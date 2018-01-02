@@ -60,7 +60,7 @@ export const otherRouter = {
             path: 'home',
             title: {i18n: 'home'},
             name: 'home_index',
-            component: resolve => { require(['@/views/home/home.vue'], resolve); }
+            component: resolve => { require(['@/pages/home/home.vue'], resolve); }
         },
         {
             path: 'myLog',

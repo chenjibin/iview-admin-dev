@@ -83,24 +83,7 @@
                         ></infor-card>
                     </Col>
                 </Row>
-                <!--<Row>-->
-                    <!--<Card :padding="0">-->
-                        <!--<p slot="title" class="card-title">-->
-                            <!--<Icon type="map"></Icon>-->
-                            <!--今日服务调用地理分布-->
-                        <!--</p>-->
-                        <!--<div class="map-con">-->
-                            <!--<Col span="10">-->
-                                <!--<map-data-table :cityData="cityData" height="281" :style-obj="{margin: '12px 0 0 11px'}"></map-data-table>-->
-                            <!--</Col>-->
-                            <!--<Col span="14" class="map-incon">-->
-                                <!--<Row type="flex" justify="center" align="middle">-->
-                                    <!--<home-map :city-data="cityData"></home-map>-->
-                                <!--</Row>-->
-                            <!--</Col>-->
-                        <!--</div>-->
-                    <!--</Card>-->
-                <!--</Row>-->
+
             </Col>
         </Row>
         <!--<Row :gutter="10" class="margin-top-10">-->
