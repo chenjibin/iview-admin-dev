@@ -1,6 +1,9 @@
 <template>
     <Card class="people-change">
         <p class="people-change-title">人事调动</p>
+        <marquee-infinite
+            :item-data="itemData"
+            height="300"></marquee-infinite>
     </Card>
 </template>
 <style lang="less">
@@ -18,64 +21,20 @@
 
 </style>
 <script>
+    import marqueeInfinite from './marqueeInfinite'
     export default {
         data () {
             return {
-                columns: [
-                    {
-                        title: '公告',
-                        key: 'title'
-                    },
-                    {
-                        title: '时间',
-                        key: 'time',
-                        width: 100,
-                        align: 'center'
-                    },
-                    {
-                        title: '发布人',
-                        key: 'people',
-                        width: 120
-                    }
-                ],
-                rowData: [
-                    {
-                        title: '今天开始写日志拉',
-                        time: '2017-12-30',
-                        people: '管理员'
-                    },
-                    {
-                        title: '今天开始写日志拉',
-                        time: '2017-12-30',
-                        people: '管理员'
-                    },
-                    {
-                        title: '今天开始写日志拉',
-                        time: '2017-12-30',
-                        people: '管理员'
-                    },
-                    {
-                        title: '今天开始写日志拉',
-                        time: '2017-12-30',
-                        people: '管理员'
-                    },
-                    {
-                        title: '今天开始写日志拉',
-                        time: '2017-12-30',
-                        people: '管理员'
-                    },
-                    {
-                        title: '今天开始写日志拉',
-                        time: '2017-12-30',
-                        people: '管理员'
-                    }
-                ]
+                itemData: ['骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fawfafafawfaf', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fawfafafawfaf骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fafafafafafafaf', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fafafafafafafaf', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】']
             };
         },
         created() {
             // this.getNoticeInfo();
         },
         methods: {
+            _testClick() {
+                console.log('aa');
+            },
             pageChangeHandler(current) {
                 console.log(current);
             },
@@ -89,6 +48,8 @@
                 });
             }
         },
-        components: {}
+        components: {
+            marqueeInfinite
+        }
     };
 </script>

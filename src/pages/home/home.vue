@@ -11,9 +11,9 @@
                         <Card>
                             <Row type="flex" class="user-infor">
                                 <Col span="8">
-                                <Row class-name="made-child-con-middle" type="flex" align="middle">
-                                    <img class="avator-img" :src="avatorPath" />
-                                </Row>
+                                    <Row class-name="made-child-con-middle" type="flex" align="middle">
+                                        <img class="avator-img" :src="avatorPath" />
+                                    </Row>
                                 </Col>
                                 <Col span="16" style="padding-left:6px;">
                                 <Row class-name="made-child-con-middle" type="flex" align="middle">
@@ -35,7 +35,7 @@
                             </Row>
                         </Card>
                     </Col>
-                    <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
+                    <Col :md="24" :lg="24">
                         <Row :gutter="5">
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
@@ -66,6 +66,12 @@
                                         @card-click=""></info-btn>
                             </Col>
                         </Row>
+                    </Col>
+                    <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
+                        <coin-change></coin-change>
+                    </Col>
+                    <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
+                        <injob-commemorate></injob-commemorate>
                     </Col>
                 </Row>
             </Col>
@@ -101,7 +107,9 @@
 import infoBtn from './components/infoBtn';
 import coinRanking from './components/coinRanking';
 import Notice from './components/notice';
-import peopleChange from './components/peopleChange'
+import peopleChange from './components/peopleChange';
+import injobCommemorate from './components/injobCommemorate';
+import coinChange from './components/coinChange';
 
 export default {
     name: 'home',
@@ -109,7 +117,9 @@ export default {
         infoBtn,
         coinRanking,
         Notice,
-        peopleChange
+        peopleChange,
+        injobCommemorate,
+        coinChange
     },
     data () {
         return {
