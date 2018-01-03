@@ -47,14 +47,14 @@
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
                                         iconType="clipboard"
-                                        color="#64d572"
+                                        color="#19be6b"
                                         btn-text="考勤"
                                         @card-click=""></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
                                         iconType="ios-grid-view"
-                                        color="#ffd572"
+                                        color="#ff9900"
                                         btn-text="抽奖"
                                         @card-click=""></info-btn>
                             </Col>
@@ -70,19 +70,27 @@
                 </Row>
             </Col>
             <Col :md="24" :lg="14">
-                <Row :gutter="5">
+                <Row>
+                    <Notice></Notice>
+                </Row>
+                <Row :gutter="5" style="margin-bottom: 10px;">
                     <Col :md="12" :lg="12">
-                        <Card>
-                            <p>金币月排行红榜</p>
-                            <Table height="300" :columns="columns1" :data="data2"></Table>
-                        </Card>
+                        <coin-ranking
+                                tag-color="#19be6b"
+                                coin-title="金币排行红榜"
+                                :row-data="data2">
+                        </coin-ranking>
                     </Col>
                     <Col :md="12" :lg="12">
-                        <Card>
-                            <p>金币月排行黑榜</p>
-                            <Table height="300" :columns="columns1" :data="data2"></Table>
-                        </Card>
+                        <coin-ranking
+                                tag-color="#ed3f14"
+                                coin-title="金币排行黑榜"
+                                :row-data="data2">
+                        </coin-ranking>
                     </Col>
+                </Row>
+                <Row>
+                    <people-change></people-change>
                 </Row>
             </Col>
         </Row>
@@ -90,91 +98,71 @@
 </template>
 
 <script>
-import infoBtn from './components/infoBtn'
-
+import infoBtn from './components/infoBtn';
+import coinRanking from './components/coinRanking';
+import Notice from './components/notice';
+import peopleChange from './components/peopleChange'
 
 export default {
     name: 'home',
     components: {
-        infoBtn
+        infoBtn,
+        coinRanking,
+        Notice,
+        peopleChange
     },
     data () {
         return {
-             columns1: [
+            data2: [
                 {
-                    title: '排名',
-                    key: 'sort',
-                    render: (h, params) => {
-                        return h('strong', `No.${params.index + 1}`)
-                    }
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'New York No. 1 Lake Park',
+                    coin: '35'
                 },
                 {
-                    title: '姓名',
-                    key: 'name'
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'London No. 1 Lake Park',
+                    coin: '35'
                 },
                 {
-                    title: '金币数',
-                    key: 'coin',
-                    render: (h, params) => {
-                        return h('Tag', {
-                            props: {
-                                color: 'green'
-                            }
-                        }, params.row.coin)
-
-                    }
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'Sydney No. 1 Lake Park',
+                    coin: '35'
+                },
+                {
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'Ottawa No. 2 Lake Park',
+                    coin: '35'
+                },
+                {
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'New York No. 1 Lake Park',
+                    coin: '35'
+                },
+                {
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'London No. 1 Lake Park',
+                    coin: '35'
+                },
+                {
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'Sydney No. 1 Lake Park',
+                    coin: '35'
+                },
+                {
+                    sort: 'No.1',
+                    name: 'Jon Snow',
+                    address: 'Ottawa No. 2 Lake Park',
+                    coin: '35'
                 }
-            ],
-             data2: [
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'New York No. 1 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'London No. 1 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'Sydney No. 1 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'Ottawa No. 2 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'New York No. 1 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'London No. 1 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'Sydney No. 1 Lake Park',
-                        coin: '35'
-                    },
-                    {
-                        sort: 'No.1',
-                        name: 'Jon Snow',
-                        address: 'Ottawa No. 2 Lake Park',
-                        coin: '35'
-                    }
-                ]
+            ]
         };
     },
     computed: {

@@ -7,7 +7,7 @@ let util = {
 
 };
 util.title = function (title) {
-    title = title || 'iView admin';
+    title = title || '天马人事系统';
     window.document.title = title;
 };
 
