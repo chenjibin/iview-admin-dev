@@ -5,7 +5,7 @@
                 <p class="coin-change-title">我的金币动态</p>
             </Col>
             <Col>
-                <Button type="primary" shape="circle" icon="ios-search" @click="modelFlag = true">查看更多</Button>
+                <Button type="primary" shape="circle" icon="ios-search" @click.stop="modelFlag = true">查看更多</Button>
             </Col>
         </Row>
         <div class="coin-change-list">

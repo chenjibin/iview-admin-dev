@@ -1,20 +1,160 @@
 <template>
     <div>
-        我的日志
+        <Row>
+            <Col :lg="16" :md="16">
+                <Card>
+                    <Row type="flex" justify="center" align="middle" style="margin-bottom: 10px">
+                        <span style="font-size: 18px;cursor: pointer;" @click.stop="_preMonth">
+                            <Button type="primary" shape="circle" icon="chevron-left"></Button>
+                        </span>
+                        <span style="padding:0 16px;font-size: 18px">{{dateData}}</span>
+                        <span style="font-size: 18px;cursor: pointer;" @click.stop="_nextMonth">
+                             <Button type="primary" shape="circle" icon="chevron-right"></Button>
+                        </span>
+                    </Row>
+                    <Table :columns="columnsData"
+                           :data="tableData"
+                           :row-class-name="_rowClassName"
+                           :disabled-hover="true"></Table>
+                </Card>
+            </Col>
+            <Col :lg="8" :md="16">
 
+            </Col>
+        </Row>
     </div>
 </template>
-<style>
+<style lang="less">
+    .ivu-table .mylog-table-row {
+        td {
+            .ivu-table-cell {
+                position: relative;
+                padding: 0;
+                padding-top: 80%;
+                .inner {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    font-size: 16px;
+                    font-weight: 700;
+                    transition: all 0.2s ease-in-out;
+                    &:hover {
+                        cursor: pointer;
+                        background-color:#5cadff;
+                        color: #fff
+                    }
+                }
+            }
+
+        }
+    }
 
 </style>
 <script>
+    import moment from 'moment';
     export default {
         name: 'myLog',
         data () {
-            return {};
+            return {
+                open: true,
+                dateData: null,
+                columnsData: [
+                    {
+                        title: '周日',
+                        render: this._rowRender(0),
+                        align: 'center'
+                    },
+                    {
+                        title: '周一',
+                        render: this._rowRender(1),
+                        align: 'center'
+                    },
+                    {
+                        title: '周二',
+                        render: this._rowRender(2),
+                        align: 'center'
+                    },
+                    {
+                        title: '周三',
+                        render: this._rowRender(3),
+                        align: 'center'
+                    },
+                    {
+                        title: '周四',
+                        render: this._rowRender(4),
+                        align: 'center'
+                    },
+                    {
+                        title: '周五',
+                        render: this._rowRender(5),
+                        align: 'center'
+                    },
+                    {
+                        title: '周六',
+                        render: this._rowRender(6),
+                        align: 'center'
+                    }
+                ],
+                tableData: []
+            };
         },
         created() {
-            console.log('aa');
+            this.dateData = moment().format('YYYY-MM');
+            let year = moment(this.dateData).year();
+            let month = moment(this.dateData).month();
+            this.tableData = this.returnDateDetail(year, month);
+        },
+        methods: {
+            returnDateDetail(year, month) {
+                let tableData = [];
+                let mDays = [31, 28 + this.isLeap(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                let n1str = new Date(year, month, 1);
+                let firstday = n1str.getDay();
+                let lines = Math.ceil((mDays[month] + firstday) / 7); // 表格所需行数
+                for (let i = 0; i < lines; i++) {
+                    tableData[i] = {};
+                    for (let j = 0; j < 7; j++) {
+                        let idx = i * 7 + j;// 单元格自然序列号
+                        let dateStr = idx - firstday + 1;// 计算日期
+                        dateStr = (dateStr <= 0 || dateStr > mDays[month]) ? '' : dateStr;
+                        tableData[i]['day' + j] = {};
+                        tableData[i]['day' + j]['day'] = dateStr;
+                    }
+                }
+                return tableData;
+            },
+            isLeap(year) {
+                return (year % 100 === 0 ? (year % 400 === 0 ? 1 : 0) : (year % 4 === 0 ? 1 : 0));
+            },
+            _preMonth() {
+                this.dateData = moment(this.dateData).subtract(1, 'M').format('YYYY-MM');
+                let year = moment(this.dateData).year();
+                let month = moment(this.dateData).month();
+                this.tableData = this.returnDateDetail(year, month);
+            },
+            _nextMonth() {
+                this.dateData = moment(this.dateData).add(1, 'M').format('YYYY-MM');
+                let year = moment(this.dateData).year();
+                let month = moment(this.dateData).month();
+                this.tableData = this.returnDateDetail(year, month);
+            },
+            _rowClassName() {
+                return 'mylog-table-row';
+            },
+            _rowRender(i) {
+                return function (h, params) {
+                    return h('div', {
+                        class: [params.row['day' + i].day ? 'inner' : '']
+                    }, [
+                        h('span', params.row['day' + i].day)
+                    ]);
+                };
+            }
         },
         components: {}
     };
