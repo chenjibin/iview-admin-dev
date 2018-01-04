@@ -23,7 +23,7 @@ module.exports = merge(webpackBaseConfig, {
         port: 8056,
         proxy: {
             "/oa": {
-                target: "http://192.168.15.22:8080",
+                target: "http://192.168.15.22:80",
                 changeOrigin: true
             }
         }
