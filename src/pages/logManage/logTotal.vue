@@ -1,6 +1,5 @@
 <template>
     <div>
-        我的日志
 
     </div>
 </template>
@@ -9,12 +8,9 @@
 </style>
 <script>
     export default {
-        name: 'myLog',
+        name: 'logTotal',
         data () {
             return {};
-        },
-        created() {
-            console.log('aa');
         },
         components: {}
     };

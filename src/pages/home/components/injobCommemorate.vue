@@ -39,6 +39,7 @@
 </template>
 <style lang="less">
     .injob-commemorate {
+        user-select: none;
         &-title {
             margin-bottom: 10px;
             font-size: 18px;

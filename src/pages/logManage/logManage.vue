@@ -8,6 +8,7 @@
 </style>
 <script>
     export default {
+        name: 'logManage',
         data () {
             return {};
         },

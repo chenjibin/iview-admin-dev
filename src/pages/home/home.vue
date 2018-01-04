@@ -180,6 +180,8 @@ export default {
             return localStorage.avatorImgPath;
         }
     },
+    created() {
+    },
     methods: {
 
     }

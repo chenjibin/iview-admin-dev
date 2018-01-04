@@ -111,7 +111,7 @@ export const appRouter = [
                 icon: 'compose',
                 name: 'logTotal',
                 title: '日志统计',
-                component: resolve => { require(['@/pages/logManage/logManage.vue'], resolve); }
+                component: resolve => { require(['@/pages/logManage/logTotal.vue'], resolve); }
             }
         ]
     },
