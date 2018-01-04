@@ -63,6 +63,12 @@
             return {
                 open: true,
                 dateData: null,
+                logInfo: [
+                    {
+                        type: 'down',
+                        comment: 'good'
+                    }
+                ],
                 columnsData: [
                     {
                         title: '周日',
@@ -121,9 +127,14 @@
                     for (let j = 0; j < 7; j++) {
                         let idx = i * 7 + j;// 单元格自然序列号
                         let dateStr = idx - firstday + 1;// 计算日期
-                        dateStr = (dateStr <= 0 || dateStr > mDays[month]) ? '' : dateStr;
-                        tableData[i]['day' + j] = {};
-                        tableData[i]['day' + j]['day'] = dateStr;
+                        if (dateStr <= 0 || dateStr > mDays[month]) {
+                            tableData[i]['day' + j] = {};
+                            tableData[i]['day' + j]['day'] = '';
+                        } else {
+                            tableData[i]['day' + j] = {};
+                            tableData[i]['day' + j]['day'] = dateStr;
+                            tableData[i]['day' + j] = Object.assign({}, this.logInfo[dateStr - 1] || {}, tableData[i]['day' + j])
+                        }
                     }
                 }
                 return tableData;
@@ -146,10 +157,18 @@
             _rowClassName() {
                 return 'mylog-table-row';
             },
+            _testRowClick(obj) {
+                console.log(obj)
+            },
             _rowRender(i) {
-                return function (h, params) {
+                return (h, params) => {
                     return h('div', {
-                        class: [params.row['day' + i].day ? 'inner' : '']
+                        class: [params.row['day' + i].day ? 'inner' : ''],
+                        on: {
+                            click: () => {
+                                this._testRowClick(params.row['day' + i])
+                            }
+                        }
                     }, [
                         h('span', params.row['day' + i].day)
                     ]);
