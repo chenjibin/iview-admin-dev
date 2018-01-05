@@ -69,6 +69,12 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/logManage/myLog.vue'], resolve); }
         },
         {
+            path: 'myAttendance',
+            title: '我的考勤',
+            name: 'myAttendance',
+            component: resolve => { require(['@/pages/myAttendance/myAttendance.vue'], resolve); }
+        },
+        {
             path: 'ownspace',
             title: '个人中心',
             name: 'ownspace_index',
@@ -258,7 +264,7 @@ export const routers = [
     otherRouter,
     preview,
     locking,
-    ...appRouter,
+    // ...appRouter,
     page500,
     page403,
     page404

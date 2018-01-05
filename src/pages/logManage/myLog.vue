@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Row>
+        <Row :gutter="10">
             <Col :lg="16" :md="16">
                 <Card>
                     <Row type="flex" justify="center" align="middle" style="margin-bottom: 10px">
@@ -14,12 +14,16 @@
                     </Row>
                     <Table :columns="columnsData"
                            :data="tableData"
+                           :loading="loading"
                            :row-class-name="_rowClassName"
                            :disabled-hover="true"></Table>
                 </Card>
             </Col>
-            <Col :lg="8" :md="16">
+            <Col :lg="8" :md="8">
+                <Card>
+                    <p style="font-size: 18px;font-weight: 700;text-align: center;">日志范本</p>
 
+                </Card>
             </Col>
         </Row>
     </div>
@@ -33,6 +37,7 @@
                 padding-top: 80%;
                 .inner {
                     display: flex;
+                    flex-direction: column;
                     justify-content: center;
                     align-items: center;
                     position: absolute;
@@ -45,7 +50,7 @@
                     transition: all 0.2s ease-in-out;
                     &:hover {
                         cursor: pointer;
-                        background-color:#5cadff;
+                        background-color: rgba(92, 173, 255, 0.6);
                         color: #fff
                     }
                 }
@@ -53,7 +58,6 @@
 
         }
     }
-
 </style>
 <script>
     import moment from 'moment';
@@ -61,12 +65,33 @@
         name: 'myLog',
         data () {
             return {
+                loading: false,
                 open: true,
                 dateData: null,
                 logInfo: [
                     {
-                        type: 'down',
-                        comment: 'good'
+                        date: '2018-01-01',
+                        type: 1
+                    },
+                    {
+                        date: '2018-01-02',
+                        type: 1
+                    },
+                    {
+                        date: '2018-01-03',
+                        type: 1
+                    },
+                    {
+                        date: '2018-01-04',
+                        type: 2
+                    },
+                    {
+                        date: '2018-01-05',
+                        type: 3
+                    },
+                    {
+                        date: '2018-01-06',
+                        type: 0
                     }
                 ],
                 columnsData: [
@@ -133,7 +158,7 @@
                         } else {
                             tableData[i]['day' + j] = {};
                             tableData[i]['day' + j]['day'] = dateStr;
-                            tableData[i]['day' + j] = Object.assign({}, this.logInfo[dateStr - 1] || {}, tableData[i]['day' + j])
+                            tableData[i]['day' + j] = Object.assign({}, this.logInfo[dateStr - 1] || {}, tableData[i]['day' + j]);
                         }
                     }
                 }
@@ -143,12 +168,20 @@
                 return (year % 100 === 0 ? (year % 400 === 0 ? 1 : 0) : (year % 4 === 0 ? 1 : 0));
             },
             _preMonth() {
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false
+                }, 500);
                 this.dateData = moment(this.dateData).subtract(1, 'M').format('YYYY-MM');
                 let year = moment(this.dateData).year();
                 let month = moment(this.dateData).month();
                 this.tableData = this.returnDateDetail(year, month);
             },
             _nextMonth() {
+                this.loading = true;
+                setTimeout(() => {
+                    this.loading = false
+                }, 500);
                 this.dateData = moment(this.dateData).add(1, 'M').format('YYYY-MM');
                 let year = moment(this.dateData).year();
                 let month = moment(this.dateData).month();
@@ -157,20 +190,44 @@
             _rowClassName() {
                 return 'mylog-table-row';
             },
-            _testRowClick(obj) {
-                console.log(obj)
+            _logRowClick(obj) {
+                console.log(obj);
             },
             _rowRender(i) {
                 return (h, params) => {
+                    let typeDom;
+                    let type = params.row['day' + i].type
+                    if (type === 0) {
+                        typeDom = '';
+                    } else if (type === 1) {
+                        typeDom = h('Tag', {
+                            props: {
+                                color: 'green'
+                            }
+                        }, '已写');
+                    } else if (type === 2) {
+                        typeDom = h('Tag', {
+                            props: {
+                                color: 'red'
+                            }
+                        }, '补写');
+                    } else if (type === 3) {
+                        typeDom = h('Tag', {
+                            props: {
+                                color: 'yellow'
+                            }
+                        }, '待写');
+                    }
                     return h('div', {
                         class: [params.row['day' + i].day ? 'inner' : ''],
                         on: {
                             click: () => {
-                                this._testRowClick(params.row['day' + i])
+                                this._logRowClick(params.row['day' + i]);
                             }
                         }
                     }, [
-                        h('span', params.row['day' + i].day)
+                        h('span', params.row['day' + i].day),
+                        typeDom
                     ]);
                 };
             }

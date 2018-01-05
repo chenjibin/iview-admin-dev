@@ -6,6 +6,7 @@ import Vue from 'vue';
 const app = {
     state: {
         cachePage: [],
+        isPermission: 0,
         lang: '',
         isFullScreen: false,
         openedSubmenuArr: [], // 要展开的菜单数组
@@ -37,10 +38,14 @@ const app = {
         setTagsList (state, list) {
             state.tagsList.push(...list);
         },
+        setPermission (state) {
+            state.isPermission = 1;
+        },
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));
             let menuList = [];
-            appRouter.forEach((item, index) => {
+            let asyncRouter = JSON.parse(localStorage.menuListData)
+            asyncRouter.forEach((item, index) => {
                 if (item.access !== undefined) {
                     if (Util.showThisRoute(item.access, accessCode)) {
                         if (item.children.length === 1) {

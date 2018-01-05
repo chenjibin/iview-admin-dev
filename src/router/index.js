@@ -3,7 +3,8 @@ import iView from 'iview';
 import Util from '../libs/util';
 import VueRouter from 'vue-router';
 import Cookies from 'js-cookie';
-import {routers, otherRouter, appRouter} from './router';
+import store from '../store';
+import {routers, otherRouter, appRouter, page404} from './router';
 
 Vue.use(VueRouter);
 
@@ -36,19 +37,30 @@ router.beforeEach((to, from, next) => {
                 name: 'home_index'
             });
         } else {
-            const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
-            if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
-                if (curRouterObj.access === parseInt(Cookies.get('access'))) {
-                    Util.toDefaultPage([otherRouter, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
-                } else {
-                    next({
-                        replace: true,
-                        name: 'error-403'
-                    });
-                }
-            } else { // 没有配置权限的路由, 直接通过
-                Util.toDefaultPage([...routers], to.name, router, next);
+            if (Cookies.get('user') && !store.state.app.isPermission) {
+                let asyncRouter = [];
+                asyncRouter.push(...appRouter);
+                localStorage.menuListData = JSON.stringify(asyncRouter);
+                router.addRoutes(asyncRouter);
+                // router.addRoutes([page404]);
+                store.commit('updateMenulist');
+                store.commit('setPermission');
             }
+            console.log(to.name)
+            Util.toDefaultPage([...routers], to.name, router, next);
+            // const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
+            // if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
+            //     if (curRouterObj.access === parseInt(Cookies.get('access'))) {
+            //         Util.toDefaultPage([otherRouter, ...appRouter], to.name, router, next); // 如果在地址栏输入的是一级菜单则默认打开其第一个二级菜单的页面
+            //     } else {
+            //         next({
+            //             replace: true,
+            //             name: 'error-403'
+            //         });
+            //     }
+            // } else { // 没有配置权限的路由, 直接通过
+            //     Util.toDefaultPage([...routers], to.name, router, next);
+            // }
         }
     }
 });

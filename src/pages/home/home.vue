@@ -49,7 +49,7 @@
                                         iconType="clipboard"
                                         color="#19be6b"
                                         btn-text="考勤"
-                                        @card-click=""></info-btn>
+                                        @card-click="$router.push('myAttendance')"></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
