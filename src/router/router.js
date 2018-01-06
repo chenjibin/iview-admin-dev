@@ -266,6 +266,6 @@ export const routers = [
     locking,
     // ...appRouter,
     page500,
-    page403,
-    page404
+    page403
+    // page404
 ];
