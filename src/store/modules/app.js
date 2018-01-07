@@ -7,6 +7,7 @@ const app = {
     state: {
         cachePage: [],
         isPermission: 0,
+        premissionMenu: [],
         lang: '',
         isFullScreen: false,
         openedSubmenuArr: [], // 要展开的菜单数组
@@ -35,6 +36,9 @@ const app = {
         dontCache: ['text-editor', 'artical-publish'] // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
     },
     mutations: {
+        setPremissionMenu (state, menu) {
+            state.premissionMenu = menu;
+        },
         setTagsList (state, list) {
             state.tagsList.push(...list);
         },
@@ -44,8 +48,7 @@ const app = {
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));
             let menuList = [];
-            let asyncRouter = JSON.parse(localStorage.menuListData)
-            asyncRouter.forEach((item, index) => {
+            state.premissionMenu.forEach((item, index) => {
                 if (item.access !== undefined) {
                     if (Util.showThisRoute(item.access, accessCode)) {
                         if (item.children.length === 1) {

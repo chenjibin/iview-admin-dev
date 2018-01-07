@@ -4,7 +4,7 @@ import Util from '../libs/util';
 import VueRouter from 'vue-router';
 import Cookies from 'js-cookie';
 import store from '../store';
-import {routers, otherRouter, appRouter, page404} from './router';
+import {routers} from './router';
 
 Vue.use(VueRouter);
 
@@ -37,24 +37,7 @@ router.beforeEach((to, from, next) => {
                 name: 'home_index'
             });
         } else {
-            if (Cookies.get('user') && !store.state.app.isPermission) {
-                console.log('aaa');
-                let asyncRouter = [];
-                asyncRouter.push(...appRouter);
-                // asyncRouter.push(page404);
-                localStorage.menuListData = JSON.stringify(asyncRouter);
-                router.addRoutes(asyncRouter);
-                router.addRoutes([page404]);
-                store.commit('updateMenulist');
-                store.commit('setPermission');
-            }
-            next()
-            console.log(to)
-            // if (localStorage.menuListData) {
-            //     Util.toDefaultPage([...routers, ...JSON.parse(localStorage.menuListData)], to.name, router, next);
-            // } else {
-            //     Util.toDefaultPage([...routers], to.name, router, next);
-            // }
+            Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to.name, router, next);
             // const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
             // if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
             //     if (curRouterObj.access === parseInt(Cookies.get('access'))) {
