@@ -56,7 +56,8 @@ export default {
                             }
                         });
                         editor.on('keydown', function (e) {
-                            localStorage.editorContent = tinymce.get('tinymceEditer').getContent();
+                            localStorage.editorContent = tinymce.get('tinymceEditer').getBody().innerHTML;
+                            console.log(typeof tinymce.get('tinymceEditer').getBody().innerHTML);
                         });
                     }
                 });

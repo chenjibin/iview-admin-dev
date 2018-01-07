@@ -2,6 +2,7 @@ import axios from 'axios';
 import env from '../../build/env';
 import semver from 'semver';
 import packjson from '../../package.json';
+import {page404} from '../router/router';
 
 let util = {
 
@@ -265,5 +266,25 @@ util.checkUpdate = function (vm) {
         }
     });
 };
+
+util.getRoutersData = function (allRouter, permissionRouterArr) {
+    return '';
+};
+
+util.initMenu = function (vm, routeData, page404) {
+    let syncRouterAll = routeData.concat([page404]);
+    vm.$store.commit('setPremissionMenu', routeData);
+    vm.$router.addRoutes(syncRouterAll);
+    let tagsList = [];
+    routeData.map((item) => {
+        if (item.children.length <= 1) {
+            tagsList.push(item.children[0]);
+        } else {
+            tagsList.push(...item.children);
+        }
+    });
+    vm.$store.commit('setTagsList', tagsList);
+    vm.$store.commit('updateMenulist');
+}
 
 export default util;

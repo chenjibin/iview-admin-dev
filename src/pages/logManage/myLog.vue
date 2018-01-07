@@ -17,6 +17,15 @@
                            :loading="loading"
                            :row-class-name="_rowClassName"
                            :disabled-hover="true"></Table>
+                    <Modal v-model="modelFlag" width="800" :mask-closable="false">
+                        <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                            <span>{{logDetail.date}} 日志</span>
+                        </p>
+                        <div class="" v-html="logDetail.content" v-if="logDetail.type === 1"></div>
+                        <text-editor v-if="logDetail.type === 2 || logDetail.type === 3"></text-editor>
+                        <div slot="footer">
+                        </div>
+                    </Modal>
                 </Card>
             </Col>
             <Col :lg="8" :md="8">
@@ -55,19 +64,37 @@
                     }
                 }
             }
-
+            .fs-tag {
+                display: inline-block;
+                height: 22px;
+                line-height: 22px;
+                margin: 2px 4px 2px 0;
+                padding: 0 8px;
+                border-radius: 3px;
+                font-size: 12px;
+                vertical-align: middle;
+                opacity: 1;
+                overflow: hidden;
+            }
         }
     }
 </style>
 <script>
     import moment from 'moment';
+    import textEditor from '@/baseComponents/text-editor';
     export default {
         name: 'myLog',
         data () {
             return {
+                modelFlag: false,
                 loading: false,
                 open: true,
                 dateData: null,
+                logDetail: {
+                    date: '2018-01-01',
+                    type: 0,
+                    content: '<table style="padding:20px 10px 10px 10px;background-color: #c7edcc;width:100%"><tbody><tr><td valign="top"><p class="MsoNormal"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">各部门同事：</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:28.0000pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">为进一步完善集团金币制度，提高金币衡量人才的标准，体现金币的价值，现对公司现行金币制度进行调整。新的金币制度将通过四个维度来衡量一个员工的综合能力值，分为财富点、伯乐点、智慧点及技能点四个方面，具体规则近日会另行公示。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:28.0000pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><font face="仿宋">新金币制度将于</font>2018年1月1日0时正式实施，为了保证新金币合理规范，现有金币将于12月31日24时进行清零，所有正值金币将以现金的方式给大家折现（比例：1元=10金币），负值的同事同样需要以现金的方式补足上缴人事部。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent: 28pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><font face="仿宋">请需要兑换实物或迟到券等同事于</font>2017年12月31日下午五点半前操作。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-indent:28.0000pt;text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">江苏天马网络科技集团有限公司</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-indent:28.0000pt;text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">人力资源部</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">2017年12月26日</span><span style="mso-spacerun:\'yes\';font-family:Calibri;mso-fareast-font-family:宋体;mso-bidi-font-family:\'Times New Roman\';font-size:10.5000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p></td></tr></tbody></table>'
+                },
                 logInfo: [
                     {
                         date: '2018-01-01',
@@ -83,14 +110,22 @@
                     },
                     {
                         date: '2018-01-04',
-                        type: 2
+                        type: 4
                     },
                     {
                         date: '2018-01-05',
-                        type: 3
+                        type: 2
                     },
                     {
                         date: '2018-01-06',
+                        type: 2
+                    },
+                    {
+                        date: '2018-01-07',
+                        type: 3
+                    },
+                    {
+                        date: '2018-01-08',
                         type: 0
                     }
                 ],
@@ -143,16 +178,16 @@
         methods: {
             returnDateDetail(year, month) {
                 let tableData = [];
-                let mDays = [31, 28 + this.isLeap(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                let allDats = (new Date(year, month + 1, 0)).getDate();
                 let n1str = new Date(year, month, 1);
                 let firstday = n1str.getDay();
-                let lines = Math.ceil((mDays[month] + firstday) / 7); // 表格所需行数
+                let lines = Math.ceil((allDats + firstday) / 7); // 表格所需行数
                 for (let i = 0; i < lines; i++) {
                     tableData[i] = {};
                     for (let j = 0; j < 7; j++) {
                         let idx = i * 7 + j;// 单元格自然序列号
                         let dateStr = idx - firstday + 1;// 计算日期
-                        if (dateStr <= 0 || dateStr > mDays[month]) {
+                        if (dateStr <= 0 || dateStr > allDats) {
                             tableData[i]['day' + j] = {};
                             tableData[i]['day' + j]['day'] = '';
                         } else {
@@ -164,13 +199,15 @@
                 }
                 return tableData;
             },
-            isLeap(year) {
-                return (year % 100 === 0 ? (year % 400 === 0 ? 1 : 0) : (year % 4 === 0 ? 1 : 0));
+            _getLogInfo(ym) {
+                this.$http.get('/log/getLogInfo', {yearmonth: ym}).then((res) => {
+
+                });
             },
             _preMonth() {
                 this.loading = true;
                 setTimeout(() => {
-                    this.loading = false
+                    this.loading = false;
                 }, 500);
                 this.dateData = moment(this.dateData).subtract(1, 'M').format('YYYY-MM');
                 let year = moment(this.dateData).year();
@@ -180,7 +217,7 @@
             _nextMonth() {
                 this.loading = true;
                 setTimeout(() => {
-                    this.loading = false
+                    this.loading = false;
                 }, 500);
                 this.dateData = moment(this.dateData).add(1, 'M').format('YYYY-MM');
                 let year = moment(this.dateData).year();
@@ -192,30 +229,47 @@
             },
             _logRowClick(obj) {
                 console.log(obj);
+                if (obj.type === 0) return;
+                this.logDetail.type = obj.type;
+                if (obj.type === 4) {
+                    this.$Message.error('超过48小时不可再补写日志！');
+                } else if (obj.type === 2 || obj.type === 3) {
+                    this.modelFlag = true;
+                    this.logDetail.date = obj.date;
+                } else if (obj.type === 1) {
+                    this.modelFlag = true;
+                    this.logDetail.date = obj.date;
+                }
             },
             _rowRender(i) {
                 return (h, params) => {
                     let typeDom;
-                    let type = params.row['day' + i].type
+                    let type = params.row['day' + i].type;
                     if (type === 0) {
                         typeDom = '';
                     } else if (type === 1) {
-                        typeDom = h('Tag', {
-                            props: {
-                                color: 'green'
-                            }
+                        typeDom = h('span', {
+                            style: {
+                                backgroundColor: '#19be6b',
+                                color: '#fff'
+                            },
+                            class: ['fs-tag']
                         }, '已写');
-                    } else if (type === 2) {
-                        typeDom = h('Tag', {
-                            props: {
-                                color: 'red'
-                            }
+                    } else if (type === 2 || type === 4) {
+                        typeDom = h('span', {
+                            style: {
+                                backgroundColor: '#ed3f14',
+                                color: '#fff'
+                            },
+                            class: ['fs-tag']
                         }, '补写');
                     } else if (type === 3) {
-                        typeDom = h('Tag', {
-                            props: {
-                                color: 'yellow'
-                            }
+                        typeDom = h('span', {
+                            style: {
+                                backgroundColor: '#f90',
+                                color: '#fff'
+                            },
+                            class: ['fs-tag']
                         }, '待写');
                     }
                     return h('div', {
@@ -232,6 +286,8 @@
                 };
             }
         },
-        components: {}
+        components: {
+            textEditor
+        }
     };
 </script>
