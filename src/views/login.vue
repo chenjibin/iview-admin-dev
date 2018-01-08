@@ -90,6 +90,21 @@ export default {
                     this.loading = true;
                     this.$http.post('/login/login', this.form).then((res) => {
                         if (res.Success) {
+                            Cookies.set('user', this.form.userName);
+                            Cookies.set('password', this.form.password);
+                            this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
+                            if (this.form.userName === 'iview_admin') {
+                                Cookies.set('access', 0);
+                            } else {
+                                Cookies.set('access', 1);
+                            }
+                            Cookies.set('token', '1010101010');
+                            this.getPermissionData().then((data) => {
+                                util.initMenu(this, data, page404);
+                                this.$router.push({
+                                    name: 'home_index'
+                                });
+                            });
                         } else {
                             this.$Message.error(res.message);
                         }
@@ -97,21 +112,21 @@ export default {
                     }).finally(() => {
                         this.loading = false;
                     });
-                    Cookies.set('user', this.form.userName);
-                    Cookies.set('password', this.form.password);
-                    this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
-                    if (this.form.userName === 'iview_admin') {
-                        Cookies.set('access', 0);
-                    } else {
-                        Cookies.set('access', 1);
-                    }
-                    Cookies.set('token', '1010101010');
-                    this.getPermissionData().then((data) => {
-                        util.initMenu(this, data, page404);
-                        this.$router.push({
-                            name: 'home_index'
-                        });
-                    });
+                    // Cookies.set('user', this.form.userName);
+                    // Cookies.set('password', this.form.password);
+                    // this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
+                    // if (this.form.userName === 'iview_admin') {
+                    //     Cookies.set('access', 0);
+                    // } else {
+                    //     Cookies.set('access', 1);
+                    // }
+                    // Cookies.set('token', '1010101010');
+                    // this.getPermissionData().then((data) => {
+                    //     util.initMenu(this, data, page404);
+                    //     this.$router.push({
+                    //         name: 'home_index'
+                    //     });
+                    // });
                 }
             });
         }

@@ -24,6 +24,7 @@ axios.interceptors.request.use(config => {
 
 // Add a response interceptor
 axios.interceptors.response.use(response => {
+    console.log(response)
     // Do something with response data
     if (response.data.Success === 'fail') {
         if (response.data.failCode === 'OUT_OF_LOGIN') {
@@ -37,6 +38,7 @@ axios.interceptors.response.use(response => {
     }
 }, function(error) {
     // Do something with response error
+    console.log(error);
     return Promise.reject(error);
 })
 

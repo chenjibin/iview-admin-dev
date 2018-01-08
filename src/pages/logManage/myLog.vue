@@ -2,7 +2,7 @@
     <div>
         <Row :gutter="10">
             <Col :lg="16" :md="16">
-                <Card>
+                <Card style="margin-bottom: 10px;">
                     <Row type="flex" justify="center" align="middle" style="margin-bottom: 10px">
                         <span style="font-size: 18px;cursor: pointer;" @click.stop="_preMonth">
                             <Button type="primary" shape="circle" icon="chevron-left"></Button>
@@ -12,17 +12,30 @@
                              <Button type="primary" shape="circle" icon="chevron-right"></Button>
                         </span>
                     </Row>
+                    <div class="" v-show="logShowType === 'card'">
+                        <Row>
+                            <Col :lg="8" :md="12">
+                                <div class="">
+                                    <h3>2018-01-01</h3>
+                                    <div></div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
                     <Table :columns="columnsData"
+                           v-show="logShowType === 'date'"
                            :data="tableData"
                            :loading="loading"
                            :row-class-name="_rowClassName"
                            :disabled-hover="true"></Table>
-                    <Modal v-model="modelFlag" width="900" :mask-closable="false">
+                    <Modal v-model="modelFlag"
+                           width="900"
+                           :mask-closable="false">
                         <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                             <span>{{logDetail.date}} 日志</span>
                         </p>
-                        <div class="" v-html="logDetail.content" v-if="logDetail.type === 5"></div>
-                        <template v-if="logDetail.type === 2 || logDetail.type === 3">
+                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.content" v-if="[5,6].indexOf(logDetail.type) > -1"></div>
+                        <template v-if="[0,1,2,3].indexOf(logDetail.type) > -1">
                             <span style="display: inline-block;margin-right: 10px;height: 30px;line-height: 30px;vertical-align: top;">日志类型</span>
                             <Select v-model="logDetail.logType"
                                     placeholder="日志类型"
@@ -32,14 +45,26 @@
                             <text-editor
                                     :menubar="editorOpt.menubar"
                                     :plugins="editorOpt.plugins"
+                                    :editor-content="logDetail.content"
                                     :toolbar1="editorOpt.toolbar1"
                                     @content-change="_setContent"></text-editor>
                         </template>
                         <div slot="footer">
-                            <Button type="primary" :loading="submitLoading" @click="_submitLog">
-                                <span v-if="!submitLoading">提交日志</span>
-                                <span v-else>提交中...</span>
-                            </Button>
+                            <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1">
+                                <div class=""></div>
+                                <Button type="primary" :loading="submitLoading" @click="_submitLog">
+                                    <span v-if="!submitLoading">提交日志</span>
+                                    <span v-else>提交中...</span>
+                                </Button>
+                            </div>
+                            <div class="" v-if="[5,6].indexOf(logDetail.type) > -1">
+                                <span>指导状态:</span>
+                                <Tag color="green">已指导</Tag>
+                                <span>类型:</span>
+                                <Tag color="blue">{{logDetail.logType1 | _returnLogType}}</Tag>
+                                <span>评级结果:</span>
+                                <Tag color="blue">{{logDetail.commentResult | _returnCommentResult}}</Tag>
+                            </div>
                         </div>
                     </Modal>
                 </Card>
@@ -101,6 +126,7 @@
         name: 'myLog',
         data () {
             return {
+                logShowType: 'date',
                 submitLoading: false,
                 modelFlag: false,
                 loading: false,
@@ -120,7 +146,9 @@
                     logType: '0',
                     date: '2018-01-01',
                     type: 0,
+                    logType1: '',
                     editorContent: '',
+                    commentResult: '0',
                     content: '<table style="padding:20px 10px 10px 10px;background-color: #c7edcc;width:100%"><tbody><tr><td valign="top"><p class="MsoNormal"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">各部门同事：</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:28.0000pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">为进一步完善集团金币制度，提高金币衡量人才的标准，体现金币的价值，现对公司现行金币制度进行调整。新的金币制度将通过四个维度来衡量一个员工的综合能力值，分为财富点、伯乐点、智慧点及技能点四个方面，具体规则近日会另行公示。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:28.0000pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><font face="仿宋">新金币制度将于</font>2018年1月1日0时正式实施，为了保证新金币合理规范，现有金币将于12月31日24时进行清零，所有正值金币将以现金的方式给大家折现（比例：1元=10金币），负值的同事同样需要以现金的方式补足上缴人事部。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent: 28pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><font face="仿宋">请需要兑换实物或迟到券等同事于</font>2017年12月31日下午五点半前操作。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-indent:28.0000pt;text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">江苏天马网络科技集团有限公司</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-indent:28.0000pt;text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">人力资源部</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">2017年12月26日</span><span style="mso-spacerun:\'yes\';font-family:Calibri;mso-fareast-font-family:宋体;mso-bidi-font-family:\'Times New Roman\';font-size:10.5000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p></td></tr></tbody></table>'
                 },
                 logTypeList: [
@@ -178,6 +206,38 @@
             this.dateData = moment().format('YYYY-MM');
             this._getLogInfo(this.dateData);
         },
+        filters: {
+            _returnCommentResult(val) {
+                let text = '';
+                switch (+val) {
+                    case 0:
+                        text = '未评价';
+                        break;
+                    case 1:
+                        text = '优秀';
+                        break;
+                    case 2:
+                        text = '合格';
+                        break;
+                    case 3:
+                        text = '不合格';
+                        break;
+                }
+                return text;
+            },
+            _returnLogType(val) {
+                let text = '';
+                switch (+val) {
+                    case 0:
+                        text = '出勤';
+                        break;
+                    case 1:
+                        text = '休息';
+                        break;
+                }
+                return text;
+            }
+        },
         methods: {
             returnDateDetail(year, month) {
                 let tableData = [];
@@ -232,32 +292,59 @@
             _setContent(content) {
                 this.logDetail.editorContent = content;
             },
+            _setSelectOpt(type) {
+                if (type === 0) {
+                    this.logTypeList = [ {
+                        value: '1',
+                        label: '休息'
+                    }];
+                    this.logDetail.logType = '1';
+                    this.logDetail.content = '休息';
+                } else {
+                    this.logTypeList = [
+                        {
+                            value: '0',
+                            label: '出勤'
+                        },
+                        {
+                            value: '1',
+                            label: '休息'
+                        }
+                    ];
+                    this.logDetail.logType = '0';
+                }
+            },
             _logRowClick(obj) {
                 console.log(obj);
-                if (obj.type === 0) return;
-                this.logDetail.type = obj.type;
                 if (obj.type === 4) {
                     this.$Message.error('超过48小时不可再补写日志！');
-                } else if (obj.type === 2 || obj.type === 3 || obj.type === 5) {
-                    this.modelFlag = true;
-                    this.logDetail.date = obj.date;
-                } else if (obj.type === 1 || obj.type === 6) {
-                    this.modelFlag = true;
-                    this.logDetail.date = obj.date;
+                    return;
                 }
+                this.logDetail.date = obj.date;
+                this.logDetail.type = obj.type;
+                this.logDetail.commentResult = obj.commentResult;
+                this.logDetail.content = obj.content || '';
+                this.logDetail.logType1 = obj.logType || '';
+                this._setSelectOpt(obj.type);
+                this.modelFlag = true;
             },
             _submitLog() {
                 this.submitLoading = true;
                 let data = {
                     type: this.logDetail.logType,
-                    date: this.logDetail.date,
+                    time: this.logDetail.date,
                     content: this.logDetail.editorContent
                 };
-                this.$http.post('', data).then((res) => {
+                // console.log(data);
+                this.$http.post('/journal/addJournal', data).then((res) => {
                     if (res.Success) {
                         this.$Message.success('日志提交成功！');
+                        this._getLogInfo(this.dateData);
+                    } else {
+                        this.$Message.error(res.message);
                     }
                 }).finally(() => {
+                    this.modelFlag = false;
                     this.submitLoading = false;
                 });
             },

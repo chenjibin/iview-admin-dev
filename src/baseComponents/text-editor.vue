@@ -17,6 +17,10 @@
     export default {
         name: 'text-editor',
         props: {
+            editorContent: {
+                type: String,
+                default: ''
+            },
             menubar: {
                 type: String,
                 default: 'edit insert view format table tools'
@@ -37,6 +41,11 @@
                 default: ' newnote print preview | undo redo | insert | styleselect | forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image emoticons media codesample'
             }
 
+        },
+        watch: {
+            editorContent(val) {
+                tinymce.get('tinymceEditer').setContent(val);
+            }
         },
         data () {
             return {
@@ -66,6 +75,7 @@
                         setup: function (editor) {
                             editor.on('init', function (e) {
                                 vm.spinShow = false;
+                                tinymce.get('tinymceEditer').setContent(vm.editorContent);
                             });
                             editor.on('keyup', function (e) {
                                 let content = tinymce.get('tinymceEditer').getBody().innerHTML;
