@@ -29,7 +29,7 @@
                         'searchreplace visualblocks visualchars code fullpage',
                         'insertdatetime media nonbreaking save table contextmenu directionality',
                         'emoticons paste textcolor colorpicker textpattern imagetools codesample'
-                    ]
+                    ];
                 }
             },
             toolbar1: {

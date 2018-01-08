@@ -144,7 +144,7 @@
                     });
                 } else if (name === 'loginout') {
                     // 退出登录
-                    this.$store.commit('logout', this);
+                    this.$store.commit('logout');
                     this.$store.commit('clearOpenedSubmenu');
                     this.$router.push({
                         name: 'login'

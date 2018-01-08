@@ -1,23 +1,35 @@
 <template>
-    <div>
+    <div class="#my-attendance">
         <Card>
             <Table :columns="columns1"
                    :data="data1"
                    height="700"
-                   @on-row-dblclick="_checkDetail"
+                   @on-row-click="_checkDetail"
+                   :row-class-name="_returnRowClass"
                    style="margin-bottom: 10px;"></Table>
             <Page :total="100"></Page>
+            <Modal v-model="modelFlag" width="800" :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>2018-1 考勤</span>
+                </p>
+                <div slot="footer"></div>
+            </Modal>
         </Card>
     </div>
 </template>
 <style lang="less">
-
+    .ivu-table  {
+        .fs-row {
+            cursor: pointer;
+        }
+    }
 </style>
 <script>
     export default {
         name: 'myAttendance',
         data () {
             return {
+                modelFlag: false,
                 columns1: [
                     {
                         title: '记录月份',
@@ -144,6 +156,10 @@
         methods: {
             _checkDetail(obj) {
                 console.log(obj);
+                this.modelFlag = true;
+            },
+            _returnRowClass() {
+                return 'fs-row';
             }
         },
         components: {}
