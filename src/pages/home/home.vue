@@ -65,6 +65,20 @@
                                         btn-text="金币商城"
                                         @card-click=""></info-btn>
                             </Col>
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                                <info-btn
+                                        iconType="compose"
+                                        color="#2d8cf0"
+                                        btn-text="请假"
+                                        @card-click="$router.push('myLeave')"></info-btn>
+                            </Col>
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                                <info-btn
+                                        iconType="navicon"
+                                        color="#19be6b"
+                                        btn-text="排班"
+                                        @card-click="$router.push('myArrange')"></info-btn>
+                            </Col>
                         </Row>
                     </Col>
                     <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">

@@ -21,6 +21,7 @@ module.exports = merge(webpackBaseConfig, {
     },
     devServer: {
         port: 8056,
+        host: '192.168.18.146',
         proxy: {
             "/oa": {
                 target: "http://192.168.15.22:80",

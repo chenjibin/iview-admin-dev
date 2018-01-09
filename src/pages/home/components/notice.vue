@@ -111,7 +111,7 @@
             };
         },
         created() {
-            // this.getNoticeInfo();
+            this.getNoticeInfo();
         },
         methods: {
             pageChangeHandler(current) {
@@ -120,19 +120,16 @@
             getNoticeInfo() {
                 let data = {
                     page: this.currentPage,
-                    pageSize: 10
+                    pageSize: 10,
+                    type: 1
                 };
-                this.$http.get('', data).then((res) => {
+                this.$http.get('/notice/diaodongInfo', {params: data}).then((res) => {
+
                     console.log(res);
                 });
             },
             _checkDetails(rowData) {
-                // let data = {
-                //     id: rowData.id
-                // };
-                this.modelFlag = true;
-                // this.$http.get('', data).then((res) => {
-                // });
+
             },
             _rowClassName() {
                 return 'row-cursor';

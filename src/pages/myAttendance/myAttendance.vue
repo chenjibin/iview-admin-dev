@@ -8,7 +8,7 @@
                    :row-class-name="_returnRowClass"
                    style="margin-bottom: 10px;"></Table>
             <Page :total="100"></Page>
-            <Modal v-model="modelFlag" width="800" :mask-closable="false">
+            <Modal v-model="modelFlag" width="900" :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>2018-1 考勤</span>
                 </p>

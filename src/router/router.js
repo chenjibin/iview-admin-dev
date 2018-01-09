@@ -75,6 +75,18 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/myAttendance/myAttendance.vue'], resolve); }
         },
         {
+            path: 'myLeave',
+            title: '我的请假',
+            name: 'myLeave',
+            component: resolve => { require(['@/pages/myLeave/myLeave.vue'], resolve); }
+        },
+        {
+            path: 'myArrange',
+            title: '我的排班',
+            name: 'myArrange',
+            component: resolve => { require(['@/pages/myArrange/myArrange.vue'], resolve); }
+        },
+        {
             path: 'ownspace',
             title: '个人中心',
             name: 'ownspace_index',

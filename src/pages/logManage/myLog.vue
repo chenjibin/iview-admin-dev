@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div id="my-log">
         <Row :gutter="10">
-            <Col :lg="16" :md="16">
+            <Col :lg="14" :md="14">
                 <Card style="margin-bottom: 10px;">
                     <Row type="flex" justify="center" align="middle" style="margin-bottom: 10px">
                         <span style="font-size: 18px;cursor: pointer;" @click.stop="_preMonth">
@@ -12,18 +12,7 @@
                              <Button type="primary" shape="circle" icon="chevron-right"></Button>
                         </span>
                     </Row>
-                    <div class="" v-show="logShowType === 'card'">
-                        <Row>
-                            <Col :lg="8" :md="12">
-                                <div class="">
-                                    <h3>2018-01-01</h3>
-                                    <div></div>
-                                </div>
-                            </Col>
-                        </Row>
-                    </div>
                     <Table :columns="columnsData"
-                           v-show="logShowType === 'date'"
                            :data="tableData"
                            :loading="loading"
                            :row-class-name="_rowClassName"
@@ -51,7 +40,7 @@
                         </template>
                         <div slot="footer">
                             <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1">
-                                <div class=""></div>
+
                                 <Button type="primary" :loading="submitLoading" @click="_submitLog">
                                     <span v-if="!submitLoading">提交日志</span>
                                     <span v-else>提交中...</span>
@@ -69,15 +58,39 @@
                     </Modal>
                 </Card>
             </Col>
-            <Col :lg="8" :md="8">
+            <Col :lg="10" :md="10">
                 <Card>
-                    <p style="font-size: 18px;font-weight: 700;text-align: center;">日志范本</p>
+                    <p  class="log-title">{{dateData}} 日志概览</p>
+                    <div class="each-log-look" v-for="item in logLookList">
+                        <p class="time-title">{{item.date}}</p>
+                        <div class="" v-html="item.content"></div>
+                    </div>
                 </Card>
             </Col>
         </Row>
     </div>
 </template>
 <style lang="less">
+    @import "../../styles/fsBase";
+    #my-log {
+        .log-title {
+            color: @fs-title-color;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .each-log-look {
+            margin-top: 10px;
+            padding: 8px 0;
+            &:not(:last-child) {
+                border-bottom: 1px solid @fs-divider-color;
+            }
+            .time-title {
+                color: @fs-title-color;
+                font-weight: 700;
+            }
+        }
+    }
     .ivu-table .mylog-table-row {
         td {
             .ivu-table-cell {
@@ -126,7 +139,6 @@
         name: 'myLog',
         data () {
             return {
-                logShowType: 'date',
                 submitLoading: false,
                 modelFlag: false,
                 loading: false,
@@ -142,6 +154,7 @@
                     ],
                     toolbar1: 'preview | undo redo | styleselect | forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent'
                 },
+                logLookList: [],
                 logDetail: {
                     logType: '0',
                     date: '2018-01-01',
@@ -149,7 +162,7 @@
                     logType1: '',
                     editorContent: '',
                     commentResult: '0',
-                    content: '<table style="padding:20px 10px 10px 10px;background-color: #c7edcc;width:100%"><tbody><tr><td valign="top"><p class="MsoNormal"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">各部门同事：</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:28.0000pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">为进一步完善集团金币制度，提高金币衡量人才的标准，体现金币的价值，现对公司现行金币制度进行调整。新的金币制度将通过四个维度来衡量一个员工的综合能力值，分为财富点、伯乐点、智慧点及技能点四个方面，具体规则近日会另行公示。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent:28.0000pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><font face="仿宋">新金币制度将于</font>2018年1月1日0时正式实施，为了保证新金币合理规范，现有金币将于12月31日24时进行清零，所有正值金币将以现金的方式给大家折现（比例：1元=10金币），负值的同事同样需要以现金的方式补足上缴人事部。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" style="text-indent: 28pt;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><font face="仿宋">请需要兑换实物或迟到券等同事于</font>2017年12月31日下午五点半前操作。</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-indent:28.0000pt;text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">江苏天马网络科技集团有限公司</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-indent:28.0000pt;text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">人力资源部</span><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p><p class="MsoNormal" align="right" style="text-align:right;"><span style="mso-spacerun:\'yes\';font-family:仿宋;font-size:14.0000pt;mso-font-kerning:1.0000pt;">2017年12月26日</span><span style="mso-spacerun:\'yes\';font-family:Calibri;mso-fareast-font-family:宋体;mso-bidi-font-family:\'Times New Roman\';font-size:10.5000pt;mso-font-kerning:1.0000pt;"><o:p></o:p></span></p></td></tr></tbody></table>'
+                    content: ''
                 },
                 logTypeList: [
                     {
@@ -266,7 +279,9 @@
                 this.loading = true;
                 this.$http.get('/journal/typeList', {params: {time: ym}}).then((res) => {
                     if (res.Success) {
+                        let storeArr = res.date.slice(0);
                         this.logInfo = res.date;
+                        this._setLogList(storeArr);
                         let year = moment(ym).year();
                         let month = moment(ym).month();
                         this.tableData = this.returnDateDetail(year, month);
@@ -313,6 +328,11 @@
                     ];
                     this.logDetail.logType = '0';
                 }
+            },
+            _setLogList(arr) {
+                this.logLookList = arr.filter((item) => {
+                    return !!item.content;
+                });
             },
             _logRowClick(obj) {
                 console.log(obj);
