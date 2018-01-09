@@ -7,7 +7,14 @@
                         <span style="font-size: 18px;cursor: pointer;" @click.stop="_preMonth">
                             <Button type="primary" shape="circle" icon="chevron-left"></Button>
                         </span>
-                        <span style="padding:0 16px;font-size: 18px">{{dateData}}</span>
+                        <DatePicker
+                                :open="datePickerFlag"
+                                :value="dateData"
+                                size="large"
+                                @on-change="_dateChange"
+                                type="month">
+                            <span style="padding:0 16px;font-size: 18px;cursor: pointer;" @click="datePickerFlag = !datePickerFlag">{{dateData}}</span>
+                        </DatePicker>
                         <span style="font-size: 18px;cursor: pointer;" @click.stop="_nextMonth">
                              <Button type="primary" shape="circle" icon="chevron-right"></Button>
                         </span>
@@ -139,6 +146,7 @@
         name: 'myLog',
         data () {
             return {
+                datePickerFlag: false,
                 submitLoading: false,
                 modelFlag: false,
                 loading: false,
@@ -215,9 +223,13 @@
                 tableData: []
             };
         },
+        watch: {
+            dateData(val) {
+                this._getLogInfo(val);
+            }
+        },
         created() {
             this.dateData = moment().format('YYYY-MM');
-            this._getLogInfo(this.dateData);
         },
         filters: {
             _returnCommentResult(val) {
@@ -290,16 +302,18 @@
                     this.loading = false;
                 });
             },
+            _dateChange(date) {
+                this.dateData = date;
+                this.datePickerFlag = false;
+            },
             _preMonth() {
                 setTimeout(() => {
                     this.loading = false;
                 }, 500);
                 this.dateData = moment(this.dateData).subtract(1, 'M').format('YYYY-MM');
-                this._getLogInfo(this.dateData);
             },
             _nextMonth() {
                 this.dateData = moment(this.dateData).add(1, 'M').format('YYYY-MM');
-                this._getLogInfo(this.dateData);
             },
             _rowClassName() {
                 return 'mylog-table-row';
@@ -315,6 +329,7 @@
                     }];
                     this.logDetail.logType = '1';
                     this.logDetail.content = '休息';
+                    this.logDetail.editorContent = '休息';
                 } else {
                     this.logTypeList = [
                         {
@@ -355,7 +370,6 @@
                     time: this.logDetail.date,
                     content: this.logDetail.editorContent
                 };
-                // console.log(data);
                 this.$http.post('/journal/addJournal', data).then((res) => {
                     if (res.Success) {
                         this.$Message.success('日志提交成功！');

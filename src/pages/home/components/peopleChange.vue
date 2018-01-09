@@ -21,15 +21,15 @@
 
 </style>
 <script>
-    import marqueeInfinite from './marqueeInfinite'
+    import marqueeInfinite from './marqueeInfinite';
     export default {
         data () {
             return {
-                itemData: ['骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fawfafafawfaf', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fawfafafawfaf骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fafafafafafafaf', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', 'fafafafafafafaf', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】', '骆龙丽 岗位从 【储备店长】 变更为 【导购】 从 【耐克阿迪折扣店】 部门调配到 【716多品店】 部门    【2018-01-02】']
+                itemData: []
             };
         },
         created() {
-            // this.getNoticeInfo();
+            this.getChangeInfo();
         },
         methods: {
             _testClick() {
@@ -40,11 +40,18 @@
             },
             getChangeInfo() {
                 let data = {
-                    start: 0,
-                    limit: 10
-                }
-                this.$http.post('', data).then((res) => {
-                    console.log(res);
+                    page: 1,
+                    pageSize: 20,
+                    type: 5
+                };
+                this.$http.get('/notice/diaodongInfo', {params: data}).then((res) => {
+                    if (res.Success) {
+                        let storeArr = [];
+                        res.date.forEach((item) => {
+                            storeArr.push(item.content);
+                        });
+                        this.itemData = storeArr;
+                    }
                 });
             }
         },

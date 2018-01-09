@@ -1,7 +1,7 @@
 <template>
     <Card class="coin-ranking">
         <p class="coin-ranking-title">{{coinTitle}}</p>
-        <Table height="300" :columns="columns" :data="rowData"></Table>
+        <Table height="300" :loading="loading" :columns="columns" :data="rowData"></Table>
     </Card>
 </template>
 <style lang="less">
@@ -17,6 +17,7 @@
 <script>
     export default {
         props: {
+            loading: Boolean,
             rowData: Array,
             coinTitle: String,
             tagColor: {
@@ -36,17 +37,17 @@
                     },
                     {
                         title: '姓名',
-                        key: 'name'
+                        key: 'user_name'
                     },
                     {
                         title: '金币数',
-                        key: 'coin',
+                        key: 'opt_num',
                         render: (h, params) => {
                             return h('Tag', {
                                 props: {
                                     color: this.tagColor
                                 }
-                            }, params.row.coin);
+                            }, params.row.opt_num);
                         }
                     }
                 ]
