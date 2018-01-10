@@ -49,6 +49,7 @@
     import moment from 'moment';
     import dateMixin from '@/mixins/dateMixin';
     export default {
+        name: 'myArrange',
         mixins: [dateMixin],
         data () {
             return {
