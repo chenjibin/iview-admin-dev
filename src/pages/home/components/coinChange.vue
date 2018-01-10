@@ -5,7 +5,15 @@
                 <p class="coin-change-title">我的金币动态</p>
             </Col>
             <Col>
-                <Button type="primary" shape="circle" icon="ios-search" @click.stop="modelFlag = true">查看更多</Button>
+                <Button type="primary"
+                        shape="circle"
+                        icon="ios-flag-outline"
+                        style="margin-right: 8px;"
+                        @click.stop="modelCoinFlag = true">金币排行</Button>
+                <Button type="primary"
+                        shape="circle"
+                        icon="ios-search"
+                        @click.stop="modelFlag = true">查看更多</Button>
             </Col>
         </Row>
         <div class="coin-change-list">
@@ -23,6 +31,31 @@
                 </Col>
             </Row>
         </div>
+        <Modal v-model="modelCoinFlag" width="800" :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>金币排行榜</span>
+            </p>
+            <Row :gutter="5" style="margin-bottom: 10px;">
+                <Col :md="12" :lg="12">
+                <coin-ranking
+                        :loading="coinLoadingFlag"
+                        tag-color="#19be6b"
+                        coin-title="金币排行红榜"
+                        :row-data="rankDataRed">
+                </coin-ranking>
+                </Col>
+                <Col :md="12" :lg="12">
+                <coin-ranking
+                        :loading="coinLoadingFlag"
+                        tag-color="#ed3f14"
+                        coin-title="金币排行黑榜"
+                        :row-data="rankDataBlack">
+                </coin-ranking>
+                </Col>
+            </Row>
+            <div slot="footer">
+            </div>
+        </Modal>
         <Modal v-model="modelFlag" width="800" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>我的金币记录</span>
@@ -72,9 +105,14 @@
     }
 </style>
 <script>
+    import coinRanking from './coinRanking';
     export default {
         data () {
             return {
+                modelCoinFlag: false,
+                coinLoadingFlag: false,
+                rankDataRed: [],
+                rankDataBlack: [],
                 pageData: {
                     totalData: 60,
                     pageSize: 10,
@@ -232,7 +270,25 @@
                 ]
             };
         },
+        created() {
+            this._getRankData();
+        },
         methods: {
+            _getRankData() {
+                this.coinLoadingFlag = true;
+                this.$http
+                    .all([this.$http.get('/main/Ranking?page=1&pageSize=10000&type=1'), this.$http.get('/main/Ranking?page=1&pageSize=10000&type=2')])
+                    .then(this.$http.spread((res1, res2) => {
+                        if (res1.Success) {
+                            this.rankDataBlack = res1.date;
+                        }
+                        if (res2.Success) {
+                            this.rankDataRed = res2.date;
+                        }
+                    })).finally(() => {
+                        this.coinLoadingFlag = false;
+                    });
+            },
             pageChangeHandler(current) {
                 this.pageData.current = current;
             },
@@ -248,6 +304,8 @@
                 });
             }
         },
-        components: {}
+        components: {
+            coinRanking
+        }
     };
 </script>

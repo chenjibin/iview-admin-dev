@@ -142,8 +142,10 @@
 <script>
     import moment from 'moment';
     import textEditor from '@/baseComponents/text-editor';
+    import dateMixin from '@/mixins/dateMixin';
     export default {
         name: 'myLog',
+        mixins: [dateMixin],
         data () {
             return {
                 datePickerFlag: false,
@@ -182,7 +184,6 @@
                         label: '休息'
                     }
                 ],
-                logInfo: [],
                 columnsData: [
                     {
                         title: '周日',
@@ -264,39 +265,15 @@
             }
         },
         methods: {
-            returnDateDetail(year, month) {
-                let tableData = [];
-                let allDats = (new Date(year, month + 1, 0)).getDate();
-                let n1str = new Date(year, month, 1);
-                let firstday = n1str.getDay();
-                let lines = Math.ceil((allDats + firstday) / 7); // 表格所需行数
-                for (let i = 0; i < lines; i++) {
-                    tableData[i] = {};
-                    for (let j = 0; j < 7; j++) {
-                        let idx = i * 7 + j;// 单元格自然序列号
-                        let dateStr = idx - firstday + 1;// 计算日期
-                        if (dateStr <= 0 || dateStr > allDats) {
-                            tableData[i]['day' + j] = {};
-                            tableData[i]['day' + j]['day'] = '';
-                        } else {
-                            tableData[i]['day' + j] = {};
-                            tableData[i]['day' + j]['day'] = dateStr;
-                            tableData[i]['day' + j] = Object.assign({}, this.logInfo[dateStr - 1] || {}, tableData[i]['day' + j]);
-                        }
-                    }
-                }
-                return tableData;
-            },
             _getLogInfo(ym) {
                 this.loading = true;
                 this.$http.get('/journal/typeList', {params: {time: ym}}).then((res) => {
                     if (res.Success) {
                         let storeArr = res.date.slice(0);
-                        this.logInfo = res.date;
                         this._setLogList(storeArr);
                         let year = moment(ym).year();
                         let month = moment(ym).month();
-                        this.tableData = this.returnDateDetail(year, month);
+                        this.tableData = this.returnDateDetail(year, month, res.date);
                     }
                 }).finally(() => {
                     this.loading = false;

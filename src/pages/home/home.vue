@@ -93,24 +93,24 @@
                 <Row>
                     <Notice></Notice>
                 </Row>
-                <Row :gutter="5" style="margin-bottom: 10px;">
-                    <Col :md="12" :lg="12">
-                        <coin-ranking
-                                :loading="coinLoadingFlag"
-                                tag-color="#19be6b"
-                                coin-title="金币排行红榜"
-                                :row-data="rankDataRed">
-                        </coin-ranking>
-                    </Col>
-                    <Col :md="12" :lg="12">
-                        <coin-ranking
-                                :loading="coinLoadingFlag"
-                                tag-color="#ed3f14"
-                                coin-title="金币排行黑榜"
-                                :row-data="rankDataBlack">
-                        </coin-ranking>
-                    </Col>
-                </Row>
+                <!--<Row :gutter="5" style="margin-bottom: 10px;">-->
+                    <!--<Col :md="12" :lg="12">-->
+                        <!--<coin-ranking-->
+                                <!--:loading="coinLoadingFlag"-->
+                                <!--tag-color="#19be6b"-->
+                                <!--coin-title="金币排行红榜"-->
+                                <!--:row-data="rankDataRed">-->
+                        <!--</coin-ranking>-->
+                    <!--</Col>-->
+                    <!--<Col :md="12" :lg="12">-->
+                        <!--<coin-ranking-->
+                                <!--:loading="coinLoadingFlag"-->
+                                <!--tag-color="#ed3f14"-->
+                                <!--coin-title="金币排行黑榜"-->
+                                <!--:row-data="rankDataBlack">-->
+                        <!--</coin-ranking>-->
+                    <!--</Col>-->
+                <!--</Row>-->
                 <Row>
                     <people-change></people-change>
                 </Row>
@@ -121,7 +121,6 @@
 
 <script>
 import infoBtn from './components/infoBtn';
-import coinRanking from './components/coinRanking';
 import Notice from './components/notice';
 import peopleChange from './components/peopleChange';
 import injobCommemorate from './components/injobCommemorate';
@@ -131,7 +130,6 @@ export default {
     name: 'home',
     components: {
         infoBtn,
-        coinRanking,
         Notice,
         peopleChange,
         injobCommemorate,
@@ -139,9 +137,9 @@ export default {
     },
     data () {
         return {
-            coinLoadingFlag: false,
-            rankDataRed: [],
-            rankDataBlack: [],
+            // coinLoadingFlag: false,
+            // rankDataRed: [],
+            // rankDataBlack: [],
             data2: [
                 {
                     sort: 'No.1',
@@ -197,26 +195,6 @@ export default {
     computed: {
         avatorPath () {
             return localStorage.avatorImgPath;
-        }
-    },
-    created() {
-        this._getRankData();
-    },
-    methods: {
-        _getRankData() {
-            this.coinLoadingFlag = true;
-            this.$http
-                .all([this.$http.get('/main/Ranking?page=1&pageSize=10000&type=1'), this.$http.get('/main/Ranking?page=1&pageSize=10000&type=2')])
-                .then(this.$http.spread((res1, res2) => {
-                    if (res1.Success) {
-                        this.rankDataBlack = res1.date;
-                    }
-                    if (res2.Success) {
-                        this.rankDataRed = res2.date;
-                    }
-                })).finally(() => {
-                    this.coinLoadingFlag = false;
-            });
         }
     }
 };

@@ -22,6 +22,7 @@
 </style>
 <script>
     import marqueeInfinite from './marqueeInfinite';
+    import moment from 'moment';
     export default {
         data () {
             return {
@@ -41,14 +42,14 @@
             getChangeInfo() {
                 let data = {
                     page: 1,
-                    pageSize: 20,
+                    pageSize: 30,
                     type: 5
                 };
                 this.$http.get('/notice/diaodongInfo', {params: data}).then((res) => {
                     if (res.Success) {
                         let storeArr = [];
                         res.date.forEach((item) => {
-                            storeArr.push(item.content);
+                            storeArr.push('【' + moment(item.nottime).format('YYYY-MM-DD') + '】' + item.content);
                         });
                         this.itemData = storeArr;
                     }

@@ -5,6 +5,7 @@ import axios from 'axios';
 import qs from 'qs';
 import {router} from '../router/index';
 import store from '../store';
+
 axios.defaults.baseURL = '/oa';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
@@ -24,8 +25,6 @@ axios.interceptors.request.use(config => {
 
 // Add a response interceptor
 axios.interceptors.response.use(response => {
-    console.log(response)
-    // Do something with response data
     if (response.data.Success === 'fail') {
         if (response.data.failCode === 'OUT_OF_LOGIN') {
             store.commit('logout');

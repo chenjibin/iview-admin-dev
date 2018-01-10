@@ -3,11 +3,13 @@
         <Card>
             <Table :columns="columns1"
                    :data="data1"
+                   :loading="loading"
                    height="700"
                    @on-row-click="_checkDetail"
                    :row-class-name="_returnRowClass"
                    style="margin-bottom: 10px;"></Table>
-            <Page :total="100"></Page>
+            <Page :total="totalCount"
+                  @on-change="_pageChangeHandler"></Page>
             <Modal v-model="modelFlag" width="900" :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>2018-1 考勤</span>
@@ -29,6 +31,12 @@
         name: 'myAttendance',
         data () {
             return {
+                loading: false,
+                pageData: {
+                    totalCount: null,
+                    page: 1,
+                    pageSize: 10
+                },
                 modelFlag: false,
                 columns1: [
                     {
@@ -77,6 +85,7 @@
                         align: 'center'
                     }
                 ],
+                attendanceList: null,
                 data1: [
                     {
                         name: '1',
@@ -153,10 +162,31 @@
                 ]
             };
         },
+        created() {
+            this._getAttendanceList(1);
+        },
         methods: {
+            _pageChangeHandler(page) {
+                this._getAttendanceList(page);
+                console.log(page);
+            },
             _checkDetail(obj) {
-                console.log(obj);
                 this.modelFlag = true;
+            },
+            _getAttendanceList(page) {
+                this.loading = true;
+                let data = {
+                    page: page,
+                    pageSize: this.pageData.pageSize
+                };
+                this.$http.get('', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.attendanceList = res.dateList;
+                        this.pageData.totalCount = res.totalCount;
+                    }
+                }).finally(() => {
+                    this.loading = false;
+                });
             },
             _returnRowClass() {
                 return 'fs-row';
