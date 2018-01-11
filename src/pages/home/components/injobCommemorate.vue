@@ -2,38 +2,16 @@
     <Card class="injob-commemorate">
         <p class="injob-commemorate-title">入职纪念</p>
         <Row :gutter="5">
-            <Col :lg="6" :md="6" :sm="12" :xs="12">
-                <Card class="injob-commemorate-card">
-                    <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="large"></Avatar>
-                    <p class="injob-commemorate-name">admin</p>
-                    <time class="injob-commemorate-time">2017-10-25</time>
-                    <p>(入职时间)</p>
-                </Card>
-            </Col>
-            <Col :lg="6" :md="6" :sm="12" :xs="12">
-            <Card class="injob-commemorate-card">
-                <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="large"></Avatar>
-                <p class="injob-commemorate-name">admin</p>
-                <time class="injob-commemorate-time">2017-10-25</time>
-                <p>(入职时间)</p>
-            </Card>
-            </Col>
-            <Col :lg="6" :md="6" :sm="12" :xs="12">
-            <Card class="injob-commemorate-card">
-                <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="large"></Avatar>
-                <p class="injob-commemorate-name">admin</p>
-                <time class="injob-commemorate-time">2017-10-25</time>
-                <p>(入职时间)</p>
-            </Card>
-            </Col>
-            <Col :lg="6" :md="6" :sm="12" :xs="12">
-            <Card class="injob-commemorate-card">
-                <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="large"></Avatar>
-                <p class="injob-commemorate-name">admin</p>
-                <time class="injob-commemorate-time">2017-10-25</time>
-                <p>(入职时间)</p>
-            </Card>
-            </Col>
+            <template v-for="(item, index) in inJobData">
+                <Col :lg="6" :md="6" :sm="12" :xs="12">
+                    <Card class="injob-commemorate-card" style="margin-bottom: 10px;">
+                        <Avatar :src="item.avatar" size="large"></Avatar>
+                        <p class="injob-commemorate-name">{{item.name}}</p>
+                        <time class="injob-commemorate-time">{{item.time}}</time>
+                        <p>(入职时间)</p>
+                    </Card>
+                </Col>
+            </template>
         </Row>
     </Card>
 </template>
@@ -56,12 +34,56 @@
 
 </style>
 <script>
-    import Avatar from 'iview/src/components/avatar/avatar';
-
     export default {
         data () {
-            return {};
+            return {
+                inJobData: [
+                    {
+                        avatar: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                        name: 'admin',
+                        time: '2017-10-25'
+                    },
+                    {
+                        avatar: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                        name: 'admin',
+                        time: '2017-10-25'
+                    },
+                    {
+                        avatar: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                        name: 'admin',
+                        time: '2017-10-25'
+                    },
+                    {
+                        avatar: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                        name: 'admin',
+                        time: '2017-10-25'
+                    },
+                    {
+                        avatar: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                        name: 'admin',
+                        time: '2017-10-25'
+                    },
+                    {
+                        avatar: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
+                        name: 'admin',
+                        time: '2017-10-25'
+                    }
+                ]
+            };
         },
-        components: {Avatar}
+        created () {
+            this._getInJobData();
+        },
+        methods: {
+            _getInJobData () {
+                this.$http.get('/main/getRuZhi').then((res) => {
+                    if (res.success) {
+                    } else {
+                        this.inJobData = [];
+                    }
+                    console.log(res);
+                });
+            }
+        }
     };
 </script>

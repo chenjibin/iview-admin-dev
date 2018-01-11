@@ -1,5 +1,8 @@
 <style lang="less">
     @import "./main.less";
+    .tags-con {
+        user-select: none;
+    }
 </style>
 <template>
     <div class="main" :class="{'main-hide-text': shrink}">

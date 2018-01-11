@@ -8,7 +8,7 @@
                    @on-row-click="_checkDetail"
                    :row-class-name="_returnRowClass"
                    style="margin-bottom: 10px;"></Table>
-            <Page :total="totalCount"
+            <Page :total="pageData.totalCount"
                   @on-change="_pageChangeHandler"></Page>
             <Modal v-model="modelFlag" width="900" :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
@@ -33,7 +33,7 @@
             return {
                 loading: false,
                 pageData: {
-                    totalCount: null,
+                    totalCount: 10,
                     page: 1,
                     pageSize: 10
                 },
@@ -179,7 +179,7 @@
                     page: page,
                     pageSize: this.pageData.pageSize
                 };
-                this.$http.get('', {params: data}).then((res) => {
+                this.$http.get('/arrange/getPersonStatistic', {params: data}).then((res) => {
                     if (res.success) {
                         this.attendanceList = res.dateList;
                         this.pageData.totalCount = res.totalCount;
