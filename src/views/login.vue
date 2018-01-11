@@ -32,7 +32,7 @@
                                     <Icon :size="16" type="android-checkmark-circle"></Icon>
                                 </span>
                             </Input>
-                            <img src="/oa/login/geneCode" id="validate-code-img"/>
+                            <img src="/oa/login/geneCode" id="validate-code-img" @click="getCode" ref="codeImg" style="cursor: pointer;"/>
                         </FormItem>
                         <FormItem>
                             <Button @click="handleSubmit"
@@ -77,6 +77,11 @@ export default {
         };
     },
     methods: {
+        getCode() {
+            let time = +(new Date());
+            let picUrl = '/oa/login/geneCode?t=' + time;
+            this.$refs.codeImg.setAttribute('src', picUrl);
+        },
         getPermissionData() {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {

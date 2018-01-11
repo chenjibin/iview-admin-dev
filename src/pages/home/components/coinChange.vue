@@ -201,7 +201,7 @@
                 };
                 this.$http.get('/main/getMyCoinLogList', {params: data}).then((res) => {
                     if (res.success) {
-                        this.pageData.totalCount = res.count;
+                        this.pageData.totalData = res.count;
                         this.rowData = res.date;
                     }
                 }).finally(() => {
