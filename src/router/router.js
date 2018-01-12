@@ -134,6 +134,108 @@ export const appRouter = [
         ]
     },
     {
+        path: '/personnelManage',
+        icon: 'ios-folder-outline',
+        name: 'personnelManage',
+        title: '人事档案管理',
+        component: Main,
+        children: [
+            {
+                path: 'attendanceManage',
+                icon: 'compose',
+                name: 'attendanceManage',
+                title: '考勤管理',
+                component: resolve => { require(['@/pages/attendanceManage/attendanceManage.vue'], resolve); }
+            },
+            {
+                path: 'employeeLeave',
+                icon: 'compose',
+                name: 'employeeLeave',
+                title: '请假审批',
+                component: resolve => { require(['@/pages/employeeLeave/employeeLeave.vue'], resolve); }
+            },
+            {
+                path: 'leaveManage',
+                icon: 'compose',
+                name: 'leaveManage',
+                title: '请假管理',
+                component: resolve => { require(['@/pages/leaveManage/leaveManage.vue'], resolve); }
+            },
+            {
+                path: 'depAttendance',
+                icon: 'compose',
+                name: 'depAttendance',
+                title: '部门考勤',
+                component: resolve => { require(['@/pages/depAttendance/depAttendance.vue'], resolve); }
+            },
+            {
+                path: 'depArrange',
+                icon: 'compose',
+                name: 'depArrange',
+                title: '部门排班信息',
+                component: resolve => { require(['@/pages/depArrange/depArrange.vue'], resolve); }
+            },
+            {
+                path: 'employeeFile',
+                icon: 'compose',
+                name: 'employeeFile',
+                title: '员工档案',
+                component: resolve => { require(['@/pages/employeeFile/employeeFile.vue'], resolve); }
+            }
+        ]
+    },
+    {
+        path: '/systemManage',
+        icon: 'ios-gear',
+        name: 'systemManage',
+        title: '系统管理',
+        component: Main,
+        children: [
+            {
+                path: 'organizationManage',
+                icon: 'compose',
+                name: 'organizationManage',
+                title: '组织管理',
+                component: resolve => { require(['@/pages/organizationManage/organizationManage.vue'], resolve); }
+            },
+            {
+                path: 'roleManage',
+                icon: 'compose',
+                name: 'roleManage',
+                title: '角色管理',
+                component: resolve => { require(['@/pages/roleManage/roleManage.vue'], resolve); }
+            },
+            {
+                path: 'levelManage',
+                icon: 'compose',
+                name: 'levelManage',
+                title: '职级管理',
+                component: resolve => { require(['@/pages/levelManage/levelManage.vue'], resolve); }
+            },
+            {
+                path: 'employeeManage',
+                icon: 'compose',
+                name: 'employeeManage',
+                title: '用户管理',
+                component: resolve => { require(['@/pages/employeeManage/employeeManage.vue'], resolve); }
+            },
+            {
+                path: 'postManage',
+                icon: 'compose',
+                name: 'postManage',
+                title: '岗位管理',
+                component: resolve => { require(['@/pages/postManage/postManage.vue'], resolve); }
+            },
+            {
+                path: 'noticeManage',
+                icon: 'compose',
+                name: 'noticeManage',
+                title: '公告管理',
+                component: resolve => { require(['@/pages/noticeManage/noticeManage.vue'], resolve); }
+            }
+        ]
+    },
+    {
         path: '/access',
         icon: 'key',
         name: 'access',
