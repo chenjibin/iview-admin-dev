@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import store from '../index';
 
 const user = {
     state: {},
@@ -8,6 +9,8 @@ const user = {
             Cookies.remove('password');
             Cookies.remove('access');
             Cookies.remove('token');
+            store.commit('setPremissionMenu', []);
+            store.commit('clearAllTags');
             // 恢复默认样式
             let themeLink = document.querySelector('link[name="theme"]');
             themeLink.setAttribute('href', '');

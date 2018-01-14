@@ -2,7 +2,7 @@ import axios from 'axios';
 import env from '../../build/env';
 import semver from 'semver';
 import packjson from '../../package.json';
-import {page404} from '../router/router';
+import {appRouter, page404} from '../router/router';
 
 let util = {
 
@@ -267,23 +267,32 @@ util.checkUpdate = function (vm) {
     });
 };
 
-util.getRoutersData = function (allRouter, permissionRouterArr) {
-    return '';
-};
-
-util.initMenu = function (vm, routeData, page404) {
-    let syncRouterAll = routeData.concat([page404]);
-    vm.$store.commit('setPremissionMenu', routeData);
-    vm.$router.addRoutes(syncRouterAll);
+util.getNeedRouter = function (routeData) {
+    let appR = appRouter.slice(0);
+    appR.forEach((item) => {
+        item.children = item.children.filter((val) => {
+            for (let i = 0, length = routeData.length; i < length; i++) {
+                if (val.name === routeData[i].name) return true;
+            }
+        });
+    });
+    return appR.filter(val => val.children.length > 0);
+}
+util.initMenu = function (vm, routeData) {
+    let syncRouterAll = util.getNeedRouter(routeData);
+    vm.$router.addRoutes(syncRouterAll.concat([page404]));
     let tagsList = [];
-    routeData.map((item) => {
+    syncRouterAll.map((item) => {
         if (item.children.length <= 1) {
             tagsList.push(item.children[0]);
         } else {
             tagsList.push(...item.children);
         }
-    });
+    })
+    console.log(syncRouterAll);
     vm.$store.commit('setTagsList', tagsList);
+    vm.$store.commit('setRouters', syncRouterAll);
+    vm.$store.commit('setPremissionMenu', syncRouterAll);
     vm.$store.commit('updateMenulist');
 }
 

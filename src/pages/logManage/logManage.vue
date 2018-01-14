@@ -63,6 +63,7 @@
         },
         data () {
             return {
+                tableLoading: false,
                 searchData: {
                     name: '',
                     startDate: '',

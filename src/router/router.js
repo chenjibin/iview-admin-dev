@@ -107,7 +107,64 @@ export const otherRouter = {
         { path: 'message', title: '消息中心', name: 'message_index', component: resolve => { require(['@/views/message/message.vue'], resolve); } }
     ]
 };
-
+var aa = [
+    {
+        name: 'elogManage',
+        title: '员工日志管理'
+    },
+    {
+        name: 'logTotal',
+        title: '日志统计'
+    },
+    {
+        name: 'attendanceManage',
+        title: '考勤管理'
+    },
+    {
+        name: 'employeeLeave',
+        title: '请假审批'
+    },
+    {
+        name: 'leaveManage',
+        title: '请假管理'
+    },
+    {
+        name: 'depAttendance',
+        title: '部门考勤'
+    },
+    {
+        name: 'depArrange',
+        title: '部门排班信息'
+    },
+    {
+        name: 'employeeFile',
+        title: '员工档案'
+    },
+    {
+        name: 'organizationManage',
+        title: '组织管理'
+    },
+    {
+        name: 'roleManage',
+        title: '角色管理'
+    },
+    {
+        name: 'levelManage',
+        title: '职级管理'
+    },
+    {
+        name: 'employeeManage',
+        title: '用户管理'
+    },
+    {
+        name: 'postManage',
+        title: '岗位管理'
+    },
+    {
+        name: 'noticeManage',
+        title: '公告管理'
+    }
+]
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
     {

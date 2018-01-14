@@ -84,9 +84,9 @@ export default {
         },
         getPermissionData() {
             return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve(appRouter);
-                }, 500);
+                this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
+                    resolve(res.date);
+                });
             });
         },
         handleSubmit () {
@@ -98,14 +98,9 @@ export default {
                             Cookies.set('user', this.form.userName);
                             Cookies.set('password', this.form.password);
                             this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
-                            if (this.form.userName === 'iview_admin') {
-                                Cookies.set('access', 0);
-                            } else {
-                                Cookies.set('access', 1);
-                            }
                             Cookies.set('token', '1010101010');
                             this.getPermissionData().then((data) => {
-                                util.initMenu(this, data, page404);
+                                util.initMenu(this, data);
                                 this.$router.push({
                                     name: 'home_index'
                                 });
@@ -113,7 +108,6 @@ export default {
                         } else {
                             this.$Message.error(res.message);
                         }
-                        console.log(res);
                     }).finally(() => {
                         this.loading = false;
                     });

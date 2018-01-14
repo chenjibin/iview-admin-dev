@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import iView from 'iview';
-import {Tree} from 'element-ui'
+import {Tree} from 'element-ui';
 import {router} from './router/index';
-import {appRouter, page404} from './router/router';
+// import {appRouter, page404} from './router/router';
 import store from './store';
 import App from './app.vue';
 import '@/locale';
@@ -28,9 +28,9 @@ new Vue({
     methods: {
         getPermissionData() {
             return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve(appRouter);
-                }, 500);
+                this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
+                    resolve(res.date);
+                });
             });
         }
     },
@@ -43,8 +43,7 @@ new Vue({
     created () {
         if (Cookies.get('token')) {
             this.getPermissionData().then((data) => {
-                // let syncRouters = util.getRoutersData(appRouter, data);
-                util.initMenu(this, data, page404);
+                util.initMenu(this, data);
             });
         } else {
             this.$router.replace({name: 'login'});
