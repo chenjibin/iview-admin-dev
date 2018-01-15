@@ -1,7 +1,7 @@
 <template>
     <div id="employee-manage">
         <Row :gutter="10">
-            <Col :span="5">
+            <Col :span="4">
                 <Card>
                     <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
                     <el-tree :data="orgTreeData"
@@ -14,37 +14,53 @@
                              :props="defaultProps"></el-tree>
                 </Card>
             </Col>
-            <Col :span="19">
+            <Col :span="20">
                 <Card>
-                    <Form ref="searchData" :model="searchData" inline :label-width="60">
+                    <Form ref="searchData" :model="searchData" inline :label-width="50">
                         <FormItem prop="name" label="姓名">
                             <Input type="text"
                                    @on-blur="_getUserData"
                                    v-model="searchData.realName"
-                                   placeholder="姓名"></Input>
+                                   placeholder="筛选姓名"></Input>
                         </FormItem>
                         <FormItem prop="name" label="岗位">
                             <Input type="text"
                                    @on-blur="_getUserData"
                                    v-model="searchData.postName"
-                                   placeholder="岗位"></Input>
+                                   placeholder="筛选岗位"></Input>
                         </FormItem>
-
                         <FormItem label="角色">
                             <Select v-model="searchData.roleId" clearable :transfer="true" placeholder="筛选角色" style="width: 120px">
                                 <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
                             </Select>
                         </FormItem>
                         <FormItem label="状态">
-                            <Select v-model="searchData.states" clearable style="width: 100px">
+                            <Select v-model="searchData.states"
+                                    clearable
+                                    placeholder="筛选状态"
+                                    style="width: 100px">
                                 <Option value="1">启用</Option>
                                 <Option value="0">禁用</Option>
                             </Select>
                         </FormItem>
+                        <FormItem>
+                            <ButtonGroup>
+                                <Button type="primary" @click="_addUserOpen">
+                                    <Icon type="plus-round"></Icon>
+                                    新增人员
+                                </Button>
+                                <Button type="primary" :disabled="!chooseDataArr.length">
+                                    <Icon type="navicon-round"></Icon>
+                                    批量添加金币
+                                </Button>
+                            </ButtonGroup>
+                        </FormItem>
                     </Form>
                     <Table :columns="columns1"
                            :loading="tableLoading"
-                           height="700"
+                           @on-sort-change="_tableSortChange"
+                           @on-selection-change="_tableSelectChange"
+                           :height="tableHeight"
                            :data="userData"></Table>
                     <Page :total="totalCount"
                           @on-change="_setPage"
@@ -61,13 +77,13 @@
                width="800"
                :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>用户设置</span>
+                <span>{{userFormType === 'update' ? '用户设置' : '添加用户'}}</span>
             </p>
             <Form :model="userSettingForm" :label-width="80">
                 <Row>
                     <Col :span="8">
                         <FormItem label="状态">
-                            <i-switch v-model="userSettingForm.status" size="large">
+                            <i-switch v-model="userSettingForm.states" size="large">
                                 <span slot="open">启用</span>
                                 <span slot="close">禁用</span>
                             </i-switch>
@@ -83,30 +99,33 @@
                     </Col>
                     <Col :span="8">
                         <FormItem label="入职时间">
-                            <DatePicker type="date" placeholder="Select date" v-model="userSettingForm.inJobTime"></DatePicker>
+                            <DatePicker type="date" v-model="userSettingForm.inJobTime"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
                 <Row>
                     <Col :span="8">
                         <FormItem label="账号">
-                            <Input v-model="userSettingForm.account" disabled></Input>
+                            <Input v-model="userSettingForm.account" :disabled="userFormType === 'update'"></Input>
                         </FormItem>
                     </Col>
                     <Col :span="8">
                         <FormItem label="姓名">
-                            <Input v-model="userSettingForm.name" placeholder="Enter something..."></Input>
+                            <Input v-model="userSettingForm.name" placeholder=""></Input>
                         </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="性别">
-                            <RadioGroup v-model="userSettingForm.sex">
-                                <Radio label="女">女</Radio>
-                                <Radio label="男">男</Radio>
-                            </RadioGroup>
-                        </FormItem>
+                    <FormItem label="初始密码" v-if="userFormType === 'add'">
+                        <Input v-model="defaultPsd" disabled ></Input>
+                    </FormItem>
                     </Col>
                 </Row>
+                <FormItem label="性别">
+                    <RadioGroup v-model="userSettingForm.sex">
+                        <Radio label="女">女</Radio>
+                        <Radio label="男">男</Radio>
+                    </RadioGroup>
+                </FormItem>
                 <Row>
                     <Col :span="8">
                         <FormItem label="角色">
@@ -117,11 +136,15 @@
                     </Col>
                     <Col :span="8">
                         <FormItem label="部门">
-                            <Select v-model="userSettingForm.dep">
-                                <Option value="beijing">New York</Option>
-                                <Option value="shanghai">London</Option>
-                                <Option value="shenzhen">Sydney</Option>
-                            </Select>
+                            <el-cascader
+                                    :options="orgTreeData[0] ? orgTreeData[0].children : []"
+                                    :props="depProps"
+                                    expand-trigger="hover"
+                                    v-model="userSettingForm.dep"
+                                    size="small"
+                                    @change="testChange"
+                                    :show-all-levels="false"
+                            ></el-cascader>
                         </FormItem>
                     </Col>
                     <Col :span="8">
@@ -136,18 +159,26 @@
                 </Row>
                 <FormItem label="岗位操作指南" :label-width="100">
                     <Select v-model="userSettingForm.guider" multiple>
-                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="item in guiderList" :value="item.id" :key="item.id">{{ item.name }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="班次设置" :label-width="100">
                     <Select v-model="userSettingForm.banci" multiple>
-                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
                     </Select>
                 </FormItem>
             </Form>
             <div slot="footer">
-                <Button type="primary">保存</Button>
-                <Button type="ghost" style="margin-left: 8px">取消</Button>
+                <Poptip
+                        confirm
+                        :transfer="true"
+                        @on-ok="_resetPassWord"
+                        title="是否确认重置此用户密码？">
+                    <Button type="warning" v-show="userFormType === 'update'">重置密码</Button>
+                </Poptip>
+                <Button type="primary" v-show="userFormType === 'add'">添加</Button>
+                <Button type="primary" v-show="userFormType === 'update'">更新</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
             </div>
         </Modal>
     </div>
@@ -180,42 +211,19 @@
         },
         data () {
             return {
-                cityList: [
-                    {
-                        value: 'New York',
-                        label: 'New York'
-                    },
-                    {
-                        value: 'London',
-                        label: 'London'
-                    },
-                    {
-                        value: 'Sydney',
-                        label: 'Sydney'
-                    },
-                    {
-                        value: 'Ottawa',
-                        label: 'Ottawa'
-                    },
-                    {
-                        value: 'Paris',
-                        label: 'Paris'
-                    },
-                    {
-                        value: 'Canberra',
-                        label: 'Canberra'
-                    }
-                ],
                 settingModalFlag: false,
                 tableLoading: false,
+                userFormType: 'update',
+                defaultPsd: '123456',
+                editUserId: '',
                 userSettingForm: {
-                    status: true,
-                    account: 'chenjibin',
-                    name: '陈继斌',
-                    sex: '男',
-                    inJobTime: '2017-01-01',
+                    states: true,
+                    account: '',
+                    name: '',
+                    sex: '',
+                    inJobTime: '',
                     role: '',
-                    dep: '',
+                    dep: [],
                     post: '',
                     guider: [],
                     banci: [],
@@ -264,8 +272,9 @@
                     {
                         title: '天马金币',
                         key: 'tm_coin',
+                        sortable: true,
                         align: 'center',
-                        width: 100
+                        width: 110
                     },
                     {
                         title: '入职时间',
@@ -297,7 +306,7 @@
                     {
                         title: '是否写日志',
                         align: 'center',
-                        width: 110,
+                        width: 100,
                         render: (h, params) => {
                             return h('Tag', {
                                 props: {
@@ -350,6 +359,23 @@
                                 ]),
                                 h('Tooltip', {
                                     props: {
+                                        content: '用户授权',
+                                        placement: 'top'
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            icon: 'key',
+                                            shape: 'circle'
+                                        },
+                                        style: {
+                                            marginRight: '4px'
+                                        }
+                                    })
+                                ]),
+                                h('Tooltip', {
+                                    props: {
                                         content: '用户设置',
                                         placement: 'top'
                                     }
@@ -378,20 +404,76 @@
                     children: 'children',
                     label: 'name'
                 },
-                filterText: ''
+                depProps: {
+                    value: 'id',
+                    label: 'name'
+                },
+                guiderList: [],
+                chooseDataArr: [],
+                filterText: '',
+                tableHeight: 700
             };
         },
         created() {
+            this._setTableHeight();
             this._getAllMenu();
+            this._getGuiderList();
             this._getRoleData();
             this._getOrgTree().then(() => {
                 this._getUserData();
             });
         },
         methods: {
+            testChange() {
+                console.log(this.userSettingForm);
+            },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
+            },
+            _initUserInfo() {
+                this.userSettingForm = {
+                    states: true,
+                    account: '',
+                    name: '',
+                    sex: '',
+                    inJobTime: '',
+                    role: '',
+                    dep: [],
+                    post: '',
+                    guider: [],
+                    banci: [],
+                    level: '',
+                    vUp: '',
+                    isLog: true
+                };
+            },
+            _addUserOpen() {
+                this._initUserInfo();
+                this.userFormType = 'add';
+                this.settingModalFlag = true;
+            },
+            _resetPassWord() {
+                console.log(this.editUserId);
+                this.$Message.success('密码重置成功！');
+            },
+            _tableSortChange(data) {
+                console.log(data);
+            },
+            _setTableHeight() {
+                let dm = document.body.clientHeight;
+                this.tableHeight = dm - 280;
+            },
+            _tableSelectChange(data) {
+                if (!data.length) {
+                    this.chooseDataArr = [];
+                    return;
+                }
+                let storeArr = [];
+                data.forEach((item) => {
+                    storeArr.push(item.userid);
+                });
+                this.chooseDataArr = storeArr;
             },
             _getUserData() {
                 this.tableLoading = true;
@@ -414,12 +496,20 @@
                 this.searchData.nodeId = data.id;
             },
             _editorSetting(id) {
+                this.userFormType = 'update';
                 this.settingModalFlag = true;
+                this.editUserId = id;
                 console.log(id);
+            },
+            _getGuiderList() {
+                this.$http.get('/post/getPdftree?userId=0').then((res) => {
+                    if (res.success) {
+                        this.guiderList = res.date;
+                    }
+                });
             },
             _getAllMenu() {
                 this.$http.get('/jurisdiction/getAllSystemMenu ').then((res) => {
-                    console.log(res);
                 });
             },
             _getRoleData() {

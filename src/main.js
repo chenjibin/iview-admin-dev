@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import iView from 'iview';
-import {Tree} from 'element-ui';
+import {Tree, Cascader} from 'element-ui';
 import {router} from './router/index';
 // import {appRouter, page404} from './router/router';
 import store from './store';
@@ -15,6 +15,7 @@ import Cookies from 'js-cookie';
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Tree);
+Vue.use(Cascader);
 Vue.prototype.$http = request;
 
 new Vue({
