@@ -5,6 +5,7 @@ import axios from 'axios';
 import qs from 'qs';
 import {router} from '../router/index';
 import store from '../store';
+import Vue from 'vue';
 
 axios.defaults.baseURL = '/oa';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -21,7 +22,7 @@ axios.interceptors.request.use(config => {
 }, function(error) {
     // Do something with request error
     return Promise.reject(error);
-})
+});
 
 // Add a response interceptor
 axios.interceptors.response.use(response => {
@@ -37,8 +38,8 @@ axios.interceptors.response.use(response => {
     }
 }, function(error) {
     // Do something with response error
-    console.log(error);
+    Vue.prototype.$Message.error('服务器错误！');
     return Promise.reject(error);
-})
+});
 
 export default axios;

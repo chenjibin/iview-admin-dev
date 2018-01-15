@@ -277,7 +277,8 @@ util.getNeedRouter = function (routeData) {
         });
     });
     return appR.filter(val => val.children.length > 0);
-}
+};
+
 util.initMenu = function (vm, routeData) {
     let syncRouterAll = util.getNeedRouter(routeData);
     vm.$router.addRoutes(syncRouterAll.concat([page404]));
@@ -288,12 +289,12 @@ util.initMenu = function (vm, routeData) {
         } else {
             tagsList.push(...item.children);
         }
-    })
+    });
     console.log(syncRouterAll);
     vm.$store.commit('setTagsList', tagsList);
     vm.$store.commit('setRouters', syncRouterAll);
     vm.$store.commit('setPremissionMenu', syncRouterAll);
     vm.$store.commit('updateMenulist');
-}
+};
 
 export default util;
