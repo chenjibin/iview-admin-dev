@@ -17,15 +17,15 @@
             <Col :span="20">
                 <Card>
                     <Form ref="searchData" :model="searchData" inline :label-width="50">
-                        <FormItem prop="name" label="姓名">
+                        <FormItem prop="realName" label="姓名">
                             <Input type="text"
-                                   @on-blur="_getUserData"
+                                   @on-blur="_filterResultHandler"
                                    v-model="searchData.realName"
                                    placeholder="筛选姓名"></Input>
                         </FormItem>
-                        <FormItem prop="name" label="岗位">
+                        <FormItem prop="postName" label="岗位">
                             <Input type="text"
-                                   @on-blur="_getUserData"
+                                   @on-blur="_filterResultHandler"
                                    v-model="searchData.postName"
                                    placeholder="筛选岗位"></Input>
                         </FormItem>
@@ -49,9 +49,9 @@
                                     <Icon type="plus-round"></Icon>
                                     新增人员
                                 </Button>
-                                <Button type="primary" :disabled="!chooseDataArr.length">
-                                    <Icon type="navicon-round"></Icon>
-                                    批量添加金币
+                                <Button type="primary" @click="_openCoinSettingHandler">
+                                    <Icon type="cash"></Icon>
+                                    金币操作
                                 </Button>
                             </ButtonGroup>
                         </FormItem>
@@ -134,7 +134,7 @@
                             </Select>
                         </FormItem>
                     </Col>
-                    <Col :span="8">
+                    <Col :span="16">
                         <FormItem label="部门">
                             <el-cascader
                                     :options="orgTreeData[0] ? orgTreeData[0].children : []"
@@ -142,10 +142,13 @@
                                     v-model="userSettingForm.dep"
                                     change-on-select
                                     size="small"
+                                    style="width: 100%"
                                     @change="testChange"
                             ></el-cascader>
                         </FormItem>
                     </Col>
+                </Row>
+                <Row>
                     <Col :span="8">
                     <FormItem label="岗位">
                         <Select v-model="userSettingForm.post">
@@ -155,8 +158,6 @@
                         </Select>
                     </FormItem>
                     </Col>
-                </Row>
-                <Row>
                     <Col :span="8">
                         <FormItem label="职级">
                             <Select v-model="userSettingForm.level" multiple></Select>
@@ -192,10 +193,44 @@
                 <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="coinSettingFlag"
+               :mask-closable="false"
+               width="600">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>金币操作</span>
+            </p>
+            <Form :model="coinSettingForm" :label-width="80">
+                <FormItem prop="target" label="操作对象" :label-width="80">
+                    <Input type="text"
+                           disabled
+                           v-model="coinSettingForm.target"></Input>
+                </FormItem>
+                <FormItem label="类型">
+                    <Select @on-change="_coinTypeChangeHandler">
+                        <Option :value="item.value" v-for="item in coinTypeSelect" :key="'coin-type-' + item.value">{{item.label}}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="属性">
+                    <Select v-model="coinSettingForm.coinProperty">
+                        <Option :value="item.value" v-for="(item, index) in coinOptSelect" :key="'coin-property' + index">{{item.label}}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="金币数量" :label-width="80">
+                    <Input type="text"
+                           v-model="coinSettingForm.coinNumber"></Input>
+                </FormItem>
+                <FormItem label="说明" :label-width="80">
+                    <Input v-model="coinSettingForm.content" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary">确认</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="coinSettingFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
-    @import "../../styles/fsBase";
 </style>
 <script>
     export default {
@@ -204,29 +239,97 @@
             filterText(val) {
                 this.$refs.treeDom.filter(val);
             },
-            'searchData.page'() {
-                this._getUserData();
-            },
             'searchData.pageSize'() {
-                this._getUserData();
+                this._filterResultHandler();
             },
             'searchData.nodeId'() {
-                this._getUserData();
+                this._filterResultHandler();
             },
             'searchData.states'() {
-                this._getUserData();
+                this._filterResultHandler();
             },
             'searchData.roleId'() {
-                this._getUserData();
+                this._filterResultHandler();
             }
         },
         data () {
             return {
+                coinSettingFlag: false,
                 settingModalFlag: false,
                 tableLoading: false,
                 userFormType: 'update',
                 defaultPsd: '123456',
                 editUserId: '',
+                coinSettingForm: {
+                    target: '',
+                    coinProperty: '',
+                    coinNumber: '',
+                    content: ''
+                },
+                coinOptSelect: [
+                    {
+                        value: '无属性',
+                        label: '无属性'
+                    },
+                    {
+                        value: '财富点',
+                        label: '财富点'
+                    },
+                    {
+                        value: '技能点',
+                        label: '技能点'
+                    },
+                    {
+                        value: '伯乐点',
+                        label: '伯乐点'
+                    },
+                    {
+                        value: '智慧点',
+                        label: '智慧点'
+                    }
+                ],
+                coinTypeSelect: [
+                    {
+                        value: '1',
+                        coin: 100,
+                        label: '提出合理化建议'
+                    },
+                    {
+                        value: '2',
+                        coin: 100,
+                        label: '考试成绩优异者'
+                    },
+                    {
+                        value: '3',
+                        coin: 300,
+                        label: '授课一次'
+                    },
+                    {
+                        value: '4',
+                        coin: 500,
+                        label: '带新人被录用'
+                    },
+                    {
+                        value: '5',
+                        coin: -100,
+                        label: '未执行公司制度'
+                    },
+                    {
+                        value: '6',
+                        coin: 50,
+                        label: '好人好事奖励'
+                    },
+                    {
+                        value: '7',
+                        coin: 200,
+                        label: '伯乐奖'
+                    },
+                    {
+                        value: '8',
+                        coin: 0,
+                        label: '其他'
+                    }
+                ],
                 userSettingForm: {
                     states: true,
                     account: '',
@@ -354,24 +457,6 @@
                                 ]),
                                 h('Tooltip', {
                                     props: {
-                                        content: '金币操作',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            icon: 'cash',
-                                            shape: 'circle'
-                                        },
-                                        style: {
-                                            marginRight: '4px'
-                                        }
-                                    })
-                                ]),
-                                h('Tooltip', {
-                                    props: {
                                         content: '用户授权',
                                         placement: 'top',
                                         transfer: true
@@ -426,7 +511,8 @@
                 guiderList: [],
                 chooseDataArr: [],
                 filterText: '',
-                tableHeight: 700
+                tableHeight: 700,
+                storePath: []
             };
         },
         created() {
@@ -446,9 +532,42 @@
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
             },
+            _openCoinSettingHandler() {
+                this.coinSettingFlag = true;
+                if (this.chooseDataArr.length === 0) {
+                    this.coinSettingForm.target = '公司全体员工';
+                } else if (this.chooseDataArr.length === 1) {
+                    this.coinSettingForm.target = this.chooseDataArr[0].realname;
+                } else {
+                    this.coinSettingForm.target = '选中的员工';
+                }
+            },
+            _initPage() {
+                this.searchData.page = 1;
+            },
+            _filterResultHandler() {
+                this._initPage();
+                this._getUserData();
+            },
+            _coinTypeChangeHandler(val) {
+                let storeArr = this.coinTypeSelect.filter((item) => {
+                    return +item.value === +val;
+                });
+                this.coinSettingForm.coinNumber = storeArr[0].coin;
+                this.coinSettingForm.content = storeArr[0].label;
+            },
+            _storeFilter(root, path, id) {
+                root.forEach((item) => {
+                    if (item.id === id) this.storePath = [...path, id];
+                    if (item.children) this._storeFilter(item.children, [...path, item.id], id);
+                });
+            },
             _returnOrgIds(id) {
-                if (!this.orgTreeData[0]) return;
+                if (!this.orgTreeData[0]) return [];
                 let depsStore = this.orgTreeData[0].children;
+                let path = [];
+                this._storeFilter(depsStore, path, id);
+                return this.storePath;
             },
             _initUserInfo() {
                 this.userSettingForm = {
@@ -484,17 +603,10 @@
                 this.tableHeight = dm - 280;
             },
             _tableSelectChange(data) {
-                if (!data.length) {
-                    this.chooseDataArr = [];
-                    return;
-                }
-                let storeArr = [];
-                data.forEach((item) => {
-                    storeArr.push(item.userid);
-                });
-                this.chooseDataArr = storeArr;
+                this.chooseDataArr = data;
             },
             _getUserData() {
+                this.chooseDataArr = [];
                 this.tableLoading = true;
                 this.$http.get('/user/dataList', {params: this.searchData}).then((res) => {
                     if (res.success) {
@@ -507,6 +619,7 @@
             },
             _setPage(page) {
                 this.searchData.page = page;
+                this._getUserData()
             },
             _setPageSize(size) {
                 this.searchData.pageSize = size;
@@ -515,7 +628,6 @@
                 this.searchData.nodeId = data.id;
             },
             _editorSetting(data) {
-                console.log(data);
                 this.userSettingForm = {
                     states: !!data.states,
                     account: data.username,
@@ -531,7 +643,6 @@
                     vUp: data.p_name,
                     isLog: !data.no_write
                 };
-                console.log(this.userSettingForm);
                 this.userFormType = 'update';
                 this.settingModalFlag = true;
                 this.editUserId = data.id;
@@ -549,7 +660,6 @@
             },
             _getRoleData() {
                 this.$http.get('/role/getAllRole').then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.roleData = res.date;
                     }
