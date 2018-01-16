@@ -139,11 +139,10 @@
                             <el-cascader
                                     :options="orgTreeData[0] ? orgTreeData[0].children : []"
                                     :props="depProps"
-                                    expand-trigger="hover"
                                     v-model="userSettingForm.dep"
+                                    change-on-select
                                     size="small"
                                     @change="testChange"
-                                    :show-all-levels="false"
                             ></el-cascader>
                         </FormItem>
                     </Col>
@@ -155,6 +154,18 @@
                             <Option value="shenzhen">Sydney</Option>
                         </Select>
                     </FormItem>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col :span="8">
+                        <FormItem label="职级">
+                            <Select v-model="userSettingForm.level" multiple></Select>
+                        </FormItem>
+                    </Col>
+                    <Col :span="8">
+                        <FormItem label="虚拟上级">
+                            <Input v-model="userSettingForm.vUp"></Input>
+                        </FormItem>
                     </Col>
                 </Row>
                 <FormItem label="岗位操作指南" :label-width="100">
@@ -326,7 +337,8 @@
                                 h('Tooltip', {
                                     props: {
                                         content: '完善信息',
-                                        placement: 'top'
+                                        placement: 'top',
+                                        transfer: true
                                     }
                                 }, [
                                     h('Button', {
@@ -343,7 +355,8 @@
                                 h('Tooltip', {
                                     props: {
                                         content: '金币操作',
-                                        placement: 'top'
+                                        placement: 'top',
+                                        transfer: true
                                     }
                                 }, [
                                     h('Button', {
@@ -360,7 +373,8 @@
                                 h('Tooltip', {
                                     props: {
                                         content: '用户授权',
-                                        placement: 'top'
+                                        placement: 'top',
+                                        transfer: true
                                     }
                                 }, [
                                     h('Button', {
@@ -377,7 +391,8 @@
                                 h('Tooltip', {
                                     props: {
                                         content: '用户设置',
-                                        placement: 'top'
+                                        placement: 'top',
+                                        transfer: true
                                     }
                                 }, [
                                     h('Button', {
@@ -388,7 +403,7 @@
                                         },
                                         on: {
                                             click: function () {
-                                                vm._editorSetting(params.row.userid);
+                                                vm._editorSetting(params.row);
                                             }
                                         }
                                     })
@@ -430,6 +445,10 @@
             filterNode(value, data) {
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
+            },
+            _returnOrgIds(id) {
+                if (!this.orgTreeData[0]) return;
+                let depsStore = this.orgTreeData[0].children;
             },
             _initUserInfo() {
                 this.userSettingForm = {
@@ -495,11 +514,27 @@
             _treeNodeClickHandler(data) {
                 this.searchData.nodeId = data.id;
             },
-            _editorSetting(id) {
+            _editorSetting(data) {
+                console.log(data);
+                this.userSettingForm = {
+                    states: !!data.states,
+                    account: data.username,
+                    name: data.realname,
+                    sex: data.sex,
+                    inJobTime: data.joindate,
+                    role: data.roleid,
+                    dep: this._returnOrgIds(data.lv),
+                    post: '',
+                    guider: data.post_pdf_id ? data.post_pdf_id.split(',').map(Number) : [],
+                    banci: [],
+                    level: '',
+                    vUp: data.p_name,
+                    isLog: !data.no_write
+                };
+                console.log(this.userSettingForm);
                 this.userFormType = 'update';
                 this.settingModalFlag = true;
-                this.editUserId = id;
-                console.log(id);
+                this.editUserId = data.id;
             },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
