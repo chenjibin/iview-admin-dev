@@ -43,9 +43,10 @@ new Vue({
     },
     created () {
         if (Cookies.get('token')) {
-            this.getPermissionData().then((data) => {
-                util.initMenu(this, data);
-            });
+            // this.getPermissionData().then((data) => {
+            //     console.log('aaaaaaa');
+            //     util.initMenu(this, data);
+            // });
         } else {
             this.$router.replace({name: 'login'});
         }

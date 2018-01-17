@@ -104,12 +104,16 @@ export default {
                             Cookies.set('password', this.form.password);
                             this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
                             Cookies.set('token', '1010101010');
-                            this.getPermissionData().then((data) => {
-                                util.initMenu(this, data);
-                                this.$router.push({
-                                    name: 'home_index'
-                                });
+                            this.$router.push({
+                                name: 'home_index'
                             });
+                            // this.getPermissionData().then((data) => {
+                            //     console.log('bbbbbbbb');
+                            //     util.initMenu(this, data);
+                            //     this.$router.push({
+                            //         name: 'home_index'
+                            //     });
+                            // });
                         } else {
                             this.$Message.error(res.message);
                         }

@@ -50,6 +50,7 @@ const app = {
         updateMenulist (state) {
             let accessCode = parseInt(Cookies.get('access'));
             let menuList = [];
+            console.log(state.premissionMenu)
             state.premissionMenu.forEach((item, index) => {
                 if (item.access !== undefined) {
                     if (Util.showThisRoute(item.access, accessCode)) {

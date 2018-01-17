@@ -174,6 +174,13 @@
             },
             fullscreenChange (isFullScreen) {
                 // console.log(isFullScreen);
+            },
+            getPermissionData() {
+                return new Promise((resolve, reject) => {
+                    this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
+                        resolve(res.date);
+                    });
+                });
             }
         },
         watch: {
@@ -194,6 +201,9 @@
             this.init();
         },
         created () {
+            this.getPermissionData().then((data) => {
+                util.initMenu(this, data);
+            });
             // 显示打开的页面的列表
             this.$store.commit('setOpenedList');
         }
