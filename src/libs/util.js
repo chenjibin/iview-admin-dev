@@ -3,6 +3,7 @@ import env from '../../build/env';
 import semver from 'semver';
 import packjson from '../../package.json';
 import {appRouter, page404} from '../router/router';
+import cloneDeep from 'lodash/cloneDeep';
 
 let util = {
 
@@ -268,7 +269,7 @@ util.checkUpdate = function (vm) {
 };
 
 util.getNeedRouter = function (routeData) {
-    let appR = appRouter.slice(0);
+    let appR = cloneDeep(appRouter);
     appR.forEach((item) => {
         item.children = item.children.filter((val) => {
             for (let i = 0, length = routeData.length; i < length; i++) {

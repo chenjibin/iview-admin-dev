@@ -76,6 +76,11 @@ export default {
             }
         };
     },
+    activated() {
+    },
+    mounted() {
+        this.getCode();
+    },
     methods: {
         getCode() {
             let time = +(new Date());
@@ -83,7 +88,7 @@ export default {
             this.$refs.codeImg.setAttribute('src', picUrl);
         },
         getPermissionData() {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
                     resolve(res.date);
                 });

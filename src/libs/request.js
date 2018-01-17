@@ -39,6 +39,8 @@ axios.interceptors.response.use(response => {
 }, function(error) {
     // Do something with response error
     Vue.prototype.$Message.error('服务器错误！');
+    store.commit('logout');
+    store.commit('clearOpenedSubmenu');
     return Promise.reject(error);
 });
 

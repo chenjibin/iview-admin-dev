@@ -53,6 +53,10 @@
                                     <Icon type="cash"></Icon>
                                     金币操作
                                 </Button>
+                                <Button type="primary" @click="banciModalFlag = true">
+                                    <Icon type="ios-book-outline"></Icon>
+                                    班次管理
+                                </Button>
                             </ButtonGroup>
                         </FormItem>
                     </Form>
@@ -176,7 +180,7 @@
                 </FormItem>
                 <FormItem label="班次设置" :label-width="100">
                     <Select v-model="userSettingForm.banci" multiple>
-                        <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+                        <Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>
                     </Select>
                 </FormItem>
             </Form>
@@ -199,7 +203,10 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>金币操作</span>
             </p>
-            <Form :model="coinSettingForm" :label-width="80">
+            <Form :model="coinSettingForm"
+                  :rules="coinRules"
+                  ref="coinForm"
+                  :label-width="80">
                 <FormItem prop="target" label="操作对象" :label-width="80">
                     <Input type="text"
                            disabled
@@ -210,22 +217,34 @@
                         <Option :value="item.value" v-for="item in coinTypeSelect" :key="'coin-type-' + item.value">{{item.label}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="属性">
+                <FormItem label="属性" prop="coinProperty">
                     <Select v-model="coinSettingForm.coinProperty">
                         <Option :value="item.value" v-for="(item, index) in coinOptSelect" :key="'coin-property' + index">{{item.label}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="金币数量" :label-width="80">
-                    <Input type="text"
-                           v-model="coinSettingForm.coinNumber"></Input>
+                <FormItem label="金币数量" :label-width="80" prop="coinNumber">
+                    <Input type="text" v-model="coinSettingForm.coinNumber"></Input>
                 </FormItem>
-                <FormItem label="说明" :label-width="80">
+                <FormItem label="说明" :label-width="80" prop="content">
                     <Input v-model="coinSettingForm.content" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
-                <Button type="primary">确认</Button>
+                <Button type="primary" @click="_coinConfirmHandler">确认</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="coinSettingFlag = false">取消</Button>
+            </div>
+        </Modal>
+        <Modal v-model="banciModalFlag"
+               width="800"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>班次管理</span>
+            </p>
+            <Table :columns="columnsBanci"
+                   :loading="tableBanciLoading"
+                   height="400"
+                   :data="banCiList"></Table>
+            <div slot="footer">
             </div>
         </Modal>
     </div>
@@ -233,6 +252,7 @@
 <style lang="less">
 </style>
 <script>
+    import moment from 'moment';
     export default {
         name: 'employeeManage',
         watch: {
@@ -254,15 +274,24 @@
         },
         data () {
             return {
+                banciModalFlag: false,
                 coinSettingFlag: false,
                 settingModalFlag: false,
                 tableLoading: false,
                 userFormType: 'update',
                 defaultPsd: '123456',
                 editUserId: '',
+                coinRules: {
+                    coinNumber: [
+                        { required: true, message: '金币不能为空', trigger: 'blur' }
+                    ],
+                    content: [
+                        { required: true, message: '说明不能为空', trigger: 'blur' }
+                    ]
+                },
                 coinSettingForm: {
                     target: '',
-                    coinProperty: '',
+                    coinProperty: '无属性',
                     coinNumber: '',
                     content: ''
                 },
@@ -291,42 +320,42 @@
                 coinTypeSelect: [
                     {
                         value: '1',
-                        coin: 100,
+                        coin: '100',
                         label: '提出合理化建议'
                     },
                     {
                         value: '2',
-                        coin: 100,
+                        coin: '100',
                         label: '考试成绩优异者'
                     },
                     {
                         value: '3',
-                        coin: 300,
+                        coin: '300',
                         label: '授课一次'
                     },
                     {
                         value: '4',
-                        coin: 500,
+                        coin: '500',
                         label: '带新人被录用'
                     },
                     {
                         value: '5',
-                        coin: -100,
+                        coin: '-100',
                         label: '未执行公司制度'
                     },
                     {
                         value: '6',
-                        coin: 50,
+                        coin: '50',
                         label: '好人好事奖励'
                     },
                     {
                         value: '7',
-                        coin: 200,
+                        coin: '200',
                         label: '伯乐奖'
                     },
                     {
                         value: '8',
-                        coin: 0,
+                        coin: '',
                         label: '其他'
                     }
                 ],
@@ -360,6 +389,12 @@
                         type: 'selection',
                         width: 60,
                         align: 'center'
+                    },
+                    {
+                        title: '用户id',
+                        key: 'userid',
+                        align: 'center',
+                        width: 80
                     },
                     {
                         title: '姓名',
@@ -512,10 +547,29 @@
                 chooseDataArr: [],
                 filterText: '',
                 tableHeight: 700,
-                storePath: []
+                storePath: [],
+                columnsBanci: [
+                    {
+                        title: '班次id',
+                        key: 'id',
+                        align: 'center',
+                        width: 100
+                    },
+                    {
+                        title: '班次名称',
+                        key: 'name'
+                    },
+                    {
+                        title: '班次时间',
+                        key: 'time',
+                        align: 'center'
+                    }
+                ],
+                banCiList: []
             };
         },
         created() {
+            this._getBanCiData();
             this._setTableHeight();
             this._getAllMenu();
             this._getGuiderList();
@@ -531,6 +585,23 @@
             filterNode(value, data) {
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
+            },
+            _coinConfirmHandler() {
+                this.$refs.coinForm.validate((valid) => {
+                    if (valid) {
+                        let data = {};
+                        data.userId = this.chooseDataArr.map((item) => item.userid).join(',');
+                        data.Property = this.coinSettingForm.coinProperty;
+                        data.coin = this.coinSettingForm.coinNumber;
+                        data.content = this.coinSettingForm.content;
+                        this.$http.post('/user/coinOpt', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('金币操作成功!');
+                                this.coinSettingFlag = false;
+                            }
+                        });
+                    }
+                });
             },
             _openCoinSettingHandler() {
                 this.coinSettingFlag = true;
@@ -575,7 +646,7 @@
                     account: '',
                     name: '',
                     sex: '',
-                    inJobTime: '',
+                    inJobTime: moment().format('YYYY-MM-DD'),
                     role: '',
                     dep: [],
                     post: '',
@@ -619,7 +690,7 @@
             },
             _setPage(page) {
                 this.searchData.page = page;
-                this._getUserData()
+                this._getUserData();
             },
             _setPageSize(size) {
                 this.searchData.pageSize = size;
@@ -633,12 +704,12 @@
                     account: data.username,
                     name: data.realname,
                     sex: data.sex,
-                    inJobTime: data.joindate,
+                    inJobTime: moment(data.joindate).format('YYYY-MM-DD'),
                     role: data.roleid,
                     dep: this._returnOrgIds(data.lv),
                     post: '',
                     guider: data.post_pdf_id ? data.post_pdf_id.split(',').map(Number) : [],
-                    banci: [],
+                    banci: data.kq_type.split(',').map(Number),
                     level: '',
                     vUp: data.p_name,
                     isLog: !data.no_write
@@ -674,6 +745,13 @@
                             resolve(res.date[0].id);
                         }
                     });
+                });
+            },
+            _getBanCiData() {
+                this.$http.get('/user/getBanCi').then((res) => {
+                    if (res.success) {
+                        this.banCiList = res.date;
+                    }
                 });
             }
         },
