@@ -266,6 +266,27 @@
                 </Poptip>
             </div>
         </Modal>
+        <Modal v-model="userAccessModalFlag"
+               width="800"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>用户授权</span>
+            </p>
+            <div class="" style="height: 400px;overflow: auto;">
+                <el-tree :data="accseeList"
+                                ref="accessTreeDom"
+                                show-checkbox
+                                node-key="id"
+                                :default-checked-keys="accessCheckArr"
+                                :default-expand-all="true"
+                                style="margin-top: 10px;"
+                                :props="accseeProps"></el-tree>
+            </div>
+            <div slot="footer">
+                <Button type="primary" @click="_confirmAccess">确认授权</Button>
+                <Button type="ghost">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
@@ -526,6 +547,11 @@
                                             icon: 'key',
                                             shape: 'circle'
                                         },
+                                        on: {
+                                            click: function() {
+                                                vm._userAccessOpen(params.row);
+                                            }
+                                        },
                                         style: {
                                             marginRight: '4px'
                                         }
@@ -600,7 +626,104 @@
                     time: [
                         { required: true, message: '班次时间不能为空', trigger: 'blur' }
                     ]
-                }
+                },
+                accseeProps: {
+                    children: 'children',
+                    label: 'title'
+                },
+                accessCheckArr: [1, 2],
+                accseeList: [
+                    {
+                        title: '系统管理',
+                        children: [
+                            {
+                                title: '用户管理',
+                                name: 'employeeManage',
+                                id: 1,
+                                children: []
+                            },
+                            {
+                                title: '用户管理',
+                                name: 'employeeManage',
+                                id: 2,
+                                children: [
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 21
+                                    },
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 22
+                                    }
+                                ]
+                            },
+                            {
+                                title: '用户管理',
+                                name: 'employeeManage',
+                                id: 3,
+                                children: [
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 31
+                                    },
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 32
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: '人事档案管理',
+                        children: [
+                            {
+                                title: '用户管理',
+                                name: 'employeeManage',
+                                id: 4,
+                                children: []
+                            },
+                            {
+                                title: '用户管理',
+                                name: 'employeeManage',
+                                id: 5,
+                                children: [
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 21
+                                    },
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 22
+                                    }
+                                ]
+                            },
+                            {
+                                title: '用户管理',
+                                name: 'employeeManage',
+                                id: 6,
+                                children: [
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 31
+                                    },
+                                    {
+                                        title: '按钮',
+                                        name: 'can',
+                                        id: 32
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
             };
         },
         created() {
@@ -609,11 +732,15 @@
             this._getAllMenu();
             this._getGuiderList();
             this._getRoleData();
+            this._getAccessMenu();
             this._getOrgTree().then(() => {
                 this._getUserData();
             });
         },
         methods: {
+            testChange(data) {
+                console.log(data);
+            },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
@@ -649,7 +776,7 @@
                 this.searchData.page = 1;
             },
             _inputDebounce: debounce(function () {
-                this._filterResultHandler()
+                this._filterResultHandler();
             }, 600),
             _filterResultHandler() {
                 this._initPage();
@@ -814,8 +941,18 @@
                     }
                 });
             },
-            _userAccessOpen() {
-
+            _getAccessMenu() {
+                this.$http.get('/jurisdiction/getAllMenu').then((res) => {
+                    console.log(res);
+                });
+            },
+            _confirmAccess() {
+                let checkKeys = this.$refs.accessTreeDom.getCheckedKeys();
+                console.log(checkKeys);
+            },
+            _userAccessOpen(data) {
+                console.log(data);
+                this.userAccessModalFlag = true;
             }
         },
         components: {}

@@ -231,14 +231,14 @@
                 this.postSettingForm.level = '';
             },
             _inputDebounce: debounce(function () {
-                this._filterResultHandler()
+                this._filterResultHandler();
             }, 600),
             _filterResultHandler() {
                 this.initPage();
                 this._getPostData();
             },
             _delPost() {
-                console.log('aa')
+                console.log('aa');
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -267,7 +267,7 @@
                 this.postSettingForm.level = data.level;
 
                 this.settingModalFlag = true;
-                console.log(data)
+                console.log(data);
             },
             _getPostData() {
                 let data = {};

@@ -1,4 +1,4 @@
-import {otherRouter, appRouter} from '@/router/router';
+import { otherRouter } from '@/router/router';
 import Util from '@/libs/util';
 import Cookies from 'js-cookie';
 import Vue from 'vue';
@@ -19,13 +19,11 @@ const app = {
             name: 'home_index'
         }],
         currentPageName: '',
-        currentPath: [
-            {
-                title: '首页',
-                path: '',
-                name: 'home_index'
-            }
-        ], // 面包屑数组
+        currentPath: [{
+            title: '首页',
+            path: '',
+            name: 'home_index'
+        }], // 面包屑数组
         menuList: [],
         routers: [
             otherRouter
@@ -35,22 +33,21 @@ const app = {
         dontCache: ['text-editor', 'artical-publish'] // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
     },
     mutations: {
-        setRouters (state, routers) {
+        setRouters(state, routers) {
             state.routers = [...state.routers, ...routers];
         },
-        setPremissionMenu (state, menu) {
+        setPremissionMenu(state, menu) {
             state.premissionMenu = menu;
         },
-        setTagsList (state, list) {
+        setTagsList(state, list) {
             state.tagsList.push(...list);
         },
-        setPermission (state) {
+        setPermission(state) {
             state.isPermission = 1;
         },
-        updateMenulist (state) {
+        updateMenulist(state) {
             let accessCode = parseInt(Cookies.get('access'));
             let menuList = [];
-            console.log(state.premissionMenu)
             state.premissionMenu.forEach((item, index) => {
                 if (item.access !== undefined) {
                     if (Util.showThisRoute(item.access, accessCode)) {
@@ -94,13 +91,13 @@ const app = {
             });
             state.menuList = menuList;
         },
-        changeMenuTheme (state, theme) {
+        changeMenuTheme(state, theme) {
             state.menuTheme = theme;
         },
-        changeMainTheme (state, mainTheme) {
+        changeMainTheme(state, mainTheme) {
             state.themeColor = mainTheme;
         },
-        addOpenSubmenu (state, name) {
+        addOpenSubmenu(state, name) {
             let hasThisName = false;
             let isEmpty = false;
             if (name.length === 0) {
@@ -113,26 +110,26 @@ const app = {
                 state.openedSubmenuArr.push(name);
             }
         },
-        closePage (state, name) {
+        closePage(state, name) {
             state.cachePage.forEach((item, index) => {
                 if (item === name) {
                     state.cachePage.splice(index, 1);
                 }
             });
         },
-        initCachepage (state) {
+        initCachepage(state) {
             if (localStorage.cachePage) {
                 state.cachePage = JSON.parse(localStorage.cachePage);
             }
         },
-        removeTag (state, name) {
+        removeTag(state, name) {
             state.pageOpenedList.map((item, index) => {
                 if (item.name === name) {
                     state.pageOpenedList.splice(index, 1);
                 }
             });
         },
-        pageOpenedList (state, get) {
+        pageOpenedList(state, get) {
             let openedPage = state.pageOpenedList[get.index];
             if (get.argu) {
                 openedPage.argu = get.argu;
@@ -143,12 +140,12 @@ const app = {
             state.pageOpenedList.splice(get.index, 1, openedPage);
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        clearAllTags (state) {
+        clearAllTags(state) {
             state.pageOpenedList.splice(1);
             state.cachePage.length = 0;
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        clearOtherTags (state, vm) {
+        clearOtherTags(state, vm) {
             let currentName = vm.$route.name;
             let currentIndex = 0;
             state.pageOpenedList.forEach((item, index) => {
@@ -168,29 +165,29 @@ const app = {
             state.cachePage = newCachepage;
             localStorage.pageOpenedList = JSON.stringify(state.pageOpenedList);
         },
-        setOpenedList (state) {
+        setOpenedList(state) {
             state.pageOpenedList = localStorage.pageOpenedList ? JSON.parse(localStorage.pageOpenedList) : [otherRouter.children[0]];
         },
-        setCurrentPath (state, pathArr) {
+        setCurrentPath(state, pathArr) {
             state.currentPath = pathArr;
         },
-        setCurrentPageName (state, name) {
+        setCurrentPageName(state, name) {
             state.currentPageName = name;
         },
-        setAvator (state, path) {
+        setAvator(state, path) {
             localStorage.avatorImgPath = path;
         },
-        switchLang (state, lang) {
+        switchLang(state, lang) {
             state.lang = lang;
             Vue.config.lang = lang;
         },
-        clearOpenedSubmenu (state) {
+        clearOpenedSubmenu(state) {
             state.openedSubmenuArr.length = 0;
         },
-        setMessageCount (state, count) {
+        setMessageCount(state, count) {
             state.messageCount = count;
         },
-        increateTag (state, tagObj) {
+        increateTag(state, tagObj) {
             if (!Util.oneOf(tagObj.name, state.dontCache)) {
                 state.cachePage.push(tagObj.name);
                 localStorage.cachePage = JSON.stringify(state.cachePage);
