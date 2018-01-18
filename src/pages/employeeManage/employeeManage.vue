@@ -19,13 +19,13 @@
                     <Form ref="searchData" :model="searchData" inline :label-width="50">
                         <FormItem prop="realName" label="姓名">
                             <Input type="text"
-                                   @on-blur="_filterResultHandler"
+                                   @on-change="_inputDebounce"
                                    v-model="searchData.realName"
                                    placeholder="筛选姓名"></Input>
                         </FormItem>
                         <FormItem prop="postName" label="岗位">
                             <Input type="text"
-                                   @on-blur="_filterResultHandler"
+                                   @on-change="_inputDebounce"
                                    v-model="searchData.postName"
                                    placeholder="筛选岗位"></Input>
                         </FormItem>
@@ -272,6 +272,7 @@
 </style>
 <script>
     import moment from 'moment';
+    import debounce from 'lodash/debounce';
     export default {
         name: 'employeeManage',
         watch: {
@@ -295,7 +296,8 @@
             return {
                 banciModalFlag: false,
                 coinSettingFlag: false,
-                settingModalFlag: false,
+                settingModalFlag: false,,
+                userAccessModalFlag: false,
                 banciBtnLoading: false,
                 tableBanciLoading: false,
                 tableLoading: false,
@@ -612,9 +614,6 @@
             });
         },
         methods: {
-            testChange() {
-                console.log(this.userSettingForm);
-            },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
@@ -649,6 +648,9 @@
             _initPage() {
                 this.searchData.page = 1;
             },
+            _inputDebounce: debounce(function () {
+                this._filterResultHandler()
+            }, 600),
             _filterResultHandler() {
                 this._initPage();
                 this._getUserData();
@@ -811,6 +813,9 @@
                         });
                     }
                 });
+            },
+            _userAccessOpen() {
+
             }
         },
         components: {}

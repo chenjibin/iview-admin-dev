@@ -30,7 +30,6 @@ export default {
                 pageSize: this.pageData.pageSize
             }, params);
             this.$http.get(url, {params: data}).then((res) => {
-                console.log(res);
                 if (res.success) {
                     this.pageData.totalCount = res.count;
                     this.pageData.list = res.date;
