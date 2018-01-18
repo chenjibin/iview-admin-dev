@@ -296,7 +296,7 @@
             return {
                 banciModalFlag: false,
                 coinSettingFlag: false,
-                settingModalFlag: false,,
+                settingModalFlag: false,
                 userAccessModalFlag: false,
                 banciBtnLoading: false,
                 tableBanciLoading: false,
