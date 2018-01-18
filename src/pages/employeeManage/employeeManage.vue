@@ -245,6 +245,25 @@
                    height="400"
                    :data="banCiList"></Table>
             <div slot="footer">
+                <Poptip placement="left" width="400">
+                    <Button type="ghost">添加班次</Button>
+                    <div class="banci-add-form" slot="content">
+                        <Form :rules="banciRules"
+                              :model="banciForm"
+                              ref="banciForm"
+                              :label-width="100">
+                            <FormItem label="班次名称" prop="name">
+                                <Input v-model="banciForm.name" placeholder=""></Input>
+                            </FormItem>
+                            <FormItem label="班次时间" prop="time">
+                                <Input v-model="banciForm.time" placeholder=""></Input>
+                            </FormItem>
+                            <FormItem>
+                                <Button type="primary" @click="_addBanci" :loading="banciBtnLoading">添加班次</Button>
+                            </FormItem>
+                        </Form>
+                    </div>
+                </Poptip>
             </div>
         </Modal>
     </div>
@@ -277,6 +296,8 @@
                 banciModalFlag: false,
                 coinSettingFlag: false,
                 settingModalFlag: false,
+                banciBtnLoading: false,
+                tableBanciLoading: false,
                 tableLoading: false,
                 userFormType: 'update',
                 defaultPsd: '123456',
@@ -565,7 +586,19 @@
                         align: 'center'
                     }
                 ],
-                banCiList: []
+                banCiList: [],
+                banciForm: {
+                    name: '',
+                    time: ''
+                },
+                banciRules: {
+                    name: [
+                        { required: true, message: '班次名称不能为空', trigger: 'blur' }
+                    ],
+                    time: [
+                        { required: true, message: '班次时间不能为空', trigger: 'blur' }
+                    ]
+                }
             };
         },
         created() {
@@ -748,9 +781,34 @@
                 });
             },
             _getBanCiData() {
+                this.tableBanciLoading = true;
                 this.$http.get('/user/getBanCi').then((res) => {
                     if (res.success) {
                         this.banCiList = res.date;
+                    }
+                }).finally(() => {
+                    this.tableBanciLoading = false;
+                });
+            },
+            _addBanci() {
+                this.$refs.banciForm.validate((valid) => {
+                    if (valid) {
+                        this.banciBtnLoading = true;
+                        let data = {};
+                        data.name = this.banciForm.name;
+                        data.time = this.banciForm.time;
+                        this.$http.post('/user/addBanCi', data).then((res) => {
+                            if (res.success) {
+                                this.banciForm = {
+                                    name: '',
+                                    time: ''
+                                };
+                                this._getBanCiData();
+                                this.$Message.success('班次添加成功');
+                            }
+                        }).finally(() => {
+                            this.banciBtnLoading = false;
+                        });
                     }
                 });
             }
