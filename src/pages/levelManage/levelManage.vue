@@ -8,7 +8,7 @@
                            v-model="filterOpt.name"
                            placeholder="职级代码"></Input>
                 </FormItem>
-                 <FormItem label="职级序列">
+                <FormItem label="职级序列">
                     <Select v-model="filterOpt.states"
                             clearable
                             @on-change="_filterResultHandler"
@@ -106,7 +106,7 @@
         </Card>
     </div>
 </template>
-<style>
+<style lang="less">
 
 </style>
 <script>
@@ -249,7 +249,6 @@
                 this.postSettingForm.number = data.number;
                 this.postSettingForm.username = data.username;
                 this.postSettingForm.level = data.level;
-
                 this.settingModalFlag = true;
                 console.log(data);
             },

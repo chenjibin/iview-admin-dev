@@ -272,15 +272,172 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>用户授权</span>
             </p>
-            <div class="" style="height: 400px;overflow: auto;">
-                <el-tree :data="accseeList"
-                                ref="accessTreeDom"
-                                show-checkbox
-                                node-key="id"
-                                :default-checked-keys="accessCheckArr"
-                                :default-expand-all="true"
-                                style="margin-top: 10px;"
-                                :props="accseeProps"></el-tree>
+            <div id="fs-access-control-block">
+                <CheckboxGroup v-model="social">
+                    <Row :gutter="10" type="flex">
+                        <Col :span="12" style="margin-bottom: 10px;" v-for="(cate, ci) in accseeList" :key="'cate-' + ci">
+                            <Card style="height: 100%;">
+                                <h3 class="cate-title">{{cate.title}}}</h3>
+                                <div class="each-page-wrapper" v-for="(page, pi) in cate.children" :key="'page-' + pi">
+                                    <Checkbox label="page1" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>员工日志</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn1">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn2">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn3">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Col>
+                        <Col :span="12" style="margin-bottom: 10px;">
+                            <Card>
+                                <h3 class="cate-title">工作日志管理</h3>
+                                <div class="each-page-wrapper">
+                                    <Checkbox label="page1" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>员工日志</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn1">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn2">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn3">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                                <div class="each-page-wrapper">
+                                    <Checkbox label="page2" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>日志统计</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn4">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn5">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn6">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Col>
+                        <Col :span="12">
+                            <Card>
+                                <h3 class="cate-title">工作日志管理</h3>
+                                <div class="each-page-wrapper">
+                                    <Checkbox label="page1" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>员工日志</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn1">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn2">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn3">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                                <div class="each-page-wrapper">
+                                    <Checkbox label="page2" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>日志统计</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn4">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn5">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn6">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Col>
+                        <Col :span="12">
+                            <Card>
+                                <h3 class="cate-title">工作日志管理</h3>
+                                <div class="each-page-wrapper">
+                                    <Checkbox label="page1" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>员工日志</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn1">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn2">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn3">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>添加</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                                <div class="each-page-wrapper">
+                                    <Checkbox label="page2" size="large">
+                                        <Icon type="document"></Icon>
+                                        <span>日志统计</span>
+                                    </Checkbox>
+                                    <div class="each-btn-wrapper">
+                                        <Checkbox label="btn4">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn5">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                        <Checkbox label="btn6">
+                                            <Icon type="ios-toggle"></Icon>
+                                            <span>删除</span>
+                                        </Checkbox>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Col>
+                    </Row>
+                </CheckboxGroup>
+                    
             </div>
             <div slot="footer">
                 <Button type="primary" @click="_confirmAccess">确认授权</Button>
@@ -290,6 +447,21 @@
     </div>
 </template>
 <style lang="less">
+    #fs-access-control-block {
+        padding: 10px;
+        height: 400px;
+        overflow: auto;
+        background-color: #dddee1;
+        .cate-title {
+            margin-bottom: 16px;
+        }
+        .each-page-wrapper {
+            margin-bottom: 16px;
+            .each-btn-wrapper {
+                padding-left: 16px;
+            }
+        }
+    }
 </style>
 <script>
     import moment from 'moment';
@@ -311,10 +483,17 @@
             },
             'searchData.roleId'() {
                 this._filterResultHandler();
+            },
+            social(val) {
+                console.log(val);
+            },
+            btnbtn(val) {
+                console.log(val);
             }
         },
         data () {
             return {
+                social: [],
                 banciModalFlag: false,
                 coinSettingFlag: false,
                 settingModalFlag: false,
@@ -627,103 +806,8 @@
                         { required: true, message: '班次时间不能为空', trigger: 'blur' }
                     ]
                 },
-                accseeProps: {
-                    children: 'children',
-                    label: 'title'
-                },
                 accessCheckArr: [1, 2],
-                accseeList: [
-                    {
-                        title: '系统管理',
-                        children: [
-                            {
-                                title: '用户管理',
-                                name: 'employeeManage',
-                                id: 1,
-                                children: []
-                            },
-                            {
-                                title: '用户管理',
-                                name: 'employeeManage',
-                                id: 2,
-                                children: [
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 21
-                                    },
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 22
-                                    }
-                                ]
-                            },
-                            {
-                                title: '用户管理',
-                                name: 'employeeManage',
-                                id: 3,
-                                children: [
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 31
-                                    },
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 32
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: '人事档案管理',
-                        children: [
-                            {
-                                title: '用户管理',
-                                name: 'employeeManage',
-                                id: 4,
-                                children: []
-                            },
-                            {
-                                title: '用户管理',
-                                name: 'employeeManage',
-                                id: 5,
-                                children: [
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 21
-                                    },
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 22
-                                    }
-                                ]
-                            },
-                            {
-                                title: '用户管理',
-                                name: 'employeeManage',
-                                id: 6,
-                                children: [
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 31
-                                    },
-                                    {
-                                        title: '按钮',
-                                        name: 'can',
-                                        id: 32
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                accseeList: []
             };
         },
         created() {
@@ -941,14 +1025,36 @@
                     }
                 });
             },
+            _renturnAccessNeedArr(data) {
+                let arr = [];
+                data.forEach((cateItem) => {
+                    let cate = {};
+                    cate.title = cateItem.title;
+                    cate.pages = [];
+                    cateItem.pages.forEach((pageItem) => {
+                        let obj = pageItem.menu.columns;
+                        if (pageItem.btn) {
+                            let btnArr = [];
+                            pageItem.btn.forEach((bitem) => {
+                                btnArr.push(bitem.columns);
+                            });
+                            obj.btns = btnArr;
+                        }
+                        cate.pages.push(obj);
+                    });
+                });
+                console.log(arr);
+                // return arr;
+            },
             _getAccessMenu() {
                 this.$http.get('/jurisdiction/getAllMenu').then((res) => {
                     console.log(res);
+                    if (res.success) {
+                        this.accseeList = this._renturnAccessNeedArr(res.date);
+                    }
                 });
             },
             _confirmAccess() {
-                let checkKeys = this.$refs.accessTreeDom.getCheckedKeys();
-                console.log(checkKeys);
             },
             _userAccessOpen(data) {
                 console.log(data);
