@@ -1,38 +1,12 @@
 <template>
     <div>
         <Card>
-            <Form inline :label-width="80">
-                <FormItem label="职级代码">
-                    <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
-                           placeholder="职级代码"></Input>
-                </FormItem>
-                 <FormItem label="职级序列">
-                    <Select v-model="filterOpt.states"
-                            clearable
-                            @on-change="_filterResultHandler"
-                            placeholder="筛选状态"
-                            style="width: 100px">
-                        <Option value="1">管理序列</Option>
-                        <Option value="2">普通序列</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="状态">
-                    <Select v-model="filterOpt.states"
-                            clearable
-                            @on-change="_filterResultHandler"
-                            placeholder="筛选状态"
-                            style="width: 100px">
-                        <Option value="1">启用</Option>
-                        <Option value="0">禁用</Option>
-                    </Select>
-                </FormItem>
+            <Form inline>
                 <FormItem>
                     <ButtonGroup>
                         <Button type="primary" @click="_addPostOpen">
                             <Icon type="plus-round"></Icon>
-                            新增岗位
+                            新增角色
                         </Button>
                     </ButtonGroup>
                 </FormItem>
@@ -53,54 +27,50 @@
                    width="400"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>{{postFormType === 'update' ? '职级设置' : '添加职级'}}</span>
+                    <span>添加角色</span>
                 </p>
                 <Form :model="postSettingForm" :label-width="80">
-                    <FormItem label="状态">
-                        <i-switch v-model="postSettingForm.states" size="large">
-                            <span slot="open">启用</span>
-                            <span slot="close">禁用</span>
-                        </i-switch>
-                    </FormItem>
-                    <FormItem label="职级序列">
-                        <Select v-model="postSettingForm.level">
-                            <!--<Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>-->
-                        </Select>
-                    </FormItem>
-                    <FormItem label="职级代码">
-                        <Input v-model="postSettingForm.number" :disabled="postFormType === 'update'"></Input>
-                    </FormItem>
-                    <FormItem label="薪资范围">
-                        <Row>
-                            <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
-                            </Col>
-                            <Col :span="2">
-                                <span style="display:block;text-align: center;">--</span>
-                            </Col>
-                            <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
-                            </Col>
-                        </Row>
-                    </FormItem>
-                    <FormItem label="积分范围">
-                        <Row>
-                            <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
-                            </Col>
-                            <Col :span="2" style="test-align: center;">
-                                <span style="display:block;text-align: center;">--</span>
-                            </Col>
-                            <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
-                            </Col>
-                        </Row>
+                    <FormItem label="角色名称">
+                        <Input v-model="postSettingForm.name"></Input>
                     </FormItem>
                 </Form>
                 <div slot="footer">
-                    <Button type="primary" v-show="postFormType === 'add'">添加</Button>
-                    <Button type="primary" v-show="postFormType === 'update'">更新</Button>
+                    <Button type="primary">添加</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
+                </div>
+            </Modal>
+            <Modal v-model="roleAccessModalFlag"
+               width="800"
+               :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>角色授权</span>
+                </p>
+                <div id="fs-access-control-block">
+                    <CheckboxGroup v-model="social">
+                        <Row :gutter="10" type="flex">
+                            <Col :span="12" style="margin-bottom: 10px;" v-for="(cate, ci) in accseeList" :key="'cate-' + ci">
+                                <Card style="height: 100%;">
+                                    <h3 class="cate-title">{{cate.title}}</h3>
+                                    <div class="each-page-wrapper" v-for="(page, pi) in cate.pages" :key="'page-' + pi">
+                                        <Checkbox :label="'page' + page.id" size="large">
+                                            <Icon type="document" size="18"></Icon>
+                                            <span>{{page.title}}</span>
+                                        </Checkbox>
+                                        <div class="each-btn-wrapper">
+                                            <Checkbox :label="'btn' + btn.id" v-for="(btn, bi) in page.btns" :key="'btn-' + bi">
+                                                <Icon type="ios-toggle"></Icon>
+                                                <span>{{btn.btnname}}</span>
+                                            </Checkbox>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </CheckboxGroup>
+                </div>
+                <div slot="footer">
+                    <Button type="primary" @click="_confirmAccess">确认授权</Button>
+                    <Button type="ghost">取消</Button>
                 </div>
             </Modal>
         </Card>
@@ -111,41 +81,32 @@
 </style>
 <script>
     import pageMixin from '@/mixins/pageMixin';
-    import debounce from 'lodash/debounce';
     export default {
         name: 'roleManage',
         data () {
             return {
+                roleAccessModalFlag: false,
                 settingModalFlag: false,
-                postFormType: 'update',
+                social: [],
+                accseeList: [],
                 postSettingForm: {
-                    states: '',
-                    name: '',
-                    number: '',
-                    organizename: '',
-                    username: ''
-                },
-                filterOpt: {
-                    name: '',
-                    level: '',
-                    states: '1',
-                    organizeName: ''
+                    name: ''
                 },
                 postColumns: [
                     {
                         title: '角色名',
-                        key: 'number',
+                        key: 'name',
                         align: 'center',
                         width: 100
                     },
                     {
                         title: '添加时间',
-                        key: 'name',
+                        key: 'date',
                         align: 'center'
                     },
                     {
                         title: '操作人',
-                        key: 'organizename',
+                        key: 'user',
                         align: 'center'
                     },
                     {
@@ -157,27 +118,27 @@
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
-                                        content: '职级设置',
+                                        content: '删除',
                                         placement: 'top',
                                         transfer: true
                                     }
                                 }, [
                                     h('Button', {
                                         props: {
-                                            type: 'primary',
-                                            icon: 'ios-gear',
+                                            type: 'error',
+                                            icon: 'close',
                                             shape: 'circle'
                                         },
                                         on: {
                                             click: function () {
-                                                vm._editorSetting(params.row);
+                                                vm._delRole(params.row);
                                             }
                                         }
                                     })
                                 ]),
                                 h('Tooltip', {
                                     props: {
-                                        content: '用户授权',
+                                        content: '角色授权',
                                         placement: 'top',
                                         transfer: true
                                     }
@@ -190,11 +151,11 @@
                                         },
                                         on: {
                                             click: function() {
-                                                vm._userAccessOpen(params.row);
+                                                vm._postAccessOpen(params.row);
                                             }
                                         },
                                         style: {
-                                            marginRight: '4px'
+                                            marginLeft: '4px'
                                         }
                                     })
                                 ])
@@ -207,26 +168,44 @@
         },
         mixins: [pageMixin],
         created() {
+            this._getAccessMenu();
             this._getPostData();
             this._setTableHeight();
         },
         methods: {
             _initPostForm() {
-                this.postSettingForm.states = true;
                 this.postSettingForm.name = '';
-                this.postSettingForm.organizename = '';
-                this.postSettingForm.number = '';
-                this.postSettingForm.username = '';
-                this.postSettingForm.level = '';
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
+            _renturnAccessNeedArr(data) {
+                let arr = [];
+                data.forEach((cateItem) => {
+                    let cate = {};
+                    cate.title = cateItem.title;
+                    cate.pages = [];
+                    cateItem.page.forEach((pageItem) => {
+                        let obj = pageItem.menu.columns;
+                        obj.btns = [];
+                        if (pageItem.btn) {
+                            let btnArr = [];
+                            pageItem.btn.forEach((bitem) => {
+                                btnArr.push(bitem.columns);
+                            });
+                            obj.btns = btnArr;
+                        }
+                        cate.pages.push(obj);
+                    });
+                    arr.push(cate);
+                });
+                return arr;
             },
-            _delPost() {
+            _getAccessMenu() {
+                this.$http.get('/jurisdiction/getAllMenu').then((res) => {
+                    if (res.success) {
+                        this.accseeList = this._renturnAccessNeedArr(res.date);
+                    }
+                });
+            },
+            _delRole() {
                 console.log('aa');
             },
             _setTableHeight() {
@@ -241,30 +220,43 @@
                 this.pageData.pageSize = size;
                 this._getPostData();
             },
+            _roleAccessOpen(data) {
+
+            },
             _addPostOpen() {
-                this.postFormType = 'add';
                 this._initPostForm();
                 this.settingModalFlag = true;
             },
-            _editorSetting(data) {
-                this.postFormType = 'update';
-                this.postSettingForm.states = !!data.states;
-                this.postSettingForm.name = data.name;
-                this.postSettingForm.organizename = data.organizename;
-                this.postSettingForm.number = data.number;
-                this.postSettingForm.username = data.username;
-                this.postSettingForm.level = data.level;
-
-                this.settingModalFlag = true;
-                console.log(data);
-            },
             _getPostData() {
-                let data = {};
-                data.name = this.filterOpt.name;
-                data.level = this.filterOpt.level;
-                data.states = this.filterOpt.states;
-                data.organizeName = this.filterOpt.organizeName;
-                this.getList('/post/datalist', data);
+                this.getList('/role/getAllRole');
+            },
+            _confirmAccess() {
+                let pageArr = [];
+                let btnArr = [];
+                this.social.forEach((item) => {
+                    if (item.startsWith('page')) {
+                        pageArr.push(item.split('page')[1]);
+                    }
+                    if (item.startsWith('btn')) {
+                        btnArr.push(item.split('btn')[1]);
+                    }
+                });
+                let data = {
+                    id: this.editUserId,
+                    menuid: pageArr.join(','),
+                    btnid: btnArr.join(',')
+                };
+                this.$http.post('/jurisdiction/setMySystemMenu', data).then((res) => {
+
+                });
+            },
+            _postAccessOpen(data) {
+                console.log(data);
+                // let pageArr = data.role ? data.role.split(',').map(x => 'page' + x) : [];
+                // let btnArr = data.btnid ? data.btnid.split(',').map(x => 'btn' + x) : [];
+                // this.social = pageArr.concat(btnArr);
+                // this.editUserId = data.userid;
+                this.roleAccessModalFlag = true;
             }
         },
         components: {}
