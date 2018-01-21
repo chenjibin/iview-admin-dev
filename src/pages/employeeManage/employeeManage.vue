@@ -147,7 +147,7 @@
                                     change-on-select
                                     size="small"
                                     style="width: 100%"
-                                    @change="testChange"
+                                    @change="_depChange"
                             ></el-cascader>
                         </FormItem>
                     </Col>
@@ -156,15 +156,15 @@
                     <Col :span="8">
                     <FormItem label="岗位">
                         <Select v-model="userSettingForm.post">
-                            <Option value="beijing">New York</Option>
-                            <Option value="shanghai">London</Option>
-                            <Option value="shenzhen">Sydney</Option>
+                            <Option v-for="item in postList" :value="item.id" :key="item.id">{{item.name}}</Option>
                         </Select>
                     </FormItem>
                     </Col>
                     <Col :span="8">
                         <FormItem label="职级">
-                            <Select v-model="userSettingForm.level" multiple></Select>
+                            <Select v-model="userSettingForm.level">
+                                <Option v-for="item in levelData" :value="item.id" :key="item.id">{{item.code}}</Option>
+                            </Select>
                         </FormItem>
                     </Col>
                     <Col :span="8">
@@ -173,11 +173,11 @@
                         </FormItem>
                     </Col>
                 </Row>
-                <FormItem label="岗位操作指南" :label-width="100">
-                    <Select v-model="userSettingForm.guider" multiple>
-                        <Option v-for="item in guiderList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-                    </Select>
-                </FormItem>
+                <!--<FormItem label="岗位操作指南" :label-width="100">-->
+                    <!--<Select v-model="userSettingForm.guider" multiple>-->
+                        <!--<Option v-for="item in guiderList" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
+                    <!--</Select>-->
+                <!--</FormItem>-->
                 <FormItem label="班次设置" :label-width="100">
                     <Select v-model="userSettingForm.banci" multiple>
                         <Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>
@@ -193,7 +193,7 @@
                     <Button type="warning" v-show="userFormType === 'update'">重置密码</Button>
                 </Poptip>
                 <Button type="primary" v-show="userFormType === 'add'">添加</Button>
-                <Button type="primary" v-show="userFormType === 'update'">更新</Button>
+                <Button type="primary" v-show="userFormType === 'update'" @click="_updateUserInfo">更新</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
             </div>
         </Modal>
@@ -626,6 +626,7 @@
                 ],
                 roleData: [],
                 userData: [],
+                levelData: [],
                 orgTreeData: [],
                 defaultProps: {
                     children: 'children',
@@ -635,6 +636,7 @@
                     value: 'id',
                     label: 'name'
                 },
+                postList: [],
                 guiderList: [],
                 chooseDataArr: [],
                 filterText: '',
@@ -687,9 +689,6 @@
             });
         },
         methods: {
-            testChange(data) {
-                console.log(data);
-            },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
@@ -782,8 +781,13 @@
                 this.settingModalFlag = true;
             },
             _resetPassWord() {
-                console.log(this.editUserId);
-                this.$Message.success('密码重置成功！');
+                let data = {};
+                data.id = this.editUserId;
+                this.$http.post('/user/resetPassword', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('密码重置成功！重置后的默认密码为123456！');
+                    }
+                });
             },
             _tableSortChange(data) {
                 console.log(data);
@@ -817,25 +821,79 @@
             _treeNodeClickHandler(data) {
                 this.searchData.nodeId = data.id;
             },
+            _depChange(data) {
+                this._getPostList(data.slice(-1)[0]).then(() => {
+                    this.userSettingForm.post = this.postList[0].id;
+                });
+            },
+            _updateUserInfo() {
+                let data = {};
+                data.id = this.editUserId;
+                data.isUpdate = true;
+                data.states = this.userSettingForm.states ? 1 : 0;
+                data.joinDate = moment(this.userSettingForm.inJobTime).format('YYYY-MM-DD');
+                data.realName = this.userSettingForm.name;
+                data.sex = this.userSettingForm.sex;
+                data.no_write = this.userSettingForm.isLog ? 0 : 1;
+                data.banci = this.userSettingForm.banci;
+                data.organizeId = this.userSettingForm.dep.slice(-1)[0];
+                data.level = this.userSettingForm.level;
+                data.postId = this.userSettingForm.post;
+                data.leaderName = this.userSettingForm.vUp;
+                data.roleName = this.userSettingForm.role;
+                console.log(data)
+            },
             _editorSetting(data) {
-                this.userSettingForm = {
-                    states: !!data.states,
-                    account: data.username,
-                    name: data.realname,
-                    sex: data.sex,
-                    inJobTime: moment(data.joindate).format('YYYY-MM-DD'),
-                    role: data.roleid,
-                    dep: this._returnOrgIds(data.lv),
-                    post: '',
-                    guider: data.post_pdf_id ? data.post_pdf_id.split(',').map(Number) : [],
-                    banci: data.kq_type.split(',').map(Number),
-                    level: '',
-                    vUp: data.p_name,
-                    isLog: !data.no_write
-                };
+                this.userSettingForm.states = !!data.states;
+                this.userSettingForm.account = data.username;
+                this.userSettingForm.name = data.realname;
+                this.userSettingForm.sex = data.sex;
+                this.userSettingForm.inJobTime = moment(data.joindate).format('YYYY-MM-DD');
+                this.userSettingForm.role = data.roleid;
+                this.userSettingForm.dep = this._returnOrgIds(data.lv);
+                this.userSettingForm.post = data.postid;
+                this.userSettingForm.banci = data.kq_type.split(',').map(Number);
+                this.userSettingForm.vUp = data.p_name;
+                this.userSettingForm.level = '';
+                this.userSettingForm.isLog = !data.no_write;
+
+                this._getPostList(data.lv);
+                console.log(data, this.userSettingForm);
                 this.userFormType = 'update';
                 this.settingModalFlag = true;
                 this.editUserId = data.id;
+            },
+            _returnNeedPostList(ids, names) {
+                let idsArr = ids.split(',').filter(x => !!x);
+                let namesArr = names.split(',').filter(x => !!x);
+                let storeArr = [];
+                for (let i = 0, length = idsArr.length; i < length; i++) {
+                    storeArr[i] = {}
+                }
+                storeArr.forEach((item, index, arr) => {
+                    item.id = +idsArr[index];
+                    item.name = namesArr[index]
+                });
+                return storeArr;
+            },
+            _getPostList(id) {
+                let data = {};
+                data.lv = id;
+                return new Promise((resolve) => {
+                    this.$http.get('/organize/getSetInfo', {params: data}).then((res) => {
+                        if (res.success) {
+                            this.postList = this._returnNeedPostList(res.date.postids, res.date.postnames);
+                            resolve()
+                        }
+                    })
+                })
+            },
+            _getLevelList() {
+                this.$http.get('/rank/datalist?page=1&pageSize=20').then((res) => {
+                    if (res.success) {
+                        this.levelData = res.date
+                    }
+                })
             },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {

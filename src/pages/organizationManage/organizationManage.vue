@@ -67,18 +67,15 @@
                     }
                 }
             }
-            .el-tree-node__expand-icon {
-                margin-top: 12px;
-            }
         }
         .fs-tree-header {
             display: flex;
             padding: 10px 6px;
-            background: #eef1f6;
+            background-color: #f8f8f9;
             color: #1f2d3d;
             font-weight: bold;
             font-size: 14px;
-            border: 1px solid #ddd;
+            border: 1px solid #dddee1;
             .title {
                 width: 300px;
             }
@@ -130,14 +127,19 @@
                     }
                 })
             },
-            append() {
-
+            append(store, data) {
+                store.append({name: 'testtest', postNames: 'a', member: 'b', chargerName: 'c', leaderName: 'd', children: [] }, data)
             },
-            editInfo() {
-
+            editInfo(store, data) {
+                console.log(data);
             },
-            remove() {
-
+            remove(store, data) {
+                console.log(store)
+                if (data.children && data.children.length !== 0) {
+                    this.$Message.error('下级有部门,不可以删除！')
+                    return
+                }
+                store.remove(data)
             },
             renderContent(h, { node, data, store }) {
                 return (
