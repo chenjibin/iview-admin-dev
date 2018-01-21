@@ -32,7 +32,7 @@
                     <ButtonGroup>
                         <Button type="primary" @click="_addPostOpen">
                             <Icon type="plus-round"></Icon>
-                            新增岗位
+                            新增职级
                         </Button>
                     </ButtonGroup>
                 </FormItem>
@@ -134,24 +134,31 @@
                 postColumns: [
                     {
                         title: '职级序列',
-                        key: 'number',
+                        key: 'type',
                         align: 'center',
-                        width: 100
+                        width: 100,
+                        render: (h, params) => {
+                            return h('span', params.row.type === 0 ? '管理序列' : '普通序列')
+                        }
                     },
                     {
                         title: '职级代码',
-                        key: 'name',
+                        key: 'code',
                         align: 'center'
                     },
                     {
                         title: '薪资范围',
-                        key: 'organizename',
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('span', params.row.minsalary + ' - ' + params.row.maxsalary)
+                        }
                     },
                     {
                         title: '积分范围',
-                        key: 'username',
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('span', params.row.minpoints + ' - ' + params.row.maxpoints)
+                        }
                     },
                     {
                         title: '状态',
@@ -253,12 +260,7 @@
                 console.log(data);
             },
             _getPostData() {
-                let data = {};
-                data.name = this.filterOpt.name;
-                data.level = this.filterOpt.level;
-                data.states = this.filterOpt.states;
-                data.organizeName = this.filterOpt.organizeName;
-                this.getList('/post/datalist', data);
+                this.getList('/rank/datalist');
             }
         },
         components: {}

@@ -118,26 +118,6 @@
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
-                                        content: '删除',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            icon: 'close',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function () {
-                                                vm._delRole(params.row);
-                                            }
-                                        }
-                                    })
-                                ]),
-                                h('Tooltip', {
-                                    props: {
                                         content: '角色授权',
                                         placement: 'top',
                                         transfer: true
@@ -204,9 +184,6 @@
                         this.accseeList = this._renturnAccessNeedArr(res.date);
                     }
                 });
-            },
-            _delRole() {
-                console.log('aa');
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;

@@ -5,6 +5,6 @@
             "libraryName": "element-ui",
             "styleLibraryName": "theme-chalk"
         }
-    ]]],
+    ]],"transform-vue-jsx"],
     "comments": false
 }
