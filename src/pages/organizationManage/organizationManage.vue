@@ -11,10 +11,10 @@
                 </div>
                 <div class="detail">
                     <span style="width:600px;">包含岗位</span>
-                    <span style="width:160px;">部门负责人姓名</span>
                     <span style="width:160px;">部门负责人</span>
-                    <span style="width:160px;">分管部门领导姓名</span>
+                    <span style="width:160px;">部门负责人岗位</span>
                     <span style="width:160px;">分管部门领导</span>
+                    <span style="width:160px;">分管部门领导岗位</span>
                 </div>
             </div>
             <div class="" style="width: 100%;overflow: auto;" :style="{'height': initHeight + 'px'}">
@@ -30,6 +30,70 @@
                 </el-tree>
             </div>
         </div>
+        <Modal v-model="depSettingFlag"
+               :mask-closable="false"
+               width="800">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>编辑部门</span>
+            </p>
+            <Form :model="depSettingForm"
+                  ref="coinForm"
+                  :label-width="80">
+                <FormItem label="上级部门">
+                    <el-cascader
+                            :options="orgData[0] ? orgData[0].children : []"
+                            :props="depProps"
+                            v-model="depSettingForm.fatherId"
+                            change-on-select
+                            size="small"
+                            style="width: 100%"
+                            @change="_depChange"
+                    ></el-cascader>
+                </FormItem>
+                <FormItem prop="target" label="当前部门">
+                    <Input type="text"
+                           v-model="depSettingForm.name"></Input>
+                </FormItem>
+                <Row>
+                    <Col :span="12">
+                        <FormItem label="分管部门领导岗位" :label-width="120">
+                            <Input type="text" v-model="depSettingForm.charger"></Input>
+                        </FormItem>
+                    </Col>
+                    <Col :span="12">
+                        <FormItem label="分管部门领导" :label-width="100">
+                            <Input type="text" v-model="depSettingForm.chargerName"></Input>
+                        </FormItem>
+                    </Col>
+                    <!--<Col :span="12">-->
+                        <!--<FormItem label="分管部门领导用户id" :label-width="120">-->
+                            <!--<Input type="text" v-model="depSettingForm.chargerUserId"></Input>-->
+                        <!--</FormItem>-->
+                    <!--</Col>-->
+                </Row>
+                <Row>
+                    <Col :span="12">
+                        <FormItem label="负责人岗位" :label-width="120">
+                            <Input type="text" v-model="depSettingForm.leader"></Input>
+                        </FormItem>
+                    </Col>
+                    <Col :span="12">
+                        <FormItem label="负责人" :label-width="100">
+                            <Input type="text" v-model="depSettingForm.leaderName"></Input>
+                        </FormItem>
+                    </Col>
+                    <!--<Col :span="12">-->
+                        <!--<FormItem label="负责人用户id" :label-width="120">-->
+                            <!--<Input type="text" v-model="depSettingForm.leaderUserId"></Input>-->
+                        <!--</FormItem>-->
+                    <!--</Col>-->
+                </Row>
+            </Form>
+            <div slot="footer">
+                <Button type="primary">确认修改</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="coinSettingFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
@@ -93,7 +157,27 @@
         name: 'organizationManage',
         data () {
             return {
+                depSettingFlag: false,
+                storePath: [],
+                depSettingForm: {
+                    name: '',
+                    fatherId: [],
+                    charger: '',
+                    chargerId: '',
+                    chargerName: '',
+                    chargerUserId: '',
+                    leader: '',
+                    leaderId: '',
+                    leaderName: '',
+                    leaderUserId: '',
+                    posyIds: '',
+                    postName: ''
+                },
                 orgData: [],
+                depProps: {
+                    value: 'id',
+                    label: 'name'
+                },
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -112,6 +196,22 @@
           this._setTreeHeight()
         },
         methods: {
+            _depChange(data) {
+
+            },
+            _storeFilter(root, path, id) {
+                root.forEach((item) => {
+                    if (item.id === id) this.storePath = [...path, id];
+                    if (item.children) this._storeFilter(item.children, [...path, item.id], id);
+                });
+            },
+            _returnOrgIds(id) {
+                if (!this.orgData[0]) return [];
+                let depsStore = this.orgData[0].children;
+                let path = [];
+                this._storeFilter(depsStore, path, id);
+                return this.storePath;
+            },
             _setTreeHeight() {
                 let dm = document.body.clientHeight;
                 this.initHeight = dm - 220;
@@ -127,11 +227,38 @@
                     }
                 })
             },
+            _returnNeedPostList(ids, names) {
+                let idsArr = ids.split(',').filter(x => !!x);
+                let namesArr = names.split(',').filter(x => !!x);
+                let storeArr = [];
+                for (let i = 0, length = idsArr.length; i < length; i++) {
+                    storeArr[i] = {}
+                }
+                storeArr.forEach((item, index, arr) => {
+                    item.id = +idsArr[index];
+                    item.name = namesArr[index]
+                });
+                return storeArr;
+            },
             append(store, data) {
                 store.append({name: 'testtest', postNames: 'a', member: 'b', chargerName: 'c', leaderName: 'd', children: [] }, data)
             },
             editInfo(store, data) {
                 console.log(data);
+
+                this.depSettingForm.name = data.name;
+                this.depSettingForm.fatherId = this._returnOrgIds(data.fatherId);
+                this.depSettingForm.charger = data.chargerName;
+                // this.depSettingForm.chargerId = data.realname;
+                this.depSettingForm.chargerName = data.chargerName;
+                // this.depSettingForm.chargerUserId = moment(data.joindate).format('YYYY-MM-DD');
+                this.depSettingForm.leader = data.leaderName;
+                // this.depSettingForm.leaderId = data.realname;
+                this.depSettingForm.leaderName = data.leaderName;
+                // this.depSettingForm.leaderUserId = data.postid;
+                // this.userSettingForm.posyIds = data.kq_type.split(',').map(Number);
+                // this.userSettingForm.postName = data.p_name;
+                this.depSettingFlag = true;
             },
             remove(store, data) {
                 console.log(store)
