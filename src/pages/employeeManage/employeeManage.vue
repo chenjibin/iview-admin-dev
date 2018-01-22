@@ -154,16 +154,16 @@
                 </Row>
                 <Row>
                     <Col :span="8">
-                    <FormItem label="岗位">
-                        <Select v-model="userSettingForm.post">
-                            <Option v-for="item in postList" :value="item.id" :key="item.id">{{item.name}}</Option>
-                        </Select>
-                    </FormItem>
+                        <FormItem label="岗位">
+                            <Select v-model="userSettingForm.post" :disabled="!userSettingForm.dep.length">
+                                <Option v-for="item in postList" :value="item.id" :key="item.id">{{item.name}}</Option>
+                            </Select>
+                        </FormItem>
                     </Col>
                     <Col :span="8">
                         <FormItem label="职级">
-                            <Select v-model="userSettingForm.level">
-                                <Option v-for="item in levelData" :value="item.id" :key="item.id">{{item.code}}</Option>
+                            <Select v-model="userSettingForm.level" :disabled="!userSettingForm.post">
+                                <Option :value="levelCodeOpt.code" :key="'level-' + levelCodeOpt.code">{{levelCodeOpt.code}}</Option>
                             </Select>
                         </FormItem>
                     </Col>
@@ -192,7 +192,7 @@
                         title="是否确认重置此用户密码？">
                     <Button type="warning" v-show="userFormType === 'update'">重置密码</Button>
                 </Poptip>
-                <Button type="primary" v-show="userFormType === 'add'">添加</Button>
+                <Button type="primary" v-show="userFormType === 'add'" @click="_addUser">添加</Button>
                 <Button type="primary" v-show="userFormType === 'update'" @click="_updateUserInfo">更新</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
             </div>
@@ -340,6 +340,17 @@
             },
             'searchData.roleId'() {
                 this._filterResultHandler();
+            },
+            'userSettingForm.post'(val) {
+                if (val) {
+                    this.$http.get('/organize/getLevel', {params: {id: val}}).then((res) => {
+                        if (res.success) {
+                            this.levelCodeOpt.code = res.date.level.split(',')[0];
+                            console.log(this.levelCodeOpt);
+                        }
+                    })
+                }
+                console.log(val)
             },
             social(val) {
                 console.log(val);
@@ -628,6 +639,9 @@
                 userData: [],
                 levelData: [],
                 orgTreeData: [],
+                levelCodeOpt: {
+                    code: ''
+                },
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -835,13 +849,35 @@
                 data.realName = this.userSettingForm.name;
                 data.sex = this.userSettingForm.sex;
                 data.no_write = this.userSettingForm.isLog ? 0 : 1;
-                data.banci = this.userSettingForm.banci;
+                data.banci = this.userSettingForm.banci.join(',');
+                data.organizeId = this.userSettingForm.dep.slice(-1)[0];
+                data.level = this.userSettingForm.level;
+                data.postId = this.userSettingForm.post;
+                data.leaderName = this.userSettingForm.vUp;
+                data.roleId = this.userSettingForm.role;
+                console.log(data);
+                this.$http.post('/user/setUserInfo ', data).then((res) => {
+                    console.log(res)
+                })
+            },
+            _addUser() {
+                let data = {};
+                data.isUpdate = false;
+                data.userName = this.userSettingForm.account;
+                data.passWord = this.defaultPsd;
+                data.states = this.userSettingForm.states ? 1 : 0;
+                data.joinDate = moment(this.userSettingForm.inJobTime).format('YYYY-MM-DD');
+                data.realName = this.userSettingForm.name;
+                data.sex = this.userSettingForm.sex;
+                data.no_write = this.userSettingForm.isLog ? 0 : 1;
+                data.banci = this.userSettingForm.banci.join(',');
                 data.organizeId = this.userSettingForm.dep.slice(-1)[0];
                 data.level = this.userSettingForm.level;
                 data.postId = this.userSettingForm.post;
                 data.leaderName = this.userSettingForm.vUp;
                 data.roleName = this.userSettingForm.role;
-                console.log(data)
+
+                console.log(data);
             },
             _editorSetting(data) {
                 this.userSettingForm.states = !!data.states;
@@ -854,11 +890,9 @@
                 this.userSettingForm.post = data.postid;
                 this.userSettingForm.banci = data.kq_type.split(',').map(Number);
                 this.userSettingForm.vUp = data.p_name;
-                this.userSettingForm.level = '';
+                this.userSettingForm.level = data.levelcode;
                 this.userSettingForm.isLog = !data.no_write;
-
                 this._getPostList(data.lv);
-                console.log(data, this.userSettingForm);
                 this.userFormType = 'update';
                 this.settingModalFlag = true;
                 this.editUserId = data.id;
