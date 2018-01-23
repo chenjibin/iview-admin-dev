@@ -20,6 +20,7 @@
                            v-model="filterOpt.organizeName"
                            placeholder="筛选岗位部门"></Input>
                 </FormItem>
+
                 <FormItem label="状态">
                     <Select v-model="filterOpt.states"
                             clearable
@@ -52,7 +53,7 @@
                   show-elevator
                   style="margin-top: 16px;"></Page>
             <Modal v-model="settingModalFlag"
-                   width="800"
+                   width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>{{postFormType === 'update' ? '岗位设置' : '添加用户岗位'}}</span>
@@ -69,22 +70,30 @@
                         </Col>
                     </Row>
                     <Row>
-                        <Col :span="8">
+                        <Col :span="12">
                             <FormItem label="岗位名称">
                                 <Input v-model="postSettingForm.name" :disabled="postFormType === 'update'"></Input>
                             </FormItem>
                         </Col>
-                        <Col :span="8">
+                        <Col :span="12">
                             <FormItem label="岗位编号">
                                 <Input v-model="postSettingForm.number"></Input>
                             </FormItem>
                         </Col>
-                        <Col :span="8">
+                        <Col :span="24">
                             <FormItem label="岗位部门">
-                                <Input v-model="postSettingForm.organizename"></Input>
+                                <el-cascader
+                                        :options="orgTreeData[0] ? orgTreeData[0].children : []"
+                                        :props="depProps"
+                                        v-model="postSettingForm.organizename"
+                                        change-on-select
+                                        size="small"
+                                        style="width: 100%"
+                                ></el-cascader>
                             </FormItem>
                         </Col>
                     </Row>
+
                     <Row>
                         <Col :span="8">
                             <FormItem label="在岗人员">
@@ -129,6 +138,11 @@
             return {
                 settingModalFlag: false,
                 postFormType: 'update',
+                orgTreeData: [],
+                depProps: {
+                    value: 'id',
+                    label: 'name'
+                },
                 postSettingForm: {
                     states: '',
                     name: '',
@@ -220,6 +234,7 @@
         created() {
             this._getPostData();
             this._setTableHeight();
+            this._getOrgTree();
         },
         methods: {
             _initPostForm() {
@@ -261,7 +276,7 @@
                 this.postFormType = 'update';
                 this.postSettingForm.states = !!data.states;
                 this.postSettingForm.name = data.name;
-                this.postSettingForm.organizename = data.organizename;
+                this.postSettingForm.organizename = this._returnOrgIds(data.lv);
                 this.postSettingForm.number = data.number;
                 this.postSettingForm.username = data.username;
                 this.postSettingForm.level = data.level;
@@ -276,6 +291,26 @@
                 data.states = this.filterOpt.states;
                 data.organizeName = this.filterOpt.organizeName;
                 this.getList('/post/datalist', data);
+            },
+            _storeFilter(root, path, id) {
+                root.forEach((item) => {
+                    if (item.id === id) this.storePath = [...path, id];
+                    if (item.children) this._storeFilter(item.children, [...path, item.id], id);
+                });
+            },
+            _returnOrgIds(id) {
+                if (!this.orgTreeData[0]) return [];
+                let depsStore = this.orgTreeData[0].children;
+                let path = [];
+                this._storeFilter(depsStore, path, id);
+                return this.storePath;
+            },
+            _getOrgTree() {
+                this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
+                    if (res.success) {
+                        this.orgTreeData = res.date;
+                    }
+                });
             }
         },
         components: {}

@@ -1,40 +1,52 @@
 <template>
     <div>
         <Row :gutter="10">
-            <Col :span="6">
+            <Col :span="4">
                 <Card>
                     <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
-                    <el-tree :data="data"
+                    <el-tree :data="treeData"
                              ref="treeDom"
                              :filter-node-method="filterNode"
+                             :expand-on-click-node="false"
+                             :highlight-current="true"
                              style="margin-top: 10px;"
+                             @node-click="_treeNodeClickHandler"
                              :props="defaultProps"></el-tree>
                 </Card>
             </Col>
-            <Col :span="18">
+            <Col :span="20">
                 <Card>
                     <Form ref="searchData" :model="searchData" inline :label-width="60">
                         <FormItem prop="name" label="姓名">
-                            <Input type="text" v-model="searchData.name" placeholder="姓名"></Input>
+                            <Input type="text"
+                                   @on-change="_inputDebounce"
+                                   v-model="searchData.name"
+                                   placeholder="姓名"></Input>
                         </FormItem>
                         <FormItem prop="startDate" label="开始日期">
                             <DatePicker type="date"
+                                        @on-change="_setStartDate"
                                         placeholder="开始日期"
                                         :value="searchData.startDate"></DatePicker>
                         </FormItem>
                         <FormItem prop="endDate" label="结束日期">
                             <DatePicker type="date"
+                                        @on-change="_setEndDate"
                                         placeholder="结束日期"
                                         :value="searchData.endDate"></DatePicker>
                         </FormItem>
                         <FormItem label="指导状态">
-                            <Select v-model="searchData.status" clearable>
+                            <Select v-model="searchData.status"
+                                    @on-change="_filterResultHandler"
+                                    clearable>
                                 <Option value="1">已指导</Option>
-                                <Option value="2">未指导</Option>
+                                <Option value="0">未指导</Option>
                             </Select>
                         </FormItem>
                         <FormItem label="日志类型">
-                            <Select v-model="searchData.type" clearable>
+                            <Select v-model="searchData.type"
+                                    @on-change="_filterResultHandler"
+                                    clearable>
                                 <Option value="1">休息</Option>
                                 <Option value="0">出勤</Option>
                             </Select>
@@ -42,69 +54,217 @@
                     </Form>
                     <Table :columns="columns1"
                            :loading="tableLoading"
-                           height="700"
-                           :data="data1"></Table>
-                    <Page :total="100" show-sizer show-elevator style="margin-top: 16px;"></Page>
+                           :height="tableHeight"
+                           :data="pageData.list"></Table>
+                    <Page :total="pageData.totalCount"
+                          @on-change="_setPage"
+                          @on-page-size-change="_setPageSize"
+                          :page-size="pageData.pageSize"
+                          show-sizer
+                          show-total
+                          show-elevator
+                          style="margin-top: 16px;"></Page>
                 </Card>
             </Col>
         </Row>
+        <Modal v-model="checkLogFlag"
+               :mask-closable="false"
+               width="800">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>正在查看 {{logModalData.name + ' ' + logModalData.date}}日志</span>
+            </p>
+            <div id="check-log-modal-content">
+                <Row :gutter="24">
+                    <Col :span="16">
+                        <h3>日志内容</h3>
+                        <div class="" v-html="logModalData.content"></div>
+                    </Col>
+                    <Col :span="8">
+                        <h3>上级指导</h3>
+                        <div class="log-guider-wrapper">
+                            <ul v-if="!!logModalData.upGuider.length" class="log-guider-list">
+                                <li v-for="item in logModalData.upGuider" class="log-guider-item">
+                                    <Row :gutter="1">
+                                        <Col :span="12">
+                                            <span>{{item.name}}</span>
+                                        </Col>
+                                        <Col :span="12">
+                                            <span>{{item.time}}</span>
+                                        </Col>
+                                        <Col :span="24">
+                                            <p>{{item.content}}</p>
+                                        </Col>
+                                    </Row>
+                                </li>
+                            </ul>
+                            <p v-else>暂无指导</p>
+                        </div>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Form :model="commentData"
+                      style="text-align: left"
+                      :rules="commentRules"
+                      ref="commentForm"
+                      :label-width="60">
+                    <FormItem label="指导" prop="advice">
+                        <Input v-model="commentData.advice"
+                               type="textarea" :autosize="{minRows: 2,maxRows: 5}"
+                               placeholder="指导建议..."></Input>
+                    </FormItem>
+                    <FormItem label="评价">
+                        <Select v-model="commentData.result" style="width: 80px;">
+                            <Option value="1">优秀</Option>
+                            <Option value="2">合格</Option>
+                            <Option value="3">不合格</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem>
+                        <Button type="primary" @click="_submitComment">提交评价</Button>
+                    </FormItem>
+                </Form>
+            </div>
+        </Modal>
     </div>
 </template>
-<style>
-
+<style lang="less">
+    #check-log-modal-content {
+        font-size: 14px;
+        .log-guider-wrapper {
+            .log-guider-list {
+                .log-guider-item {
+                    padding: 8px 0;
+                    border-bottom: 1px solid #ddd;
+                }
+            }
+        }
+    }
 </style>
 <script>
+    import pageMixin from '@/mixins/pageMixin';
+    import debounce from 'lodash/debounce';
+    import utils from '@/libs/util';
     export default {
-        name: 'logManage',
+        name: 'elogManage',
         watch: {
             filterText(val) {
                 this.$refs.treeDom.filter(val);
+            },
+            'searchData.depId'() {
+                this._filterResultHandler();
+            },
+            'searchData.startDate'() {
+                this._filterResultHandler();
+            },
+            'searchData.endDate'() {
+                this._filterResultHandler();
             }
         },
+        mixins: [pageMixin],
         data () {
             return {
                 tableLoading: false,
+                checkLogFlag: false,
+                commentData: {
+                    advice: '',
+                    result: '2'
+                },
+                commentRules: {
+                    advice: [
+                        { required: true, message: '评语不能为空！', trigger: 'blur' }
+                    ]
+                },
+                logModalData: {
+                    name: '',
+                    content: '',
+                    date: '',
+                    upGuider: [
+                        {
+                            name: '小明',
+                            time: '2017-12-22',
+                            content: 'ok'
+                        },
+                        {
+                            name: '小明',
+                            time: '2017-12-22',
+                            content: 'ok'
+                        }
+                    ]
+                },
                 searchData: {
                     name: '',
                     startDate: '',
                     endDate: '',
                     status: '',
-                    type: ''
+                    type: '',
+                    depId: ''
                 },
+                treeData: [],
                 columns1: [
                     {
                         title: '员工姓名',
-                        key: 'name',
+                        key: 'username',
                         align: 'center',
                         width: 120
                     },
                     {
                         title: '提交日期',
-                        key: 'date',
+                        key: 'writedate',
                         width: 120,
                         align: 'center'
                     },
                     {
                         title: '日志内容',
                         key: 'content',
-                        ellipsis: true
+                        ellipsis: true,
+                        render: (h, params) => {
+                            return h('span', utils.delHtmlTag(params.row.content))
+                        }
                     },
                     {
                         title: '指导状态',
-                        key: 'status',
+                        key: 'states',
                         align: 'center',
                         width: 110
                     },
                     {
                         title: '评级结果',
-                        key: 'result',
+                        key: 'level',
                         align: 'center',
                         width: 110
                     },
                     {
                         title: '操作',
-                        align: 'center',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                h('Tooltip', {
+                                    props: {
+                                        content: '查看',
+                                        placement: 'top',
+                                        transfer: true
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            icon: 'eye',
+                                            shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function () {
+                                                vm._checkLogOpen(params.row)
+                                            }
+                                        },
+                                        style: {
+                                            marginRight: '4px'
+                                        }
+                                    })
+                                ])
+                            ]);
+                        }
                     }
                 ],
                 data1: [
@@ -277,7 +437,8 @@
                         content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
                     }
                 ],
-                data: [{
+                data: [
+                    {
                     label: '一级 1',
                     children: [{
                         label: '二级 1-1',
@@ -314,12 +475,90 @@
                 }],
                 defaultProps: {
                     children: 'children',
-                    label: 'label'
+                    label: 'text'
                 },
-                filterText: ''
+                filterText: '',
+                tableHeight: 300
             };
         },
+        created() {
+            this._setTableHeight();
+            this._getOrgTreeData().then(() => {
+                this._getLogData()
+            })
+        },
         methods: {
+            _inputDebounce: debounce(function () {
+                this._filterResultHandler();
+            }, 600),
+            _filterResultHandler() {
+                this.initPage();
+                this._getLogData();
+            },
+            _setStartDate(date) {
+                this.searchData.startDate = date;
+            },
+            _setEndDate(date) {
+                this.searchData.endDate = date;
+            },
+            _setPage(page) {
+                this.pageData.page = page;
+                this._getLogData();
+            },
+            _setPageSize(size) {
+                this.pageData.pageSize = size;
+                this._getLogData();
+            },
+            _setTableHeight() {
+                let dm = document.body.clientHeight;
+                this.tableHeight = dm - 280;
+            },
+            _checkLogOpen(data) {
+                this.logModalData.date = data.date;
+                this.logModalData.name = data.name;
+                this.logModalData.content = data.content;
+                this.checkLogFlag = true;
+                console.log(data)
+            },
+            _getLogData() {
+                let data = {};
+                data.userName = this.searchData.name;
+                data.startDate = this.searchData.startDate;
+                data.endDate = this.searchData.endDate;
+                data.states = this.searchData.status;
+                data.type = this.searchData.type;
+                data.organizeId = this.searchData.depId;
+
+                this.getList('/journal/maglist', data);
+            },
+            _treeNodeClickHandler(data) {
+                this.searchData.depId = data.id;
+            },
+            _submitComment() {
+                this.$refs.commentForm.validate((val) => {
+                    if (val) {
+                        this.$http.post('',this.commentData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('评价成功!');
+                                this._getLogData();
+                                this.checkLogFlag = false;
+                            }
+                        });
+                    }
+                })
+            },
+            _getOrgTreeData() {
+                return new Promise((resolve => {
+                    this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
+                        console.log(res);
+                        if (res.success) {
+                            this.treeData = res.date;
+                            this.searchData.depId = res.date[0].id;
+                            resolve();
+                        }
+                    })
+                }))
+            },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.label.indexOf(value) !== -1;

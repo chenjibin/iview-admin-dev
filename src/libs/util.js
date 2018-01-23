@@ -297,4 +297,7 @@ util.initMenu = function (vm, routeData) {
     vm.$store.commit('updateMenulist');
 };
 
+util.delHtmlTag = function (str) {
+    return str.replace(/<[^>]+>/g, '').replace(/&nbsp[;]/g, '');
+};
 export default util;

@@ -115,7 +115,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '200',
+                        width: '240',
                         align: 'center',
                         render: (h, params) => {
                             if (params.row.kq_re) {
