@@ -179,6 +179,7 @@
                     name: '',
                     content: '',
                     date: '',
+                    id: '',
                     upGuider: [
                         {
                             name: '小明',
@@ -226,13 +227,48 @@
                         title: '指导状态',
                         key: 'states',
                         align: 'center',
-                        width: 110
+                        width: 110,
+                        render: (h, params) => {
+                            return h('Tag', {
+                                props: {
+                                    type: 'border',
+                                    color: +params.row.states === 1 ? 'green' : 'red'
+                                }
+                            }, +params.row.states === 1 ? '已指导' : '未指导');
+                        }
                     },
                     {
                         title: '评级结果',
                         key: 'level',
                         align: 'center',
-                        width: 110
+                        width: 110,
+                        render: (h, params) => {
+                            let bgColor = '';
+                            let content = '';
+                            switch (params.row.level) {
+                                case 0:
+                                    bgColor = 'default';
+                                    content = '未评价';
+                                    break
+                                case 1:
+                                    bgColor = 'green';
+                                    content = '优秀';
+                                    break
+                                case 2:
+                                    bgColor = 'green';
+                                    content = '合格';
+                                    break
+                                case 3:
+                                    bgColor = 'red';
+                                    content = '不合格'
+                            }
+                            return h('Tag', {
+                                props: {
+                                    type: 'border',
+                                    color: bgColor
+                                }
+                            }, content);
+                        }
                     },
                     {
                         title: '操作',
@@ -488,6 +524,12 @@
             })
         },
         methods: {
+            _initCommentData() {
+                this.commentData = {
+                    advice: '',
+                    result: '2'
+                }
+            },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
             }, 600),
@@ -514,9 +556,12 @@
                 this.tableHeight = dm - 280;
             },
             _checkLogOpen(data) {
-                this.logModalData.date = data.date;
-                this.logModalData.name = data.name;
+                this.logModalData.date = data.writedate;
+                this.logModalData.name = data.username;
                 this.logModalData.content = data.content;
+                this.logModalData.id = data.id;
+                this.$refs.commentForm.resetFields();
+                this._initCommentData();
                 this.checkLogFlag = true;
                 console.log(data)
             },
@@ -537,7 +582,11 @@
             _submitComment() {
                 this.$refs.commentForm.validate((val) => {
                     if (val) {
-                        this.$http.post('',this.commentData).then((res) => {
+                        let data = {};
+                        data.content = this.commentData.advice;
+                        data.type = this.commentData.result;
+                        data.id = this.logModalData.id;
+                        this.$http.post('/journal/addGuide', data).then((res) => {
                             if (res.success) {
                                 this.$Message.success('评价成功!');
                                 this._getLogData();
@@ -561,7 +610,7 @@
             },
             filterNode(value, data) {
                 if (!value) return true;
-                return data.label.indexOf(value) !== -1;
+                return data.text.indexOf(value) !== -1;
             }
         },
         components: {}
