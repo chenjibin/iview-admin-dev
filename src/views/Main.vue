@@ -91,7 +91,7 @@
         },
         data () {
             return {
-                shrink: false,
+                shrink: true,
                 userName: '',
                 isFullScreen: false,
                 openedSubmenuArr: this.$store.state.app.openedSubmenuArr
@@ -130,7 +130,7 @@
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
-                this.userName = Cookies.get('user');
+                this.userName = JSON.parse(Cookies.get('userInfo')).userName;
                 let messageCount = 3;
                 this.messageCount = messageCount.toString();
                 this.checkTag(this.$route.name);
@@ -201,9 +201,9 @@
             this.init();
         },
         created () {
-            this.getPermissionData().then((data) => {
-                util.initMenu(this, data);
-            });
+            // this.getPermissionData().then((data) => {
+            //     util.initMenu(this, data);
+            // });
             // 显示打开的页面的列表
             this.$store.commit('setOpenedList');
         }

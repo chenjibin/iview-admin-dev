@@ -2,7 +2,6 @@ import Vue from 'vue';
 import iView from 'iview';
 import { Tree, Cascader, Checkbox } from 'element-ui';
 import { router } from './router/index';
-// import {appRouter, page404} from './router/router';
 import store from './store';
 import App from './app.vue';
 import '@/locale';
@@ -27,13 +26,6 @@ new Vue({
         currentPageName: ''
     },
     methods: {
-        getPermissionData() {
-            return new Promise((resolve, reject) => {
-                this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
-                    resolve(res.date);
-                });
-            });
-        }
     },
     mounted() {
         this.currentPageName = this.$route.name;
@@ -42,13 +34,5 @@ new Vue({
         this.$store.commit('initCachepage');
     },
     created() {
-        if (Cookies.get('token')) {
-            // this.getPermissionData().then((data) => {
-            //     console.log('aaaaaaa');
-            //     util.initMenu(this, data);
-            // });
-        } else {
-            this.$router.replace({ name: 'login' });
-        }
     }
 });

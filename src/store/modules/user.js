@@ -10,13 +10,12 @@ const user = {
             axios.get('/login/logout').then((res) => {
                 if (res.Success) {
                     Cookies.remove('user');
+                    Cookies.remove('userInfo');
                     Cookies.remove('password');
                     Cookies.remove('token');
                     store.commit('setPremissionMenu', []);
                     store.commit('clearAllTags');
-                    router.push({
-                        name: 'login'
-                    });
+                    window.location.reload();
                     // 恢复默认样式
                     let themeLink = document.querySelector('link[name="theme"]');
                     themeLink.setAttribute('href', '');

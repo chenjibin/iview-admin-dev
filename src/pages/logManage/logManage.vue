@@ -77,21 +77,21 @@
                 <Row :gutter="24">
                     <Col :span="16">
                         <h3>日志内容</h3>
-                        <div class="" v-html="logModalData.content"></div>
+                        <div style="margin-top: 16px" v-html="logModalData.content"></div>
                     </Col>
                     <Col :span="8">
                         <h3>上级指导</h3>
                         <div class="log-guider-wrapper">
-                            <ul v-if="!!logModalData.upGuider.length" class="log-guider-list">
-                                <li v-for="item in logModalData.upGuider" class="log-guider-item">
+                            <ul v-if="!!upGuider.length" class="log-guider-list">
+                                <li v-for="item in upGuider" class="log-guider-item">
                                     <Row :gutter="1">
                                         <Col :span="12">
-                                            <span>{{item.name}}</span>
+                                            <span>{{item.guider}}</span>
                                         </Col>
                                         <Col :span="12">
-                                            <span>{{item.time}}</span>
+                                            <span>{{item.guidedate | dateFormatter}}</span>
                                         </Col>
-                                        <Col :span="24">
+                                        <Col :span="24" style="margin-top: 8px;">
                                             <p>{{item.content}}</p>
                                         </Col>
                                     </Row>
@@ -132,6 +132,7 @@
     #check-log-modal-content {
         font-size: 14px;
         .log-guider-wrapper {
+            margin-top: 16px;
             .log-guider-list {
                 .log-guider-item {
                     padding: 8px 0;
@@ -145,6 +146,7 @@
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
     import utils from '@/libs/util';
+    import moment from 'moment';
     export default {
         name: 'elogManage',
         watch: {
@@ -175,23 +177,12 @@
                         { required: true, message: '评语不能为空！', trigger: 'blur' }
                     ]
                 },
+                upGuider: [],
                 logModalData: {
                     name: '',
                     content: '',
                     date: '',
-                    id: '',
-                    upGuider: [
-                        {
-                            name: '小明',
-                            time: '2017-12-22',
-                            content: 'ok'
-                        },
-                        {
-                            name: '小明',
-                            time: '2017-12-22',
-                            content: 'ok'
-                        }
-                    ]
+                    id: ''
                 },
                 searchData: {
                     name: '',
@@ -523,6 +514,11 @@
                 this._getLogData()
             })
         },
+        filters: {
+            dateFormatter(val) {
+                return moment(val).format('YYYY-MM-DD')
+            }
+        },
         methods: {
             _initCommentData() {
                 this.commentData = {
@@ -556,14 +552,27 @@
                 this.tableHeight = dm - 280;
             },
             _checkLogOpen(data) {
+                this.upGuider = [];
                 this.logModalData.date = data.writedate;
                 this.logModalData.name = data.username;
                 this.logModalData.content = data.content;
                 this.logModalData.id = data.id;
+                this._getUpGuiderData();
                 this.$refs.commentForm.resetFields();
                 this._initCommentData();
                 this.checkLogFlag = true;
                 console.log(data)
+            },
+            _getUpGuiderData() {
+                let data = {
+                    id: this.logModalData.id
+                };
+                this.$http.get('/journal/guideJson', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.upGuider = res.date;
+                    }
+                    console.log(res);
+                })
             },
             _getLogData() {
                 let data = {};

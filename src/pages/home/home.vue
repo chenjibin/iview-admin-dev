@@ -18,8 +18,8 @@
                                 <Col span="16" style="padding-left:6px;">
                                 <Row class-name="made-child-con-middle" type="flex" align="middle">
                                     <div>
-                                        <b class="card-user-infor-name">陈继斌</b>
-                                        <p>技术部（web前端工程师）</p>
+                                        <b class="card-user-infor-name">{{userInfo.userName}}</b>
+                                        <p>{{userInfo.organizeName + '（' + userInfo.postName + '）'}}</p>
                                     </div>
                                 </Row>
                                 </Col>
@@ -93,24 +93,6 @@
                 <Row>
                     <Notice></Notice>
                 </Row>
-                <!--<Row :gutter="5" style="margin-bottom: 10px;">-->
-                    <!--<Col :md="12" :lg="12">-->
-                        <!--<coin-ranking-->
-                                <!--:loading="coinLoadingFlag"-->
-                                <!--tag-color="#19be6b"-->
-                                <!--coin-title="金币排行红榜"-->
-                                <!--:row-data="rankDataRed">-->
-                        <!--</coin-ranking>-->
-                    <!--</Col>-->
-                    <!--<Col :md="12" :lg="12">-->
-                        <!--<coin-ranking-->
-                                <!--:loading="coinLoadingFlag"-->
-                                <!--tag-color="#ed3f14"-->
-                                <!--coin-title="金币排行黑榜"-->
-                                <!--:row-data="rankDataBlack">-->
-                        <!--</coin-ranking>-->
-                    <!--</Col>-->
-                <!--</Row>-->
                 <Row>
                     <people-change></people-change>
                 </Row>
@@ -125,7 +107,7 @@ import Notice from './components/notice';
 import peopleChange from './components/peopleChange';
 import injobCommemorate from './components/injobCommemorate';
 import coinChange from './components/coinChange';
-
+import Cookies from 'js-cookie';
 export default {
     name: 'home',
     components: {
@@ -137,60 +119,12 @@ export default {
     },
     data () {
         return {
-            // coinLoadingFlag: false,
-            // rankDataRed: [],
-            // rankDataBlack: [],
-            data2: [
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'New York No. 1 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'London No. 1 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'Sydney No. 1 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'Ottawa No. 2 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'New York No. 1 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'London No. 1 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'Sydney No. 1 Lake Park',
-                    coin: '35'
-                },
-                {
-                    sort: 'No.1',
-                    name: 'Jon Snow',
-                    address: 'Ottawa No. 2 Lake Park',
-                    coin: '35'
-                }
-            ]
+            userInfo: {}
         };
+    },
+    created() {
+        this.userInfo = JSON.parse(Cookies.get('userInfo'));
+        console.log(this.userInfo);
     },
     computed: {
         avatorPath () {

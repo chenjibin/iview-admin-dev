@@ -232,6 +232,7 @@ util.toDefaultPage = function (routers, name, route, next) {
     let notHandle = true;
     while (i < len) {
         if (routers[i].name === name && routers[i].children && routers[i].redirect === undefined) {
+            console.log('loglog')
             route.replace({
                 name: routers[i].children[0].name
             });
@@ -240,6 +241,11 @@ util.toDefaultPage = function (routers, name, route, next) {
             break;
         }
         i++;
+    }
+    if (!name) {
+        next({
+            name: localStorage.currentPageName || 'home_index'
+        })
     }
     if (notHandle) {
         next();
@@ -280,9 +286,9 @@ util.getNeedRouter = function (routeData) {
     return appR.filter(val => val.children.length > 0);
 };
 
-util.initMenu = function (vm, routeData) {
+util.initMenu = function (router, store, routeData) {
     let syncRouterAll = util.getNeedRouter(routeData);
-    vm.$router.addRoutes(syncRouterAll.concat([page404]));
+    router.addRoutes(syncRouterAll.concat([page404]));
     let tagsList = [];
     syncRouterAll.map((item) => {
         if (item.children.length <= 1) {
@@ -291,10 +297,17 @@ util.initMenu = function (vm, routeData) {
             tagsList.push(...item.children);
         }
     });
-    vm.$store.commit('setTagsList', tagsList);
-    vm.$store.commit('setRouters', syncRouterAll);
-    vm.$store.commit('setPremissionMenu', syncRouterAll);
-    vm.$store.commit('updateMenulist');
+    store.commit('setTagsList', tagsList);
+    store.commit('setRouters', syncRouterAll);
+    store.commit('setPremissionMenu', syncRouterAll);
+    store.commit('updateMenulist');
+};
+util.getPermissionData = function() {
+    return new Promise((resolve, reject) => {
+            axios.get('/jurisdiction/getMySystemMenu').then((res) => {
+                resolve(res.date);
+            });
+    });
 };
 
 util.delHtmlTag = function (str) {
