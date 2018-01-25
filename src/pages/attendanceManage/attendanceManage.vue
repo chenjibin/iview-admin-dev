@@ -86,8 +86,9 @@
                 </Upload>
                 <div slot="footer"></div>
             </Modal>
+
             <Modal v-model="settingModalFlag"
-                   width="1000"
+                   width="1150"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>{{attendanceOpt.userName + ' ' + attendanceOpt.monthDate}} 考勤总汇</span>
@@ -103,6 +104,55 @@
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
+            <Modal v-model="strangeModalFlag"
+                   width="400"
+                   :styles="{top: '160px', zIndex: 100}"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>异常设置</span>
+                </p>
+                <Form :model="strangeSettingForm" :label-width="80">
+                    <FormItem label="异常类型">
+                        <Select v-model="strangeSettingForm.type" clearable>
+                            <Option value="事假">事假</Option>
+                            <Option value="病假">病假</Option>
+                            <Option value="婚假">婚假</Option>
+                            <Option value="产假" >产假</Option>
+                            <Option value="年假" >年假</Option>
+                            <Option value="法假">法假</Option>
+                            <Option value="出差">出差</Option>
+                            <Option value="调休">调休</Option>
+                            <Option value="休息">休息</Option>
+                            <Option value="旷工">旷工</Option>
+                            <Option value="正常">正常</Option>
+                            <Option value="生日假">生日假</Option>
+                            <Option value="未入职">未入职</Option>
+                            <Option value="丧假">丧假</Option>
+                            <Option value="与排班不一致">与排班不一致</Option>
+                            <Option value="无薪假">无薪假</Option>
+                            <Option value="带薪假">带薪假</Option>
+                            <Option value="陪护假" >陪护假</Option>
+                            <Option value="取消设置">取消设置</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="请假天数">
+                        <Select v-model="strangeSettingForm.days" clearable>
+                            <Option value="1">1天</Option>
+                            <Option value="0.5">0.5天</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="异常描述">
+                        <Input v-model="strangeSettingForm.desc" type="textarea"
+                               :autosize="{minRows: 2,maxRows: 5}"
+                               placeholder=""></Input>
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary">确认设置</Button>
+                    <Button type="ghost" style="margin-left: 8px" @click="strangeModalFlag = false">取消</Button>
+                </div>
+            </Modal>
+
         </Card>
     </div>
 </template>
@@ -117,7 +167,13 @@
                 tableLoading2: false,
                 settingModalFlag: false,
                 importModalFlag: false,
+                strangeModalFlag: false,
                 postFormType: 'update',
+                strangeSettingForm: {
+                    type: '',
+                    days: '',
+                    desc: ''
+                },
                 uploadOpt: {
                     format: ['xls']
                 },
@@ -174,6 +230,7 @@
                         key: 'late_times',
                         align: 'center',
                         width: 60
+
                     },
                     {
                         title: '早退',
@@ -266,14 +323,13 @@
                         title: '打卡记录',
                         key: 'kq_re',
                         width: '240',
-                        fixed: 'left',
                         align: 'center',
                         render: (h, params) => {
                             if (params.row.kq_re) {
-                                let flag = +params.row.c_count || +params.row.z_count || +params.row.l_count;
+                                let flag = params.row.exception === null || +params.row.exception === 0;
                                 return h('Tag', {
                                     props: {
-                                        color: flag ? 'red' : 'green'
+                                        color: flag ? 'green' : 'red'
                                     },
                                     style: {
                                         fontSize: '14px'
@@ -291,25 +347,83 @@
                     {
                         title: '工种',
                         key: 'truetype',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '迟到',
                         key: 'c_count',
                         align: 'center',
-                        render: (h, params) => {
-                            return h()
+                        width: 100,
+                        render: (h ,params) => {
+                            if (+params.row.exception !== 2) {
+                                let vm = this;
+                                return h('InputNumber', {
+                                    props: {
+                                        value: params.row['c_count'],
+                                        size: 'small',
+                                        min: 0,
+                                        editable: false
+                                    },
+                                    on: {
+                                        'on-change' (val) {
+                                            params.row['c_count'] = val;
+                                            vm._setEveryStrangeNumber(val, 'late', params.row)
+                                        }
+                                    }
+                                })
+                            }
                         }
                     },
                     {
                         title: '早退',
                         key: 'z_count',
-                        align: 'center'
+                        align: 'center',
+                        width: 100,
+                        render: (h ,params) => {
+                            if (+params.row.exception !== 2) {
+                                let vm = this;
+                                return h('InputNumber', {
+                                    props: {
+                                        value: params.row['z_count'],
+                                        size: 'small',
+                                        min: 0,
+                                        editable: false
+                                    },
+                                    on: {
+                                        'on-change' (val) {
+                                            params.row['z_count'] = val;
+                                            vm._setEveryStrangeNumber(val, 'leave_early', params.row)
+                                        }
+                                    }
+                                })
+                            }
+                        }
                     },
                     {
                         title: '漏打卡',
                         key: 'l_count',
-                        align: 'center'
+                        align: 'center',
+                        width: 100,
+                        render: (h ,params) => {
+                            if (+params.row.exception !== 2) {
+                                let vm = this;
+                                return h('InputNumber', {
+                                    props: {
+                                        value: params.row['l_count'],
+                                        size: 'small',
+                                        min: 0,
+                                        editable: false
+                                    },
+                                    on: {
+                                        'on-change' (val) {
+                                            params.row['l_count'] = val;
+                                            vm._setEveryStrangeNumber(val, 'forget', params.row)
+                                        }
+                                    }
+                                })
+                            }
+                        }
                     },
                     {
                         title: '审核状态',
@@ -319,17 +433,15 @@
                     },
                     {
                         title: '备注信息',
-                        key: 'level',
+                        key: 'describeex',
                         align: 'center',
-                        width: 120
                     },
                     {
                         title: '操作',
-                        fixed: 'right',
-                        align: 'center',
                         width: 120,
                         render: (h, params) => {
                             let vm = this;
+                            let flag = params.row.exception === null || +params.row.exception === 0;
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
@@ -349,10 +461,12 @@
                                         },
                                         on: {
                                             click: function () {
+                                                vm._setStrangeDay(params.row)
                                             }
                                         }
                                     })
                                 ]),
+                                flag ? '' :
                                 h('Tooltip', {
                                     props: {
                                         content: '审核通过',
@@ -390,10 +504,34 @@
             this._setTableHeight();
         },
         methods: {
-            _exportCsv() {
-                this.$refs.attendanceTable.exportCsv({
-                    filename: 'The original data'
+            _initAttendanceOpt() {
+                this.attendanceOpt.userName = '';
+                this.attendanceOpt.monthDate = '';
+                this.attendanceOpt.data = [];
+            },
+            _initStrangeSettingForm() {
+                this.strangeSettingForm.type = '';
+                this.strangeSettingForm.days = '';
+                this.strangeSettingForm.desc = '';
+            },
+            _setStrangeDay(data) {
+                this.strangeModalFlag = true;
+                console.log(data)
+            },
+            _setEveryStrangeNumber(val, type, data) {
+                let sendData = {};
+                sendData.username = data.user_name;
+                sendData.id = data.id;
+                sendData.number = val;
+                sendData.type = type;
+                this.$http.post('/kq/updateStatistic', sendData).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('操作成功!');
+                        this._getUserStatistic();
+                        this._getPostData();
+                    }
                 });
+                console.log(sendData);
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -428,10 +566,14 @@
                 this._getPostData();
             },
             _editorSetting(data) {
-                this.tableLoading2 = true;
+                this._initAttendanceOpt();
                 this.attendanceOpt.userName = data.user_name;
                 this.attendanceOpt.monthDate = moment(data.record_month).format('YYYY-MM');
+                this._getUserStatistic();
                 this.settingModalFlag = true;
+            },
+            _getUserStatistic() {
+                this.tableLoading2 = true;
                 let sendData = {};
                 sendData.userName = this.attendanceOpt.userName;
                 sendData.recordMonth = this.attendanceOpt.monthDate;
@@ -439,11 +581,9 @@
                     if (res.success) {
                         this.attendanceOpt.data = res.data;
                     }
-                    console.log(res);
                 }).finally(() => {
                     this.tableLoading2 = false;
                 });
-                console.log(data);
             },
             _getPostData() {
                 let data = {};
