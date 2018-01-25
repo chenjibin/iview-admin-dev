@@ -5,39 +5,40 @@
                 <FormItem label="姓名">
                     <Input type="text"
                            @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
+                           v-model="filterOpt.userName"
                            placeholder="筛选姓名"></Input>
+                </FormItem>
+                <FormItem label="考勤月份">
+                    <DatePicker type="month"
+                                placeholder="筛选考勤月份"
+                                @on-change="_monthDateChange"
+                                :value="filterOpt.monthDate"></DatePicker>
                 </FormItem>
                 <FormItem label="部门">
                     <Input type="text"
                            @on-change="_inputDebounce"
-                           v-model="filterOpt.level"
+                           v-model="filterOpt.organizeName"
                            placeholder="筛选部门"></Input>
                 </FormItem>
                 <FormItem label="岗位">
                     <Input type="text"
                            @on-change="_inputDebounce"
-                           v-model="filterOpt.organizeName"
+                           v-model="filterOpt.postName"
                            placeholder="筛选岗位"></Input>
                 </FormItem>
                 <FormItem label="审核状态">
-                    <Select v-model="filterOpt.states"
+                    <Select v-model="filterOpt.kqstates"
                             clearable
                             @on-change="_filterResultHandler"
                             placeholder="筛选状态"
                             style="width: 100px">
-                        <Option value="1">审核完毕</Option>
-                        <Option value="0">未审核</Option>
+                        <Option value="2">审核完毕</Option>
+                        <Option value="1">未审核</Option>
                     </Select>
-                </FormItem>
-                <FormItem label="考勤月份">
-                    <DatePicker type="month"
-                                placeholder="筛选考勤月份"
-                                :value="filterOpt.date"></DatePicker>
                 </FormItem>
                 <FormItem>
                     <ButtonGroup>
-                        <Button type="ghost">
+                        <Button type="ghost" @click="importModalFlag = true">
                             <Icon type="ios-cloud-upload-outline"></Icon>
                             导入
                         </Button>
@@ -65,20 +66,40 @@
                   show-total
                   show-elevator
                   style="margin-top: 16px;"></Page>
+            <Modal v-model="importModalFlag"
+                   width="400"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>导入考勤表</span>
+                </p>
+                <Upload
+                        type="drag"
+                        :on-format-error="_uploadFormatErr"
+                        :on-success="_uploadSuccess"
+                        :on-error="_uploadFail"
+                        :format="uploadOpt.format"
+                        action="//jsonplaceholder.typicode.com/posts/">
+                    <div style="padding: 20px 0">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>点击或者拖拽文件到这里上传(后缀为.xls的文件)</p>
+                    </div>
+                </Upload>
+                <div slot="footer"></div>
+            </Modal>
             <Modal v-model="settingModalFlag"
                    width="1000"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>XXX 2017-01 考勤总汇</span>
+                    <span>{{attendanceOpt.userName + ' ' + attendanceOpt.monthDate}} 考勤总汇</span>
                 </p>
                 <div class="">
                     <Table :columns="attendanceAllCol"
                            :loading="tableLoading2"
                            height="500"
-                           :data="pageData.list"></Table>
+                           :data="attendanceOpt.data"></Table>
                 </div>
                 <div slot="footer">
-                    <Button type="primary">完成 XX 该月审核</Button>
+                    <Button type="primary">完成 {{attendanceOpt.userName}} 该月审核</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -87,6 +108,7 @@
 </template>
 <script>
     import pageMixin from '@/mixins/pageMixin';
+    import moment from 'moment';
     import debounce from 'lodash/debounce';
     export default {
         name: 'attendanceManage',
@@ -94,7 +116,11 @@
             return {
                 tableLoading2: false,
                 settingModalFlag: false,
+                importModalFlag: false,
                 postFormType: 'update',
+                uploadOpt: {
+                    format: ['xls']
+                },
                 depProps: {
                     value: 'id',
                     label: 'name'
@@ -107,11 +133,11 @@
                     username: ''
                 },
                 filterOpt: {
-                    name: '',
-                    level: '',
-                    states: '1',
+                    kqstates: '',
+                    userName: '',
+                    monthDate: '',
                     organizeName: '',
-                    date: ''
+                    postName: ''
                 },
                 attendanceDelData: [],
                 postColumns: [
@@ -122,70 +148,72 @@
                     },
                     {
                         title: '部门',
-                        key: 'number',
-                        align: 'center',
-                        width: 100
-                    },
-                    {
-                        title: '岗位',
-                        key: 'name',
-                        align: 'center'
-                    },
-                    {
-                        title: '员工姓名',
                         key: 'organizename',
                         align: 'center'
                     },
                     {
-                        title: '记录月份',
-                        key: 'username',
+                        title: '岗位',
+                        key: 'postname',
                         align: 'center'
                     },
                     {
+                        title: '员工姓名',
+                        key: 'user_name',
+                        align: 'center'
+                    },
+                    {
+                        title: '记录月份',
+                        key: 'record_month',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('span', moment(params.row['record_month']).format('YYYY-MM'))
+                        }
+                    },
+                    {
                         title: '迟到',
-                        key: 'level',
+                        key: 'late_times',
                         align: 'center',
                         width: 60
                     },
                     {
                         title: '早退',
-                        key: 'level',
+                        key: 'leave_early',
                         align: 'center',
                         width: 60
                     },
                     {
                         title: '漏打卡',
-                        key: 'level',
+                        key: 'forget_times',
                         align: 'center',
                         width: 80
                     },
                     {
                         title: '请假(天)',
-                        key: 'level',
+                        key: 'leave_day',
                         align: 'center',
                         width: 80
                     },
                     {
                         title: '带薪休假(天)',
-                        key: 'level',
+                        key: 'paid_leave_day',
                         align: 'center',
                         width: 110
                     },
                     {
                         title: '出勤(天)',
-                        key: 'level',
+                        key: 'regular_day',
                         align: 'center',
                         width: 80
                     },
                     {
                         title: '旷工(天)',
-                        key: 'level',
+                        key: 'absent_off_day',
                         align: 'center',
                         width: 80
                     },
                     {
                         title: '无薪假(天)',
-                        key: 'level',
+                        key: 'without_pay_day',
                         align: 'center',
                         width: 100
                     },
@@ -198,9 +226,9 @@
                             return h('Tag', {
                                 props: {
                                     type: 'border',
-                                    color: +params.row.states === 1 ? 'green' : 'red'
+                                    color: params.row.status === '未审核' ? 'red' : 'green'
                                 }
-                            }, +params.row.states === 1 ? '审核完毕' : '未审核');
+                            }, params.row.status);
                         }
                     },
                     {
@@ -256,28 +284,36 @@
                     },
                     {
                         title: '日期',
-                        key: 'level',
+                        key: 'k_date',
                         align: 'center',
                         width: '110'
                     },
                     {
-                        title: '迟到',
-                        key: 'level',
+                        title: '工种',
+                        key: 'truetype',
                         align: 'center'
                     },
                     {
+                        title: '迟到',
+                        key: 'c_count',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h()
+                        }
+                    },
+                    {
                         title: '早退',
-                        key: 'level',
+                        key: 'z_count',
                         align: 'center'
                     },
                     {
                         title: '漏打卡',
-                        key: 'level',
+                        key: 'l_count',
                         align: 'center'
                     },
                     {
                         title: '审核状态',
-                        key: 'level',
+                        key: 'offdaytype',
                         align: 'center',
                         width: 120
                     },
@@ -340,7 +376,12 @@
                         }
                     }
                 ],
-                tableHeight: 500
+                tableHeight: 500,
+                attendanceOpt: {
+                    userName: '',
+                    monthDate: '',
+                    data: []
+                }
             };
         },
         mixins: [pageMixin],
@@ -361,9 +402,22 @@
                 this.initPage();
                 this._getPostData();
             },
+            _uploadSuccess(response, file, fileList) {
+                console.log(response)
+            },
+            _uploadFail(error, file, fileList) {
+                console.log(error)
+            },
+            _uploadFormatErr() {
+                this.$Message.error('上传文件的后缀必须为.xls');
+            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
+            },
+            _monthDateChange(val) {
+                this.filterOpt.monthDate = val;
+                this._filterResultHandler();
             },
             _setPage(page) {
                 this.pageData.page = page;
@@ -374,16 +428,31 @@
                 this._getPostData();
             },
             _editorSetting(data) {
+                this.tableLoading2 = true;
+                this.attendanceOpt.userName = data.user_name;
+                this.attendanceOpt.monthDate = moment(data.record_month).format('YYYY-MM');
                 this.settingModalFlag = true;
+                let sendData = {};
+                sendData.userName = this.attendanceOpt.userName;
+                sendData.recordMonth = this.attendanceOpt.monthDate;
+                this.$http.get('/kq/userStatistic', {params: sendData}).then((res) => {
+                    if (res.success) {
+                        this.attendanceOpt.data = res.data;
+                    }
+                    console.log(res);
+                }).finally(() => {
+                    this.tableLoading2 = false;
+                });
                 console.log(data);
             },
             _getPostData() {
                 let data = {};
-                data.name = this.filterOpt.name;
-                data.level = this.filterOpt.level;
-                data.states = this.filterOpt.states;
+                data.userName = this.filterOpt.userName;
+                data.monthDate = this.filterOpt.monthDate;
+                data.kqstates = this.filterOpt.kqstates;
                 data.organizeName = this.filterOpt.organizeName;
-                this.getList('/post/datalist', data);
+                data.postName = this.filterOpt.postName;
+                this.getList('/kq/getStatisticList', data);
             }
         },
         components: {}
