@@ -167,11 +167,6 @@
                             </Select>
                         </FormItem>
                     </Col>
-                    <Col :span="8">
-                        <FormItem label="虚拟上级">
-                            <Input v-model="userSettingForm.vUp"></Input>
-                        </FormItem>
-                    </Col>
                 </Row>
                 <!--<FormItem label="岗位操作指南" :label-width="100">-->
                     <!--<Select v-model="userSettingForm.guider" multiple>-->
