@@ -308,30 +308,46 @@
             </p>
             <div id="fs-spec-access-block">
                 <Row :gutter="16">
-                    <Col :span="16">
+                    <Col :span="14">
                         <h3 class="title">虚拟可查看部门日志</h3>
                         <div class="">
-
+                            <div class="each-dep-wrapper"
+                                 v-for="(dep, index) in specAccessData.deps"
+                                 :key="'dep-' + index">
+                                <el-cascader
+                                        :options="orgTreeData"
+                                        :props="depProps"
+                                        v-model="dep.dep"
+                                        change-on-select
+                                        size="small"
+                                        class="dep-choose"
+                                ></el-cascader>
+                                <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeDep(index)"></Button>
+                            </div>
+                            <div class="add-dep" @click="_addNewDep">
+                                <Icon type="plus-round" size="30"></Icon>
+                                <p>点击添加部门</p>
+                            </div>
                         </div>
                     </Col>
-                    <Col :span="8">
+                    <Col :span="10">
                         <h3 class="title">虚拟可查看人员日志</h3>
                         <div class="">
                             <Select
-                                    v-model="filterPeopleData"
+                                    v-model="specAccessData.filterPeopleData"
                                     multiple
                                     filterable
                                     remote
                                     :remote-method="_filterPeopleRemote"
-                                    :loading="filterPeopleLoading">
-                                <Option v-for="(option, index) in options2" :value="option.value" :key="index">{{option.label}}</Option>
+                                    :loading="specAccessData.filterPeopleLoading">
+                                <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname}}</Option>
                             </Select>
                         </div>
                     </Col>
                 </Row>
             </div>
             <div slot="footer">
-                <Button type="primary">确认授权</Button>
+                <Button type="primary" @click="_specAccessConfirm">确认授权</Button>
                 <Button type="ghost">取消</Button>
             </div>
         </Modal>
@@ -342,7 +358,24 @@
         .title {
             margin-bottom: 16px;
         }
-
+        .each-dep-wrapper {
+            margin-bottom: 16px;
+            display: flex;
+            .dep-choose {
+                flex: 1;
+                margin-right: 16px;
+            }
+        }
+        .add-dep {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: 1px dashed #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+        }
     }
     #fs-access-control-block {
         padding: 10px;
@@ -369,6 +402,12 @@
         watch: {
             filterText(val) {
                 this.$refs.treeDom.filter(val);
+            },
+            'specAccessData.filterPeopleData'(val) {
+                console.log(val)
+            },
+            'specAccessData.deps'(val) {
+                console.log(val)
             },
             'searchData.pageSize'() {
                 this._filterResultHandler();
@@ -401,9 +440,14 @@
             return {
                 accessButtons: [],
                 social: [],
-                filterPeopleLoading: false,
-                filterPeopleData: [],
                 banciModalFlag: false,
+                specAccessData: {
+                    userId: '',
+                    filterPeopleLoading: false,
+                    filterPeopleData: [],
+                    filterPeopleOpt: [],
+                    deps: []
+                },
                 coinSettingFlag: false,
                 settingModalFlag: false,
                 userAccessModalFlag: false,
@@ -770,8 +814,69 @@
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
             },
+            returnDepsIds(arr) {
+                let newArr = [];
+                let needArr = arr.filter((item) => {
+                    return item.dep.length > 0;
+                });
+                needArr.forEach((item) => {
+                    newArr.push(item.dep.slice(-1)[0])
+                });
+                return newArr.join(',');
+            },
+            _initAccessData() {
+                this.specAccessData.userId = '';
+                this.specAccessData.filterPeopleData = [];
+                this.specAccessData.filterPeopleOpt = [];
+                this.specAccessData.deps = [];
+            },
+            _specAccessConfirm() {
+                let depsArr = this.specAccessData.deps;
+                let userIds = this.specAccessData.filterPeopleData;
+                let sendData = {};
+                sendData.id = this.specAccessData.userId;
+                sendData.userIds = userIds.join(',');
+                sendData.organizeIds = this.returnDepsIds(depsArr);
+                this.$http.post('/user/addSuperPro', sendData).then((res) => {
+                    console.log(res)
+                })
+            },
+            _specAccessOpen(data) {
+                this._initAccessData();
+                this.specAccessData.userId = data.id;
+                this._getSpecAccessPro();
+                this.specAccessFlag = true;
+            },
+            _removeDep(index) {
+                this.specAccessData.deps.splice(index, 1)
+            },
             _filterPeopleRemote(val) {
-                console.log(val)
+                let data = {};
+                data.name = val;
+                this.specAccessData.filterPeopleLoading = true;
+                this.$http.get('/user/getCheckUser', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.specAccessData.filterPeopleOpt = res.date;
+                    }
+                }).finally(() => {
+                    this.specAccessData.filterPeopleLoading = false;
+                });
+            },
+            _addNewDep() {
+                let obj = {};
+                obj.dep = [];
+                this.specAccessData.deps.push(obj)
+            },
+            _getSpecAccessPro() {
+                let data = {};
+                data.id = this.specAccessData.userId;
+                this.$http.get('/user/getMySuperPro', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.specAccessData.filterPeopleOpt = res.date;
+                        this.specAccessData.filterPeopleData = res.date.map( x => x.id);
+                    }
+                    console.log(res)
+                })
             },
             _getAccessButtons() {
                 let data = {
@@ -1137,9 +1242,6 @@
                 this.social = pageArr.concat(btnArr);
                 this.editUserId = data.id;
                 this.userAccessModalFlag = true;
-            },
-            _specAccessOpen(data) {
-                this.specAccessFlag = true;
             }
         },
         components: {}
