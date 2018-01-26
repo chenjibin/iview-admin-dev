@@ -515,6 +515,7 @@
                 this.strangeSettingForm.desc = '';
             },
             _setStrangeDay(data) {
+                this._initStrangeSettingForm();
                 this.strangeModalFlag = true;
                 console.log(data)
             },
@@ -531,7 +532,6 @@
                         this._getPostData();
                     }
                 });
-                console.log(sendData);
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();

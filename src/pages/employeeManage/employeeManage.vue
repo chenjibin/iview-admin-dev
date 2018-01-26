@@ -83,7 +83,10 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>{{userFormType === 'update' ? '用户设置' : '添加用户'}}</span>
             </p>
-            <Form :model="userSettingForm" :label-width="80">
+            <Form :model="userSettingForm"
+                  :rules="userSettingValidate"
+                  ref="userSettingDom"
+                  :label-width="80">
                 <Row>
                     <Col :span="8">
                         <FormItem label="状态">
@@ -102,19 +105,21 @@
                         </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="入职时间">
-                            <DatePicker type="date" v-model="userSettingForm.inJobTime"></DatePicker>
+                        <FormItem label="入职时间" prop="inJobTime">
+                            <DatePicker type="date"
+                                        @on-change="_inJobDateChange"
+                                        :value="userSettingForm.inJobTime"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="账号">
+                        <FormItem label="账号" prop="account">
                             <Input v-model="userSettingForm.account" :disabled="userFormType === 'update'"></Input>
                         </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="姓名">
+                        <FormItem label="姓名" prop="name">
                             <Input v-model="userSettingForm.name" placeholder=""></Input>
                         </FormItem>
                     </Col>
@@ -124,7 +129,7 @@
                     </FormItem>
                     </Col>
                 </Row>
-                <FormItem label="性别">
+                <FormItem label="性别" prop="sex">
                     <RadioGroup v-model="userSettingForm.sex">
                         <Radio label="女">女</Radio>
                         <Radio label="男">男</Radio>
@@ -132,16 +137,16 @@
                 </FormItem>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="角色">
+                        <FormItem label="角色" prop="role">
                             <Select v-model="userSettingForm.role">
                                 <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
                             </Select>
                         </FormItem>
                     </Col>
                     <Col :span="16">
-                        <FormItem label="部门">
+                        <FormItem label="部门" prop="dep">
                             <el-cascader
-                                    :options="orgTreeData[0] ? orgTreeData[0].children : []"
+                                    :options="orgTreeData"
                                     :props="depProps"
                                     v-model="userSettingForm.dep"
                                     change-on-select
@@ -154,14 +159,14 @@
                 </Row>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="岗位">
+                        <FormItem label="岗位" prop="post">
                             <Select v-model="userSettingForm.post" :disabled="!userSettingForm.dep.length">
                                 <Option v-for="item in postList" :value="item.id" :key="item.id">{{item.name}}</Option>
                             </Select>
                         </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="职级">
+                        <FormItem label="职级" prop="level">
                             <Select v-model="userSettingForm.level" :disabled="!userSettingForm.post">
                                 <Option :value="levelCodeOpt.code" :key="'level-' + levelCodeOpt.code">{{levelCodeOpt.code}}</Option>
                             </Select>
@@ -173,7 +178,7 @@
                         <!--<Option v-for="item in guiderList" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
                     <!--</Select>-->
                 <!--</FormItem>-->
-                <FormItem label="班次设置" :label-width="100">
+                <FormItem label="班次设置" :label-width="100" prop="banci">
                     <Select v-model="userSettingForm.banci" multiple>
                         <Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>
                     </Select>
@@ -204,7 +209,7 @@
                   :label-width="80">
                 <FormItem prop="target" label="操作对象" :label-width="80">
                     <Input type="text"
-                           disabled
+                           readonly
                            v-model="coinSettingForm.target"></Input>
                 </FormItem>
                 <FormItem label="类型">
@@ -295,9 +300,50 @@
                 <Button type="ghost">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="specAccessFlag"
+               width="800"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>特殊权限设置</span>
+            </p>
+            <div id="fs-spec-access-block">
+                <Row :gutter="16">
+                    <Col :span="16">
+                        <h3 class="title">虚拟可查看部门日志</h3>
+                        <div class="">
+
+                        </div>
+                    </Col>
+                    <Col :span="8">
+                        <h3 class="title">虚拟可查看人员日志</h3>
+                        <div class="">
+                            <Select
+                                    v-model="filterPeopleData"
+                                    multiple
+                                    filterable
+                                    remote
+                                    :remote-method="_filterPeopleRemote"
+                                    :loading="filterPeopleLoading">
+                                <Option v-for="(option, index) in options2" :value="option.value" :key="index">{{option.label}}</Option>
+                            </Select>
+                        </div>
+                    </Col>
+                </Row>
+            </div>
+            <div slot="footer">
+                <Button type="primary">确认授权</Button>
+                <Button type="ghost">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
+    #fs-spec-access-block {
+        .title {
+            margin-bottom: 16px;
+        }
+
+    }
     #fs-access-control-block {
         padding: 10px;
         height: 400px;
@@ -355,10 +401,13 @@
             return {
                 accessButtons: [],
                 social: [],
+                filterPeopleLoading: false,
+                filterPeopleData: [],
                 banciModalFlag: false,
                 coinSettingFlag: false,
                 settingModalFlag: false,
                 userAccessModalFlag: false,
+                specAccessFlag: false,
                 banciBtnLoading: false,
                 tableBanciLoading: false,
                 tableLoading: false,
@@ -457,6 +506,20 @@
                     level: '',
                     vUp: '',
                     isLog: true
+                },
+                userSettingValidate: {
+                    inJobTime: [
+                        { required: true, message: '入职时间不能为空！', trigger: 'change' }
+                    ],
+                    account: [
+                        { required: true, message: '账号不能为空', trigger: 'blur' }
+                    ],
+                    name: [
+                        { required: true, message: '姓名不能为空', trigger: 'blur' }
+                    ],
+                    sex: [
+                        { required: true, message: '请选择性别', trigger: 'change' }
+                    ]
                 },
                 totalCount: 1,
                 searchData: {
@@ -558,7 +621,7 @@
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
-                                        content: '完善信息',
+                                        content: '特殊权限设置',
                                         placement: 'top',
                                         transfer: true
                                     }
@@ -566,8 +629,13 @@
                                     h('Button', {
                                         props: {
                                             type: 'primary',
-                                            icon: 'edit',
+                                            icon: 'arrow-shrink',
                                             shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function() {
+                                                vm._specAccessOpen(params.row);
+                                            }
                                         },
                                         style: {
                                             marginRight: '4px'
@@ -702,6 +770,9 @@
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
             },
+            _filterPeopleRemote(val) {
+                console.log(val)
+            },
             _getAccessButtons() {
                 let data = {
                     name: this.$route.name
@@ -709,6 +780,9 @@
                 this.$http.get('/jurisdiction/getMyoneBtns', {params: data}).then((res) => {
                     console.log(res);
                 });
+            },
+            _inJobDateChange(val) {
+                this.userSettingForm.inJobTime = val
             },
             _coinConfirmHandler() {
                 this.$refs.coinForm.validate((valid) => {
@@ -762,8 +836,9 @@
             },
             _returnOrgIds(id) {
                 if (!this.orgTreeData[0]) return [];
-                let depsStore = this.orgTreeData[0].children;
+                let depsStore = this.orgTreeData;
                 let path = [];
+                this.storePath = [];
                 this._storeFilter(depsStore, path, id);
                 return this.storePath;
             },
@@ -773,7 +848,7 @@
                     account: '',
                     name: '',
                     sex: '',
-                    inJobTime: moment().format('YYYY-MM-DD'),
+                    inJobTime: '',
                     role: '',
                     dep: [],
                     post: '',
@@ -786,6 +861,7 @@
             },
             _addUserOpen() {
                 this._initUserInfo();
+                this.$refs.userSettingDom.resetFields();
                 this.userFormType = 'add';
                 this.settingModalFlag = true;
             },
@@ -840,7 +916,7 @@
                 data.id = this.editUserId;
                 data.isUpdate = true;
                 data.states = this.userSettingForm.states ? 1 : 0;
-                data.joinDate = moment(this.userSettingForm.inJobTime).format('YYYY-MM-DD');
+                data.joinDate = this.userSettingForm.inJobTime;
                 data.realName = this.userSettingForm.name;
                 data.sex = this.userSettingForm.sex;
                 data.no_write = this.userSettingForm.isLog ? 0 : 1;
@@ -848,31 +924,49 @@
                 data.organizeId = this.userSettingForm.dep.slice(-1)[0];
                 data.level = this.userSettingForm.level;
                 data.postId = this.userSettingForm.post;
-                data.leaderName = this.userSettingForm.vUp;
+                // data.leaderName = this.userSettingForm.vUp;
                 data.roleId = this.userSettingForm.role;
                 console.log(data);
                 this.$http.post('/user/setUserInfo ', data).then((res) => {
-                    console.log(res)
+                    if (res.success) {
+                        this.$Message.success('用户更新成功!');
+                        this._getUserData();
+                        this.settingModalFlag = false;
+                    }
                 })
             },
             _addUser() {
-                let data = {};
-                data.isUpdate = false;
-                data.userName = this.userSettingForm.account;
-                data.passWord = this.defaultPsd;
-                data.states = this.userSettingForm.states ? 1 : 0;
-                data.joinDate = moment(this.userSettingForm.inJobTime).format('YYYY-MM-DD');
-                data.realName = this.userSettingForm.name;
-                data.sex = this.userSettingForm.sex;
-                data.no_write = this.userSettingForm.isLog ? 0 : 1;
-                data.banci = this.userSettingForm.banci.join(',');
-                data.organizeId = this.userSettingForm.dep.slice(-1)[0];
-                data.level = this.userSettingForm.level;
-                data.postId = this.userSettingForm.post;
-                data.leaderName = this.userSettingForm.vUp;
-                data.roleName = this.userSettingForm.role;
+                this.$refs.userSettingDom.validate((valid) => {
+                    if (valid) {
+                        let data = {};
+                        data.isUpdate = false;
+                        data.userName = this.userSettingForm.account;
+                        data.passWord = this.defaultPsd;
+                        data.states = this.userSettingForm.states ? 1 : 0;
+                        data.joinDate = this.userSettingForm.inJobTime;
+                        data.realName = this.userSettingForm.name;
+                        data.sex = this.userSettingForm.sex;
+                        data.no_write = this.userSettingForm.isLog ? 0 : 1;
+                        data.banci = this.userSettingForm.banci.join(',') || '';
+                        data.organizeId = this.userSettingForm.dep.slice(-1)[0] || '';
+                        data.level = this.userSettingForm.level;
+                        data.postId = this.userSettingForm.post;
+                        // data.leaderName = this.userSettingForm.vUp;
+                        data.roleId = this.userSettingForm.role;
 
-                console.log(data);
+                        console.log(data);
+
+
+                        this.$http.post('/user/setUserInfo ', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('用户添加成功!');
+                                this._getUserData();
+                                this.settingModalFlag = false;
+                            }
+                            console.log(res)
+                        })
+                    }
+                })
             },
             _editorSetting(data) {
                 this.userSettingForm.states = !!data.states;
@@ -917,13 +1011,13 @@
                     })
                 })
             },
-            _getLevelList() {
-                this.$http.get('/rank/datalist?page=1&pageSize=20').then((res) => {
-                    if (res.success) {
-                        this.levelData = res.date
-                    }
-                })
-            },
+            // _getLevelList() {
+            //     this.$http.get('/rank/datalist?page=1&pageSize=20').then((res) => {
+            //         if (res.success) {
+            //             this.levelData = res.date
+            //         }
+            //     })
+            // },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
                     if (res.success) {
@@ -1043,6 +1137,9 @@
                 this.social = pageArr.concat(btnArr);
                 this.editUserId = data.id;
                 this.userAccessModalFlag = true;
+            },
+            _specAccessOpen(data) {
+                this.specAccessFlag = true;
             }
         },
         components: {}
