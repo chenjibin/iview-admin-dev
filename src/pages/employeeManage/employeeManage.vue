@@ -338,6 +338,7 @@
                                     multiple
                                     filterable
                                     remote
+                                    :label="remoteLabel"
                                     :remote-method="_filterPeopleRemote"
                                     :loading="specAccessData.filterPeopleLoading">
                                 <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname}}</Option>
@@ -348,7 +349,7 @@
             </div>
             <div slot="footer">
                 <Button type="primary" @click="_specAccessConfirm">确认授权</Button>
-                <Button type="ghost">取消</Button>
+                <Button type="ghost" @click="specAccessFlag = false">取消</Button>
             </div>
         </Modal>
     </div>
@@ -403,12 +404,12 @@
             filterText(val) {
                 this.$refs.treeDom.filter(val);
             },
-            'specAccessData.filterPeopleData'(val) {
-                console.log(val)
-            },
-            'specAccessData.deps'(val) {
-                console.log(val)
-            },
+            // 'specAccessData.filterPeopleData'(val) {
+            //     console.log(val)
+            // },
+            // 'specAccessData.deps'(val) {
+            //     console.log(val)
+            // },
             'searchData.pageSize'() {
                 this._filterResultHandler();
             },
@@ -441,6 +442,7 @@
                 accessButtons: [],
                 social: [],
                 banciModalFlag: false,
+                remoteLabel: [],
                 specAccessData: {
                     userId: '',
                     filterPeopleLoading: false,
@@ -838,7 +840,10 @@
                 sendData.userIds = userIds.join(',');
                 sendData.organizeIds = this.returnDepsIds(depsArr);
                 this.$http.post('/user/addSuperPro', sendData).then((res) => {
-                    console.log(res)
+                    if (res.success) {
+                        this.$Message.success('授权成功!');
+                        this.specAccessFlag = false;
+                    }
                 })
             },
             _specAccessOpen(data) {
@@ -867,6 +872,17 @@
                 obj.dep = [];
                 this.specAccessData.deps.push(obj)
             },
+            _returnAccessDeps(deps) {
+                if (!deps) return [];
+                let arr = deps.split(',');
+                let storeArr = [];
+                for (let i = 0, depLength = arr.length; i < depLength; i++) {
+                    let obj = {};
+                    obj.dep = this._returnOrgIds(+arr[i]);
+                    storeArr.push(obj)
+                }
+                return storeArr;
+            },
             _getSpecAccessPro() {
                 let data = {};
                 data.id = this.specAccessData.userId;
@@ -874,8 +890,9 @@
                     if (res.success) {
                         this.specAccessData.filterPeopleOpt = res.date;
                         this.specAccessData.filterPeopleData = res.date.map( x => x.id);
+                        this.remoteLabel = res.date.map( x => x.realname);
+                        this.specAccessData.deps = this._returnAccessDeps(res.organizeIds);
                     }
-                    console.log(res)
                 })
             },
             _getAccessButtons() {
@@ -1031,7 +1048,7 @@
                 data.postId = this.userSettingForm.post;
                 // data.leaderName = this.userSettingForm.vUp;
                 data.roleId = this.userSettingForm.role;
-                console.log(data);
+
                 this.$http.post('/user/setUserInfo ', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('用户更新成功!');
@@ -1116,13 +1133,6 @@
                     })
                 })
             },
-            // _getLevelList() {
-            //     this.$http.get('/rank/datalist?page=1&pageSize=20').then((res) => {
-            //         if (res.success) {
-            //             this.levelData = res.date
-            //         }
-            //     })
-            // },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
                     if (res.success) {
