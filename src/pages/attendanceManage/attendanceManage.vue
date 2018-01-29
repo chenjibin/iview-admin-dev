@@ -42,7 +42,8 @@
                             <Icon type="ios-cloud-upload-outline"></Icon>
                             导入
                         </Button>
-                        <Button type="ghost">
+                        <Button type="ghost" @click="_exportToExcel">
+                            <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
                             <Icon type="ios-cloud-download-outline"></Icon>
                             导出
                         </Button>
@@ -61,6 +62,7 @@
             <Page :total="pageData.totalCount"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
+                  :page-size-opts="pageSizeOption"
                   :page-size="pageData.pageSize"
                   show-sizer
                   show-total
@@ -78,7 +80,7 @@
                         :on-success="_uploadSuccess"
                         :on-error="_uploadFail"
                         :format="uploadOpt.format"
-                        action="//jsonplaceholder.typicode.com/posts/">
+                        action="/oa/kq/add">
                     <div style="padding: 20px 0">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>点击或者拖拽文件到这里上传(后缀为.xls的文件)</p>
@@ -100,7 +102,7 @@
                            :data="attendanceOpt.data"></Table>
                 </div>
                 <div slot="footer">
-                    <Button type="primary">完成 {{attendanceOpt.userName}} 该月审核</Button>
+                    <Button type="primary" @click="_completeThisMonth">完成 {{attendanceOpt.userName}} 该月审核</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -148,7 +150,7 @@
                     </FormItem>
                 </Form>
                 <div slot="footer">
-                    <Button type="primary">确认设置</Button>
+                    <Button type="primary" @click="_confirmStrangeSetting">确认设置</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="strangeModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -160,19 +162,23 @@
     import pageMixin from '@/mixins/pageMixin';
     import moment from 'moment';
     import debounce from 'lodash/debounce';
+    import table2excel from '@/libs/table2excel.js';
     export default {
         name: 'attendanceManage',
         data () {
             return {
+                pageSizeOption: [10, 20, 30, 2000],
                 tableLoading2: false,
                 settingModalFlag: false,
                 importModalFlag: false,
                 strangeModalFlag: false,
                 postFormType: 'update',
+                recordId: '',
                 strangeSettingForm: {
                     type: '',
                     days: '',
-                    desc: ''
+                    desc: '',
+                    id: ''
                 },
                 uploadOpt: {
                     format: ['xls']
@@ -482,6 +488,7 @@
                                         },
                                         on: {
                                             click: function () {
+                                                vm._setConfirmPass(params.row)
                                             }
                                         }
                                     })
@@ -504,6 +511,18 @@
             this._setTableHeight();
         },
         methods: {
+            _exportToExcel() {
+
+                // table2excel.transform(this.$refs.attendanceTable, 'hrefToExportTable', 'textExcel');
+            },
+            _completeThisMonth() {
+                let data = {};
+                data.user_name = this.attendanceOpt.userName;
+                data.record_month = this.attendanceOpt.monthDate;
+                this.$http.post('/kq/completeExamine', data).then((res) => {
+                    console.log(res)
+                })
+            },
             _initAttendanceOpt() {
                 this.attendanceOpt.userName = '';
                 this.attendanceOpt.monthDate = '';
@@ -513,11 +532,43 @@
                 this.strangeSettingForm.type = '';
                 this.strangeSettingForm.days = '';
                 this.strangeSettingForm.desc = '';
+                this.strangeSettingForm.id = '';
+            },
+            _setConfirmPass(data) {
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.post('/kq/completeSingle', sendData).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('审核通过成功!');
+                        this._getUserStatistic();
+                    }
+                })
+            },
+            _confirmStrangeSetting() {
+                let data = {};
+                data.id = this.strangeSettingForm.id;
+                data.type = this.strangeSettingForm.type;
+                data.quality = this.strangeSettingForm.days;
+                data.text = this.strangeSettingForm.desc;
+                data.date = this.attendanceOpt.monthDate;
+                this.$http.post('/kq/updateOffDayType', data).then((res) => {
+                    if (res.success) {
+                        this.strangeModalFlag = false;
+                        this.$Message.success('异常设置成功!');
+                        this._getUserStatistic();
+                    }
+                })
             },
             _setStrangeDay(data) {
                 this._initStrangeSettingForm();
+                this.strangeSettingForm.id = data.id;
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.get('/kq/setException', {params: sendData}).then((res) => {
+                    this.strangeSettingForm.type = res.exceptionType ? res.exceptionType : '';
+                    this.strangeSettingForm.days = res.exceptionDay ? res.exceptionDay + '' : '';
+                });
                 this.strangeModalFlag = true;
-                console.log(data)
             },
             _setEveryStrangeNumber(val, type, data) {
                 let sendData = {};

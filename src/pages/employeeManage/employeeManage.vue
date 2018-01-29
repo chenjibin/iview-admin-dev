@@ -341,7 +341,7 @@
                                     :label="remoteLabel"
                                     :remote-method="_filterPeopleRemote"
                                     :loading="specAccessData.filterPeopleLoading">
-                                <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname}}</Option>
+                                <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
                             </Select>
                         </div>
                     </Col>
@@ -889,8 +889,8 @@
                 this.$http.get('/user/getMySuperPro', {params: data}).then((res) => {
                     if (res.success) {
                         this.specAccessData.filterPeopleOpt = res.date;
-                        this.specAccessData.filterPeopleData = res.date.map( x => x.id);
-                        this.remoteLabel = res.date.map( x => x.realname);
+                        this.specAccessData.filterPeopleData = !!res.date.length ? res.date.map( x => x.id) : [];
+                        this.remoteLabel = !!res.date.length ? res.date.map( x => x.realname) : [];
                         this.specAccessData.deps = this._returnAccessDeps(res.organizeIds);
                     }
                 })
