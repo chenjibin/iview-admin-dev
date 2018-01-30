@@ -70,6 +70,7 @@
                           @on-change="_setPage"
                           @on-page-size-change="_setPageSize"
                           :page-size="searchData.pageSize"
+                          placement="top"
                           show-sizer
                           show-total
                           show-elevator
