@@ -430,9 +430,9 @@
                             this.levelCodeOpt.code = res.date.level.split(',')[0];
                             console.log(this.levelCodeOpt);
                         }
-                    })
+                    });
                 }
-                console.log(val)
+                console.log(val);
             },
             social(val) {
                 console.log(val);

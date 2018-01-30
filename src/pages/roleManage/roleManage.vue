@@ -76,8 +76,23 @@
         </Card>
     </div>
 </template>
-<style>
-
+<style lang="less">
+    #fs-access-control-block {
+        padding: 10px;
+        height: 400px;
+        overflow: auto;
+        background-color: #dddee1;
+        .cate-title {
+            margin-bottom: 16px;
+        }
+        .each-page-wrapper {
+            margin-bottom: 16px;
+            .each-btn-wrapper {
+                margin-top: 10px;
+                padding-left: 20px;
+            }
+        }
+    }
 </style>
 <script>
     import pageMixin from '@/mixins/pageMixin';
@@ -92,6 +107,7 @@
                 postSettingForm: {
                     name: ''
                 },
+                roleId: '',
                 postColumns: [
                     {
                         title: '角色名',
@@ -219,7 +235,7 @@
                     }
                 });
                 let data = {
-                    id: this.editUserId,
+                    id: this.roleId,
                     menuid: pageArr.join(','),
                     btnid: btnArr.join(',')
                 };
@@ -229,10 +245,10 @@
             },
             _postAccessOpen(data) {
                 console.log(data);
-                // let pageArr = data.role ? data.role.split(',').map(x => 'page' + x) : [];
-                // let btnArr = data.btnid ? data.btnid.split(',').map(x => 'btn' + x) : [];
-                // this.social = pageArr.concat(btnArr);
-                // this.editUserId = data.userid;
+                let pageArr = data.relate ? data.relate.split(',').map(x => 'page' + x) : [];
+                let btnArr = data.btnid ? data.btnid.split(',').map(x => 'btn' + x) : [];
+                this.social = pageArr.concat(btnArr);
+                this.roleId = data.id;
                 this.roleAccessModalFlag = true;
             }
         },

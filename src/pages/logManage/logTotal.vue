@@ -24,6 +24,7 @@
             <Table :columns="postColumns"
                    :loading="tableLoading"
                    :height="tableHeight"
+                   @on-sort-change="_tableSortChange"
                    ref="attendanceTable"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
@@ -49,53 +50,58 @@
         mixins: [pageMixin],
         data () {
             return {
-                tableLoading: false,
                 tableHeight: 300,
                 filterOpt: {
                     userName: '',
                     monthDate: '',
-                    organizeName: ''
+                    organizeName: '',
+                    sort: {}
                 },
                 postColumns: [
                     {
                         title: '姓名',
-                        key: 'organizename',
+                        key: 'realname',
                         align: 'center'
                     },
                     {
                         title: '所在部门',
-                        key: 'postname',
+                        key: 'department',
                         align: 'center'
                     },
                     {
                         title: '当月已写日志',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'number',
+                        align: 'center',
+                        sortable: true
                     },
                     {
                         title: '统计月份',
-                        key: 'record_month',
-                        align: 'center',
-                        render: (h, params) => {
-                            return h('span', moment(params.row['record_month']).format('YYYY-MM'));
-                        }
+                        key: 'date',
+                        align: 'center'
                     },
                     {
                         title: '最近检索时间',
-                        key: 'late_times',
+                        key: 'updatebydate',
                         align: 'center',
                         width: 180
-
                     }
                 ]
             };
         },
         created() {
+            this._getPostData();
             this._setTableHeight();
         },
         methods: {
+            _tableSortChange(data) {
+                console.log(data);
+                this.filterOpt.sort.key = data.key;
+                this.filterOpt.sort.order = data.order;
+                this._filterResultHandler();
+            },
             _monthDateChange(date) {
                 this.filterOpt.monthDate = date;
+                this._getPostData();
             },
             initPage() {
                 this.pageData.page = 1;
@@ -124,7 +130,8 @@
                 data.name = this.filterOpt.userName;
                 data.startDate = this.filterOpt.monthDate;
                 data.dpname = this.filterOpt.organizeName;
-                this.getList('/statistics/logList ', data);
+                data.sort = this.filterOpt.sort;
+                this.getList('/statistics/logList', data);
             }
         },
         components: {}

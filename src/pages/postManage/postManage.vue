@@ -83,7 +83,7 @@
                         <Col :span="24">
                             <FormItem label="岗位部门">
                                 <el-cascader
-                                        :options="orgTreeData[0] ? orgTreeData[0].children : []"
+                                        :options="orgTreeData"
                                         :props="depProps"
                                         v-model="postSettingForm.organizename"
                                         change-on-select
@@ -139,6 +139,7 @@
                 settingModalFlag: false,
                 postFormType: 'update',
                 orgTreeData: [],
+                postId: '',
                 depProps: {
                     value: 'id',
                     label: 'name'
@@ -147,7 +148,7 @@
                     states: '',
                     name: '',
                     number: '',
-                    organizename: '',
+                    organizename: [],
                     username: ''
                 },
                 filterOpt: {
@@ -227,7 +228,8 @@
                         }
                     }
                 ],
-                tableHeight: 500
+                tableHeight: 500,
+                storePath: []
             };
         },
         mixins: [pageMixin],
@@ -240,10 +242,11 @@
             _initPostForm() {
                 this.postSettingForm.states = true;
                 this.postSettingForm.name = '';
-                this.postSettingForm.organizename = '';
+                this.postSettingForm.organizename = [];
                 this.postSettingForm.number = '';
                 this.postSettingForm.username = '';
                 this.postSettingForm.level = '';
+                this.storePath = [];
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -274,9 +277,10 @@
             },
             _editorSetting(data) {
                 this.postFormType = 'update';
+                this._initPostForm();
                 this.postSettingForm.states = !!data.states;
                 this.postSettingForm.name = data.name;
-                this.postSettingForm.organizename = this._returnOrgIds(data.lv);
+                this.postSettingForm.organizename = this._returnOrgIds(data.organizeid);
                 this.postSettingForm.number = data.number;
                 this.postSettingForm.username = data.username;
                 this.postSettingForm.level = data.level;
@@ -300,7 +304,7 @@
             },
             _returnOrgIds(id) {
                 if (!this.orgTreeData[0]) return [];
-                let depsStore = this.orgTreeData[0].children;
+                let depsStore = this.orgTreeData;
                 let path = [];
                 this._storeFilter(depsStore, path, id);
                 return this.storePath;
