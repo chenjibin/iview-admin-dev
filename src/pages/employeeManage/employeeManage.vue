@@ -845,7 +845,7 @@
                         this.$Message.success('授权成功!');
                         this.specAccessFlag = false;
                     }
-                })
+                });
             },
             _specAccessOpen(data) {
                 this._initAccessData();

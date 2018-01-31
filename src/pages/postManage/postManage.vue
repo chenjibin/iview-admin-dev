@@ -48,6 +48,7 @@
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
+                  placement="top"
                   show-sizer
                   show-total
                   show-elevator
@@ -56,9 +57,12 @@
                    width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>{{postFormType === 'update' ? '岗位设置' : '添加用户岗位'}}</span>
+                    <span>{{postFormType === 'update' ? '岗位设置' : '添加岗位'}}</span>
                 </p>
-                <Form :model="postSettingForm" :label-width="80">
+                <Form :model="postSettingForm"
+                      :rules="postRules"
+                      ref="postForm"
+                      :label-width="80">
                     <Row>
                         <Col :span="8">
                         <FormItem label="状态">
@@ -71,21 +75,21 @@
                     </Row>
                     <Row>
                         <Col :span="12">
-                            <FormItem label="岗位名称">
+                            <FormItem label="岗位名称" prop="name">
                                 <Input v-model="postSettingForm.name" :disabled="postFormType === 'update'"></Input>
                             </FormItem>
                         </Col>
-                        <Col :span="12">
-                            <FormItem label="岗位编号">
-                                <Input v-model="postSettingForm.number"></Input>
-                            </FormItem>
+                        <Col :span="8">
+                        <FormItem label="岗位职级">
+                            <Input v-model="postSettingForm.level"></Input>
+                        </FormItem>
                         </Col>
                         <Col :span="24">
                             <FormItem label="岗位部门">
                                 <el-cascader
                                         :options="orgTreeData"
                                         :props="depProps"
-                                        v-model="postSettingForm.organizename"
+                                        v-model="postSettingForm.organizeId"
                                         change-on-select
                                         size="small"
                                         style="width: 100%"
@@ -93,33 +97,23 @@
                             </FormItem>
                         </Col>
                     </Row>
-
-                    <Row>
-                        <Col :span="8">
-                            <FormItem label="在岗人员">
-                                <Input v-model="postSettingForm.username"></Input>
-                            </FormItem>
-                        </Col>
-                        <Col :span="8">
-                            <FormItem label="岗位职级">
-                                <Select v-model="postSettingForm.level">
-                                    <!--<Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>-->
-                                </Select>
-                            </FormItem>
-                        </Col>
-                    </Row>
-
                 </Form>
                 <div slot="footer">
-                    <Poptip
-                            confirm
-                            :transfer="true"
-                            @on-ok="_delPost"
-                            title="是否确认删除此岗位？">
-                        <Button type="error" v-show="postFormType === 'update'">删除岗位</Button>
-                    </Poptip>
-                    <Button type="primary" v-show="postFormType === 'add'">添加</Button>
-                    <Button type="primary" v-show="postFormType === 'update'">更新</Button>
+                    <!--<Poptip-->
+                            <!--confirm-->
+                            <!--:transfer="true"-->
+                            <!--@on-ok="_delPost"-->
+                            <!--title="是否确认删除此岗位？">-->
+                        <!--<Button type="error" v-show="postFormType === 'update'">删除岗位</Button>-->
+                    <!--</Poptip>-->
+                    <Button type="primary"
+                            @click="_addPost"
+                            :disabled="btnDisabled"
+                            v-show="postFormType === 'add'">添加</Button>
+                    <Button type="primary"
+                            @click="_updatePost"
+                            :disabled="btnDisabled"
+                            v-show="postFormType === 'update'">更新</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -139,7 +133,13 @@
                 settingModalFlag: false,
                 postFormType: 'update',
                 orgTreeData: [],
+                btnDisabled: false,
                 postId: '',
+                postRules: {
+                    name: [
+                        { required: true, message: '岗位名称不能为空！', trigger: 'blur' }
+                    ]
+                },
                 depProps: {
                     value: 'id',
                     label: 'name'
@@ -147,9 +147,8 @@
                 postSettingForm: {
                     states: '',
                     name: '',
-                    number: '',
-                    organizename: [],
-                    username: ''
+                    organizeId: [],
+                    level: ''
                 },
                 filterOpt: {
                     name: '',
@@ -159,8 +158,8 @@
                 },
                 postColumns: [
                     {
-                        title: '岗位编号',
-                        key: 'number',
+                        title: '岗位ID',
+                        key: 'id',
                         align: 'center',
                         width: 100
                     },
@@ -242,9 +241,7 @@
             _initPostForm() {
                 this.postSettingForm.states = true;
                 this.postSettingForm.name = '';
-                this.postSettingForm.organizename = [];
-                this.postSettingForm.number = '';
-                this.postSettingForm.username = '';
+                this.postSettingForm.organizeId = [];
                 this.postSettingForm.level = '';
                 this.storePath = [];
             },
@@ -256,7 +253,15 @@
                 this._getPostData();
             },
             _delPost() {
-                console.log('aa');
+                let data = {};
+                data.id = this.postId;
+                this.$http.post('/post/delete', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('岗位删除成功!');
+                        this.postSettingForm = false;
+                        this._getPostData();
+                    }
+                });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -280,13 +285,57 @@
                 this._initPostForm();
                 this.postSettingForm.states = !!data.states;
                 this.postSettingForm.name = data.name;
-                this.postSettingForm.organizename = this._returnOrgIds(data.organizeid);
-                this.postSettingForm.number = data.number;
-                this.postSettingForm.username = data.username;
+                this.postSettingForm.organizeId = this._returnOrgIds(data.organizeid);
                 this.postSettingForm.level = data.level;
+                this.postId = data.id;
 
                 this.settingModalFlag = true;
                 console.log(data);
+            },
+            _addPost() {
+                this.$refs.postForm.validate((valid) => {
+                    if (valid) {
+                        this.btnDisabled = true;
+                        let data = {};
+                        data.id = 0;
+                        data.states = this.postSettingForm.states ? 1 : 0;
+                        data.name = this.postSettingForm.name;
+                        data.organizeId = this.postSettingForm.organizeId.slice(-1)[0] || '';
+                        data.level = this.postSettingForm.level;
+                        this.$http.post('/post/add', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('新增岗位成功!');
+                                this._getPostData();
+                                this.settingModalFlag = false;
+                            }
+                        }).finally(() => {
+                            this.btnDisabled = false;
+                        });
+                    }
+                });
+            },
+            _updatePost() {
+                this.$refs.postForm.validate((valid) => {
+                    if (valid) {
+                        this.btnDisabled = true;
+                        let data = {};
+                        data.id = this.postId;
+                        data.states = this.postSettingForm.states ? 1 : 0;
+                        data.name = this.postSettingForm.name;
+                        data.organizeId = this.postSettingForm.organizeId.slice(-1)[0] || '';
+                        data.level = this.postSettingForm.level;
+
+                        this.$http.post('/post/add', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('更新岗位成功!');
+                                this._getPostData();
+                                this.settingModalFlag = false;
+                            }
+                        }).finally(() => {
+                            this.btnDisabled = false;
+                        });
+                    }
+                });
             },
             _getPostData() {
                 let data = {};

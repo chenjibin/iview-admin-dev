@@ -29,13 +29,16 @@
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>添加角色</span>
                 </p>
-                <Form :model="postSettingForm" :label-width="80">
-                    <FormItem label="角色名称">
+                <Form :model="postSettingForm"
+                      :label-width="80"
+                      ref="nameForm"
+                      :rules="roleRules">
+                    <FormItem label="角色名称" prop="name">
                         <Input v-model="postSettingForm.name"></Input>
                     </FormItem>
                 </Form>
                 <div slot="footer">
-                    <Button type="primary">添加</Button>
+                    <Button type="primary" @click="_addRole">添加</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -107,6 +110,11 @@
                 postSettingForm: {
                     name: ''
                 },
+                roleRules: {
+                    name: [
+                        { required: true, message: '角色姓名不能为空！', trigger: 'blur' }
+                    ]
+                },
                 roleId: '',
                 postColumns: [
                     {
@@ -169,6 +177,21 @@
             this._setTableHeight();
         },
         methods: {
+            _addRole() {
+                this.$refs.nameForm.validate((valid) => {
+                    if (valid) {
+                        let data = {};
+                        data.name = this.postSettingForm.name;
+                        this.$http.post('/role/add', data).then((res) => {
+                            if (res.success) {
+                                this.settingModalFlag = false;
+                                this.$Message.success('角色添加才成功!');
+                                this._getPostData();
+                            }
+                        });
+                    }
+                });
+            },
             _initPostForm() {
                 this.postSettingForm.name = '';
             },
@@ -239,8 +262,14 @@
                     menuid: pageArr.join(','),
                     btnid: btnArr.join(',')
                 };
-                this.$http.post('/jurisdiction/setMySystemMenu', data).then((res) => {
-
+                console.log(data);
+                this.$http.post('/jurisdiction/setRoleMenu', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('授权成功!');
+                        this.roleAccessModalFlag = false;
+                        this._getPostData();
+                    }
+                    console.log(res);
                 });
             },
             _postAccessOpen(data) {
