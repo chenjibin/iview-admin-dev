@@ -603,10 +603,10 @@
                             }
                         });
                     }
-                })
+                });
             },
             _getOrgTreeData() {
-                return new Promise((resolve => {
+                return new Promise(resolve => {
                     this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
                         console.log(res);
                         if (res.success) {
@@ -614,8 +614,8 @@
                             this.searchData.depId = res.date[0].id;
                             resolve();
                         }
-                    })
-                }))
+                    });
+                });
             },
             filterNode(value, data) {
                 if (!value) return true;

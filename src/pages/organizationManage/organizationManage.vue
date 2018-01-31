@@ -10,11 +10,11 @@
                     <span>部门名称</span>
                 </div>
                 <div class="detail">
-                    <span style="width:600px;">包含岗位</span>
                     <span style="width:160px;">部门负责人</span>
                     <span style="width:160px;">部门负责人岗位</span>
                     <span style="width:160px;">分管部门领导</span>
                     <span style="width:160px;">分管部门领导岗位</span>
+                    <span style="width:600px;">包含岗位</span>
                 </div>
             </div>
             <div class="" style="width: 100%;overflow: auto;" :style="{'height': initHeight + 'px'}">
@@ -124,10 +124,12 @@
                     }
                 }
                 .detail {
+                    display: flex;
+                    justify-content: flex-end;
                     flex: 1;
                     padding-right: 6px;
                     span {
-                        float: right;
+
                     }
                 }
             }
@@ -144,6 +146,8 @@
                 width: 300px;
             }
             .detail {
+                display: flex;
+                justify-content: flex-end;
                 flex: 1;
                 span {
                     float: right;
@@ -187,13 +191,13 @@
             };
         },
         watch: {
-            filterTextName(val) {
-                this.$refs.tree1.filter(val)
+            'filterTextName'(val) {
+                this.$refs.tree1.filter(val);
             }
         },
         created() {
-          this._getOrgData();
-          this._setTreeHeight()
+            this._getOrgData();
+            this._setTreeHeight();
         },
         methods: {
             _depChange(data) {
@@ -218,30 +222,37 @@
             },
             filterNode(value, data) {
                 if (!value) return true;
-                return data.name.indexOf(value) !== -1
+                return data.name.indexOf(value) !== -1;
             },
             _getOrgData() {
                 this.$http.get('/organize/organizeList?fatherId=-1').then((res) => {
                     if (res.success) {
                         this.orgData = res.date;
                     }
-                })
+                });
             },
             _returnNeedPostList(ids, names) {
                 let idsArr = ids.split(',').filter(x => !!x);
                 let namesArr = names.split(',').filter(x => !!x);
                 let storeArr = [];
                 for (let i = 0, length = idsArr.length; i < length; i++) {
-                    storeArr[i] = {}
+                    storeArr[i] = {};
                 }
                 storeArr.forEach((item, index, arr) => {
                     item.id = +idsArr[index];
-                    item.name = namesArr[index]
+                    item.name = namesArr[index];
                 });
                 return storeArr;
             },
             append(store, data) {
-                store.append({name: 'testtest', postNames: 'a', member: 'b', chargerName: 'c', leaderName: 'd', children: [] }, data)
+                // store.append({
+                //     name: 'testtest',
+                //     postNames: 'a',
+                //     member: 'b',
+                //     chargerName: 'c',
+                //     leaderName: 'd',
+                //     children: []
+                // }, data);
             },
             editInfo(store, data) {
                 console.log(data);
@@ -261,12 +272,12 @@
                 this.depSettingFlag = true;
             },
             remove(store, data) {
-                console.log(store)
-                if (data.children && data.children.length !== 0) {
-                    this.$Message.error('下级有部门,不可以删除！')
-                    return
-                }
-                store.remove(data)
+                console.log(store);
+                // if (data.children && data.children.length !== 0) {
+                //     this.$Message.error('下级有部门,不可以删除！');
+                //     return;
+                // }
+                // store.remove(data);
             },
             renderContent(h, { node, data, store }) {
                 return (
@@ -280,12 +291,12 @@
                             </div>
                         </div>
                     <div class="detail">
-                        <span style="width:584px;overflow:hidden;text-overflow">{data.postNames}</span>
                         <span style="width:160px;">{data.chargerName}</span>
                         <span style="width:160px;">{data.chargerName}</span>
                         <span style="width:160px;">{data.leaderName}</span>
                         <span style="width:160px;">{data.leaderName}</span>
-                    </div>
+                        <span style="width:584px;overflow:hidden;text-overflow" title={data.postNames}>{data.postNames}</span>
+                </div>
                 </div>)
             }
         },

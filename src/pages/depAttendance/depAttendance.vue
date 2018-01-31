@@ -34,6 +34,7 @@
                           @on-change="_setPage"
                           @on-page-size-change="_setPageSize"
                           :page-size="pageData.pageSize"
+                          placement="top"
                           show-sizer
                           show-total
                           show-elevator
@@ -43,11 +44,11 @@
         </Row>
         <Modal v-model="modelFlag" width="900" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>{{monthData}} 考勤</span>
+                <span>{{userName + ' ' + monthData}} 考勤</span>
             </p>
             <Table :columns="columns2"
                    :data="attendanceDetail"
-                   height="600"
+                   height="500"
                    :row-class-name="_returnInnerRowClass"
                    :loading="loading2"></Table>
             <div slot="footer"></div>
@@ -97,31 +98,28 @@
                 tableHeight: 300,
                 searchData: {
                     userName: '',
-                    depId: ''
-                },
-                pageData: {
-                    totalCount: 0,
-                    page: 1,
-                    pageSize: 12
+                    depId: '',
+                    organizeName: ''
                 },
                 modelFlag: false,
                 monthData: '',
+                userName: '',
                 columns1: [
                     {
                         title: '部门',
-                        key: 'late_times',
+                        key: 'organizename',
                         align: 'center'
                     },
                     {
                         title: '员工姓名',
-                        key: 'late_times',
+                        key: 'user_name',
                         align: 'center'
                     },
                     {
                         title: '记录月份',
                         key: 'record_month',
                         align: 'center',
-                        width: '120',
+                        width: 120,
                         render: (h, params) => {
                             return h('span', moment(params.row.record_month).format('YYYY-MM'));
                         }
@@ -171,7 +169,7 @@
                     {
                         title: '审核状态',
                         key: 'status',
-                        align: 'center',
+                        width: 120,
                         render: (h, params) => {
                             return h('Tag', {
                                 props: {
@@ -205,7 +203,7 @@
                         title: '日期',
                         key: 'k_date',
                         align: 'center',
-                        width: '110'
+                        width: 110
                     },
                     {
                         title: '迟到',
@@ -223,13 +221,14 @@
                         align: 'center'
                     },
                     {
-                        title: '审核状态',
-                        key: 'offdaytype',
+                        title: '备注说明',
+                        key: 'describeex',
                         align: 'center'
                     },
                     {
-                        title: '备注说明',
-                        key: 'describeex',
+                        title: '审核状态',
+                        key: 'offdaytype',
+                        width: 120,
                         align: 'center'
                     }
                 ],
@@ -240,29 +239,30 @@
         created() {
             this._setTableHeight();
             this._getOrgTreeData().then(() => {
-                this._getAttendanceData()
-            })
+                this._getAttendanceData();
+            });
         },
         methods: {
             _setTableHeight() {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 280;
+                this.tableHeight = dm - 260;
             },
             filterNode(value, data) {
                 if (!value) return true;
                 return data.text.indexOf(value) !== -1;
             },
             _getOrgTreeData() {
-                return new Promise((resolve => {
+                return new Promise(resolve => {
                     this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
                         console.log(res);
                         if (res.success) {
                             this.treeData = res.date;
                             this.searchData.depId = res.date[0].id;
+                            this.searchData.organizeName = res.date[0].text;
                             resolve();
                         }
-                    })
-                }))
+                    });
+                });
             },
             _setPage(page) {
                 this.pageData.page = page;
@@ -274,15 +274,17 @@
             },
             _getAttendanceData() {
                 let data = {};
-                data.userName = this.searchData.name;
+                data.userName = this.searchData.userName;
                 data.organizeId = this.searchData.depId;
-                this.getList('/arrange/getPersonStatistic', data);
+                data.organizeName = this.searchData.organizeName;
+                this.getList('/kq/getStatisticListByOrgName', data);
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
             }, 600),
             _treeNodeClickHandler(data) {
                 this.searchData.depId = data.id;
+                this.searchData.organizeName = data.text;
             },
             _filterResultHandler() {
                 this.initPage();
@@ -299,12 +301,13 @@
                 this.loading2 = true;
                 let month = moment(obj.record_month).format('YYYY-MM');
                 this.monthData = month;
-                let data = {
-                    month: month
-                };
-                this.$http.get('/arrange/getMyKqLogMonth', {params: data}).then((res) => {
-                    if (res.Success) {
-                        this.attendanceDetail = res.date;
+                this.userName = obj.user_name;
+                let data = {};
+                data.user_name = obj.user_name;
+                data.record_month = month;
+                this.$http.get('/kq/singleStatistic', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.attendanceDetail = res.date.userRecords;
                     }
                 }).finally(() => {
                     this.loading2 = false;

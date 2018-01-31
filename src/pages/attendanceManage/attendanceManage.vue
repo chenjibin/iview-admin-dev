@@ -66,7 +66,6 @@
             <Page :total="pageData.totalCount"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
-                  :page-size-opts="pageSizeOption"
                   :page-size="pageData.pageSize"
                   placement="top"
                   show-sizer
@@ -141,7 +140,6 @@
                     <Button type="ghost" style="margin-left: 8px" @click="exportModalFlag = false">取消</Button>
                 </div>
             </Modal>
-
             <Modal v-model="settingModalFlag"
                    width="1150"
                    :mask-closable="false">
@@ -218,7 +216,6 @@
         name: 'attendanceManage',
         data () {
             return {
-                pageSizeOption: [10, 20, 30, 40],
                 tableLoading2: false,
                 settingModalFlag: false,
                 importModalFlag: false,
@@ -568,15 +565,11 @@
             this._setTableHeight();
         },
         methods: {
-            _exportToExcel() {
-
-                // table2excel.transform(this.$refs.attendanceTable, 'hrefToExportTable', 'textExcel');
-            },
             _confirmDelete() {
                 this.deleteLoading = true;
                 let data = {};
                 data.date = this.deleteMonth;
-                this.$http.post('/kq/', data).then((res) => {
+                this.$http.post('/kq/delete', data).then((res) => {
                     if (res.success) {
                         this.$Message.success(this.deleteMonth + '考勤数据删除成功!');
                         this.deleteModalFlag = false;
@@ -603,7 +596,6 @@
                         document.getElementById('hrefToExportTable').click();
                         this.exportModalFlag = false;
                     }
-                    console.log(res);
                 }).finally(() => {
                     this.exportLoading = false;
                 });
@@ -613,6 +605,10 @@
                 data.user_name = this.attendanceOpt.userName;
                 data.record_month = this.attendanceOpt.monthDate;
                 this.$http.post('/kq/completeExamine', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('操作成功!');
+                        this.settingModalFlag = false;
+                    }
                     console.log(res);
                 });
             },

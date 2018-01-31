@@ -4,8 +4,12 @@
             <Col :lg="14" :md="14">
                 <Card style="margin-bottom: 10px;">
                     <Row type="flex" justify="center" align="middle" style="margin-bottom: 10px">
-                        <span style="font-size: 18px;cursor: pointer;" @click.stop="_preMonth">
-                            <Button type="primary" shape="circle" icon="chevron-left"></Button>
+                        <span style="font-size: 18px;cursor: pointer;" >
+                            <Button type="primary"
+                                    shape="circle"
+                                    @click.stop="_preMonth"
+                                    :disabled="btnDisabled"
+                                    icon="chevron-left"></Button>
                         </span>
                         <DatePicker
                                 :open="datePickerFlag"
@@ -15,8 +19,12 @@
                                 type="month">
                             <span style="padding:0 16px;font-size: 18px;cursor: pointer;" @click="datePickerFlag = !datePickerFlag">{{dateData}}</span>
                         </DatePicker>
-                        <span style="font-size: 18px;cursor: pointer;" @click.stop="_nextMonth">
-                             <Button type="primary" shape="circle" icon="chevron-right"></Button>
+                        <span style="font-size: 18px;cursor: pointer;">
+                             <Button type="primary"
+                                     @click.stop="_nextMonth"
+                                     shape="circle"
+                                     :disabled="btnDisabled"
+                                     icon="chevron-right"></Button>
                         </span>
                     </Row>
                     <Table :columns="columnsData"
@@ -153,6 +161,7 @@
                 modelFlag: false,
                 loading: false,
                 open: true,
+                btnDisabled: false,
                 dateData: null,
                 editorOpt: {
                     menubar: '',
@@ -267,6 +276,7 @@
         methods: {
             _getLogInfo(ym) {
                 this.loading = true;
+                this.btnDisabled = true;
                 this.$http.get('/journal/typeList', {params: {time: ym}}).then((res) => {
                     if (res.Success) {
                         let storeArr = res.date.slice(0);
@@ -277,6 +287,7 @@
                     }
                 }).finally(() => {
                     this.loading = false;
+                    this.btnDisabled = false;
                 });
             },
             _dateChange(date) {
@@ -284,9 +295,6 @@
                 this.datePickerFlag = false;
             },
             _preMonth() {
-                setTimeout(() => {
-                    this.loading = false;
-                }, 500);
                 this.dateData = moment(this.dateData).subtract(1, 'M').format('YYYY-MM');
             },
             _nextMonth() {
