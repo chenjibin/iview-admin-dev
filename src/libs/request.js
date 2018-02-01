@@ -27,8 +27,8 @@ axios.interceptors.request.use(config => {
 // Add a response interceptor
 axios.interceptors.response.use(response => {
     if (response.data.hasOwnProperty('success') && !response.data.success) {
-        console.log(response)
-        Vue.prototype.$Message.error(response.data.message)
+        console.log(response);
+        Vue.prototype.$Message.error(response.data.message);
     }
     if (response.data.Success === 'fail') {
         if (response.data.failCode === 'OUT_OF_LOGIN') {
@@ -39,7 +39,6 @@ axios.interceptors.response.use(response => {
         }
     }
     return response.data;
-
 }, function(error) {
     // Do something with response error
     Vue.prototype.$Message.error('服务器错误！');

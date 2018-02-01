@@ -23,12 +23,6 @@
                                     @on-change="_monthDateChange"
                                     :value="filterOpt.monthDate"></DatePicker>
                     </FormItem>
-                    <FormItem prop="name" label="部门">
-                        <Input type="text"
-                               @on-change="_inputDebounce"
-                               v-model="filterOpt.organizeName"
-                               placeholder="姓名"></Input>
-                    </FormItem>
                     <FormItem label="设置状态">
                         <Select v-model="filterOpt.kqstates"
                                 clearable
@@ -58,14 +52,60 @@
         </Row>
         <Modal v-model="modelFlag" width="900" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>排班</span>
+                <span>{{'【' + organizeName +  '】' + monthData}}排班</span>
             </p>
             <Table :columns="changeColums"
                    :data="changeData"
-                   height="500"
+                   height="450"
                    width="868"
                    :loading="loading2"></Table>
-            <div slot="footer"></div>
+            <div slot="footer">
+                <Button type="primary"
+                        :disabled="loading2"
+                        :loading="importLoading"
+                        v-if="opSataus === '未设置'"
+                        @click="_importLastMonth">
+                    <span v-if="!importLoading">导入上月设置</span>
+                    <span v-else>正在导入...</span>
+                </Button>
+                <Button type="primary"
+                        :disabled="loading2"
+                        v-if="opSataus === '未设置'"
+                        @click="_completeThisMonth">完成 【{{organizeName}}】 该月排班</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
+            </div>
+        </Modal>
+        <Modal v-model="strangeModalFlag"
+               width="400"
+               :styles="{top: '160px', zIndex: 100}"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 16px">
+                <span>编辑出勤信息</span>
+            </p>
+            <Form :model="strangeSettingForm" :label-width="80">
+                <FormItem label="出勤类型">
+                    <Select v-model="strangeSettingForm.type" clearable>
+                        <Option value="休息">休息</Option>
+                        <Option value="上班">上班</Option>
+                        <Option value="法假">法假</Option>
+                        <Option value="旷工">旷工</Option>
+                        <Option value="无薪假" >无薪假</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="天数">
+                    <Select v-model="strangeSettingForm.quality" clearable>
+                        <Option value="1">1天</Option>
+                        <Option value="0.5">0.5天</Option>
+                    </Select>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary"
+                        :disabled="btnConfirmDis"
+                        @click="_confirmStrangeSetting">确认设置</Button>
+                <Button type="ghost" style="margin-left: 8px"
+                        @click="strangeModalFlag = false">取消</Button>
+            </div>
         </Modal>
     </div>
 </template>
@@ -93,23 +133,35 @@
                 filterText: '',
                 loading: false,
                 loading2: false,
+                importLoading: false,
+                strangeModalFlag: false,
+                btnConfirmDis: false,
                 treeData: [],
+                strangeSettingForm: {
+                    type: '休息',
+                    quality: '1',
+                    id: ''
+                },
                 defaultProps: {
                     children: 'children',
-                    label: 'text'
+                    label: 'name'
                 },
                 tableHeight: 300,
                 filterOpt: {
                     monthDate: '',
                     organizeId: '',
-                    organizeName: '',
+                    // organizeName: '',
                     kqstates: ''
                 },
                 modelFlag: false,
                 monthData: '',
-                userName: '',
+                organizeName: '',
                 changeColums: [],
                 changeData: [],
+                opSataus: '',
+                userIds: [],
+                sendId: '',
+                sendMonth: '',
                 columns1: [
                     {
                         title: '部门',
@@ -162,61 +214,12 @@
                         }
                     }
                 ],
-                columns2: [
-                    {
-                        title: '打卡记录',
-                        key: 'kq_re',
-                        width: '240',
-                        align: 'center',
-                        render: (h, params) => {
-                            if (params.row.kq_re) {
-                                let flag = +params.row.c_count || +params.row.z_count || +params.row.l_count;
-                                return h('Tag', {
-                                    props: {
-                                        color: flag ? 'red' : 'green'
-                                    },
-                                    style: {
-                                        fontSize: '14px'
-                                    }
-                                }, params.row.kq_re);
-                            }
-                        }
-                    },
-                    {
-                        title: '日期',
-                        key: 'k_date',
-                        align: 'center',
-                        width: 110
-                    },
-                    {
-                        title: '迟到',
-                        key: 'c_count',
-                        align: 'center'
-                    },
-                    {
-                        title: '早退',
-                        key: 'z_count',
-                        align: 'center'
-                    },
-                    {
-                        title: '漏打卡',
-                        key: 'l_count',
-                        align: 'center'
-                    },
-                    {
-                        title: '备注说明',
-                        key: 'describeex',
-                        align: 'center'
-                    },
-                    {
-                        title: '审核状态',
-                        key: 'offdaytype',
-                        width: 120,
-                        align: 'center'
-                    }
-                ],
-                attendanceList: [],
-                attendanceDetail: []
+                getDetailData: {
+                    id: '',
+                    record_month: '',
+                    organizeName: '',
+                    status: ''
+                }
             };
         },
         created() {
@@ -226,6 +229,54 @@
             });
         },
         methods: {
+            _importLastMonth() {
+                this.loading2 = true;
+                this.importLoading = true;
+                let data = {};
+                data.userIds = this.userIds.join(',');
+                data.month = this.sendMonth;
+                this.$http.post('/kq/exportLastMonthMsg', data).then((res) => {
+                    if (res.success) {
+                        this._getDetailData();
+                    }
+                    console.log(res);
+                }).finally(() => {
+                    this.importLoading = false;
+                });
+            },
+            _confirmStrangeSetting() {
+                this.btnConfirmDis = true;
+                this.$http.post('/kq/updateArrangeExceptionType', this.strangeSettingForm).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('设置成功!');
+                        this._getDetailData();
+                        this.strangeModalFlag = false;
+                    }
+                    console.log(res);
+                }).finally(() => {
+                    this.btnConfirmDis = false;
+                });
+                console.log(this.strangeSettingForm);
+            },
+            _settingStrangeDay(params) {
+                this.strangeModalFlag = true;
+                this.strangeSettingForm.id = params.row[params.column.key].id;
+                console.log(params);
+            },
+            _completeThisMonth() {
+                let data = {};
+                data.userIds = this.userIds.join(',');
+                data.month = this.sendMonth;
+                data.id = this.sendId;
+                this.$http.post('/kq/completeOrganizeArrangeSetup', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('设置成功!');
+                        this.modelFlag = false;
+                        this._getAttendanceData();
+                    }
+                    console.log(res);
+                });
+            },
             _monthDateChange(val) {
                 this.filterOpt.monthDate = val;
                 this._filterResultHandler();
@@ -240,11 +291,11 @@
             },
             _getOrgTreeData() {
                 return new Promise(resolve => {
-                    this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
+                    this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
                         console.log(res);
                         if (res.success) {
                             this.treeData = res.date;
-                            this.filterOpt.organizeId = res.date[0].id;
+                            this.filterOpt.organizeId = '';
                             resolve();
                         }
                     });
@@ -262,7 +313,6 @@
                 let data = {};
                 data.organizeId = this.filterOpt.organizeId;
                 data.monthDate = this.filterOpt.monthDate;
-                data.organizeName = this.filterOpt.organizeName;
                 data.kqstates = this.filterOpt.kqstates;
                 this.getList('/kq/getOrganizeArrangeStatistic', data);
             },
@@ -278,56 +328,90 @@
                 this._getAttendanceData();
             },
             _returnRenderFun() {
+                let vm = this;
                 return function (h, params) {
-                    console.log(params)
-                    return h('div', params.row[params.column.key].kq_plan);
+                    let content = '';
+                    let color = '';
+                    let flag = !!params.row[params.column.key];
+                    if (flag) {
+                        if (params.row[params.column.key].exceptiontype) {
+                            content = params.row[params.column.key].exceptiontype;
+                            color = '#ff9900';
+                        } else {
+                            content = params.row[params.column.key].kq_plan;
+                            if (content === '休息') {
+                                color = '#2d8cf0';
+                            } else {
+                                color = '#495060';
+                            }
+                        }
+                    }
+                    return h('div', {
+                        on: {
+                            click: function () {
+                                vm._settingStrangeDay(params);
+                            }
+                        },
+                        style: {
+                            color: color,
+                            cursor: 'pointer'
+                        }
+                    }, content);
                 };
             },
-            _checkDetail(obj) {
+            _getDetailData() {
                 this.loading2 = true;
-                let month = obj.monthdate;
-                this.monthData = month;
-                this.userName = obj.organizename;
-                let data = {};
-                data.id = obj.id;
-                data.record_month = month;
-                data.organizeName = obj.organizename;
-                data.status = obj.status;
-                console.log(data)
-                this.$http.get('/kq/organizeArrangeStatistic', {params: data}).then((res) => {
-                    console.log(res);
-                    let storeColum = [
-                        {
-                            title: '姓名',
-                            key: 'name',
-                            width: 80,
-                            fixed: 'left'
-                        }
-                    ];
-                    res.days.forEach((item, index) => {
-                        let storeObj = {};
-                        storeObj.title = item;
-                        storeObj.key = 'day' + index;
-                        storeObj.width = 80;
-                        storeObj.align = 'center';
-                        storeObj.render = this._returnRenderFun();
-                        storeColum.push(storeObj);
-                    });
-                    let storeData = [];
-                    _forEach(res.arrangeMap, (value, key) => {
-                        let storeObj = {};
-                        storeObj.name = key;
-                        value.forEach((item, index) => {
-                            storeObj['day' + index] = item;
+                this.$http.get('/kq/organizeArrangeStatistic', {params: this.getDetailData}).then((res) => {
+                    if (res.success) {
+                        console.log(res);
+                        this.userIds = res.date.userIds;
+                        this.sendId = res.date.id;
+                        this.sendMonth = res.date.month;
+                        let storeColum = [
+                            {
+                                title: '姓名',
+                                key: 'name',
+                                width: 80,
+                                fixed: 'left'
+                            }
+                        ];
+                        res.date.days.forEach((item, index) => {
+                            let storeObj = {};
+                            storeObj.title = item;
+                            storeObj.key = 'day' + index;
+                            storeObj.width = 80;
+                            storeObj.align = 'center';
+                            storeObj.render = this._returnRenderFun();
+                            storeColum.push(storeObj);
                         });
-                        storeData.push(storeObj);
-                    })
-                    this.changeData = storeData
-                    this.changeColums = storeColum;
-                    console.log(storeData);
+                        let storeData = [];
+                        _forEach(res.date.arrangeMap, (value, key) => {
+                            let storeObj = {};
+                            storeObj.name = key;
+                            if (value.length) {
+                                value.forEach((item, index) => {
+                                    storeObj['day' + index] = item;
+                                });
+                            }
+                            storeData.push(storeObj);
+                        });
+                        this.changeData = storeData;
+                        this.changeColums = storeColum;
+                    }
                 }).finally(() => {
                     this.loading2 = false;
                 });
+            },
+            _checkDetail(obj) {
+                let month = obj.monthdate;
+                this.opSataus = obj.status;
+                this.monthData = month;
+                this.organizeName = obj.organizename;
+                this.getDetailData.id = obj.id;
+                this.getDetailData.record_month = month;
+                this.getDetailData.organizeName = obj.organizename;
+                this.getDetailData.status = obj.status;
+                this._getDetailData();
                 this.modelFlag = true;
             }
         },
