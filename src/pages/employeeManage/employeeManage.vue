@@ -310,7 +310,7 @@
             <div id="fs-spec-access-block">
                 <Row :gutter="16">
                     <Col :span="14">
-                        <h3 class="title">虚拟可查看部门日志</h3>
+                        <h3 class="title">虚拟可查看部门</h3>
                         <div class="">
                             <div class="each-dep-wrapper"
                                  v-for="(dep, index) in specAccessData.deps"
@@ -325,14 +325,15 @@
                                 ></el-cascader>
                                 <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeDep(index)"></Button>
                             </div>
-                            <div class="add-dep" @click="_addNewDep">
-                                <Icon type="plus-round" size="30"></Icon>
-                                <p>点击添加部门</p>
-                            </div>
+                            <Button
+                                    type="ghost"
+                                    shape="circle"
+                                    @click="_addNewDep"
+                                    icon="plus-round"></Button>
                         </div>
                     </Col>
                     <Col :span="10">
-                        <h3 class="title">虚拟可查看人员日志</h3>
+                        <h3 class="title">虚拟可查看人员</h3>
                         <div class="">
                             <Select
                                     v-model="specAccessData.filterPeopleData"
@@ -346,6 +347,29 @@
                             </Select>
                         </div>
                     </Col>
+                    <Col :span="14" style="margin-top: 16px;">
+                        <h3 class="title">虚拟可查看排班部门</h3>
+                        <div class="">
+                            <div class="each-dep-wrapper"
+                                 v-for="(dep, index) in specAccessData.arrangeDeps"
+                                 :key="'arrangedep-' + index">
+                                <el-cascader
+                                        :options="orgTreeData"
+                                        :props="depProps"
+                                        v-model="dep.dep"
+                                        change-on-select
+                                        size="small"
+                                        class="dep-choose"
+                                ></el-cascader>
+                                <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeArrangeDep(index)"></Button>
+                            </div>
+                            <Button
+                                    type="ghost"
+                                    shape="circle"
+                                    @click="_addNewArrangeDep"
+                                    icon="plus-round"></Button>
+                        </div>
+                    </Col>
                 </Row>
             </div>
             <div slot="footer">
@@ -357,6 +381,9 @@
 </template>
 <style lang="less">
     #fs-spec-access-block {
+        max-height: 400px;
+        overflow-x: hidden;
+        overflow-y: auto;
         .title {
             margin-bottom: 16px;
         }
@@ -449,7 +476,8 @@
                     filterPeopleLoading: false,
                     filterPeopleData: [],
                     filterPeopleOpt: [],
-                    deps: []
+                    deps: [],
+                    arrangeDeps: []
                 },
                 coinSettingFlag: false,
                 settingModalFlag: false,
@@ -854,7 +882,10 @@
                 this.specAccessFlag = true;
             },
             _removeDep(index) {
-                this.specAccessData.deps.splice(index, 1)
+                this.specAccessData.deps.splice(index, 1);
+            },
+            _removeArrangeDep(index) {
+                this.specAccessData.arrangeDeps.splice(index, 1);
             },
             _filterPeopleRemote(val) {
                 let data = {};
@@ -871,7 +902,12 @@
             _addNewDep() {
                 let obj = {};
                 obj.dep = [];
-                this.specAccessData.deps.push(obj)
+                this.specAccessData.deps.push(obj);
+            },
+            _addNewArrangeDep() {
+                let obj = {};
+                obj.dep = [];
+                this.specAccessData.arrangeDeps.push(obj);
             },
             _returnAccessDeps(deps) {
                 if (!deps) return [];

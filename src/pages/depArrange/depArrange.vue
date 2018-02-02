@@ -33,10 +33,37 @@
                             <Option value="1">已设置</Option>
                         </Select>
                     </FormItem>
+                    <FormItem>
+                        <ButtonGroup>
+                            <Button type="ghost" @click="_createMonthOpen">
+                                <Icon type="plus-round"></Icon>
+                                新建
+                            </Button>
+                            <Button type="warning" @click="_delMonthOpen">
+                                <Icon type="ios-trash-outline"></Icon>
+                                删除
+                            </Button>
+                            <Button type="ghost">
+                                <Icon type="plus-round"></Icon>
+                                添加个人
+                            </Button>
+                            <Button type="ghost">
+                                <Icon type="plus-round"></Icon>
+                                添加部门
+                            </Button>
+                            <Button type="warning"
+                                    :disabled="!chooseDataArr.length"
+                                    @click="_delDepChoose">
+                                <Icon type="ios-trash-outline"></Icon>
+                                删除部门
+                            </Button>
+                        </ButtonGroup>
+                    </FormItem>
                 </Form>
                 <Table :columns="columns1"
                        :loading="tableLoading"
                        :height="tableHeight"
+                       @on-selection-change="_tableSelectChange"
                        :data="pageData.list"></Table>
                 <Page :total="pageData.totalCount"
                       @on-change="_setPage"
@@ -107,6 +134,38 @@
                         @click="strangeModalFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="deleteModalFlag"
+               width="300"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>{{allType === 'del' ? '删除' : '新建'}}月份</span>
+            </p>
+            <Form >
+                <FormItem label="月份">
+                    <DatePicker type="month"
+                                placeholder="月份"
+                                @on-change="_deleteMonthChange"
+                                :value="deleteMonth"></DatePicker>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary"
+                        v-if="allType === 'del'"
+                        :loading="deleteLoading"
+                        @click="_confirmDelete">
+                    <span v-if="!deleteLoading">确认删除</span>
+                    <span v-else>正在删除...</span>
+                </Button>
+                <Button type="primary"
+                        v-if="allType === 'create'"
+                        :loading="deleteLoading"
+                        @click="_confirmCreate">
+                    <span v-if="!deleteLoading">确认新建</span>
+                    <span v-else>正在新建...</span>
+                </Button>
+                <Button type="ghost" style="margin-left: 8px" @click="deleteModalFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
@@ -131,11 +190,15 @@
         data () {
             return {
                 filterText: '',
+                allType: 'del',
                 loading: false,
                 loading2: false,
+                deleteLoading: false,
                 importLoading: false,
                 strangeModalFlag: false,
+                deleteModalFlag: false,
                 btnConfirmDis: false,
+                deleteMonth: moment().format('YYYY-MM'),
                 treeData: [],
                 strangeSettingForm: {
                     type: '休息',
@@ -160,9 +223,15 @@
                 changeData: [],
                 opSataus: '',
                 userIds: [],
+                chooseDataArr: [],
                 sendId: '',
                 sendMonth: '',
                 columns1: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
                     {
                         title: '部门',
                         key: 'organizename',
@@ -229,6 +298,60 @@
             });
         },
         methods: {
+            _delDepChoose() {
+                let storeArr = this.chooseDataArr.map(x => x.id);
+                let data = {};
+                data.ids = storeArr.join(',');
+                this.$http.post('/kq/deleteOrganizeArrange', data).then((res) => {
+                    console.log(res);
+                    if (res.success) {
+                        this.$Message.success('删除成功!');
+                        this._getAttendanceData();
+                    }
+                });
+            },
+            _createMonthOpen() {
+                this.allType = 'create';
+                this.deleteModalFlag = true;
+            },
+            _delMonthOpen() {
+                this.allType = 'del';
+                this.deleteModalFlag = true;
+            },
+            _deleteMonthChange(date) {
+                this.deleteMonth = date;
+            },
+            _confirmCreate() {
+                this.deleteLoading = true;
+                let data = {};
+                data.month = this.deleteMonth;
+                this.$http.post('/kq/addArrangeTableByMonth', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('创建成功!');
+                        this._getAttendanceData();
+                        this.deleteModalFlag = false;
+                    }
+                }).finally(() => {
+                    this.deleteLoading = false;
+                });
+            },
+            _confirmDelete() {
+                this.deleteLoading = true;
+                let data = {};
+                data.month = this.deleteMonth;
+                this.$http.post('/kq/ArrangeDelete', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('删除成功!');
+                        this._getAttendanceData();
+                        this.deleteModalFlag = false;
+                    }
+                }).finally(() => {
+                    this.deleteLoading = false;
+                });
+            },
+            _tableSelectChange(data) {
+                this.chooseDataArr = data;
+            },
             _importLastMonth() {
                 this.loading2 = true;
                 this.importLoading = true;
@@ -239,7 +362,6 @@
                     if (res.success) {
                         this._getDetailData();
                     }
-                    console.log(res);
                 }).finally(() => {
                     this.importLoading = false;
                 });
@@ -252,16 +374,13 @@
                         this._getDetailData();
                         this.strangeModalFlag = false;
                     }
-                    console.log(res);
                 }).finally(() => {
                     this.btnConfirmDis = false;
                 });
-                console.log(this.strangeSettingForm);
             },
             _settingStrangeDay(params) {
                 this.strangeModalFlag = true;
                 this.strangeSettingForm.id = params.row[params.column.key].id;
-                console.log(params);
             },
             _completeThisMonth() {
                 let data = {};
@@ -274,7 +393,6 @@
                         this.modelFlag = false;
                         this._getAttendanceData();
                     }
-                    console.log(res);
                 });
             },
             _monthDateChange(val) {
@@ -291,8 +409,7 @@
             },
             _getOrgTreeData() {
                 return new Promise(resolve => {
-                    this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
-                        console.log(res);
+                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.treeData = res.date;
                             this.filterOpt.organizeId = '';
@@ -363,7 +480,6 @@
                 this.loading2 = true;
                 this.$http.get('/kq/organizeArrangeStatistic', {params: this.getDetailData}).then((res) => {
                     if (res.success) {
-                        console.log(res);
                         this.userIds = res.date.userIds;
                         this.sendId = res.date.id;
                         this.sendMonth = res.date.month;

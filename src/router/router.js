@@ -231,14 +231,15 @@ export const appRouter = [
                 name: 'depArrange',
                 title: '部门排班信息',
                 component: resolve => { require(['@/pages/depArrange/depArrange.vue'], resolve); }
-            },
-            {
-                path: 'employeeFile',
-                icon: 'compose',
-                name: 'employeeFile',
-                title: '员工档案',
-                component: resolve => { require(['@/pages/employeeFile/employeeFile.vue'], resolve); }
             }
+            // ,
+            // {
+            //     path: 'employeeFile',
+            //     icon: 'compose',
+            //     name: 'employeeFile',
+            //     title: '员工档案',
+            //     component: resolve => { require(['@/pages/employeeFile/employeeFile.vue'], resolve); }
+            // }
         ]
     },
     {

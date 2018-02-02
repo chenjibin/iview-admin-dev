@@ -47,7 +47,7 @@
                             <Icon type="ios-cloud-download-outline"></Icon>
                             导出
                         </Button>
-                        <Button type="error" @click="deleteModalFlag = true" >
+                        <Button type="warning" @click="deleteModalFlag = true" >
                             <Icon type="ios-trash-outline"></Icon>
                             删除
                         </Button>
