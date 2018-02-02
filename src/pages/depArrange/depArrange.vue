@@ -43,11 +43,11 @@
                                 <Icon type="ios-trash-outline"></Icon>
                                 删除
                             </Button>
-                            <Button type="ghost">
+                            <Button type="ghost" @click="addPersonModalFlag = true">
                                 <Icon type="plus-round"></Icon>
                                 添加个人
                             </Button>
-                            <Button type="ghost">
+                            <Button type="ghost" @click="addDepModalFlag = true">
                                 <Icon type="plus-round"></Icon>
                                 添加部门
                             </Button>
@@ -166,6 +166,62 @@
                 <Button type="ghost" style="margin-left: 8px" @click="deleteModalFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="addDepModalFlag"
+               width="300"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>添加部门</span>
+            </p>
+            <Form :label-width="80">
+                <FormItem label="月份">
+                    <DatePicker type="month"
+                                placeholder="月份"
+                                @on-change="_addDepMonthChange"
+                                :value="addDepForm.month"></DatePicker>
+                </FormItem>
+                <FormItem label="部门名称">
+                    <Input type="text"
+                           v-model="addDepForm.organizeName"></Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary"
+                        :loading="deleteLoading"
+                        @click="_confirmAddDep">
+                    <span v-if="!deleteLoading">确认添加</span>
+                    <span v-else>正在添加...</span>
+                </Button>
+                <Button type="ghost" style="margin-left: 8px" @click="addDepModalFlag = false">取消</Button>
+            </div>
+        </Modal>
+        <Modal v-model="addPersonModalFlag"
+               width="300"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>添加个人</span>
+            </p>
+            <Form :label-width="80">
+                <FormItem label="月份">
+                    <DatePicker type="month"
+                                placeholder="月份"
+                                @on-change="_addPersonMonthChange"
+                                :value="addPersonForm.month"></DatePicker>
+                </FormItem>
+                <FormItem label="员工姓名">
+                    <Input type="text"
+                           v-model="addPersonForm.userName"></Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary"
+                        :loading="deleteLoading"
+                        @click="_confirmAddPerson">
+                    <span v-if="!deleteLoading">确认添加</span>
+                    <span v-else>正在添加...</span>
+                </Button>
+                <Button type="ghost" style="margin-left: 8px" @click="addPersonModalFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
@@ -176,6 +232,7 @@
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
     import _forEach from 'lodash/forEach';
+    const NOW_MONTH = moment().format('YYYY-MM');
     export default {
         name: 'depArrange',
         mixins: [pageMixin],
@@ -197,9 +254,19 @@
                 importLoading: false,
                 strangeModalFlag: false,
                 deleteModalFlag: false,
+                addDepModalFlag: false,
+                addPersonModalFlag: false,
                 btnConfirmDis: false,
-                deleteMonth: moment().format('YYYY-MM'),
+                deleteMonth: NOW_MONTH,
                 treeData: [],
+                addDepForm: {
+                    month: NOW_MONTH,
+                    organizeName: ''
+                },
+                addPersonForm: {
+                    month: NOW_MONTH,
+                    userName: ''
+                },
                 strangeSettingForm: {
                     type: '休息',
                     quality: '1',
@@ -298,6 +365,36 @@
             });
         },
         methods: {
+            _confirmAddPerson() {
+                this.deleteLoading = true;
+                this.$http.post('/kq/addSingleArrangeByMonth', this.addPersonForm).then((res) => {
+                    if (res.success) {
+                        this.addPersonModalFlag = false;
+                        this.$Message.success('个人添加成功!');
+                        this._getAttendanceData();
+                    }
+                }).finally(() => {
+                    this.deleteLoading = false;
+                });
+            },
+            _addPersonMonthChange(date) {
+                this.addPersonForm.month = date;
+            },
+            _confirmAddDep() {
+                this.deleteLoading = true;
+                this.$http.post('/kq/addOrganizeArrangeByMonth', this.addDepForm).then((res) => {
+                    if (res.success) {
+                        this.addDepModalFlag = false;
+                        this.$Message.success('部门添加成功!');
+                        this._getAttendanceData();
+                    }
+                }).finally(() => {
+                    this.deleteLoading = false;
+                });
+            },
+            _addDepMonthChange(date) {
+                this.addDepForm.month = date;
+            },
             _delDepChoose() {
                 let storeArr = this.chooseDataArr.map(x => x.id);
                 let data = {};
@@ -307,6 +404,7 @@
                     if (res.success) {
                         this.$Message.success('删除成功!');
                         this._getAttendanceData();
+                        this.chooseDataArr = [];
                     }
                 });
             },
