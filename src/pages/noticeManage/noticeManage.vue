@@ -9,14 +9,12 @@
                            placeholder="筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="开始日期">
-                    <DatePicker type="month"
-                                placeholder="筛选考勤月份"
+                    <DatePicker placeholder="筛选开始日期"
                                 @on-change="_monthStartDateChange"
                                 :value="filterOpt.startDate"></DatePicker>
                 </FormItem>
                 <FormItem label="结束日期">
-                    <DatePicker type="month"
-                                placeholder="筛选考勤月份"
+                    <DatePicker placeholder="筛选结束日期"
                                 @on-change="_monthEndDateChange"
                                 :value="filterOpt.endDate"></DatePicker>
                 </FormItem>
@@ -26,13 +24,17 @@
                             @on-change="_filterResultHandler"
                             placeholder="筛选状态"
                             style="width: 100px">
-                        <Option value="2">审核完毕</Option>
-                        <Option value="1">未审核</Option>
+                        <Option value="0">制度</Option>
+                        <Option value="1">任命</Option>
+                        <Option value="2">通知</Option>
+                        <Option value="3">考勤</Option>
+                        <Option value="4">奖惩</Option>
+                        <Option value="5">其他</Option>
                     </Select>
                 </FormItem>
                 <FormItem>
                     <ButtonGroup>
-                        <Button type="ghost" @click="strangeModalFlag = true">
+                        <Button type="ghost" @click="_openNewNotice">
                             <Icon type="paper-airplane"></Icon>
                             发布公告
                         </Button>
@@ -53,59 +55,89 @@
                   show-total
                   show-elevator
                   style="margin-top: 16px;"></Page>
-            <Modal v-model="strangeModalFlag"
-                   width="800"
+            <Modal v-model="settingModalFlag"
+                   width="1100"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>发布公告</span>
                 </p>
-                <Form :model="strangeSettingForm" :label-width="80">
-                    <Row>
-                        <Col :span="24">
+                <Row :gutter="16">
+                    <Col :span="16">
+                        <Form :model="strangeSettingForm" :label-width="80">
+                        <Row>
+                            <Col :span="24">
                             <FormItem label="标题">
                                 <Input type="text"
                                        v-model="strangeSettingForm.title"
                                        placeholder="公告标题"></Input>
                             </FormItem>
-                        </Col>
-                        <Col :span="8">
+                            </Col>
+                            <Col :span="8">
                             <FormItem label="公告类型">
                                 <Select v-model="strangeSettingForm.type" clearable>
-                                    <Option value="事假">事假</Option>
-                                    <Option value="病假">病假</Option>
-                                    <Option value="婚假">婚假</Option>
-                                    <Option value="产假" >产假</Option>
-                                    <Option value="年假" >年假</Option>
+                                    <Option value="0">制度</Option>
+                                    <Option value="1">任命</Option>
+                                    <Option value="2">通知</Option>
+                                    <Option value="3" >考勤</Option>
+                                    <Option value="4" >奖惩</Option>
+                                    <Option value="5" >其他</Option>
                                 </Select>
                             </FormItem>
-                        </Col>
-                        <Col :span="8">
+                            </Col>
+                            <Col :span="8">
                             <FormItem label="阅读要求">
                                 <Select v-model="strangeSettingForm.require" clearable>
-                                    <Option value="1">1天</Option>
-                                    <Option value="0.5">0.5天</Option>
+                                    <Option value="不强制">不强制</Option>
+                                    <Option value="强制阅读">强制阅读</Option>
                                 </Select>
                             </FormItem>
-                        </Col>
-                        <Col :span="8">
+                            </Col>
+                            <Col :span="8">
                             <FormItem label="发布状态">
                                 <Select v-model="strangeSettingForm.status" clearable>
-                                    <Option value="1">1天</Option>
-                                    <Option value="0.5">0.5天</Option>
+                                    <Option value="草稿">草稿</Option>
+                                    <Option value="发布">发布</Option>
                                 </Select>
                             </FormItem>
-                        </Col>
-                    </Row>
-                    <text-editor
-                            :menubar="editorOpt.menubar"
-                            :plugins="editorOpt.plugins"
-                            :editor-content="strangeSettingForm.content"
-                            :toolbar1="editorOpt.toolbar1"
-                            @content-change="_setContent"></text-editor>
-                </Form>
+                            </Col>
+                        </Row>
+                        <text-editor
+                                :menubar="editorOpt.menubar"
+                                :plugins="editorOpt.plugins"
+                                :editor-content="strangeSettingForm.content"
+                                :toolbar1="editorOpt.toolbar1"
+                                @content-change="_setContent"></text-editor>
+                    </Form>
+                    </Col>
+                    <Col :span="8">
+                        <h3>发布范围</h3>
+                        <div style="max-height: 460px;overflow:auto;">
+                            <el-tree :data="orgTreeData"
+                                     ref="treeDom"
+                                     show-checkbox
+                                     default-expand-all
+                                     :check-strictly="true"
+                                     :expand-on-click-node="false"
+                                     :default-checked-keys="strangeSettingForm.deps"
+                                     :highlight-current="true"
+                                     node-key="id"
+                                     style="margin-top: 10px;"
+                                     :props="defaultProps"></el-tree>
+
+                        </div>
+                    </Col>
+                </Row>
                 <div slot="footer">
                     <Button type="primary">发布</Button>
-                    <Button type="ghost" style="margin-left: 8px" @click="strangeModalFlag = false">取消</Button>
+                    <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
+                </div>
+            </Modal>
+            <Modal v-model="lookModelFlag" width="800" :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>{{noticeData.title}}</span>
+                </p>
+                <div style="max-height: 500px;overflow: auto;" v-html="noticeData.content"></div>
+                <div slot="footer">
                 </div>
             </Modal>
         </Card>
@@ -122,6 +154,11 @@
             return {
                 settingModalFlag: false,
                 strangeModalFlag: false,
+                lookModelFlag: false,
+                noticeData: {
+                    title: '',
+                    content: ''
+                },
                 editorOpt: {
                     menubar: '',
                     plugins: [
@@ -138,7 +175,8 @@
                     require: '',
                     status: '',
                     content: '',
-                    editorContent: ''
+                    editorContent: '',
+                    deps: []
                 },
                 depProps: {
                     value: 'id',
@@ -158,25 +196,48 @@
                     },
                     {
                         title: '标题',
-                        key: 'organizename',
-                        align: 'center'
+                        key: 'title'
                     },
                     {
                         title: '公告类型',
-                        key: 'late_times',
+                        key: 'type',
                         align: 'center',
-                        width: 100
-
+                        width: 100,
+                        render: (h, params) => {
+                            let typeContent = '';
+                            switch (+params.row.type) {
+                                case 0:
+                                    typeContent = '制度';
+                                    break;
+                                case 1:
+                                    typeContent = '任命';
+                                    break;
+                                case 2:
+                                    typeContent = '通知';
+                                    break;
+                                case 3:
+                                    typeContent = '考勤';
+                                    break;
+                                case 4:
+                                    typeContent = '奖惩';
+                                    break;
+                                default:
+                                    typeContent = '其他';
+                            }
+                            return h('span', typeContent);
+                        }
                     },
                     {
                         title: '发布日期',
-                        key: 'leave_early',
                         align: 'center',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            return h('span', moment(params.row.nottime).format('YYYY-MM-DD'));
+                        }
                     },
                     {
                         title: '发布人',
-                        key: 'forget_times',
+                        key: 'operater',
                         align: 'center',
                         width: 80
                     },
@@ -199,8 +260,12 @@
                                             icon: 'compose',
                                             shape: 'circle'
                                         },
+                                        style: {
+                                            marginRight: '8px'
+                                        },
                                         on: {
                                             click: function () {
+                                                vm._editorSetting(params.row)
                                             }
                                         }
                                     })
@@ -220,6 +285,7 @@
                                         },
                                         on: {
                                             click: function () {
+                                                vm._lookNotice(params.row);
                                             }
                                         }
                                     })
@@ -228,6 +294,12 @@
                         }
                     }
                 ],
+                orgTreeData: [],
+                allTreeId: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'name'
+                },
                 tableHeight: 500,
                 attendanceOpt: {
                     userName: '',
@@ -240,8 +312,31 @@
         created() {
             this._getPostData();
             this._setTableHeight();
+            this._getOrgTree().then((res) => {
+                this._getAllDepIds(res);
+                console.log(this.allTreeId);
+            });
         },
         methods: {
+            _getAllDepIds(data) {
+                data.forEach((item) => {
+                    this.allTreeId.push(item.id);
+                    if (item.children) this._getAllDepIds(item.children);
+                });
+            },
+            _initNoticeForm() {
+                this.strangeSettingForm.title = '';
+                this.strangeSettingForm.type = '';
+                this.strangeSettingForm.require = '';
+                this.strangeSettingForm.status = '';
+                this.strangeSettingForm.content = '';
+                this.strangeSettingForm.editorContent = '';
+                this.$refs.treeDom.setCheckedKeys(this.allTreeId.slice(0));
+            },
+            _openNewNotice() {
+                this._initNoticeForm();
+                this.settingModalFlag = true;
+            },
             _setContent(content) {
                 this.strangeSettingForm.editorContent = content;
             },
@@ -275,20 +370,34 @@
                 this._getPostData();
             },
             _editorSetting(data) {
-                this._initAttendanceOpt();
-                this.attendanceOpt.userName = data.user_name;
-                this.attendanceOpt.monthDate = moment(data.record_month).format('YYYY-MM');
-                this._getUserStatistic();
+                this._initNoticeForm();
+                // this._getUserStatistic();
+                this.strangeSettingForm.deps = [1];
+                this.$refs.treeDom.setCheckedKeys([1]);
                 this.settingModalFlag = true;
+            },
+            _lookNotice(data) {
+                this.lookModelFlag = true;
+                this.noticeData.title = data.title;
+                this.noticeData.content = data.content;
+            },
+            _getOrgTree() {
+                return new Promise((resolve) => {
+                    this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
+                        if (res.success) {
+                            this.orgTreeData = res.date;
+                            resolve(res.date);
+                        }
+                    });
+                });
             },
             _getPostData() {
                 let data = {};
-                data.userName = this.filterOpt.userName;
-                data.monthDate = this.filterOpt.monthDate;
-                data.kqstates = this.filterOpt.kqstates;
-                data.organizeName = this.filterOpt.organizeName;
-                data.postName = this.filterOpt.postName;
-                // this.getList('/kq/getStatisticList', data);
+                data.title = this.filterOpt.title;
+                data.noticeType = this.filterOpt.type;
+                data.startDate = this.filterOpt.startDate;
+                data.endDate = this.filterOpt.endDate;
+                this.getList('/notice/datalist', data);
             }
         },
         components: {

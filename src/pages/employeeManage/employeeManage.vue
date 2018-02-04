@@ -851,7 +851,7 @@
                     return item.dep.length > 0;
                 });
                 needArr.forEach((item) => {
-                    newArr.push(item.dep.slice(-1)[0])
+                    newArr.push(item.dep.slice(-1)[0]);
                 });
                 return newArr.join(',');
             },
@@ -916,7 +916,7 @@
                 for (let i = 0, depLength = arr.length; i < depLength; i++) {
                     let obj = {};
                     obj.dep = this._returnOrgIds(+arr[i]);
-                    storeArr.push(obj)
+                    storeArr.push(obj);
                 }
                 return storeArr;
             },
@@ -926,11 +926,11 @@
                 this.$http.get('/user/getMySuperPro', {params: data}).then((res) => {
                     if (res.success) {
                         this.specAccessData.filterPeopleOpt = res.date;
-                        this.specAccessData.filterPeopleData = !!res.date.length ? res.date.map( x => x.id) : [];
-                        this.remoteLabel = !!res.date.length ? res.date.map( x => x.realname) : [];
+                        this.specAccessData.filterPeopleData = res.date.length ? res.date.map(x => x.id) : [];
+                        this.remoteLabel = res.date.length ? res.date.map(x => x.realname) : [];
                         this.specAccessData.deps = this._returnAccessDeps(res.organizeIds);
                     }
-                })
+                });
             },
             _getAccessButtons() {
                 let data = {
@@ -941,7 +941,7 @@
                 });
             },
             _inJobDateChange(val) {
-                this.userSettingForm.inJobTime = val
+                this.userSettingForm.inJobTime = val;
             },
             _coinConfirmHandler() {
                 this.$refs.coinForm.validate((valid) => {
@@ -1092,7 +1092,7 @@
                         this._getUserData();
                         this.settingModalFlag = false;
                     }
-                })
+                });
             },
             _addUser() {
                 this.$refs.userSettingDom.validate((valid) => {
@@ -1112,20 +1112,17 @@
                         data.postId = this.userSettingForm.post;
                         // data.leaderName = this.userSettingForm.vUp;
                         data.roleId = this.userSettingForm.role;
-
                         console.log(data);
-
-
                         this.$http.post('/user/setUserInfo ', data).then((res) => {
                             if (res.success) {
                                 this.$Message.success('用户添加成功!');
                                 this._getUserData();
                                 this.settingModalFlag = false;
                             }
-                            console.log(res)
-                        })
+                            console.log(res);
+                        });
                     }
-                })
+                });
             },
             _editorSetting(data) {
                 this.userSettingForm.states = !!data.states;
@@ -1150,11 +1147,11 @@
                 let namesArr = names.split(',').filter(x => !!x);
                 let storeArr = [];
                 for (let i = 0, length = idsArr.length; i < length; i++) {
-                    storeArr[i] = {}
+                    storeArr[i] = {};
                 }
                 storeArr.forEach((item, index, arr) => {
                     item.id = +idsArr[index];
-                    item.name = namesArr[index]
+                    item.name = namesArr[index];
                 });
                 return storeArr;
             },
@@ -1165,10 +1162,10 @@
                     this.$http.get('/organize/getSetInfo', {params: data}).then((res) => {
                         if (res.success) {
                             this.postList = this._returnNeedPostList(res.date.postids, res.date.postnames);
-                            resolve()
+                            resolve();
                         }
-                    })
-                })
+                    });
+                });
             },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {

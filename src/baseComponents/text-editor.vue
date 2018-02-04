@@ -89,7 +89,7 @@
         mounted () {
             this.init();
         },
-        destroyed () {
+        beforeDestroy () {
             tinymce.get('tinymceEditer').destroy();
         }
     };

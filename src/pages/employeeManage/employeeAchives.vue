@@ -214,7 +214,7 @@
                             </FormItem>
                             <FormItem>
                                 <Button type="primary" :loading="btnLoading" @click="saveBase()">提交</Button>
-                                <Button type="ghost" @click="cancel()" style="margin-left: 8px">取消</Button>
+                                <Button type="ghost" @click="cancel" style="margin-left: 8px">取消</Button>
                             </FormItem>
                         </Form>
                     </TabPane>
@@ -246,7 +246,7 @@
                             <FormItem>
                                 <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(2,educationForm)">提交</Button>
                                 <Button type="success" icon="android-add"  style="margin-left: 8px" @click="educationForm.push({})">增加经历</Button>
-                                <Button type="ghost" @click="cancel()">取消修改</Button>
+                                <Button type="ghost" @click="cancel">取消修改</Button>
                             </FormItem>
                         </Form>
                     </TabPane>
@@ -287,7 +287,7 @@
                             <FormItem>
                                 <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(3,workingForm)">提交</Button>
                                 <Button type="success" icon="android-add"  style="margin-left: 8px" @click="workingForm.push({})">增加经历</Button>
-                                <Button type="ghost" @click="cancel()">取消修改</Button>
+                                <Button type="ghost" @click="cancel">取消修改</Button>
                             </FormItem>
                         </Form>
                     </TabPane>
@@ -334,7 +334,7 @@
                             <FormItem style="width:100%">
                                 <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(1,socailShipForm)">提交</Button>
                                 <Button type="success" icon="android-add"  style="margin-left: 8px" @click="socailShipForm.push({})">增加关系</Button>
-                                <Button type="ghost" @click="cancel()">取消修改</Button>
+                                <Button type="ghost" @click="cancel">取消修改</Button>
                             </FormItem>
                         </Form>
                     </TabPane>
@@ -582,7 +582,7 @@
                 });
             },
             // 社会关系 教育程度 工作资历保存
-            saveRelation(typerelationship,data) {
+            saveRelation(typerelationship, data) {
                 var d = {};
                 this.btnLoading = true;
                 d.typerelationship = typerelationship;

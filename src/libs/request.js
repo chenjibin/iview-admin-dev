@@ -29,13 +29,8 @@ axios.interceptors.response.use(response => {
     if (response.data.hasOwnProperty('success') && !response.data.success) {
         console.log(response);
         Vue.prototype.$Message.error(response.data.message);
-    }
-    if (response.data.Success === 'fail') {
-        if (response.data.failCode === 'OUT_OF_LOGIN') {
+        if (response.data.error_code === 403) {
             store.commit('logout');
-            router.push({
-                name: 'login'
-            });
         }
     }
     return response.data;
