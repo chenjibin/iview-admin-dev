@@ -342,7 +342,9 @@
                         <div style="max-height: 400px;overflow-x: hidden;overflow-y: auto;">
                             <Card >
                                 <Row :gutter="16">
-                                    <Col span="12" v-for="(item,index) in fileList" style="margin-bottom: 16px;">
+                                    <Col span="12" v-for="(item, index) in fileList"
+                                         :key="'file-' + index"
+                                         style="margin-bottom: 16px;">
                                         <Row>
                                             <Col span="8">
                                                 <h4 style="width: 150px;text-overflow: ellipsis;overflow: hidden;white-space:nowrap;">文件名：{{item.file_name}}</h4>
@@ -383,7 +385,7 @@
     // lodash输入延时
     import debounce from 'lodash/debounce';
     export default {
-        name: 'employee-achives',
+        name: 'employeeAchives',
         data () {
             return {
                 settingModalFlag: false,

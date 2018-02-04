@@ -63,10 +63,13 @@
                 </p>
                 <Row :gutter="16">
                     <Col :span="16">
-                        <Form :model="strangeSettingForm" :label-width="80">
+                        <Form :model="strangeSettingForm"
+                              ref="noticeFormDom"
+                              :rules="noticeRule"
+                              :label-width="80">
                         <Row>
                             <Col :span="24">
-                            <FormItem label="标题">
+                            <FormItem label="标题" prop="title">
                                 <Input type="text"
                                        v-model="strangeSettingForm.title"
                                        placeholder="公告标题"></Input>
@@ -74,7 +77,7 @@
                             </Col>
                             <Col :span="8">
                             <FormItem label="公告类型">
-                                <Select v-model="strangeSettingForm.type" clearable>
+                                <Select v-model="strangeSettingForm.type">
                                     <Option value="0">制度</Option>
                                     <Option value="1">任命</Option>
                                     <Option value="2">通知</Option>
@@ -86,17 +89,17 @@
                             </Col>
                             <Col :span="8">
                             <FormItem label="阅读要求">
-                                <Select v-model="strangeSettingForm.require" clearable>
-                                    <Option value="不强制">不强制</Option>
-                                    <Option value="强制阅读">强制阅读</Option>
+                                <Select v-model="strangeSettingForm.require">
+                                    <Option value="0">不强制</Option>
+                                    <Option value="1">强制阅读</Option>
                                 </Select>
                             </FormItem>
                             </Col>
                             <Col :span="8">
                             <FormItem label="发布状态">
-                                <Select v-model="strangeSettingForm.status" clearable>
-                                    <Option value="草稿">草稿</Option>
-                                    <Option value="发布">发布</Option>
+                                <Select v-model="strangeSettingForm.status">
+                                    <Option value="0">草稿</Option>
+                                    <Option value="1">发布</Option>
                                 </Select>
                             </FormItem>
                             </Col>
@@ -111,7 +114,7 @@
                     </Col>
                     <Col :span="8">
                         <h3>发布范围</h3>
-                        <div style="max-height: 460px;overflow:auto;">
+                        <div style="max-height: 490px;overflow:auto;">
                             <el-tree :data="orgTreeData"
                                      ref="treeDom"
                                      show-checkbox
@@ -128,7 +131,27 @@
                     </Col>
                 </Row>
                 <div slot="footer">
-                    <Button type="primary">发布</Button>
+                    <Button type="primary"
+                            v-show="strangeSettingForm.status === '1' && isNoticeType === 'create'"
+                            :loading="btnLoading"
+                            @click="_operateNotice">
+                        <span v-if="!btnLoading">立即发布</span>
+                        <span v-else>发布中...</span>
+                    </Button>
+                    <Button type="primary"
+                            v-show="strangeSettingForm.status === '0' && isNoticeType === 'create'"
+                            :loading="btnLoading"
+                            @click="_saveNotice">
+                        <span v-if="!btnLoading">存为草稿</span>
+                        <span v-else>保存中...</span>
+                    </Button>
+                    <Button type="primary"
+                            v-show="isNoticeType === 'update'"
+                            :loading="btnLoading"
+                            @click="_updateNotice">
+                        <span v-if="!btnLoading">修改公告</span>
+                        <span v-else>修改中...</span>
+                    </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -150,17 +173,26 @@
     import textEditor from '@/baseComponents/text-editor';
     export default {
         name: 'noticeManage',
+        watch: {
+        },
         data () {
             return {
+                btnLoading: false,
                 settingModalFlag: false,
                 strangeModalFlag: false,
                 lookModelFlag: false,
+                isNoticeType: 'create',
+                noticeRule: {
+                    title: [
+                        { required: true, message: '标题不能为空!', trigger: 'blur' }
+                    ]
+                },
                 noticeData: {
                     title: '',
                     content: ''
                 },
                 editorOpt: {
-                    menubar: '',
+                    menubar: 'view',
                     plugins: [
                         'advlist autolink lists charmap print preview hr anchor pagebreak imagetools',
                         'searchreplace visualblocks visualchars code fullpage',
@@ -171,12 +203,12 @@
                 },
                 strangeSettingForm: {
                     title: '',
-                    type: '',
-                    require: '',
-                    status: '',
+                    type: '2',
+                    require: '1',
+                    status: '1',
+                    id: '',
                     content: '',
-                    editorContent: '',
-                    deps: []
+                    editorContent: ''
                 },
                 depProps: {
                     value: 'id',
@@ -205,7 +237,7 @@
                         width: 100,
                         render: (h, params) => {
                             let typeContent = '';
-                            switch (+params.row.type) {
+                            switch (+params.row.noticetype) {
                                 case 0:
                                     typeContent = '制度';
                                     break;
@@ -265,7 +297,7 @@
                                         },
                                         on: {
                                             click: function () {
-                                                vm._editorSetting(params.row)
+                                                vm._editorSetting(params.row);
                                             }
                                         }
                                     })
@@ -314,10 +346,42 @@
             this._setTableHeight();
             this._getOrgTree().then((res) => {
                 this._getAllDepIds(res);
-                console.log(this.allTreeId);
             });
         },
         methods: {
+            _noticeHandler(id, desc) {
+                this.$refs.noticeFormDom.validate((valid) => {
+                    if (valid) {
+                        this.btnLoading = true;
+                        let data = {};
+                        data.title = this.strangeSettingForm.title;
+                        data.content = this.strangeSettingForm.editorContent;
+                        data.organizeId = this.$refs.treeDom.getCheckedKeys().join(',');
+                        data.noticeType = this.strangeSettingForm.type;
+                        data.state = this.strangeSettingForm.status;
+                        data.type = this.strangeSettingForm.require;
+                        data.id = id;
+                        this.$http.post('/notice/add', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success(desc);
+                                this.settingModalFlag = false;
+                                this._getPostData();
+                            }
+                        }).finally(() => {
+                            this.btnLoading = false;
+                        });
+                    }
+                });
+            },
+            _updateNotice() {
+                this._noticeHandler(this.strangeSettingForm.id, '修改公告成功!');
+            },
+            _operateNotice() {
+                this._noticeHandler(0, '发布公告成功!');
+            },
+            _saveNotice() {
+                this._noticeHandler(0, '保存草稿成功!');
+            },
             _getAllDepIds(data) {
                 data.forEach((item) => {
                     this.allTreeId.push(item.id);
@@ -325,16 +389,19 @@
                 });
             },
             _initNoticeForm() {
+                this.$refs.noticeFormDom.resetFields();
                 this.strangeSettingForm.title = '';
-                this.strangeSettingForm.type = '';
-                this.strangeSettingForm.require = '';
-                this.strangeSettingForm.status = '';
+                this.strangeSettingForm.type = '2';
+                this.strangeSettingForm.require = '1';
+                this.strangeSettingForm.status = '1';
+                this.strangeSettingForm.id = '';
                 this.strangeSettingForm.content = '';
                 this.strangeSettingForm.editorContent = '';
                 this.$refs.treeDom.setCheckedKeys(this.allTreeId.slice(0));
             },
             _openNewNotice() {
                 this._initNoticeForm();
+                this.isNoticeType = 'create';
                 this.settingModalFlag = true;
             },
             _setContent(content) {
@@ -370,10 +437,16 @@
                 this._getPostData();
             },
             _editorSetting(data) {
+                this.isNoticeType = 'update';
                 this._initNoticeForm();
-                // this._getUserStatistic();
-                this.strangeSettingForm.deps = [1];
-                this.$refs.treeDom.setCheckedKeys([1]);
+                this.strangeSettingForm.title = data.title;
+                this.strangeSettingForm.type = data.noticetype;
+                this.strangeSettingForm.require = data.type;
+                this.strangeSettingForm.status = data.state + '';
+                this.strangeSettingForm.content = data.content;
+                this.strangeSettingForm.editorContent = data.content;
+                this.strangeSettingForm.id = data.id;
+                this.$refs.treeDom.setCheckedKeys(data.organzeid ? data.organzeid.split(',').filter(x => !!x) : []);
                 this.settingModalFlag = true;
             },
             _lookNotice(data) {
