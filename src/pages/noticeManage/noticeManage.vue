@@ -173,8 +173,6 @@
     import textEditor from '@/baseComponents/text-editor';
     export default {
         name: 'noticeManage',
-        watch: {
-        },
         data () {
             return {
                 btnLoading: false,

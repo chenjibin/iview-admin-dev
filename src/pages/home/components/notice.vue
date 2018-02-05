@@ -48,6 +48,7 @@
         mixins: [pageMixin],
         data () {
             return {
+                modelFlag: false,
                 noticeData: {
                     title: '',
                     content: ''
