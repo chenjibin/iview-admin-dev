@@ -102,7 +102,6 @@
 </template>
 <script>
     import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
     import debounce from 'lodash/debounce';
     import tableExpend from './table-expend';
     export default {

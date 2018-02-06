@@ -28,7 +28,7 @@ export default {
             let data = Object.assign({
                 page: this.pageData.page,
                 pageSize: this.pageData.pageSize
-            }, params);
+            }, params || {});
             this.$http.get(url, {params: data}).then((res) => {
                 if (res.success) {
                     this.pageData.totalCount = res.count;
