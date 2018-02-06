@@ -1,25 +1,12 @@
 <template>
     <div>
         <Card>
-            <Form inline :label-width="60">
-                <FormItem>
-                    <ButtonGroup>
-                        <Poptip
-                                confirm
-                                placement="bottom-start"
-                                title="您确认删除已选请假记录？"
-                                @on-ok="_delLeaveInfo">
-                            <Button type="ghost"
-                                    :disabled="!chooseDataArr.length"
-                                    @click="">
-                                <Icon type="ios-trash-outline"></Icon>
-                                删除请假信息
-                            </Button>
-                        </Poptip>
-
-                    </ButtonGroup>
-                </FormItem>
-            </Form>
+            <ButtonGroup>
+                <Button style="margin-bottom: 16px;"
+                        icon="plus-round"
+                        @click="leaveModalFlag = true"
+                        type="primary">申请请假</Button>
+            </ButtonGroup>
             <Table :columns="postColumns"
                    :loading="tableLoading"
                    :height="tableHeight"
@@ -49,6 +36,7 @@
                     <Button type="ghost" @click="visible = false">关闭</Button>
                 </div>
             </Modal>
+            <leave-modal :visible.sync="leaveModalFlag"></leave-modal>
         </Card>
     </div>
 </template>
@@ -56,11 +44,13 @@
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
     import tableExpend from './table-expend';
+    import leaveModal from './components/leave-modal'
     export default {
         name: 'myLeave',
         mixins: [pageMixin],
         data () {
             return {
+                leaveModalFlag: false,
                 visible: false,
                 chooseDataArr: [],
                 imgArr: [],
@@ -249,9 +239,12 @@
                 this._getPostData();
             },
             _getPostData() {
-                this.getList('/od/getAllManageOdLog');
+                this.getList('/od/getOdLog');
             }
         },
-        components: {tableExpend}
+        components: {
+            tableExpend,
+            leaveModal
+        }
     };
 </script>
