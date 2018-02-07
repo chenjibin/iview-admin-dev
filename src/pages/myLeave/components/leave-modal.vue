@@ -6,11 +6,13 @@
         <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
             <span>请假申请</span>
         </p>
-        <Form :model="leaveSendForm" :label-width="80">
+        <Form :model="leaveSendForm"
+              :rules="leaveRules"
+              :label-width="80">
             <Row>
                 <Col :span="12">
                     <FormItem label="请假类型">
-                        <Select v-model="leaveSendForm.type" clearable>
+                        <Select v-model="leaveSendForm.type">
                             <Option :value="item.value"
                                     :key="'od-type-' + index"
                                     v-for="(item, index) in odTypeOpt">{{item.label}}</Option>
@@ -25,13 +27,14 @@
                 </Col>
                 <Col :span="12">
                     <FormItem label="开始日期">
-                        <DatePicker :value="leaveSendForm.startDate"
+                        <DatePicker v-model="leaveSendForm.startDate"
+                                    :clearable="false"
                                     @on-change="_setDate('startDate', $event)"></DatePicker>
                     </FormItem>
                 </Col>
                 <Col :span="12">
                     <FormItem label="开始时间">
-                        <Select v-model="leaveSendForm.startTime" clearable>
+                        <Select v-model="leaveSendForm.startTime">
                             <Option :value="item"
                                     v-for="(item, index) in startTimeOpt"
                                     :key="'start-time-' + index">{{item}}</Option>
@@ -40,14 +43,15 @@
                 </Col>
                 <Col :span="12">
                     <FormItem label="结束日期">
-                        <DatePicker :value="leaveSendForm.endDate"
+                        <DatePicker v-model="leaveSendForm.endDate"
+                                    :clearable="false"
                                     @on-change="_setDate('endDate', $event)"
                         ></DatePicker>
                     </FormItem>
                 </Col>
                 <Col :span="12">
                     <FormItem label="结束时间">
-                        <Select v-model="leaveSendForm.endTime" clearable>
+                        <Select v-model="leaveSendForm.endTime">
                             <Option :value="item"
                                     v-for="(item, index) in endTimeOpt"
                                     :key="'end-time-' + index">{{item}}</Option>
@@ -62,7 +66,12 @@
                     </FormItem>
                 </Col>
                 <Col :span="24">
-                    <FormItem label="原因描述">
+                <FormItem label="图片证明">
+                    <fs-upload-img></fs-upload-img>
+                </FormItem>
+                </Col>
+                <Col :span="24">
+                    <FormItem label="原因描述" prop="content">
                         <Input v-model="leaveSendForm.content" type="textarea"
                                :autosize="{minRows: 2,maxRows: 5}"
                                placeholder="原因..."></Input>
@@ -81,9 +90,34 @@
 </style>
 <script>
     import moment from 'moment';
+    import FsUploadImg from '@/baseComponents/fs-upload-img';
+    const NOW_TIME = moment().format('YYYY-MM-DD');
     export default {
         props: {
             visible: Boolean
+        },
+        watch: {
+            'leaveSendForm.startDate'(val) {
+                if (moment(val).isAfter(this.leaveSendForm.endDate)) {
+                    this.leaveSendForm.endDate = val;
+                }
+                this.leaveSendForm.numberDay = this._getDayNumber();
+            },
+            'leaveSendForm.endDate'(val) {
+                if (moment(val).isBefore(this.leaveSendForm.startDate)) {
+                    this.leaveSendForm.startDate = val;
+                }
+                this.leaveSendForm.numberDay = this._getDayNumber();
+            },
+            'leaveSendForm.startTime'() {
+                this.leaveSendForm.numberDay = this._getDayNumber();
+            },
+            'leaveSendForm.endTime'() {
+                this.leaveSendForm.numberDay = this._getDayNumber();
+            }
+        },
+        components: {
+            FsUploadImg
         },
         data () {
             return {
@@ -175,11 +209,16 @@
                     '21时00分',
                     '22时30分'
                 ],
+                leaveRules: {
+                    content: [
+                        {required: true, message: '原因不能为空!', trigger: 'blur'}
+                    ]
+                },
                 leaveSendForm: {
-                    type: '',
+                    type: '1',
                     submitDate: moment().format('YYYY-MM-DD'),
-                    startDate: '',
-                    endDate: '',
+                    startDate: NOW_TIME,
+                    endDate: NOW_TIME,
                     startTime: '',
                     endTime: '',
                     numberDay: 0,
@@ -190,6 +229,28 @@
         methods: {
             _setDate(key, value) {
                 this.leaveSendForm[key] = value;
+            },
+            _getDayNumber() {
+                let formData = this.leaveSendForm;
+                if (formData.startDate && formData.endDate && formData.startTime && formData.endTime) {
+                    let dayDur = (moment(formData.endDate).unix() - moment(formData.startDate).unix()) / (60 * 60 * 24);
+                    let st = +formData.startTime.substr(0, 2);
+                    let et = +formData.endTime.substr(0, 2);
+                    let dayminus = 0;
+                    let dayNeed = 0;
+                    if (st > et) {
+                        dayminus = -1;
+                        et += 24;
+                    }
+                    if (et - st <= 6 && et - st > 0) {
+                        dayNeed = 0.5;
+                    } else if (et - st > 6) {
+                        dayNeed = 1;
+                    }
+                    return (dayDur + dayminus + dayNeed);
+                } else {
+                    return 0;
+                }
             },
             visibleChange(val) {
                 if (!val) this.$emit('update:visible', false);
