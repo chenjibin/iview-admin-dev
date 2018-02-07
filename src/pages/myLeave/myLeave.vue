@@ -36,7 +36,7 @@
                     <Button type="ghost" @click="visible = false">关闭</Button>
                 </div>
             </Modal>
-            <leave-modal :visible.sync="leaveModalFlag"></leave-modal>
+            <leave-modal :visible.sync="leaveModalFlag" @submit-success="_getPostData"></leave-modal>
         </Card>
     </div>
 </template>
@@ -44,7 +44,7 @@
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
     import tableExpend from './table-expend';
-    import leaveModal from './components/leave-modal'
+    import leaveModal from './components/leave-modal';
     export default {
         name: 'myLeave',
         mixins: [pageMixin],
