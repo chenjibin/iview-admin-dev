@@ -12,7 +12,7 @@
                 :before-upload="handleBeforeUpload"
                 multiple
                 type="drag"
-                action="//jsonplaceholder.typicode.com/posts/"
+                action="/oa/od/uploadfile"
                 style="display: inline-block;width:58px;">
             <div style="width: 58px;height:58px;line-height: 58px;">
                 <Icon type="camera" size="20"></Icon>
@@ -32,9 +32,15 @@
                 </template>
             </li>
         </ul>
-        <Modal title="View Image"
+        <Modal title="预览图片"
+               width="800"
                v-model="visible">
-            <img :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" v-if="visible" style="width: 100%">
+            <div style="max-height: 500px;overflow-y: auto;">
+                <img :src="'/oa/upload/' + imgName" v-if="visible" style="max-width: 100%">
+            </div>
+            <div slot="footer">
+                <Button type="ghost" @click="visible = false">关闭</Button>
+            </div>
         </Modal>
     </div>
 </template>
@@ -72,8 +78,9 @@
                 this.updateUploadList();
             },
             handleSuccess (res, file) {
-                file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar';
-                file.name = '7eb99afb9d5f317c912f08b5212fd69a';
+                console.log(res);
+                file.url = '/oa/upload/' + res.date.filename;
+                file.name = res.date.filename;
                 this.updateUploadList();
             },
             handleFormatError () {

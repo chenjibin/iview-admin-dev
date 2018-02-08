@@ -27,7 +27,81 @@
                     </FormItem>
                 </Col>
                 <template v-if="leaveSendForm.type === '6'">
-
+                    <Col :span="24">
+                        <Row v-for="(tiaoxiu, tindex) in leaveSendForm.tiaoxiuTime" :key="'tiaoxiu-form-' + tindex">
+                            <Col :span="12">
+                                <FormItem label="休息开始日期" :label-width="100">
+                                    <DatePicker :value="tiaoxiu.restStartDate"
+                                                :clearable="false"
+                                                @on-change=""></DatePicker>
+                                </FormItem>
+                            </Col>
+                            <Col :span="12">
+                                <FormItem label="休息开始时间" :label-width="100">
+                                    <Select v-model="tiaoxiu.restStartTime">
+                                        <Option :value="item"
+                                                v-for="(item, index) in startTimeOpt"
+                                                :key="'start-time-' + index">{{item}}</Option>
+                                    </Select>
+                                </FormItem>
+                            </Col>
+                            <Col :span="12">
+                                <FormItem label="休息结束日期" :label-width="100">
+                                    <DatePicker :value="tiaoxiu.restEndDate"
+                                                :clearable="false"
+                                                @on-change=""></DatePicker>
+                                </FormItem>
+                            </Col>
+                            <Col :span="12">
+                                <FormItem label="休息结束时间" :label-width="100">
+                                    <Select v-model="tiaoxiu.restEndTime">
+                                        <Option :value="item"
+                                                v-for="(item, index) in startTimeOpt"
+                                                :key="'start-time-' + index">{{item}}</Option>
+                                    </Select>
+                                </FormItem>
+                            </Col>
+                            <Col :span="12">
+                            <FormItem label="工作开始日期" :label-width="100">
+                                <DatePicker :value="tiaoxiu.workStartDate"
+                                            :clearable="false"
+                                            @on-change=""></DatePicker>
+                            </FormItem>
+                            </Col>
+                            <Col :span="12">
+                            <FormItem label="工作开始时间" :label-width="100">
+                                <Select v-model="tiaoxiu.workStartTime">
+                                    <Option :value="item"
+                                            v-for="(item, index) in startTimeOpt"
+                                            :key="'start-time-' + index">{{item}}</Option>
+                                </Select>
+                            </FormItem>
+                            </Col>
+                            <Col :span="12">
+                            <FormItem label="工作结束日期" :label-width="100">
+                                <DatePicker :value="tiaoxiu.workEndDate"
+                                            :clearable="false"
+                                            @on-change=""></DatePicker>
+                            </FormItem>
+                            </Col>
+                            <Col :span="12">
+                            <FormItem label="工作结束时间" :label-width="100">
+                                <Select v-model="tiaoxiu.workEndTime">
+                                    <Option :value="item"
+                                            v-for="(item, index) in startTimeOpt"
+                                            :key="'start-time-' + index">{{item}}</Option>
+                                </Select>
+                            </FormItem>
+                            </Col>
+                            <Col :span="12">
+                            <FormItem label="调休天数">
+                                <InputNumber :min="0"
+                                             :step="0.5"
+                                             v-model="leaveSendForm.tiaoxiuNumberDay"></InputNumber>
+                            </FormItem>
+                            </Col>
+                        </Row>
+                    </Col>
                 </template>
                 <template v-else>
                     <Col :span="12">
@@ -102,9 +176,6 @@
         </div>
     </Modal>
 </template>
-<style>
-
-</style>
 <script>
     import moment from 'moment';
     import FsUploadImg from '@/baseComponents/fs-upload-img';
@@ -236,23 +307,36 @@
                 },
                 leaveSendForm: {
                     type: '1',
-                    submitDate: moment().format('YYYY-MM-DD'),
+                    submitDate: NOW_TIME,
                     startDate: NOW_TIME,
                     endDate: NOW_TIME,
                     startTime: '08时20分',
                     endTime: '18时30分',
                     numberDay: 1,
+                    tiaoxiuNumberDay: 1,
                     content: '',
-                    changePeople: ''
+                    changePeople: '',
+                    tiaoxiuTime: [
+                        {
+                            restStartDate: NOW_TIME,
+                            restStartTime: '08时20分',
+                            restEndDate: NOW_TIME,
+                            restEndTime: '18时30分',
+                            workStartDate: '',
+                            workStartTime: '08时20分',
+                            workEndDate: '',
+                            workEndTime: '18时30分',
+                            numberDay: 1
+                        }
+                    ]
                 }
             };
         },
         methods: {
             _setDate(key, value) {
-                console.log(value);
                 this.leaveSendForm[key] = value;
             },
-            _getDayNumber() {
+            _getDayNumber(sd, ed, st, et) {
                 let formData = this.leaveSendForm;
                 if (formData.startDate && formData.endDate && formData.startTime && formData.endTime) {
                     let dayDur = (moment(formData.endDate).unix() - moment(formData.startDate).unix()) / (60 * 60 * 24);
@@ -288,7 +372,7 @@
                         this.$Message.error('请上传证明图片!');
                         return;
                     } else {
-                        data.pics = this.uploadList.map(x => x.url).join(',');
+                        data.pics = this.uploadList.map(x => x.name).join(',');
                     }
                 }
                 if (data.type === '11') {
@@ -307,7 +391,8 @@
                 data.content = sendForm.content;
                 data.numberDay = sendForm.numberDay;
                 this.loadingBtn = true;
-                this.$http.post('', data).then((res) => {
+                console.log(data);
+                this.$http.post('/od/apply', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('请假申请成功!');
                         this.$emit('submit-success');

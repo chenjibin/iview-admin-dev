@@ -609,7 +609,6 @@
                         this.$Message.success('操作成功!');
                         this.settingModalFlag = false;
                     }
-                    console.log(res);
                 });
             },
             _initAttendanceOpt() {
