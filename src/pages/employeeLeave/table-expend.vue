@@ -40,7 +40,7 @@
                             <Poptip placement="left"
                                     v-model="visible"
                                     v-if="userName === row.waitoperatorname"
-                                    width="400" :transfer="true">
+                                    width="400">
                                 <Button type="primary" size="small">立即审核</Button>
                                 <div class="" slot="content">
                                     <Form :label-width="100"
@@ -74,6 +74,38 @@
                                     </Form>
                                 </div>
                             </Poptip>
+                            <Poptip placement="left"
+                                    v-model="visible2"
+                                    v-if="userName === row.currentoperator && row.status === '批准中'"
+                                    width="400" :transfer="true">
+                                <Button type="primary" size="small">修改</Button>
+                                <div class="" slot="content">
+                                    <Form :label-width="100"
+                                          :model="odChangeForm"
+                                          ref="odFormFoC"
+                                          :rules="odFormRules">
+                                        <FormItem label="备注留言" prop="content">
+                                            <Input v-model="odChangeForm.content"
+                                                   type="textarea"
+                                                   :autosize="{minRows: 2,maxRows: 5}"
+                                                   placeholder="备注..."></Input>
+                                        </FormItem>
+                                        <FormItem label="工作安排"
+                                                  prop="workDesc">
+                                            <Input v-model="odChangeForm.workDesc"
+                                                   type="textarea"
+                                                   :autosize="{minRows: 2,maxRows: 5}"
+                                                   placeholder="工作安排说明..."></Input>
+                                        </FormItem>
+                                        <FormItem>
+                                            <Button type="primary"
+                                                    :loading="btnLoading"
+                                                    @click="_submitOdChange">提交修改</Button>
+                                            <Button type="ghost" @click="visible2 = false" style="margin-left: 8px">取消</Button>
+                                        </FormItem>
+                                    </Form>
+                                </div>
+                            </Poptip>
                         </div>
                     </div>
                 </Col>
@@ -94,6 +126,12 @@
                 progressData: this.row.operatelog.split(','),
                 userName: '',
                 visible: false,
+                visible2: false,
+                btnLoading: false,
+                odChangeForm: {
+                    content: this.row.content,
+                    workDesc: this.row.workcontent
+                },
                 odForm: {
                     agree: '同意',
                     content: '',
@@ -122,15 +160,49 @@
             },
             validaWorkDesc(rule, value, callback) {
                 if (value === '' && this.row.numberday >= 3) {
-                    callback(new Error('备注留言不能为空!'));
+                    callback(new Error('排班说明不能为空!'));
                 } else {
                     callback();
                 }
             },
+            _submitOdChange() {
+                this.$refs.odFormFoC.validate((valid) => {
+                    if (valid) {
+                        let data = {};
+                        data.id = this.row.id;
+                        data.content = this.odChangeForm.content;
+                        data.workcontent = this.odChangeForm.workDesc;
+                        this.btnLoading = true;
+                        this.$http.post('/od/editContent', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('操作成功!');
+                                this.$emit('op-success');
+                            }
+                        }).finally(() => {
+                            this.btnLoading = false;
+                        });
+                    }
+                });
+            },
             _submitOdResult() {
                 this.$refs.odFormFo.validate((valid) => {
                     if (valid) {
-                        console.log('aaa');
+                        let data = {};
+                        data.id = this.row.id;
+                        data.agree = this.odForm.agree === '同意' ? 1 : 2;
+                        data.content = this.odForm.content;
+                        if (this.row.numberday >= 3) {
+                            data.workDesc = this.odForm.workDesc;
+                        }
+                        this.btnLoading = true;
+                        this.$http.post('/od/updateStatus', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('操作成功!');
+                                this.$emit('op-success');
+                            }
+                        }).finally(() => {
+                            this.btnLoading = false;
+                        });
                     }
                 });
             }

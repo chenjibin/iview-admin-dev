@@ -77,9 +77,15 @@
                         type: 'expand',
                         width: 50,
                         render: (h, params) => {
+                            let vm = this;
                             return h(tableExpend, {
                                 props: {
                                     row: params.row
+                                },
+                                on: {
+                                    'op-success': function () {
+                                        vm._getPostData();
+                                    }
                                 }
                             });
                         }

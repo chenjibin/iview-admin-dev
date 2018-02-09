@@ -109,7 +109,7 @@ import injobCommemorate from './components/injobCommemorate';
 import coinChange from './components/coinChange';
 import Cookies from 'js-cookie';
 export default {
-    name: 'home',
+    name: 'home_index',
     components: {
         infoBtn,
         Notice,

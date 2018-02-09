@@ -126,7 +126,7 @@
         methods: {
             init () {
                 let pathArr = util.setCurrentPath(this, this.$route.name);
-                this.$store.commit('updateMenulist');
+                // this.$store.commit('updateMenulist');
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
@@ -185,6 +185,7 @@
         },
         watch: {
             '$route' (to) {
+                console.log(to)
                 this.$store.commit('setCurrentPageName', to.name);
                 let pathArr = util.setCurrentPath(this, to.name);
                 if (pathArr.length > 2) {
@@ -201,9 +202,6 @@
             this.init();
         },
         created () {
-            // this.getPermissionData().then((data) => {
-            //     util.initMenu(this, data);
-            // });
             // 显示打开的页面的列表
             this.$store.commit('setOpenedList');
         }
