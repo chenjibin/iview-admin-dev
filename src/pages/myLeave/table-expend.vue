@@ -18,9 +18,6 @@
                             <span class="expand-key" style="font-weight: 700;">请假原因: </span>
                             <span class="expand-value">{{ row.reason}}</span>
                         </Col>
-                        <Col span="24" v-if="row.imageproof">
-                            <span class="expand-key" style="font-weight: 700;">图片证明: </span>
-                        </Col>
                     </Row>
                 </Col>
                 <Col :span="12">

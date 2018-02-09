@@ -41,7 +41,7 @@
                   style="margin-top: 16px;"></Page>
             <Modal title="查看图片证明" v-model="visible" width="800">
                 <div style="max-height: 500px;overflow-y: auto;overflow-x: hidden;">
-                    <img :src="'http://tm.xyyzi.com:9090/oa/upload/' + item.pic"
+                    <img :src="'/oa/upload/' + item.pic"
                          v-for="(item, index) in imgArr"
                          :key="'prewimg-' + index"
                          title="点击图片可以旋转"
@@ -75,7 +75,7 @@
                 postColumns: [
                     {
                         type: 'expand',
-                        width: 20,
+                        width: 50,
                         render: (h, params) => {
                             return h(tableExpend, {
                                 props: {

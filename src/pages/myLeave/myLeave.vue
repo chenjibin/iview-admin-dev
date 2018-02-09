@@ -24,7 +24,7 @@
                   style="margin-top: 16px;"></Page>
             <Modal title="查看图片证明" v-model="visible" width="800">
                 <div class="" style="max-height: 500px;overflow-y: auto;overflow-x: hidden;">
-                    <img :src="'http://tm.xyyzi.com:9090/oa/upload/' + item.pic"
+                    <img :src="'/oa/upload/' + item.pic"
                          v-for="(item, index) in imgArr"
                          :key="'prewimg-' + index"
                          title="点击图片可以旋转"
@@ -56,13 +56,8 @@
                 imgArr: [],
                 postColumns: [
                     {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
-                    },
-                    {
                         type: 'expand',
-                        width: 20,
+                        width: 50,
                         render: (h, params) => {
                             return h(tableExpend, {
                                 props: {
@@ -153,6 +148,39 @@
                                 }
                             }, params.row.status);
                         }
+                    },
+                    {
+                        title: '操作',
+                        width: 100,
+                        render: (h, params) => {
+                            let vm = this;
+                            let btnDom = '';
+                            if (params.row.status === '未批准') {
+                                btnDom = h('Tooltip', {
+                                    props: {
+                                        content: '撤销申请',
+                                        placement: 'top',
+                                        transfer: true
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'warning',
+                                            icon: 'ios-trash-outline',
+                                            shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function () {
+                                                vm._delOd(params.row);
+                                            }
+                                        }
+                                    })
+                                ]);
+                            }
+                            return h('div', [
+                                btnDom
+                            ]);
+                        }
                     }
                 ],
                 tableHeight: 500
@@ -218,6 +246,25 @@
             _dateChange(date) {
                 this.filterOpt.date = date;
                 this._getPostData();
+            },
+            _delOd(data) {
+                let vm = this;
+                this.$Modal.confirm({
+                    title: '',
+                    content: '确认撤销当前申请么?',
+                    okText: '确认撤销',
+                    cancelText: '取消',
+                    onOk: function () {
+                        let sendData = {};
+                        sendData.ids = data.id;
+                        vm.$http.post('/od/deleteUserOdMsg', sendData).then((res) => {
+                            if (res.success) {
+                                vm.$Message.success('撤销申请成功!');
+                                vm._getPostData();
+                            }
+                        });
+                    }
+                });
             },
             _setPage(page) {
                 this.pageData.page = page;

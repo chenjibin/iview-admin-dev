@@ -18,9 +18,6 @@
                             <span class="expand-key" style="font-weight: 700;">请假原因: </span>
                             <span class="expand-value">{{ row.reason}}</span>
                         </Col>
-                        <Col span="24" v-if="row.imageproof">
-                            <span class="expand-key" style="font-weight: 700;">图片证明: </span>
-                        </Col>
                     </Row>
                 </Col>
                 <Col :span="12">
@@ -39,6 +36,45 @@
                             <p style="color: #2b85e4">备注留言:</p>
                             <span v-html="row.agreeinformation.replace(/&nbsp/g, '')"></span>
                         </div>
+                        <div class="" style="margin-top: 8px;">
+                            <Poptip placement="left"
+                                    v-model="visible"
+                                    v-if="userName === row.waitoperatorname"
+                                    width="400" :transfer="true">
+                                <Button type="primary" size="small">立即审核</Button>
+                                <div class="" slot="content">
+                                    <Form :label-width="100"
+                                          :model="odForm"
+                                          ref="odFormFo"
+                                          :rules="odFormRules">
+                                        <FormItem label="是否同意">
+                                            <RadioGroup v-model="odForm.agree">
+                                                <Radio label="同意">同意</Radio>
+                                                <Radio label="拒绝">拒绝</Radio>
+                                            </RadioGroup>
+                                        </FormItem>
+                                        <FormItem label="备注留言" prop="content">
+                                            <Input v-model="odForm.content"
+                                                   type="textarea"
+                                                   :autosize="{minRows: 2,maxRows: 5}"
+                                                   placeholder="备注..."></Input>
+                                        </FormItem>
+                                        <FormItem label="工作安排"
+                                                  prop="workDesc"
+                                                  v-show="row.numberday >= 3">
+                                            <Input v-model="odForm.workDesc"
+                                                   type="textarea"
+                                                   :autosize="{minRows: 2,maxRows: 5}"
+                                                   placeholder="工作安排说明..."></Input>
+                                        </FormItem>
+                                        <FormItem>
+                                            <Button type="primary" @click="_submitOdResult">提交审核</Button>
+                                            <Button type="ghost" @click="visible = false" style="margin-left: 8px">取消</Button>
+                                        </FormItem>
+                                    </Form>
+                                </div>
+                            </Poptip>
+                        </div>
                     </div>
                 </Col>
             </Row>
@@ -55,8 +91,49 @@
         },
         data() {
             return {
-                progressData: this.row.operatelog.split(',')
+                progressData: this.row.operatelog.split(','),
+                userName: '',
+                visible: false,
+                odForm: {
+                    agree: '同意',
+                    content: '',
+                    workDesc: ''
+                },
+                odFormRules: {
+                    content: [
+                        {validator: this.validaContent, required: true, trigger: 'blur'}
+                    ],
+                    workDesc: [
+                        {validator: this.validaWorkDesc, required: true, trigger: 'blur'}
+                    ]
+                }
             };
+        },
+        created() {
+            this.userName = this.$store.state.user.userInfo.userName;
+        },
+        methods: {
+            validaContent(rule, value, callback) {
+                if (value === '') {
+                    callback(new Error('备注留言不能为空!'));
+                } else {
+                    callback();
+                }
+            },
+            validaWorkDesc(rule, value, callback) {
+                if (value === '' && this.row.numberday >= 3) {
+                    callback(new Error('备注留言不能为空!'));
+                } else {
+                    callback();
+                }
+            },
+            _submitOdResult() {
+                this.$refs.odFormFo.validate((valid) => {
+                    if (valid) {
+                        console.log('aaa');
+                    }
+                });
+            }
         }
     };
 </script>
