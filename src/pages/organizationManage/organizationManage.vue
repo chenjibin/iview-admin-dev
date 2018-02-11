@@ -39,55 +39,60 @@
             <Form :model="depSettingForm"
                   ref="coinForm"
                   :label-width="80">
-                <FormItem label="上级部门">
-                    <el-cascader
-                            :options="orgData"
-                            :props="depProps"
-                            v-model="depSettingForm.fatherId"
-                            change-on-select
-                            size="small"
-                            style="width: 100%"
-                            @change="_depChange"
-                    ></el-cascader>
-                </FormItem>
-                <FormItem prop="target" label="当前部门">
-                    <Input type="text"
-                           v-model="depSettingForm.name"></Input>
-                </FormItem>
-                <Row>
+
+                <Row type="flex">
+                    <Col :span="24">
+                        <FormItem label="上级部门">
+                            <el-cascader
+                                    :options="orgData"
+                                    :props="depProps"
+                                    v-model="depSettingForm.fatherId"
+                                    change-on-select
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="_depChange"
+                            ></el-cascader>
+                        </FormItem>
+                    </Col>
+                    <Col :span="24">
+                        <FormItem prop="target" label="当前部门">
+                            <Input type="text"
+                                   v-model="depSettingForm.name"></Input>
+                        </FormItem>
+                    </Col>
                     <Col :span="12">
                         <FormItem label="分管部门领导岗位" :label-width="120">
-                            <Input type="text" v-model="depSettingForm.charger"></Input>
+                            <fs-search-post v-model="depSettingForm.leaderPostId"
+                                            :option="backShow.leaderPostOpt"
+                                            :clearable="true"
+                                            :label="backShow.leaderPostLabel"></fs-search-post>
                         </FormItem>
                     </Col>
                     <Col :span="12">
                         <FormItem label="分管部门领导姓名" :label-width="120">
-                            <Input type="text" v-model="depSettingForm.leader"></Input>
+                            <fs-search-user v-model="depSettingForm.leaderUserId"
+                                            :option="backShow.leaderNameOpt"
+                                            :clearable="true"
+                                            :label="backShow.label1"></fs-search-user>
                         </FormItem>
                     </Col>
                     <Col :span="12">
                         <FormItem label="负责人岗位" :label-width="120">
-                            <Input type="text" v-model="depSettingForm.leader"></Input>
+                            <fs-search-post v-model="depSettingForm.chargerPostId"
+                                            :option="backShow.chargerPostOpt"
+                                            :clearable="true"
+                                            :label="backShow.chargerPostLabel"></fs-search-post>
                         </FormItem>
                     </Col>
                     <Col :span="12">
                         <FormItem label="负责人姓名" :label-width="120">
-                            <Input type="text" v-model="depSettingForm.leader"></Input>
+                            <fs-search-user v-model="depSettingForm.chargerUserId"
+                                            :option="backShow.chargerNameOpt"
+                                            :clearable="true"
+                                            :label="backShow.chargerPostOpt"></fs-search-user>
                         </FormItem>
                     </Col>
                 </Row>
-                <!--<Row>-->
-                    <!--<Col :span="12">-->
-                        <!--<FormItem label="负责人岗位" :label-width="120">-->
-                            <!--<Input type="text" v-model="depSettingForm.leader"></Input>-->
-                        <!--</FormItem>-->
-                    <!--</Col>-->
-                    <!--<Col :span="12">-->
-                        <!--<FormItem label="负责人" :label-width="100">-->
-                            <!--<Input type="text" v-model="depSettingForm.leaderName"></Input>-->
-                        <!--</FormItem>-->
-                    <!--</Col>-->
-                <!--</Row>-->
             </Form>
             <div slot="footer">
                 <Button type="primary" v-show="formType === 'create'" @click="_createDep">创建部门</Button>
@@ -158,25 +163,31 @@
     }
 </style>
 <script>
+    import fsSearchUser from '@/baseComponents/fs-search-user';
+    import fsSearchPost from '@/baseComponents/fs-search-post';
     export default {
         name: 'organizationManage',
         data () {
             return {
                 depSettingFlag: false,
                 storePath: [],
+                backShow: {
+                    leaderPostOpt: [],
+                    leaderPostLabel: '',
+                    leaderNameOpt: [],
+                    leaderNameLabel: '',
+                    chargerPostOpt: [],
+                    chargerPostLabel: '',
+                    chargerNameOpt: [],
+                    chargerNameLabel: ''
+                },
                 depSettingForm: {
                     name: '',
                     fatherId: [],
-                    charger: '',
-                    chargerId: '',
-                    chargerName: '',
-                    chargerUserId: '',
-                    leader: '',
-                    leaderId: '',
-                    leaderName: '',
-                    leaderUserId: '',
-                    posyIds: '',
-                    postName: ''
+                    chargerPostId: '', //  负责人岗位id
+                    chargerUserId: '', //  负责人用户id
+                    leaderPostId: '', //  分管领导岗位id
+                    leaderUserId: ''//  分管领导用户id
                 },
                 orgData: [],
                 depProps: {
@@ -207,9 +218,12 @@
                 data.id = 0;
                 data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
                 data.name = this.depSettingForm.name;
-                data.chargerId = this.depSettingForm.chargerId;
-                data.leaderId = this.depSettingForm.leaderId;
-                this.$http.post('/organize/add').then((res) => {
+                data.chargerPostId = this.depSettingForm.chargerPostId;
+                data.chargerUserId = this.depSettingForm.chargerUserId;
+                data.leaderPostId = this.depSettingForm.leaderPostId;
+                data.leaderUserId = this.depSettingForm.leaderUserId;
+                console.log(data);
+                this.$http.post('/organize/add', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('新增部门成功!');
                         this.depSettingFlag = false;
@@ -227,7 +241,6 @@
                 });
             },
             _returnOrgIds(id) {
-                // if (!this.orgData[0]) return [];
                 let depsStore = this.orgData;
                 let path = [];
                 this._storeFilter(depsStore, path, id);
@@ -262,7 +275,6 @@
                 return storeArr;
             },
             append(store, data) {
-                console.log(data);
                 this.formType = 'create';
                 this.depSettingForm.name = '';
                 this.depSettingForm.fatherId = this._returnOrgIds(data.id);
@@ -273,7 +285,6 @@
             editInfo(store, data) {
                 console.log(data);
                 this.formType = 'update';
-
                 this.depSettingForm.name = data.name;
                 this.depSettingForm.fatherId = this._returnOrgIds(data.fatherId);
                 this.depSettingForm.charger = data.chargerName;
@@ -281,12 +292,18 @@
                 this.depSettingFlag = true;
             },
             remove(store, data) {
-                console.log(store);
-                // if (data.children && data.children.length !== 0) {
-                //     this.$Message.error('下级有部门,不可以删除！');
-                //     return;
-                // }
-                // store.remove(data);
+                if (data.children && data.children.length !== 0) {
+                    this.$Message.error('下级有部门,不可以删除！');
+                    return;
+                }
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.post('/organize/delete', sendData).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('删除部门成功!');
+                        this._getOrgData();
+                    }
+                });
             },
             renderContent(h, { node, data, store }) {
                 return (
@@ -309,6 +326,9 @@
                 </div>)
             }
         },
-        components: {}
+        components: {
+            fsSearchUser,
+            fsSearchPost
+        }
     };
 </script>

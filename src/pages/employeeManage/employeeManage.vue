@@ -330,8 +330,7 @@
                     <Col :span="10">
                         <h3 class="title">虚拟可查看人员</h3>
                         <div class="">
-                            <Select
-                                    v-model="specAccessData.filterPeopleData"
+                            <Select v-model="specAccessData.filterPeopleData"
                                     multiple
                                     filterable
                                     remote
@@ -427,12 +426,6 @@
             filterText(val) {
                 this.$refs.treeDom.filter(val);
             },
-            // 'specAccessData.filterPeopleData'(val) {
-            //     console.log(val)
-            // },
-            // 'specAccessData.deps'(val) {
-            //     console.log(val)
-            // },
             'searchData.pageSize'() {
                 this._filterResultHandler();
             },
@@ -454,10 +447,6 @@
                         }
                     });
                 }
-                console.log(val);
-            },
-            social(val) {
-                console.log(val);
             }
         },
         data () {

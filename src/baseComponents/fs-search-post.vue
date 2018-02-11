@@ -10,12 +10,12 @@
             :loading="filterPeopleLoading">
         <Option v-for="(option, index) in filterPeopleOpt"
                 :value="option.id"
-                :key="'user' + option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
+                :key="'post' + option.id">{{option.name + '(' + option.organizename + ')'}}</Option>
     </Select>
 </template>
 <script>
     export default {
-        name: 'fsSearchUser',
+        name: 'fsSearchPost',
         model: {
             prop: 'value',
             event: 'change'
@@ -52,10 +52,11 @@
         methods: {
             _filterPeopleRemote(val) {
                 let data = {};
-                data.name = val;
+                data.postName = val;
                 this.filterPeopleLoading = true;
-                this.$http.get('/user/getCheckUser', {params: data}).then((res) => {
+                this.$http.get('post/findPost', {params: data}).then((res) => {
                     if (res.success) {
+                        console.log(res);
                         this.filterPeopleOpt = res.date;
                     }
                 }).finally(() => {
