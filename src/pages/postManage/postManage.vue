@@ -244,6 +244,7 @@
                 this.postSettingForm.organizeId = [];
                 this.postSettingForm.level = '';
                 this.storePath = [];
+                this.$refs.postForm.resetFields();
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();

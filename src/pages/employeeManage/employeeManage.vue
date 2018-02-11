@@ -174,11 +174,6 @@
                         </FormItem>
                     </Col>
                 </Row>
-                <!--<FormItem label="岗位操作指南" :label-width="100">-->
-                    <!--<Select v-model="userSettingForm.guider" multiple>-->
-                        <!--<Option v-for="item in guiderList" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
                 <FormItem label="班次设置" :label-width="100" prop="banci">
                     <Select v-model="userSettingForm.banci" multiple>
                         <Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>
@@ -1048,7 +1043,7 @@
                 this.tableLoading = true;
                 this.$http.get('/user/dataList', {params: this.searchData}).then((res) => {
                     if (res.success) {
-                        this.totalCount = res.count;
+                        this.totalCount = res.totalCount;
                         this.userData = res.date;
                     }
                 }).finally(() => {

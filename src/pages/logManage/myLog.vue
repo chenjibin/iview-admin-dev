@@ -344,6 +344,7 @@
                 this.logDetail.type = obj.type;
                 this.logDetail.commentResult = obj.commentResult;
                 this.logDetail.content = obj.content || '';
+                this.logDetail.editorContent = obj.content || '';
                 this.logDetail.logType1 = obj.logType || '';
                 this._setSelectOpt(obj.type);
                 this.modelFlag = true;

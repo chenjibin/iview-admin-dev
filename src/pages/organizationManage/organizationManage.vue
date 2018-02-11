@@ -34,14 +34,14 @@
                :mask-closable="false"
                width="800">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>编辑部门</span>
+                <span>{{formType === 'create' ? '新增部门' : '编辑部门'}}</span>
             </p>
             <Form :model="depSettingForm"
                   ref="coinForm"
                   :label-width="80">
                 <FormItem label="上级部门">
                     <el-cascader
-                            :options="orgData[0] ? orgData[0].children : []"
+                            :options="orgData"
                             :props="depProps"
                             v-model="depSettingForm.fatherId"
                             change-on-select
@@ -61,37 +61,38 @@
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="分管部门领导" :label-width="100">
-                            <Input type="text" v-model="depSettingForm.chargerName"></Input>
+                        <FormItem label="分管部门领导姓名" :label-width="120">
+                            <Input type="text" v-model="depSettingForm.leader"></Input>
                         </FormItem>
                     </Col>
-                    <!--<Col :span="12">-->
-                        <!--<FormItem label="分管部门领导用户id" :label-width="120">-->
-                            <!--<Input type="text" v-model="depSettingForm.chargerUserId"></Input>-->
-                        <!--</FormItem>-->
-                    <!--</Col>-->
-                </Row>
-                <Row>
                     <Col :span="12">
                         <FormItem label="负责人岗位" :label-width="120">
                             <Input type="text" v-model="depSettingForm.leader"></Input>
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="负责人" :label-width="100">
-                            <Input type="text" v-model="depSettingForm.leaderName"></Input>
+                        <FormItem label="负责人姓名" :label-width="120">
+                            <Input type="text" v-model="depSettingForm.leader"></Input>
                         </FormItem>
                     </Col>
+                </Row>
+                <!--<Row>-->
                     <!--<Col :span="12">-->
-                        <!--<FormItem label="负责人用户id" :label-width="120">-->
-                            <!--<Input type="text" v-model="depSettingForm.leaderUserId"></Input>-->
+                        <!--<FormItem label="负责人岗位" :label-width="120">-->
+                            <!--<Input type="text" v-model="depSettingForm.leader"></Input>-->
                         <!--</FormItem>-->
                     <!--</Col>-->
-                </Row>
+                    <!--<Col :span="12">-->
+                        <!--<FormItem label="负责人" :label-width="100">-->
+                            <!--<Input type="text" v-model="depSettingForm.leaderName"></Input>-->
+                        <!--</FormItem>-->
+                    <!--</Col>-->
+                <!--</Row>-->
             </Form>
             <div slot="footer">
-                <Button type="primary">确认修改</Button>
-                <Button type="ghost" style="margin-left: 8px" @click="coinSettingFlag = false">取消</Button>
+                <Button type="primary" v-show="formType === 'create'" @click="_createDep">创建部门</Button>
+                <Button type="primary" v-show="formType === 'update'">确认修改</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
         </Modal>
     </div>
@@ -186,6 +187,7 @@
                     children: 'children',
                     label: 'name'
                 },
+                formType: 'create',
                 initHeight: 300,
                 filterTextName: ''
             };
@@ -200,6 +202,21 @@
             this._setTreeHeight();
         },
         methods: {
+            _createDep() {
+                let data = {};
+                data.id = 0;
+                data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
+                data.name = this.depSettingForm.name;
+                data.chargerId = this.depSettingForm.chargerId;
+                data.leaderId = this.depSettingForm.leaderId;
+                this.$http.post('/organize/add').then((res) => {
+                    if (res.success) {
+                        this.$Message.success('新增部门成功!');
+                        this.depSettingFlag = false;
+                        this._getOrgData();
+                    }
+                });
+            },
             _depChange(data) {
 
             },
@@ -210,8 +227,8 @@
                 });
             },
             _returnOrgIds(id) {
-                if (!this.orgData[0]) return [];
-                let depsStore = this.orgData[0].children;
+                // if (!this.orgData[0]) return [];
+                let depsStore = this.orgData;
                 let path = [];
                 this._storeFilter(depsStore, path, id);
                 return this.storePath;
@@ -245,30 +262,22 @@
                 return storeArr;
             },
             append(store, data) {
-                // store.append({
-                //     name: 'testtest',
-                //     postNames: 'a',
-                //     member: 'b',
-                //     chargerName: 'c',
-                //     leaderName: 'd',
-                //     children: []
-                // }, data);
+                console.log(data);
+                this.formType = 'create';
+                this.depSettingForm.name = '';
+                this.depSettingForm.fatherId = this._returnOrgIds(data.id);
+                this.depSettingForm.charger = '';
+                this.depSettingForm.leader = '';
+                this.depSettingFlag = true;
             },
             editInfo(store, data) {
                 console.log(data);
+                this.formType = 'update';
 
                 this.depSettingForm.name = data.name;
                 this.depSettingForm.fatherId = this._returnOrgIds(data.fatherId);
                 this.depSettingForm.charger = data.chargerName;
-                // this.depSettingForm.chargerId = data.realname;
-                this.depSettingForm.chargerName = data.chargerName;
-                // this.depSettingForm.chargerUserId = moment(data.joindate).format('YYYY-MM-DD');
                 this.depSettingForm.leader = data.leaderName;
-                // this.depSettingForm.leaderId = data.realname;
-                this.depSettingForm.leaderName = data.leaderName;
-                // this.depSettingForm.leaderUserId = data.postid;
-                // this.userSettingForm.posyIds = data.kq_type.split(',').map(Number);
-                // this.userSettingForm.postName = data.p_name;
                 this.depSettingFlag = true;
             },
             remove(store, data) {
