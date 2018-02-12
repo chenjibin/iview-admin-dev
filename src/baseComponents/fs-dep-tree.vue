@@ -33,31 +33,37 @@
             return {
                 filterText: '',
                 orgTreeData: [],
-                chooseNodeId: ''
+                chooseNode: null
             };
         },
         watch: {
             filterText(val) {
                 this.$refs.treeFo.filter(val);
             },
-            chooseNodeId(val) {
-                this.$emit('nodeid-change', val);
+            chooseNode(val) {
+                this.$emit('node-change', val);
             }
+        },
+        created() {
+            this._getOrgTree();
         },
         methods: {
             _treeNodeClickHandler(data) {
-                this.chooseNodeId = data.id;
+                this.chooseNode = data;
             },
             filterNode(value, data) {
                 if (!value) return true;
-                return data.name.indexOf(value) !== -1;
+                if (data.hasOwnProperty('name')) {
+                    return data.name.indexOf(value) !== -1;
+                } else if (data.hasOwnProperty('text')) {
+                    return data.text.indexOf(value) !== -1;
+                }
             },
             _getOrgTree() {
                 this.$http.get(this.url).then((res) => {
                     if (res.success) {
                         this.orgTreeData = res.date;
-                        this.chooseNodeId = res.date[0].id;
-                        this.$emit('tree-load');
+                        this.chooseNode = res.date[0];
                     }
                 });
             }

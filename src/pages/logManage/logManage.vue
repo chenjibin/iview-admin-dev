@@ -3,20 +3,8 @@
         <Row :gutter="10">
             <Col :span="4">
                 <fs-dep-tree url="/organize/organizeTreeByUserForRiZhi"
-                             @tree-load="_getLogData"
-                             @nodeid-change="searchData.depId = $event"
+                             @node-change="_nodeChangeHandler($event)"
                              :defaultProps="defaultProps"></fs-dep-tree>
-                <!--<Card>-->
-                    <!--<Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>-->
-                    <!--<el-tree :data="treeData"-->
-                             <!--ref="treeDom"-->
-                             <!--:filter-node-method="filterNode"-->
-                             <!--:expand-on-click-node="false"-->
-                             <!--:highlight-current="true"-->
-                             <!--style="margin-top: 10px;"-->
-                             <!--@node-click="_treeNodeClickHandler"-->
-                             <!--:props="defaultProps"></el-tree>-->
-                <!--</Card>-->
             </Col>
             <Col :span="20">
                 <Card>
@@ -155,9 +143,6 @@
     export default {
         name: 'elogManage',
         watch: {
-            filterText(val) {
-                this.$refs.treeDom.filter(val);
-            },
             'searchData.depId'() {
                 this._filterResultHandler();
             },
@@ -197,7 +182,6 @@
                     type: '',
                     depId: ''
                 },
-                treeData: [],
                 columns1: [
                     {
                         title: '员工姓名',
@@ -216,7 +200,7 @@
                         key: 'content',
                         ellipsis: true,
                         render: (h, params) => {
-                            return h('span', utils.delHtmlTag(params.row.content))
+                            return h('span', utils.delHtmlTag(params.row.content));
                         }
                     },
                     {
@@ -245,15 +229,15 @@
                                 case 0:
                                     bgColor = 'default';
                                     content = '未评价';
-                                    break
+                                    break;
                                 case 1:
                                     bgColor = 'green';
                                     content = '优秀';
-                                    break
+                                    break;
                                 case 2:
                                     bgColor = 'green';
                                     content = '合格';
-                                    break
+                                    break;
                                 case 3:
                                     bgColor = 'red';
                                     content = '不合格';
@@ -287,7 +271,7 @@
                                         },
                                         on: {
                                             click: function () {
-                                                vm._checkLogOpen(params.row)
+                                                vm._checkLogOpen(params.row);
                                             }
                                         },
                                         style: {
@@ -303,15 +287,11 @@
                     children: 'children',
                     label: 'text'
                 },
-                filterText: '',
                 tableHeight: 300
             };
         },
         created() {
             this._setTableHeight();
-            this._getOrgTreeData().then(() => {
-                this._getLogData();
-            });
         },
         filters: {
             dateFormatter(val) {
@@ -319,11 +299,12 @@
             }
         },
         methods: {
+            _nodeChangeHandler(node) {
+                this.searchData.depId = node.id;
+            },
             _initCommentData() {
-                this.commentData = {
-                    advice: '',
-                    result: '2'
-                };
+                this.commentData.advice = '';
+                this.commentData.result = '2';
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -360,7 +341,6 @@
                 this.$refs.commentForm.resetFields();
                 this._initCommentData();
                 this.checkLogFlag = true;
-                console.log(data);
             },
             _getUpGuiderData() {
                 let data = {
@@ -370,7 +350,6 @@
                     if (res.success) {
                         this.upGuider = res.date;
                     }
-                    console.log(res);
                 });
             },
             _getLogData() {
@@ -383,9 +362,6 @@
                 data.organizeId = this.searchData.depId;
 
                 this.getList('/journal/maglist', data);
-            },
-            _treeNodeClickHandler(data) {
-                this.searchData.depId = data.id;
             },
             _submitComment() {
                 this.$refs.commentForm.validate((val) => {
@@ -403,22 +379,6 @@
                         });
                     }
                 });
-            },
-            _getOrgTreeData() {
-                return new Promise(resolve => {
-                    this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
-                        console.log(res);
-                        if (res.success) {
-                            this.treeData = res.date;
-                            this.searchData.depId = res.date[0].id;
-                            resolve();
-                        }
-                    });
-                });
-            },
-            filterNode(value, data) {
-                if (!value) return true;
-                return data.text.indexOf(value) !== -1;
             }
         },
         components: {

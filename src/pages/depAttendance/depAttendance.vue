@@ -2,17 +2,9 @@
     <div class="#my-attendance">
         <Row :gutter="10">
             <Col :span="4">
-                <Card>
-                    <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
-                    <el-tree :data="treeData"
-                             ref="treeDom"
-                             :filter-node-method="filterNode"
-                             :expand-on-click-node="false"
-                             :highlight-current="true"
-                             style="margin-top: 10px;"
-                             @node-click="_treeNodeClickHandler"
-                             :props="defaultProps"></el-tree>
-                </Card>
+                <fs-dep-tree url="/organize/organizeTreeByUserForRiZhi"
+                             @node-change="_nodeChangeHandler($event)"
+                             :defaultProps="defaultProps"></fs-dep-tree>
             </Col>
             <Col :span="20">
                 <Card>
@@ -71,6 +63,7 @@
     }
 </style>
 <script>
+    import fsDepTree from '@/baseComponents/fs-dep-tree';
     import moment from 'moment';
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
@@ -238,31 +231,15 @@
         },
         created() {
             this._setTableHeight();
-            this._getOrgTreeData().then(() => {
-                this._getAttendanceData();
-            });
         },
         methods: {
+            _nodeChangeHandler(node) {
+                this.searchData.depId = node.id;
+                this.searchData.organizeName = node.text;
+            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
-            },
-            filterNode(value, data) {
-                if (!value) return true;
-                return data.text.indexOf(value) !== -1;
-            },
-            _getOrgTreeData() {
-                return new Promise(resolve => {
-                    this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
-                        console.log(res);
-                        if (res.success) {
-                            this.treeData = res.date;
-                            this.searchData.depId = res.date[0].id;
-                            this.searchData.organizeName = res.date[0].text;
-                            resolve();
-                        }
-                    });
-                });
             },
             _setPage(page) {
                 this.pageData.page = page;
@@ -282,10 +259,6 @@
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
             }, 600),
-            _treeNodeClickHandler(data) {
-                this.searchData.depId = data.id;
-                this.searchData.organizeName = data.text;
-            },
             _filterResultHandler() {
                 this.initPage();
                 this._getAttendanceData();
@@ -318,6 +291,8 @@
                 return 'fs-row';
             }
         },
-        components: {}
+        components: {
+            fsDepTree
+        }
     };
 </script>

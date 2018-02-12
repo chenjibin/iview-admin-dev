@@ -5,10 +5,10 @@
             filterable
             remote
             :clearable="clearable"
-            :label="remoteLabel"
+            :label="label"
             :remote-method="_filterPeopleRemote"
             :loading="filterPeopleLoading">
-        <Option v-for="(option, index) in filterPeopleOpt"
+        <Option v-for="(option, index) in optionlist"
                 :value="option.id"
                 :key="'user' + option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
     </Select>
@@ -29,7 +29,7 @@
                 type: Boolean,
                 default: false
             },
-            option: Array,
+            optionlist: Array,
             label: [String, Number, Array],
             value: {
                 type: [String, Number, Array],
@@ -44,9 +44,7 @@
         data () {
             return {
                 filterPeopleData: this.value,
-                filterPeopleLoading: false,
-                remoteLabel: this.label,
-                filterPeopleOpt: this.option
+                filterPeopleLoading: false
             };
         },
         methods: {
@@ -56,7 +54,7 @@
                 this.filterPeopleLoading = true;
                 this.$http.get('/user/getCheckUser', {params: data}).then((res) => {
                     if (res.success) {
-                        this.filterPeopleOpt = res.date;
+                        this.$emit('update:optionlist', res.date);
                     }
                 }).finally(() => {
                     this.filterPeopleLoading = false;

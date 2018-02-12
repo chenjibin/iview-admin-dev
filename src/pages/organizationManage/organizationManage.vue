@@ -10,10 +10,10 @@
                     <span>部门名称</span>
                 </div>
                 <div class="detail">
-                    <span style="width:160px;">部门负责人</span>
-                    <span style="width:160px;">部门负责人岗位</span>
-                    <span style="width:160px;">分管部门领导</span>
                     <span style="width:160px;">分管部门领导岗位</span>
+                    <span style="width:160px;">分管部门领导</span>
+                    <span style="width:160px;">部门负责人岗位</span>
+                    <span style="width:160px;">部门负责人</span>
                     <span style="width:600px;">包含岗位</span>
                 </div>
             </div>
@@ -50,7 +50,6 @@
                                     change-on-select
                                     size="small"
                                     style="width: 100%"
-                                    @change="_depChange"
                             ></el-cascader>
                         </FormItem>
                     </Col>
@@ -71,9 +70,9 @@
                     <Col :span="12">
                         <FormItem label="分管部门领导姓名" :label-width="120">
                             <fs-search-user v-model="depSettingForm.leaderUserId"
-                                            :option="backShow.leaderNameOpt"
+                                            :optionlist.sync="backShow.leaderNameOpt"
                                             :clearable="true"
-                                            :label="backShow.label1"></fs-search-user>
+                                            :label="backShow.leaderNameLabel"></fs-search-user>
                         </FormItem>
                     </Col>
                     <Col :span="12">
@@ -87,16 +86,20 @@
                     <Col :span="12">
                         <FormItem label="负责人姓名" :label-width="120">
                             <fs-search-user v-model="depSettingForm.chargerUserId"
-                                            :option="backShow.chargerNameOpt"
+                                            :optionlist.sync="backShow.chargerNameOpt"
                                             :clearable="true"
-                                            :label="backShow.chargerPostOpt"></fs-search-user>
+                                            :label="backShow.chargerNameLabel"></fs-search-user>
                         </FormItem>
                     </Col>
                 </Row>
             </Form>
             <div slot="footer">
-                <Button type="primary" v-show="formType === 'create'" @click="_createDep">创建部门</Button>
-                <Button type="primary" v-show="formType === 'update'">确认修改</Button>
+                <Button type="primary"
+                        v-show="formType === 'create'"
+                        @click="_createDep">创建部门</Button>
+                <Button type="primary"
+                        @click="_updateDep"
+                        v-show="formType === 'update'">确认修改</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
         </Modal>
@@ -200,7 +203,8 @@
                 },
                 formType: 'create',
                 initHeight: 300,
-                filterTextName: ''
+                filterTextName: '',
+                depId: ''
             };
         },
         watch: {
@@ -213,6 +217,36 @@
             this._setTreeHeight();
         },
         methods: {
+            _initFormData() {
+                this.depId = '';
+                this.depSettingForm.name = '';
+                this.depSettingForm.fatherId = [];
+                this.backShow.leaderPostOpt = [];
+                this.backShow.leaderPostLabel = '';
+                this.backShow.leaderNameOpt = [];
+                this.backShow.leaderNameLabel = '';
+                this.backShow.chargerPostOpt = [];
+                this.backShow.chargerPostLabel = '';
+                this.backShow.chargerNameOpt = [];
+                this.backShow.chargerNameLabel = '';
+            },
+            _updateDep() {
+                let data = {};
+                data.id = this.depId;
+                data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
+                data.name = this.depSettingForm.name;
+                data.chargerPostId = this.depSettingForm.chargerPostId;
+                data.chargerUserId = this.depSettingForm.chargerUserId;
+                data.leaderPostId = this.depSettingForm.leaderPostId;
+                data.leaderUserId = this.depSettingForm.leaderUserId;
+                this.$http.post('/organize/add', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('更新部门成功!');
+                        this.depSettingFlag = false;
+                        this._getOrgData();
+                    }
+                });
+            },
             _createDep() {
                 let data = {};
                 data.id = 0;
@@ -222,7 +256,6 @@
                 data.chargerUserId = this.depSettingForm.chargerUserId;
                 data.leaderPostId = this.depSettingForm.leaderPostId;
                 data.leaderUserId = this.depSettingForm.leaderUserId;
-                console.log(data);
                 this.$http.post('/organize/add', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('新增部门成功!');
@@ -230,9 +263,6 @@
                         this._getOrgData();
                     }
                 });
-            },
-            _depChange(data) {
-
             },
             _storeFilter(root, path, id) {
                 root.forEach((item) => {
@@ -275,21 +305,55 @@
                 return storeArr;
             },
             append(store, data) {
+                this._initFormData();
                 this.formType = 'create';
                 this.depSettingForm.name = '';
                 this.depSettingForm.fatherId = this._returnOrgIds(data.id);
-                this.depSettingForm.charger = '';
-                this.depSettingForm.leader = '';
                 this.depSettingFlag = true;
             },
             editInfo(store, data) {
                 console.log(data);
+                this._initFormData();
+                this.depId = data.id;
                 this.formType = 'update';
                 this.depSettingForm.name = data.name;
                 this.depSettingForm.fatherId = this._returnOrgIds(data.fatherId);
-                this.depSettingForm.charger = data.chargerName;
-                this.depSettingForm.leader = data.leaderName;
+                this.backShow.leaderPostOpt = [
+                    {
+                        id: data.leaderPostId,
+                        name: data.leaderName
+                    }
+                ];
+                this.backShow.leaderPostLabel = data.leaderPostId;
+                this.depSettingForm.leaderPostId = data.leaderPostId;
+                this.backShow.leaderNameOpt = [
+                    {
+                        id: data.leaderUserId,
+                        realname: data.leaderUserName,
+                        organizename: data.leaderUserOrganize
+                    }
+                ];
+                this.backShow.leaderNameLabel = data.leaderUserName;
+                this.depSettingForm.leaderUserId = data.leaderUserId;
+                this.backShow.chargerPostOpt = [
+                    {
+                        id: data.chargerPostId,
+                        name: data.chargerName
+                    }
+                ];
+                this.backShow.chargerPostLabel = data.chargerName;
+                this.depSettingForm.chargerPostId = data.chargerPostId;
+                this.backShow.chargerNameOpt = [
+                    {
+                        id: data.chargerUserId,
+                        realname: data.chargerUserName,
+                        organizename: data.chargerUserOrganize
+                    }
+                ];
+                this.backShow.chargerNameLabel = data.chargerUserName;
+                this.depSettingForm.chargerUserId = data.chargerUserId;
                 this.depSettingFlag = true;
+                console.log(this.backShow);
             },
             remove(store, data) {
                 if (data.children && data.children.length !== 0) {
@@ -317,10 +381,10 @@
                             </div>
                         </div>
                     <div class="detail">
-                        <span style="width:160px;">{data.chargerName}</span>
-                        <span style="width:160px;">{data.chargerName}</span>
                         <span style="width:160px;">{data.leaderName}</span>
-                        <span style="width:160px;">{data.leaderName}</span>
+                        <span style="width:160px;">{data.leaderUserName}</span>
+                        <span style="width:160px;">{data.chargerName}</span>
+                        <span style="width:160px;">{data.chargerUserName}</span>
                         <span style="width:584px;overflow:hidden;text-overflow" title={data.postNames}>{data.postNames}</span>
                 </div>
                 </div>)
