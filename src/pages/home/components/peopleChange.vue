@@ -33,9 +33,6 @@
             this.getChangeInfo();
         },
         methods: {
-            _testClick() {
-                console.log('aa');
-            },
             pageChangeHandler(current) {
                 console.log(current);
             },
@@ -46,7 +43,7 @@
                     type: 5
                 };
                 this.$http.get('/notice/diaodongInfo', {params: data}).then((res) => {
-                    if (res.Success) {
+                    if (res.success) {
                         let storeArr = [];
                         res.date.forEach((item) => {
                             storeArr.push('【' + moment(item.nottime).format('YYYY-MM-DD') + '】' + item.content);

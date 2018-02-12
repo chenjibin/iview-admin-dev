@@ -1,6 +1,6 @@
 <template>
     <Select
-            v-model="filterPeopleData"
+            v-model="valueData"
             :multiple="multiple"
             filterable
             remote
@@ -37,14 +37,17 @@
             }
         },
         watch: {
-            filterPeopleData(val) {
+            valueData(val) {
                 this.$emit('change', val);
+            },
+            value(val) {
+                this.valueData = val;
             }
         },
         data () {
             return {
-                filterPeopleData: this.value,
-                filterPeopleLoading: false
+                filterPeopleLoading: false,
+                valueData: this.value
             };
         },
         methods: {

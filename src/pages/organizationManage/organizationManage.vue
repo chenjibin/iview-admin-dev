@@ -6,7 +6,7 @@
         </Input>
         <div class="">
             <div class="fs-tree-header">
-                <div class="title" style="width: 400px">
+                <div class="title" style="flex: 0 0 300px;">
                     <span>部门名称</span>
                 </div>
                 <div class="detail">
@@ -38,11 +38,11 @@
             </p>
             <Form :model="depSettingForm"
                   ref="coinForm"
+                  :rules="orgaRules"
                   :label-width="80">
-
                 <Row type="flex">
                     <Col :span="24">
-                        <FormItem label="上级部门">
+                        <FormItem label="上级部门" prop="fatherId">
                             <el-cascader
                                     :options="orgData"
                                     :props="depProps"
@@ -54,21 +54,21 @@
                         </FormItem>
                     </Col>
                     <Col :span="24">
-                        <FormItem prop="target" label="当前部门">
+                        <FormItem prop="name" label="当前部门">
                             <Input type="text"
                                    v-model="depSettingForm.name"></Input>
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="分管部门领导岗位" :label-width="120">
+                        <FormItem label="分管部门领导岗位" :label-width="120" required>
                             <fs-search-post v-model="depSettingForm.leaderPostId"
-                                            :option="backShow.leaderPostOpt"
+                                            :optionlist.sync="backShow.leaderPostOpt"
                                             :clearable="true"
                                             :label="backShow.leaderPostLabel"></fs-search-post>
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="分管部门领导姓名" :label-width="120">
+                        <FormItem label="分管部门领导姓名" :label-width="120" required>
                             <fs-search-user v-model="depSettingForm.leaderUserId"
                                             :optionlist.sync="backShow.leaderNameOpt"
                                             :clearable="true"
@@ -76,15 +76,15 @@
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="负责人岗位" :label-width="120">
+                        <FormItem label="负责人岗位" :label-width="120" required>
                             <fs-search-post v-model="depSettingForm.chargerPostId"
-                                            :option="backShow.chargerPostOpt"
+                                            :optionlist.sync="backShow.chargerPostOpt"
                                             :clearable="true"
                                             :label="backShow.chargerPostLabel"></fs-search-post>
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="负责人姓名" :label-width="120">
+                        <FormItem label="负责人姓名" :label-width="120" required>
                             <fs-search-user v-model="depSettingForm.chargerUserId"
                                             :optionlist.sync="backShow.chargerNameOpt"
                                             :clearable="true"
@@ -174,6 +174,11 @@
             return {
                 depSettingFlag: false,
                 storePath: [],
+                orgaRules: {
+                    name: [
+                        {required: true, message: '部门名称不能为空!', trigger: 'blur'}
+                    ]
+                },
                 backShow: {
                     leaderPostOpt: [],
                     leaderPostLabel: '',
@@ -217,10 +222,22 @@
             this._setTreeHeight();
         },
         methods: {
+            _validEmpty() {
+                let nowForm = this.depSettingForm;
+                let flag = nowForm.chargerPostId && nowForm.chargerUserId && nowForm.leaderPostId &&nowForm.leaderUserId;
+                if (!flag) {
+                    this.$Message.error('星号项不能为空!');
+                }
+                return flag;
+            },
             _initFormData() {
                 this.depId = '';
                 this.depSettingForm.name = '';
                 this.depSettingForm.fatherId = [];
+                this.depSettingForm.leaderUserId = '';
+                this.depSettingForm.leaderPostId = '';
+                this.depSettingForm.chargerUserId = '';
+                this.depSettingForm.chargerPostId = '';
                 this.backShow.leaderPostOpt = [];
                 this.backShow.leaderPostLabel = '';
                 this.backShow.leaderNameOpt = [];
@@ -231,36 +248,46 @@
                 this.backShow.chargerNameLabel = '';
             },
             _updateDep() {
-                let data = {};
-                data.id = this.depId;
-                data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
-                data.name = this.depSettingForm.name;
-                data.chargerPostId = this.depSettingForm.chargerPostId;
-                data.chargerUserId = this.depSettingForm.chargerUserId;
-                data.leaderPostId = this.depSettingForm.leaderPostId;
-                data.leaderUserId = this.depSettingForm.leaderUserId;
-                this.$http.post('/organize/add', data).then((res) => {
-                    if (res.success) {
-                        this.$Message.success('更新部门成功!');
-                        this.depSettingFlag = false;
-                        this._getOrgData();
+                this.$refs.coinForm.validate((valid) => {
+                    valid = this._validEmpty();
+                    if (valid) {
+                        let data = {};
+                        data.id = this.depId;
+                        data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
+                        data.name = this.depSettingForm.name;
+                        data.chargerPostId = this.depSettingForm.chargerPostId;
+                        data.chargerUserId = this.depSettingForm.chargerUserId;
+                        data.leaderPostId = this.depSettingForm.leaderPostId;
+                        data.leaderUserId = this.depSettingForm.leaderUserId;
+                        this.$http.post('/organize/add', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('更新部门成功!');
+                                this.depSettingFlag = false;
+                                this._getOrgData();
+                            }
+                        });
                     }
                 });
             },
             _createDep() {
-                let data = {};
-                data.id = 0;
-                data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
-                data.name = this.depSettingForm.name;
-                data.chargerPostId = this.depSettingForm.chargerPostId;
-                data.chargerUserId = this.depSettingForm.chargerUserId;
-                data.leaderPostId = this.depSettingForm.leaderPostId;
-                data.leaderUserId = this.depSettingForm.leaderUserId;
-                this.$http.post('/organize/add', data).then((res) => {
-                    if (res.success) {
-                        this.$Message.success('新增部门成功!');
-                        this.depSettingFlag = false;
-                        this._getOrgData();
+                this.$refs.coinForm.validate((valid) => {
+                    valid = this._validEmpty() && valid;
+                    if (valid) {
+                        let data = {};
+                        data.id = 0;
+                        data.fatherId = this.depSettingForm.fatherId.slice(-1)[0];
+                        data.name = this.depSettingForm.name;
+                        data.chargerPostId = this.depSettingForm.chargerPostId;
+                        data.chargerUserId = this.depSettingForm.chargerUserId;
+                        data.leaderPostId = this.depSettingForm.leaderPostId;
+                        data.leaderUserId = this.depSettingForm.leaderUserId;
+                        this.$http.post('/organize/add', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('新增部门成功!');
+                                this.depSettingFlag = false;
+                                this._getOrgData();
+                            }
+                        });
                     }
                 });
             },
@@ -321,10 +348,11 @@
                 this.backShow.leaderPostOpt = [
                     {
                         id: data.leaderPostId,
-                        name: data.leaderName
+                        name: data.leaderName,
+                        organizename: data.leaderPostOrganize
                     }
                 ];
-                this.backShow.leaderPostLabel = data.leaderPostId;
+                this.backShow.leaderPostLabel = data.leaderName;
                 this.depSettingForm.leaderPostId = data.leaderPostId;
                 this.backShow.leaderNameOpt = [
                     {
@@ -338,7 +366,8 @@
                 this.backShow.chargerPostOpt = [
                     {
                         id: data.chargerPostId,
-                        name: data.chargerName
+                        name: data.chargerName,
+                        organizename: data.chargerPostOrganize
                     }
                 ];
                 this.backShow.chargerPostLabel = data.chargerName;

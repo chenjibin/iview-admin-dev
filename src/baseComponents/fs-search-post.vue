@@ -1,14 +1,14 @@
 <template>
     <Select
-            v-model="filterPeopleData"
+            v-model="valueData"
             :multiple="multiple"
             filterable
             remote
             :clearable="clearable"
-            :label="remoteLabel"
+            :label="label"
             :remote-method="_filterPeopleRemote"
             :loading="filterPeopleLoading">
-        <Option v-for="(option, index) in filterPeopleOpt"
+        <Option v-for="(option, index) in optionlist"
                 :value="option.id"
                 :key="'post' + option.id">{{option.name + '(' + option.organizename + ')'}}</Option>
     </Select>
@@ -29,7 +29,7 @@
                 type: Boolean,
                 default: false
             },
-            option: Array,
+            optionlist: Array,
             label: [String, Number, Array],
             value: {
                 type: [String, Number, Array],
@@ -37,16 +37,17 @@
             }
         },
         watch: {
-            filterPeopleData(val) {
+            valueData(val) {
                 this.$emit('change', val);
+            },
+            value(val) {
+                this.valueData = val;
             }
         },
         data () {
             return {
-                filterPeopleData: this.value,
                 filterPeopleLoading: false,
-                remoteLabel: this.label,
-                filterPeopleOpt: this.option
+                valueData: this.value
             };
         },
         methods: {
@@ -56,8 +57,7 @@
                 this.filterPeopleLoading = true;
                 this.$http.get('post/findPost', {params: data}).then((res) => {
                     if (res.success) {
-                        console.log(res);
-                        this.filterPeopleOpt = res.date;
+                        this.$emit('update:optionlist', res.date);
                     }
                 }).finally(() => {
                     this.filterPeopleLoading = false;
