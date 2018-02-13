@@ -1051,7 +1051,7 @@
             },
             _depChange(data) {
                 this._getPostList(data.slice(-1)[0]).then(() => {
-                    this.userSettingForm.post = this.postList[0].id;
+                    this.userSettingForm.post = this.postList.length ? this.postList[0].id : '';
                 });
             },
             _updateUserInfo() {
@@ -1067,7 +1067,6 @@
                 data.organizeId = this.userSettingForm.dep.slice(-1)[0];
                 data.level = this.userSettingForm.level;
                 data.postId = this.userSettingForm.post;
-                // data.leaderName = this.userSettingForm.vUp;
                 data.roleId = this.userSettingForm.role;
 
                 this.$http.post('/user/setUserInfo ', data).then((res) => {
@@ -1127,6 +1126,7 @@
                 this.editUserId = data.id;
             },
             _returnNeedPostList(ids, names) {
+                if (!ids || !names) return [];
                 let idsArr = ids.split(',').filter(x => !!x);
                 let namesArr = names.split(',').filter(x => !!x);
                 let storeArr = [];

@@ -87,6 +87,12 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/myArrange/myArrange.vue'], resolve); }
         },
         {
+            path: 'coinShop',
+            title: '金币商城',
+            name: 'coinShop',
+            component: resolve => { require(['@/pages/coinShop/coinShop.vue'], resolve); }
+        },
+        {
             path: 'ownspace',
             title: '个人中心',
             name: 'ownspace_index',

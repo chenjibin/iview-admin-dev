@@ -63,7 +63,7 @@
                                         iconType="cash"
                                         color="#f25e43"
                                         btn-text="金币商城"
-                                        @card-click=""></info-btn>
+                                        @card-click="$router.push('coinShop')"></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
