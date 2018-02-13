@@ -61,7 +61,7 @@
                                         </FormItem>
                                         <FormItem label="工作安排"
                                                   prop="workDesc"
-                                                  v-show="row.numberday >= 3">
+                                                  v-show="row.numberday >= 3 && odForm.agree ==='同意'">
                                             <Input v-model="odForm.workDesc"
                                                    type="textarea"
                                                    :autosize="{minRows: 2,maxRows: 5}"

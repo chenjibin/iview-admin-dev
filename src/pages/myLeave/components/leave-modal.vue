@@ -350,6 +350,7 @@
                 let leaveForm = this.leaveSendForm;
                 leaveForm.numberDay = this._getDayNumber(leaveForm.startDate, leaveForm.endDate, leaveForm.startTime, leaveForm.endTime);
             },
+            // 计算请假时间
             _getDayNumber(sd, ed, stime, etime) {
                 if (moment(sd).isAfter(ed)) return 0;
                 if (sd && ed && stime && etime) {
@@ -372,9 +373,24 @@
                     return 0;
                 }
             },
+            //  判断时间是否有误
+            _isRightTime(arr) {
+                let flag = true;
+                arr.forEach((item) => {
+                    if (moment(item.restStartDate).isAfter(item.restEndDate) || moment(item.workStartDate).isAfter(item.workEndDate)) {
+                        flag = false;
+                    }
+                });
+                return flag;
+            },
             _submitTiaoxiu() {
                 let sendForm = this.leaveSendForm;
                 let data = {};
+                let flag = this._isRightTime(sendForm.tiaoxiuTime);
+                if (!flag) {
+                    this.$Message.error('时间有误，请检查!');
+                    return;
+                }
                 data.type = sendForm.type;
                 data.submitDate = sendForm.submitDate;
                 data.numberDay = sendForm.tiaoxiuNumberDay;
@@ -409,6 +425,10 @@
                         data.changePeople = sendForm.changePeople;
                     }
                 }
+                if (sendForm.numberDay === 0 || moment(sendForm.startDate).isAfter(sendForm.endDate)) {
+                    this.$Message.error('时间有误，请检查!');
+                    return;
+                }
                 data.submitDate = sendForm.submitDate;
                 data.startDate = sendForm.startDate;
                 data.endDate = sendForm.endDate;
@@ -429,16 +449,11 @@
                 });
             },
             submitOd() {
-                console.log('aaa')
                 this.$refs.leaveForm.validate((valid) => {
-                    console.log(valid)
                     if (valid) {
-                        console.log(this.leaveSendForm.type)
                         if (this.leaveSendForm.type === '6') {
-                            console.log(this.leaveSendForm.type)
                             this._submitTiaoxiu();
                         } else {
-                            console.log(this.leaveSendForm.type)
                             this._submitOdCommon();
                         }
                     }

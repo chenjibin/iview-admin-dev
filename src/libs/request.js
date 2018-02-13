@@ -3,7 +3,6 @@
  */
 import axios from 'axios';
 import qs from 'qs';
-import { router } from '../router/index';
 import store from '../store';
 import Vue from 'vue';
 
