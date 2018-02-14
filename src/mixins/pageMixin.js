@@ -28,11 +28,19 @@ export default {
             let data = Object.assign({
                 page: this.pageData.page,
                 pageSize: this.pageData.pageSize
-            }, params);
+            }, params || {});
             this.$http.get(url, {params: data}).then((res) => {
                 if (res.success) {
-                    this.pageData.totalCount = res.count || res.totalCount;
-                    this.pageData.list = res.date || res.data;
+                    if (res.hasOwnProperty('count')) {
+                        this.pageData.totalCount = res.count;
+                    } else if (res.hasOwnProperty('totalCount')) {
+                        this.pageData.totalCount = res.totalCount;
+                    }
+                    if (res.hasOwnProperty('date')) {
+                        this.pageData.list = res.date;
+                    } else if (res.hasOwnProperty('data')) {
+                        this.pageData.list = res.data;
+                    }
                 }
             }).finally(() => {
                 this.tableLoading = false;

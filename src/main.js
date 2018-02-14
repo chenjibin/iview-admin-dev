@@ -8,7 +8,6 @@ import '@/locale';
 import 'iview/dist/styles/iview.css';
 import VueI18n from 'vue-i18n';
 import request from './libs/request';
-import Cookies from 'js-cookie';
 
 Vue.use(VueI18n);
 Vue.use(iView);
@@ -32,7 +31,5 @@ new Vue({
         // 显示打开的页面的列表
         this.$store.commit('setOpenedList');
         this.$store.commit('initCachepage');
-    },
-    created() {
     }
 });

@@ -70,6 +70,7 @@
                           @on-change="_setPage"
                           @on-page-size-change="_setPageSize"
                           :page-size="searchData.pageSize"
+                          placement="top"
                           show-sizer
                           show-total
                           show-elevator
@@ -173,11 +174,6 @@
                         </FormItem>
                     </Col>
                 </Row>
-                <!--<FormItem label="岗位操作指南" :label-width="100">-->
-                    <!--<Select v-model="userSettingForm.guider" multiple>-->
-                        <!--<Option v-for="item in guiderList" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
                 <FormItem label="班次设置" :label-width="100" prop="banci">
                     <Select v-model="userSettingForm.banci" multiple>
                         <Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>
@@ -309,7 +305,7 @@
             <div id="fs-spec-access-block">
                 <Row :gutter="16">
                     <Col :span="14">
-                        <h3 class="title">虚拟可查看部门日志</h3>
+                        <h3 class="title">虚拟可查看部门</h3>
                         <div class="">
                             <div class="each-dep-wrapper"
                                  v-for="(dep, index) in specAccessData.deps"
@@ -324,37 +320,64 @@
                                 ></el-cascader>
                                 <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeDep(index)"></Button>
                             </div>
-                            <div class="add-dep" @click="_addNewDep">
-                                <Icon type="plus-round" size="30"></Icon>
-                                <p>点击添加部门</p>
-                            </div>
+                            <Button
+                                    type="ghost"
+                                    shape="circle"
+                                    @click="_addNewDep"
+                                    icon="plus-round"></Button>
                         </div>
                     </Col>
                     <Col :span="10">
-                        <h3 class="title">虚拟可查看人员日志</h3>
+                        <h3 class="title">虚拟可查看人员</h3>
                         <div class="">
-                            <Select
-                                    v-model="specAccessData.filterPeopleData"
+                            <Select v-model="specAccessData.filterPeopleData"
                                     multiple
                                     filterable
                                     remote
+                                    :label="remoteLabel"
                                     :remote-method="_filterPeopleRemote"
                                     :loading="specAccessData.filterPeopleLoading">
-                                <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname}}</Option>
+                                <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
                             </Select>
+                        </div>
+                    </Col>
+                    <Col :span="14" style="margin-top: 16px;">
+                        <h3 class="title">虚拟可查看排班部门</h3>
+                        <div class="">
+                            <div class="each-dep-wrapper"
+                                 v-for="(dep, index) in specAccessData.arrangeDeps"
+                                 :key="'arrangedep-' + index">
+                                <el-cascader
+                                        :options="orgTreeData"
+                                        :props="depProps"
+                                        v-model="dep.dep"
+                                        change-on-select
+                                        size="small"
+                                        class="dep-choose"
+                                ></el-cascader>
+                                <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeArrangeDep(index)"></Button>
+                            </div>
+                            <Button
+                                    type="ghost"
+                                    shape="circle"
+                                    @click="_addNewArrangeDep"
+                                    icon="plus-round"></Button>
                         </div>
                     </Col>
                 </Row>
             </div>
             <div slot="footer">
                 <Button type="primary" @click="_specAccessConfirm">确认授权</Button>
-                <Button type="ghost">取消</Button>
+                <Button type="ghost" @click="specAccessFlag = false">取消</Button>
             </div>
         </Modal>
     </div>
 </template>
 <style lang="less">
     #fs-spec-access-block {
+        max-height: 400px;
+        overflow-x: hidden;
+        overflow-y: auto;
         .title {
             margin-bottom: 16px;
         }
@@ -403,12 +426,6 @@
             filterText(val) {
                 this.$refs.treeDom.filter(val);
             },
-            'specAccessData.filterPeopleData'(val) {
-                console.log(val)
-            },
-            'specAccessData.deps'(val) {
-                console.log(val)
-            },
             'searchData.pageSize'() {
                 this._filterResultHandler();
             },
@@ -428,12 +445,8 @@
                             this.levelCodeOpt.code = res.date.level.split(',')[0];
                             console.log(this.levelCodeOpt);
                         }
-                    })
+                    });
                 }
-                console.log(val)
-            },
-            social(val) {
-                console.log(val);
             }
         },
         data () {
@@ -441,12 +454,14 @@
                 accessButtons: [],
                 social: [],
                 banciModalFlag: false,
+                remoteLabel: [],
                 specAccessData: {
                     userId: '',
                     filterPeopleLoading: false,
                     filterPeopleData: [],
                     filterPeopleOpt: [],
-                    deps: []
+                    deps: [],
+                    arrangeDeps: []
                 },
                 coinSettingFlag: false,
                 settingModalFlag: false,
@@ -820,7 +835,7 @@
                     return item.dep.length > 0;
                 });
                 needArr.forEach((item) => {
-                    newArr.push(item.dep.slice(-1)[0])
+                    newArr.push(item.dep.slice(-1)[0]);
                 });
                 return newArr.join(',');
             },
@@ -838,8 +853,11 @@
                 sendData.userIds = userIds.join(',');
                 sendData.organizeIds = this.returnDepsIds(depsArr);
                 this.$http.post('/user/addSuperPro', sendData).then((res) => {
-                    console.log(res)
-                })
+                    if (res.success) {
+                        this.$Message.success('授权成功!');
+                        this.specAccessFlag = false;
+                    }
+                });
             },
             _specAccessOpen(data) {
                 this._initAccessData();
@@ -848,7 +866,10 @@
                 this.specAccessFlag = true;
             },
             _removeDep(index) {
-                this.specAccessData.deps.splice(index, 1)
+                this.specAccessData.deps.splice(index, 1);
+            },
+            _removeArrangeDep(index) {
+                this.specAccessData.arrangeDeps.splice(index, 1);
             },
             _filterPeopleRemote(val) {
                 let data = {};
@@ -865,7 +886,23 @@
             _addNewDep() {
                 let obj = {};
                 obj.dep = [];
-                this.specAccessData.deps.push(obj)
+                this.specAccessData.deps.push(obj);
+            },
+            _addNewArrangeDep() {
+                let obj = {};
+                obj.dep = [];
+                this.specAccessData.arrangeDeps.push(obj);
+            },
+            _returnAccessDeps(deps) {
+                if (!deps) return [];
+                let arr = deps.split(',');
+                let storeArr = [];
+                for (let i = 0, depLength = arr.length; i < depLength; i++) {
+                    let obj = {};
+                    obj.dep = this._returnOrgIds(+arr[i]);
+                    storeArr.push(obj);
+                }
+                return storeArr;
             },
             _getSpecAccessPro() {
                 let data = {};
@@ -873,10 +910,11 @@
                 this.$http.get('/user/getMySuperPro', {params: data}).then((res) => {
                     if (res.success) {
                         this.specAccessData.filterPeopleOpt = res.date;
-                        this.specAccessData.filterPeopleData = res.date.map( x => x.id);
+                        this.specAccessData.filterPeopleData = res.date.length ? res.date.map(x => x.id) : [];
+                        this.remoteLabel = res.date.length ? res.date.map(x => x.realname) : [];
+                        this.specAccessData.deps = this._returnAccessDeps(res.organizeIds);
                     }
-                    console.log(res)
-                })
+                });
             },
             _getAccessButtons() {
                 let data = {
@@ -887,7 +925,7 @@
                 });
             },
             _inJobDateChange(val) {
-                this.userSettingForm.inJobTime = val
+                this.userSettingForm.inJobTime = val;
             },
             _coinConfirmHandler() {
                 this.$refs.coinForm.validate((valid) => {
@@ -994,7 +1032,7 @@
                 this.tableLoading = true;
                 this.$http.get('/user/dataList', {params: this.searchData}).then((res) => {
                     if (res.success) {
-                        this.totalCount = res.count;
+                        this.totalCount = res.totalCount;
                         this.userData = res.date;
                     }
                 }).finally(() => {
@@ -1013,7 +1051,7 @@
             },
             _depChange(data) {
                 this._getPostList(data.slice(-1)[0]).then(() => {
-                    this.userSettingForm.post = this.postList[0].id;
+                    this.userSettingForm.post = this.postList.length ? this.postList[0].id : '';
                 });
             },
             _updateUserInfo() {
@@ -1029,16 +1067,15 @@
                 data.organizeId = this.userSettingForm.dep.slice(-1)[0];
                 data.level = this.userSettingForm.level;
                 data.postId = this.userSettingForm.post;
-                // data.leaderName = this.userSettingForm.vUp;
                 data.roleId = this.userSettingForm.role;
-                console.log(data);
+
                 this.$http.post('/user/setUserInfo ', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('用户更新成功!');
                         this._getUserData();
                         this.settingModalFlag = false;
                     }
-                })
+                });
             },
             _addUser() {
                 this.$refs.userSettingDom.validate((valid) => {
@@ -1058,20 +1095,17 @@
                         data.postId = this.userSettingForm.post;
                         // data.leaderName = this.userSettingForm.vUp;
                         data.roleId = this.userSettingForm.role;
-
                         console.log(data);
-
-
                         this.$http.post('/user/setUserInfo ', data).then((res) => {
                             if (res.success) {
                                 this.$Message.success('用户添加成功!');
                                 this._getUserData();
                                 this.settingModalFlag = false;
                             }
-                            console.log(res)
-                        })
+                            console.log(res);
+                        });
                     }
-                })
+                });
             },
             _editorSetting(data) {
                 this.userSettingForm.states = !!data.states;
@@ -1092,15 +1126,16 @@
                 this.editUserId = data.id;
             },
             _returnNeedPostList(ids, names) {
+                if (!ids || !names) return [];
                 let idsArr = ids.split(',').filter(x => !!x);
                 let namesArr = names.split(',').filter(x => !!x);
                 let storeArr = [];
                 for (let i = 0, length = idsArr.length; i < length; i++) {
-                    storeArr[i] = {}
+                    storeArr[i] = {};
                 }
                 storeArr.forEach((item, index, arr) => {
                     item.id = +idsArr[index];
-                    item.name = namesArr[index]
+                    item.name = namesArr[index];
                 });
                 return storeArr;
             },
@@ -1111,18 +1146,11 @@
                     this.$http.get('/organize/getSetInfo', {params: data}).then((res) => {
                         if (res.success) {
                             this.postList = this._returnNeedPostList(res.date.postids, res.date.postnames);
-                            resolve()
+                            resolve();
                         }
-                    })
-                })
+                    });
+                });
             },
-            // _getLevelList() {
-            //     this.$http.get('/rank/datalist?page=1&pageSize=20').then((res) => {
-            //         if (res.success) {
-            //             this.levelData = res.date
-            //         }
-            //     })
-            // },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
                     if (res.success) {

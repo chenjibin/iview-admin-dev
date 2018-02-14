@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         clickHandler() {
-            this.$emit('card-click')
+            this.$emit('card-click');
         }
     }
 };

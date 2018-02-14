@@ -1,39 +1,10 @@
-<style lang="less">
-    @import "./home.less";
-    @import "../../styles/common.less";
-</style>
 <template>
     <div class="home-main">
         <Row :gutter="10">
             <Col :md="24" :lg="10">
                 <Row class-name="home-page-row1" :gutter="10">
                     <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
-                        <Card>
-                            <Row type="flex" class="user-infor">
-                                <Col span="8">
-                                    <Row class-name="made-child-con-middle" type="flex" align="middle">
-                                        <img class="avator-img" :src="avatorPath" />
-                                    </Row>
-                                </Col>
-                                <Col span="16" style="padding-left:6px;">
-                                <Row class-name="made-child-con-middle" type="flex" align="middle">
-                                    <div>
-                                        <b class="card-user-infor-name">{{userInfo.userName}}</b>
-                                        <p>{{userInfo.organizeName + '（' + userInfo.postName + '）'}}</p>
-                                    </div>
-                                </Row>
-                                </Col>
-                            </Row>
-                            <div class="line-gray"></div>
-                            <Row class="margin-top-8">
-                                <Col span="8"><p class="notwrap">上次登录时间:</p></Col>
-                                <Col span="16" class="padding-left-8">2017.09.12-13:32:20</Col>
-                            </Row>
-                            <Row class="margin-top-8">
-                                <Col span="8"><p class="notwrap">上次登录地点:</p></Col>
-                                <Col span="16" class="padding-left-8">江苏省 连云港市</Col>
-                            </Row>
-                        </Card>
+                        <user-info></user-info>
                     </Col>
                     <Col :md="24" :lg="24">
                         <Row :gutter="5">
@@ -63,7 +34,7 @@
                                         iconType="cash"
                                         color="#f25e43"
                                         btn-text="金币商城"
-                                        @card-click=""></info-btn>
+                                        @card-click="$router.push('coinShop')"></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
@@ -103,33 +74,20 @@
 
 <script>
 import infoBtn from './components/infoBtn';
+import userInfo from './components/userInfo';
 import Notice from './components/notice';
 import peopleChange from './components/peopleChange';
 import injobCommemorate from './components/injobCommemorate';
 import coinChange from './components/coinChange';
-import Cookies from 'js-cookie';
 export default {
-    name: 'home',
+    name: 'home_index',
     components: {
         infoBtn,
         Notice,
         peopleChange,
         injobCommemorate,
-        coinChange
-    },
-    data () {
-        return {
-            userInfo: {}
-        };
-    },
-    created() {
-        this.userInfo = JSON.parse(Cookies.get('userInfo'));
-        console.log(this.userInfo);
-    },
-    computed: {
-        avatorPath () {
-            return localStorage.avatorImgPath;
-        }
+        coinChange,
+        userInfo
     }
 };
 </script>

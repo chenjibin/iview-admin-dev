@@ -304,9 +304,9 @@ util.initMenu = function (router, store, routeData) {
 };
 util.getPermissionData = function() {
     return new Promise((resolve, reject) => {
-            axios.get('/jurisdiction/getMySystemMenu').then((res) => {
-                resolve(res.date);
-            });
+        axios.get('/jurisdiction/getMySystemMenu').then((res) => {
+            resolve(res.date);
+        });
     });
 };
 

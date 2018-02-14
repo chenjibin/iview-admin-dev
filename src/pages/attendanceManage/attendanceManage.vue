@@ -42,9 +42,14 @@
                             <Icon type="ios-cloud-upload-outline"></Icon>
                             导入
                         </Button>
-                        <Button type="ghost">
+                        <Button type="ghost" @click="exportModalFlag = true">
+                            <a id="hrefToExportTable" style="postion: absolute;left: -10px;top: -10px;width: 0px;height: 0px;"></a>
                             <Icon type="ios-cloud-download-outline"></Icon>
                             导出
+                        </Button>
+                        <Button type="warning" @click="deleteModalFlag = true" >
+                            <Icon type="ios-trash-outline"></Icon>
+                            删除
                         </Button>
                         <!--<Button type="ghost" @click="_exportCsv">-->
                             <!--<Icon type="ios-cloud-download-outline"></Icon>-->
@@ -62,6 +67,7 @@
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
+                  placement="top"
                   show-sizer
                   show-total
                   show-elevator
@@ -78,7 +84,7 @@
                         :on-success="_uploadSuccess"
                         :on-error="_uploadFail"
                         :format="uploadOpt.format"
-                        action="//jsonplaceholder.typicode.com/posts/">
+                        action="/oa/kq/add">
                     <div style="padding: 20px 0">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>点击或者拖拽文件到这里上传(后缀为.xls的文件)</p>
@@ -86,7 +92,54 @@
                 </Upload>
                 <div slot="footer"></div>
             </Modal>
-
+            <Modal v-model="deleteModalFlag"
+                   width="300"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>删除考勤</span>
+                </p>
+                <Form >
+                    <FormItem label="考勤月份">
+                        <DatePicker type="month"
+                                    placeholder="筛选考勤月份"
+                                    @on-change="_deleteMonthChange"
+                                    :value="deleteMonth"></DatePicker>
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary"
+                            :loading="deleteLoading"
+                            @click="_confirmDelete">
+                        <span v-if="!deleteLoading">确认删除</span>
+                        <span v-else>正在删除...</span>
+                    </Button>
+                    <Button type="ghost" style="margin-left: 8px" @click="deleteModalFlag = false">取消</Button>
+                </div>
+            </Modal>
+            <Modal v-model="exportModalFlag"
+                   width="300"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>导出考勤</span>
+                </p>
+                <Form >
+                    <FormItem label="考勤月份">
+                        <DatePicker type="month"
+                                    placeholder="筛选考勤月份"
+                                    @on-change="_exportMonthChange"
+                                    :value="exportMonth"></DatePicker>
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary"
+                            :loading="exportLoading"
+                            @click="_confirmExport">
+                        <span v-if="!exportLoading">确认导出</span>
+                        <span v-else>正在导出...</span>
+                    </Button>
+                    <Button type="ghost" style="margin-left: 8px" @click="exportModalFlag = false">取消</Button>
+                </div>
+            </Modal>
             <Modal v-model="settingModalFlag"
                    width="1150"
                    :mask-closable="false">
@@ -100,7 +153,7 @@
                            :data="attendanceOpt.data"></Table>
                 </div>
                 <div slot="footer">
-                    <Button type="primary">完成 {{attendanceOpt.userName}} 该月审核</Button>
+                    <Button type="primary" @click="_completeThisMonth">完成 {{attendanceOpt.userName}} 该月审核</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
@@ -148,11 +201,10 @@
                     </FormItem>
                 </Form>
                 <div slot="footer">
-                    <Button type="primary">确认设置</Button>
+                    <Button type="primary" @click="_confirmStrangeSetting">确认设置</Button>
                     <Button type="ghost" style="margin-left: 8px" @click="strangeModalFlag = false">取消</Button>
                 </div>
             </Modal>
-
         </Card>
     </div>
 </template>
@@ -167,12 +219,20 @@
                 tableLoading2: false,
                 settingModalFlag: false,
                 importModalFlag: false,
+                exportModalFlag: false,
+                deleteModalFlag: false,
+                exportLoading: false,
+                deleteLoading: false,
                 strangeModalFlag: false,
                 postFormType: 'update',
+                recordId: '',
+                exportMonth: moment().format('YYYY-MM'),
+                deleteMonth: moment().format('YYYY-MM'),
                 strangeSettingForm: {
                     type: '',
                     days: '',
-                    desc: ''
+                    desc: '',
+                    id: ''
                 },
                 uploadOpt: {
                     format: ['xls']
@@ -222,7 +282,7 @@
                         key: 'record_month',
                         align: 'center',
                         render: (h, params) => {
-                            return h('span', moment(params.row['record_month']).format('YYYY-MM'))
+                            return h('span', moment(params.row['record_month']).format('YYYY-MM'));
                         }
                     },
                     {
@@ -355,7 +415,7 @@
                         key: 'c_count',
                         align: 'center',
                         width: 100,
-                        render: (h ,params) => {
+                        render: (h, params) => {
                             if (+params.row.exception !== 2) {
                                 let vm = this;
                                 return h('InputNumber', {
@@ -368,10 +428,10 @@
                                     on: {
                                         'on-change' (val) {
                                             params.row['c_count'] = val;
-                                            vm._setEveryStrangeNumber(val, 'late', params.row)
+                                            vm._setEveryStrangeNumber(val, 'late', params.row);
                                         }
                                     }
-                                })
+                                });
                             }
                         }
                     },
@@ -380,7 +440,7 @@
                         key: 'z_count',
                         align: 'center',
                         width: 100,
-                        render: (h ,params) => {
+                        render: (h, params) => {
                             if (+params.row.exception !== 2) {
                                 let vm = this;
                                 return h('InputNumber', {
@@ -393,10 +453,10 @@
                                     on: {
                                         'on-change' (val) {
                                             params.row['z_count'] = val;
-                                            vm._setEveryStrangeNumber(val, 'leave_early', params.row)
+                                            vm._setEveryStrangeNumber(val, 'leave_early', params.row);
                                         }
                                     }
-                                })
+                                });
                             }
                         }
                     },
@@ -405,7 +465,7 @@
                         key: 'l_count',
                         align: 'center',
                         width: 100,
-                        render: (h ,params) => {
+                        render: (h, params) => {
                             if (+params.row.exception !== 2) {
                                 let vm = this;
                                 return h('InputNumber', {
@@ -418,10 +478,10 @@
                                     on: {
                                         'on-change' (val) {
                                             params.row['l_count'] = val;
-                                            vm._setEveryStrangeNumber(val, 'forget', params.row)
+                                            vm._setEveryStrangeNumber(val, 'forget', params.row);
                                         }
                                     }
-                                })
+                                });
                             }
                         }
                     },
@@ -434,7 +494,7 @@
                     {
                         title: '备注信息',
                         key: 'describeex',
-                        align: 'center',
+                        align: 'center'
                     },
                     {
                         title: '操作',
@@ -461,31 +521,32 @@
                                         },
                                         on: {
                                             click: function () {
-                                                vm._setStrangeDay(params.row)
+                                                vm._setStrangeDay(params.row);
                                             }
                                         }
                                     })
                                 ]),
-                                flag ? '' :
-                                h('Tooltip', {
-                                    props: {
-                                        content: '审核通过',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
+                                flag ? ''
+                                    : h('Tooltip', {
                                         props: {
-                                            type: 'success',
-                                            icon: 'checkmark-round',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function () {
-                                            }
+                                            content: '审核通过',
+                                            placement: 'top',
+                                            transfer: true
                                         }
-                                    })
-                                ])
+                                    }, [
+                                        h('Button', {
+                                            props: {
+                                                type: 'success',
+                                                icon: 'checkmark-round',
+                                                shape: 'circle'
+                                            },
+                                            on: {
+                                                click: function () {
+                                                    vm._setConfirmPass(params.row);
+                                                }
+                                            }
+                                        })
+                                    ])
                             ]);
                         }
                     }
@@ -504,6 +565,52 @@
             this._setTableHeight();
         },
         methods: {
+            _confirmDelete() {
+                this.deleteLoading = true;
+                let data = {};
+                data.date = this.deleteMonth;
+                this.$http.post('/kq/delete', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success(this.deleteMonth + '考勤数据删除成功!');
+                        this.deleteModalFlag = false;
+                    }
+                    console.log(res);
+                }).finally(() => {
+                    this.deleteLoading = false;
+                });
+            },
+            _exportMonthChange(date) {
+                this.exportMonth = date;
+            },
+            _deleteMonthChange(date) {
+                this.deleteMonth = date;
+            },
+            _confirmExport() {
+                this.exportLoading = true;
+                let data = {};
+                data.date = this.exportMonth;
+                this.$http.get('/kq/export', {params: data}).then((res) => {
+                    if (res.success) {
+                        document.getElementById('hrefToExportTable').href = res.url;
+                        document.getElementById('hrefToExportTable').download = this.exportMonth + '考勤统计表.xls';
+                        document.getElementById('hrefToExportTable').click();
+                        this.exportModalFlag = false;
+                    }
+                }).finally(() => {
+                    this.exportLoading = false;
+                });
+            },
+            _completeThisMonth() {
+                let data = {};
+                data.user_name = this.attendanceOpt.userName;
+                data.record_month = this.attendanceOpt.monthDate;
+                this.$http.post('/kq/completeExamine', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('操作成功!');
+                        this.settingModalFlag = false;
+                    }
+                });
+            },
             _initAttendanceOpt() {
                 this.attendanceOpt.userName = '';
                 this.attendanceOpt.monthDate = '';
@@ -513,11 +620,43 @@
                 this.strangeSettingForm.type = '';
                 this.strangeSettingForm.days = '';
                 this.strangeSettingForm.desc = '';
+                this.strangeSettingForm.id = '';
+            },
+            _setConfirmPass(data) {
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.post('/kq/completeSingle', sendData).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('审核通过成功!');
+                        this._getUserStatistic();
+                    }
+                });
+            },
+            _confirmStrangeSetting() {
+                let data = {};
+                data.id = this.strangeSettingForm.id;
+                data.type = this.strangeSettingForm.type;
+                data.quality = this.strangeSettingForm.days;
+                data.text = this.strangeSettingForm.desc;
+                data.date = this.attendanceOpt.monthDate;
+                this.$http.post('/kq/updateOffDayType', data).then((res) => {
+                    if (res.success) {
+                        this.strangeModalFlag = false;
+                        this.$Message.success('异常设置成功!');
+                        this._getUserStatistic();
+                    }
+                });
             },
             _setStrangeDay(data) {
                 this._initStrangeSettingForm();
+                this.strangeSettingForm.id = data.id;
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.get('/kq/setException', {params: sendData}).then((res) => {
+                    this.strangeSettingForm.type = res.exceptionType ? res.exceptionType : '';
+                    this.strangeSettingForm.days = res.exceptionDay ? res.exceptionDay + '' : '';
+                });
                 this.strangeModalFlag = true;
-                console.log(data)
             },
             _setEveryStrangeNumber(val, type, data) {
                 let sendData = {};
@@ -541,10 +680,10 @@
                 this._getPostData();
             },
             _uploadSuccess(response, file, fileList) {
-                console.log(response)
+                console.log(response);
             },
             _uploadFail(error, file, fileList) {
-                console.log(error)
+                console.log(error);
             },
             _uploadFormatErr() {
                 this.$Message.error('上传文件的后缀必须为.xls');

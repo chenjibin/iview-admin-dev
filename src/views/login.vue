@@ -102,6 +102,7 @@ export default {
                             Cookies.set('user', this.form.userName);
                             Cookies.set('userInfo', userInfo);
                             Cookies.set('password', this.form.password);
+                            this.$store.commit('setUserInfo', userInfo);
                             this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
                             Cookies.set('token', '1010101010');
                             this.$router.push({

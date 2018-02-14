@@ -3,16 +3,15 @@
         <p class="sys-notice-title">天马大小事</p>
         <Table height="300"
                :columns="columns"
-               :data="rowData"
-               :loading="loading"
+               :data="pageData.list"
+               :loading="tableLoading"
                :row-class-name="_rowClassName"
                @on-row-click="_checkDetails"
                class="sys-notice-table"></Table>
         <Page
-            :total="totalCount"
+            :total="pageData.totalCount"
             size="small"
-            :page-size="pageSize"
-            :current.sync="currentPage"
+            :page-size="pageData.pageSize"
             @on-change="pageChangeHandler"
             ></Page>
         <Modal v-model="modelFlag" width="800" :mask-closable="false">
@@ -44,14 +43,12 @@
 </style>
 <script>
     import moment from 'moment';
+    import pageMixin from '@/mixins/pageMixin';
     export default {
+        mixins: [pageMixin],
         data () {
             return {
-                loading: false,
                 modelFlag: false,
-                totalCount: 80,
-                currentPage: 1,
-                pageSize: 10,
                 noticeData: {
                     title: '',
                     content: ''
@@ -65,54 +62,42 @@
                         title: '时间',
                         key: 'nottime',
                         width: 100,
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            let time = moment(params.row.nottime).format('YYYY-MM-DD');
+                            return h('span', time);
+                        }
                     },
                     {
                         title: '发布人',
                         key: 'operater',
                         width: 120
                     }
-                ],
-                rowData: []
+                ]
             };
         },
         created() {
             this.getNoticeInfo();
         },
         methods: {
-            pageChangeHandler(current) {
-                this.currentPage = current;
+            pageChangeHandler(page) {
+                this.pageData.page = page;
+                this.getNoticeInfo();
             },
             getNoticeInfo() {
                 this.loading = true;
-                let data = {
-                    page: this.currentPage,
-                    pageSize: 10,
-                    type: 1
-                };
-                this.$http.get('/notice/diaodongInfo', {params: data}).then((res) => {
-                    if (res.Success) {
-                        this.totalCount = res.count;
-                        res.date.forEach((item) => {
-                            item.nottime = moment(item.nottime).format('YYYY-MM-DD');
-                        });
-                        this.rowData = res.date;
-                    }
-                    console.log(res);
-                }).finally(() => {
-                    this.loading = false;
-                });
+                let data = {};
+                data.type = 1;
+                this.getList('/notice/diaodongInfo', data);
             },
             _checkDetails(rowData) {
                 this.noticeData.content = rowData.content;
                 this.noticeData.title = rowData.title;
                 this.modelFlag = true;
-                console.log(rowData);
             },
             _rowClassName() {
                 return 'row-cursor';
             }
-        },
-        components: {}
+        }
     };
 </script>

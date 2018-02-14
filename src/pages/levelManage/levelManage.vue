@@ -5,17 +5,17 @@
                 <FormItem label="职级代码">
                     <Input type="text"
                            @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
+                           v-model="filterOpt.code"
                            placeholder="职级代码"></Input>
                 </FormItem>
                 <FormItem label="职级序列">
-                    <Select v-model="filterOpt.states"
+                    <Select v-model="filterOpt.levelType"
                             clearable
                             @on-change="_filterResultHandler"
                             placeholder="筛选状态"
                             style="width: 100px">
-                        <Option value="1">管理序列</Option>
-                        <Option value="2">普通序列</Option>
+                        <Option value="0">管理序列</Option>
+                        <Option value="1">普通序列</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="状态">
@@ -63,36 +63,37 @@
                         </i-switch>
                     </FormItem>
                     <FormItem label="职级序列">
-                        <Select v-model="postSettingForm.level">
-                            <!--<Option v-for="item in banCiList" :value="item.id" :key="item.id">{{item.name + '(' + item.time + ')'}}</Option>-->
+                        <Select v-model="postSettingForm.levelType">
+                            <Option value="0">管理序列</Option>
+                            <Option value="1">普通序列</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="职级代码">
-                        <Input v-model="postSettingForm.number" :disabled="postFormType === 'update'"></Input>
+                        <Input v-model="postSettingForm.code" :disabled="postFormType === 'update'"></Input>
                     </FormItem>
                     <FormItem label="薪资范围">
                         <Row>
                             <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
+                                <Input v-model="postSettingForm.minMoney"></Input>
                             </Col>
                             <Col :span="2">
                                 <span style="display:block;text-align: center;">--</span>
                             </Col>
                             <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
+                                <Input v-model="postSettingForm.maxMoney"></Input>
                             </Col>
                         </Row>
                     </FormItem>
                     <FormItem label="积分范围">
                         <Row>
                             <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
+                                <Input v-model="postSettingForm.minCoin"></Input>
                             </Col>
                             <Col :span="2" style="test-align: center;">
                                 <span style="display:block;text-align: center;">--</span>
                             </Col>
                             <Col :span="11">
-                                <Input v-model="postSettingForm.number"></Input>
+                                <Input v-model="postSettingForm.maxCoin"></Input>
                             </Col>
                         </Row>
                     </FormItem>
@@ -119,17 +120,17 @@
                 settingModalFlag: false,
                 postFormType: 'update',
                 postSettingForm: {
-                    states: '',
-                    name: '',
-                    number: '',
-                    organizename: '',
-                    username: ''
+                    code: '',
+                    downMoney: '',
+                    upMoney: '',
+                    downCoin: '',
+                    upCoin: '',
+                    states: true
                 },
                 filterOpt: {
-                    name: '',
-                    level: '',
-                    states: '1',
-                    organizeName: ''
+                    code: '',
+                    levelType: '',
+                    states: '1'
                 },
                 postColumns: [
                     {
@@ -138,7 +139,7 @@
                         align: 'center',
                         width: 100,
                         render: (h, params) => {
-                            return h('span', params.row.type === 0 ? '管理序列' : '普通序列')
+                            return h('span', params.row.type === 0 ? '管理序列' : '普通序列');
                         }
                     },
                     {
@@ -150,14 +151,14 @@
                         title: '薪资范围',
                         align: 'center',
                         render: (h, params) => {
-                            return h('span', params.row.minsalary + ' - ' + params.row.maxsalary)
+                            return h('span', params.row.minsalary + ' - ' + params.row.maxsalary);
                         }
                     },
                     {
                         title: '积分范围',
                         align: 'center',
                         render: (h, params) => {
-                            return h('span', params.row.minpoints + ' - ' + params.row.maxpoints)
+                            return h('span', params.row.minpoints + ' - ' + params.row.maxpoints);
                         }
                     },
                     {
@@ -215,11 +216,12 @@
         methods: {
             _initPostForm() {
                 this.postSettingForm.states = true;
-                this.postSettingForm.name = '';
-                this.postSettingForm.organizename = '';
-                this.postSettingForm.number = '';
-                this.postSettingForm.username = '';
-                this.postSettingForm.level = '';
+                this.postSettingForm.code = '';
+                this.postSettingForm.minMoney = '';
+                this.postSettingForm.maxMoney = '';
+                this.postSettingForm.minCoin = '';
+                this.postSettingForm.maxCoin = '';
+                this.postSettingForm.levelType = '';
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -251,16 +253,21 @@
             _editorSetting(data) {
                 this.postFormType = 'update';
                 this.postSettingForm.states = !!data.states;
-                this.postSettingForm.name = data.name;
-                this.postSettingForm.organizename = data.organizename;
-                this.postSettingForm.number = data.number;
-                this.postSettingForm.username = data.username;
-                this.postSettingForm.level = data.level;
+                this.postSettingForm.code = data.code;
+                this.postSettingForm.minMoney = data.minsalary;
+                this.postSettingForm.maxMoney = data.maxsalary;
+                this.postSettingForm.minCoin = data.minpoints;
+                this.postSettingForm.maxCoin = data.maxpoints;
+                this.postSettingForm.levelType = data.type + '';
                 this.settingModalFlag = true;
                 console.log(data);
             },
             _getPostData() {
-                this.getList('/rank/datalist');
+                let data = {};
+                data.code = this.filterOpt.code;
+                data.levelType = this.filterOpt.levelType;
+                data.states = this.filterOpt.states;
+                this.getList('/rank/datalist', data);
             }
         },
         components: {}

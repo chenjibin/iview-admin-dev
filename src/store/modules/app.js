@@ -116,10 +116,14 @@ const app = {
                     state.cachePage.splice(index, 1);
                 }
             });
+            localStorage.cachePage = JSON.stringify(state.cachePage);
         },
         initCachepage(state) {
             if (localStorage.cachePage) {
                 state.cachePage = JSON.parse(localStorage.cachePage);
+            } else {
+                state.cachePage = ['home_index'];
+                localStorage.cachePage = JSON.stringify(state.cachePage);
             }
         },
         removeTag(state, name) {

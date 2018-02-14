@@ -2,17 +2,9 @@
     <div>
         <Row :gutter="10">
             <Col :span="4">
-                <Card>
-                    <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
-                    <el-tree :data="treeData"
-                             ref="treeDom"
-                             :filter-node-method="filterNode"
-                             :expand-on-click-node="false"
-                             :highlight-current="true"
-                             style="margin-top: 10px;"
-                             @node-click="_treeNodeClickHandler"
-                             :props="defaultProps"></el-tree>
-                </Card>
+                <fs-dep-tree url="/organize/organizeTreeByUserForRiZhi"
+                             @node-change="_nodeChangeHandler($event)"
+                             :defaultProps="defaultProps"></fs-dep-tree>
             </Col>
             <Col :span="20">
                 <Card>
@@ -143,6 +135,7 @@
     }
 </style>
 <script>
+    import fsDepTree from '@/baseComponents/fs-dep-tree';
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
     import utils from '@/libs/util';
@@ -150,9 +143,6 @@
     export default {
         name: 'elogManage',
         watch: {
-            filterText(val) {
-                this.$refs.treeDom.filter(val);
-            },
             'searchData.depId'() {
                 this._filterResultHandler();
             },
@@ -192,7 +182,6 @@
                     type: '',
                     depId: ''
                 },
-                treeData: [],
                 columns1: [
                     {
                         title: '员工姓名',
@@ -211,7 +200,7 @@
                         key: 'content',
                         ellipsis: true,
                         render: (h, params) => {
-                            return h('span', utils.delHtmlTag(params.row.content))
+                            return h('span', utils.delHtmlTag(params.row.content));
                         }
                     },
                     {
@@ -240,18 +229,18 @@
                                 case 0:
                                     bgColor = 'default';
                                     content = '未评价';
-                                    break
+                                    break;
                                 case 1:
                                     bgColor = 'green';
                                     content = '优秀';
-                                    break
+                                    break;
                                 case 2:
                                     bgColor = 'green';
                                     content = '合格';
-                                    break
+                                    break;
                                 case 3:
                                     bgColor = 'red';
-                                    content = '不合格'
+                                    content = '不合格';
                             }
                             return h('Tag', {
                                 props: {
@@ -282,7 +271,7 @@
                                         },
                                         on: {
                                             click: function () {
-                                                vm._checkLogOpen(params.row)
+                                                vm._checkLogOpen(params.row);
                                             }
                                         },
                                         style: {
@@ -294,237 +283,28 @@
                         }
                     }
                 ],
-                data1: [
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    },
-                    {
-                        name: '消炎',
-                        date: '2016-10-03',
-                        result: '1',
-                        status: '1',
-                        content: '跟进安通童装活动的微信文案 2:716店铺的日常销售导购工作 3：下午去了风驰体育、步行街耐克、多品店巡店跟进店铺活动，海昌路阿迪券都已发完，还有几个老顾客没来'
-                    }
-                ],
-                data: [
-                    {
-                    label: '一级 1',
-                    children: [{
-                        label: '二级 1-1',
-                        children: [{
-                            label: '三级 1-1-1'
-                        }]
-                    }]
-                }, {
-                    label: '一级 2',
-                    children: [{
-                        label: '二级 2-1',
-                        children: [{
-                            label: '三级 2-1-1'
-                        }]
-                    }, {
-                        label: '二级 2-2',
-                        children: [{
-                            label: '三级 2-2-1'
-                        }]
-                    }]
-                }, {
-                    label: '一级 3',
-                    children: [{
-                        label: '二级 3-1',
-                        children: [{
-                            label: '三级 3-1-1'
-                        }]
-                    }, {
-                        label: '二级 3-2',
-                        children: [{
-                            label: '三级 3-2-1'
-                        }]
-                    }]
-                }],
                 defaultProps: {
                     children: 'children',
                     label: 'text'
                 },
-                filterText: '',
                 tableHeight: 300
             };
         },
         created() {
             this._setTableHeight();
-            this._getOrgTreeData().then(() => {
-                this._getLogData()
-            })
         },
         filters: {
             dateFormatter(val) {
-                return moment(val).format('YYYY-MM-DD')
+                return moment(val).format('YYYY-MM-DD');
             }
         },
         methods: {
+            _nodeChangeHandler(node) {
+                this.searchData.depId = node.id;
+            },
             _initCommentData() {
-                this.commentData = {
-                    advice: '',
-                    result: '2'
-                }
+                this.commentData.advice = '';
+                this.commentData.result = '2';
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -561,7 +341,6 @@
                 this.$refs.commentForm.resetFields();
                 this._initCommentData();
                 this.checkLogFlag = true;
-                console.log(data)
             },
             _getUpGuiderData() {
                 let data = {
@@ -571,8 +350,7 @@
                     if (res.success) {
                         this.upGuider = res.date;
                     }
-                    console.log(res);
-                })
+                });
             },
             _getLogData() {
                 let data = {};
@@ -584,9 +362,6 @@
                 data.organizeId = this.searchData.depId;
 
                 this.getList('/journal/maglist', data);
-            },
-            _treeNodeClickHandler(data) {
-                this.searchData.depId = data.id;
             },
             _submitComment() {
                 this.$refs.commentForm.validate((val) => {
@@ -603,25 +378,11 @@
                             }
                         });
                     }
-                })
-            },
-            _getOrgTreeData() {
-                return new Promise((resolve => {
-                    this.$http.get('/organize/organizeTreeByUserForRiZhi').then((res) => {
-                        console.log(res);
-                        if (res.success) {
-                            this.treeData = res.date;
-                            this.searchData.depId = res.date[0].id;
-                            resolve();
-                        }
-                    })
-                }))
-            },
-            filterNode(value, data) {
-                if (!value) return true;
-                return data.text.indexOf(value) !== -1;
+                });
             }
         },
-        components: {}
+        components: {
+            fsDepTree
+        }
     };
 </script>

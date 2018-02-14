@@ -1,11 +1,15 @@
 import Cookies from 'js-cookie';
 import store from '../index';
 import axios from 'axios';
-import {router} from '../../router/index';
 
 const user = {
-    state: {},
+    state: {
+        userInfo: {}
+    },
     mutations: {
+        setUserInfo(state, userInfo) {
+            state.userInfo = userInfo;
+        },
         logout () {
             axios.get('/login/logout').then((res) => {
                 if (res.Success) {
