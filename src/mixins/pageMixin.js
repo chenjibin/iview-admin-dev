@@ -31,8 +31,8 @@ export default {
             }, params);
             this.$http.get(url, {params: data}).then((res) => {
                 if (res.success) {
-                    this.pageData.totalCount = res.count;
-                    this.pageData.list = res.date;
+                    this.pageData.totalCount = res.count || res.totalCount;
+                    this.pageData.list = res.date || res.data;
                 }
             }).finally(() => {
                 this.tableLoading = false;
