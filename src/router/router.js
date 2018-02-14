@@ -265,6 +265,45 @@ export const appRouter = [
         ]
     },
     {
+        path: '/achiveManager',
+        icon: 'ios-book',
+        name: 'achiveManager',
+        title: '员工档案管理',
+        component: Main,
+        children: [
+            {
+                path: 'employeeAchives',
+                icon: 'compose',
+                name: 'employeeAchives',
+                title: '员工档案',
+                component: resolve => { require(['@/pages/employeeManage/employeeAchives.vue'], resolve); }
+            },
+            {
+                path: 'employeeOrganize',
+                icon: 'compose',
+                name: 'employeeOrganize',
+                title: '部门员工档案',
+                component: resolve => { require(['@/pages/employeeManage/employeeOrganize.vue'], resolve); }
+            }
+        ]
+    },
+    {
+        path: '/hireManager',
+        icon: 'ios-people',
+        name: 'hireManager',
+        title: '招聘管理',
+        component: Main,
+        children: [
+            {
+                path: 'hire',
+                icon: 'compose',
+                name: 'hire',
+                title: '员工招聘',
+                component: resolve => { require(['@/pages/hireManager/hire.vue'], resolve); }
+            }
+        ]
+    },
+    {
         path: '/systemManage',
         icon: 'ios-gear',
         name: 'systemManage',
