@@ -3,7 +3,7 @@
         <Row type="flex" class="user-infor">
             <Col span="8">
                 <Row class-name="made-child-con-middle" type="flex" align="middle">
-                    <img class="avator-img" :src="avatorPath" />
+                    <img class="avator-img" :src="avatorPath" style="border-radius: 50%;"/>
                 </Row>
             </Col>
             <Col span="16" style="padding-left:6px;">
@@ -22,70 +22,117 @@
                 <span style="font-size: 24px;">{{userInfo.tmCoin}}</span>
             </Col>
             <Col span="16" class="padding-left-8">
-            <Poptip placement="right" width="400">
-                <div class="api" slot="content">
-                </div>
                 <Tooltip placement="top" content="修改头像" :transfer="true">
-                    <Button type="ghost" shape="circle" icon="person"></Button>
+                    <Button type="ghost"
+                            @click="changeAvatorFlag = true"
+                            shape="circle" icon="person"></Button>
                 </Tooltip>
-            </Poptip>
-            <Poptip placement="right" width="400" v-model="pwsFlag">
-                <div class="api" slot="content">
-                    <Form :label-width="80"
-                          :model="passWordForm"
-                          ref="psdForm"
-                          :rules="passWordRule">
-                        <FormItem label="原始密码" prop="orpwd">
-                            <Input v-model="passWordForm.orpwd" placeholder="请输入原始密码"></Input>
-                        </FormItem>
-                        <FormItem label="新密码" prop="newpwd">
-                            <Input v-model="passWordForm.newpwd" placeholder="请输入新密码"></Input>
-                        </FormItem>
-                        <FormItem label="重复新密码" prop="repnewpwd">
-                            <Input v-model="passWordForm.repnewpwd" placeholder="请输重复新密码"></Input>
-                        </FormItem>
-                        <FormItem>
-                            <Button type="primary" @click="_submitChangePwd">提交修改</Button>
-                            <Button type="ghost" style="margin-left: 8px" @click="pwsFlag = false">取消</Button>
-                        </FormItem>
-                    </Form>
-                </div>
-                <Tooltip placement="top" content="修改密码" :transfer="true">
-                    <Button type="ghost" shape="circle" icon="lock-combination"></Button>
-                </Tooltip>
-            </Poptip>
-
+                <Poptip placement="right" width="400" v-model="pwsFlag">
+                    <div slot="content">
+                        <Form :label-width="80"
+                              :model="passWordForm"
+                              ref="psdForm"
+                              :rules="passWordRule">
+                            <FormItem label="原始密码" prop="oldPwd">
+                                <Input v-model="passWordForm.oldPwd"
+                                       type="password"
+                                       placeholder="请输入原始密码"></Input>
+                            </FormItem>
+                            <FormItem label="新密码" prop="newPwd">
+                                <Input v-model="passWordForm.newPwd"
+                                       type="password"
+                                       placeholder="请输入新密码"></Input>
+                            </FormItem>
+                            <FormItem label="重复新密码" prop="newPwdCheck">
+                                <Input v-model="passWordForm.newPwdCheck"
+                                       type="password"
+                                       placeholder="请输重复新密码"></Input>
+                            </FormItem>
+                            <FormItem>
+                                <Button type="primary" @click="_submitChangePwd">提交修改</Button>
+                                <Button type="ghost" style="margin-left: 8px" @click="_cancelResetPwd">取消</Button>
+                            </FormItem>
+                        </Form>
+                    </div>
+                    <Tooltip placement="top" content="修改密码" :transfer="true">
+                        <Button type="ghost" shape="circle" icon="lock-combination"></Button>
+                    </Tooltip>
+                </Poptip>
                 <Tooltip placement="top" content="商品订单" :transfer="true">
                     <Button type="ghost" shape="circle" icon="android-list"></Button>
                 </Tooltip>
             </Col>
         </Row>
+        <Modal title="修改头像" v-model="changeAvatorFlag" width="600">
+            <div id="change-avator-block">
+                <div class="img-wrapper">
+                    <div class="fs-square-img">
+                        <img :src="avatorPath" style="border-radius: 50%;"/>
+                    </div>
+                </div>
+                <p>当前头像</p>
+            </div>
+            <div slot="footer">
+                <Button type="primary" @click="_submitAvatorChange">提交修改</Button>
+                <Button type="ghost" @click="changeAvatorFlag = false">取消</Button>
+            </div>
+        </Modal>
     </Card>
 </template>
 <style lang="less">
     @import "../home.less";
     @import "../../../styles/common.less";
+    #change-avator-block {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .img-wrapper {
+            width: 100px;
+        }
+    }
 </style>
 <script>
     import Cookies from 'js-cookie';
     export default {
         data () {
+            const validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入新的密码!'));
+                } else {
+                    if (this.passWordForm.newPwdCheck !== '') {
+                        // 对第二个密码框单独验证
+                        this.$refs.psdForm.validateField('newPwdCheck');
+                    }
+                    callback();
+                }
+            };
+            const validatePassCheck = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入新的密码!'));
+                } else if (value !== this.passWordForm.newPwd) {
+                    callback(new Error('两次输入的密码不匹配!'));
+                } else {
+                    callback();
+                }
+            };
             return {
+                changeAvatorFlag: false,
                 pwsFlag: false,
                 passWordForm: {
-                    orpwd: '',
-                    newpwd: '',
-                    repnewpwd: ''
+                    oldPwd: '',
+                    newPwd: '',
+                    newPwdCheck: ''
                 },
                 passWordRule: {
-                    orpwd: [
+                    oldPwd: [
                         {required: true, message: '原始密码不能为空!', trigger: 'blur'}
                     ],
-                    newpwd: [
-                        {required: true, message: '新密码不能为空!', trigger: 'blur'}
+                    newPwd: [
+                        {required: true, validator: validatePass, trigger: 'blur'}
                     ],
-                    repnewpwd: [
-                        {required: true, message: '重复新密码不能为空!', trigger: 'blur'}
+                    newPwdCheck: [
+                        {required: true, validator: validatePassCheck, trigger: 'blur'}
                     ]
                 },
                 userInfo: null
@@ -95,9 +142,33 @@
             this.userInfo = JSON.parse(Cookies.get('userInfo'));
         },
         methods: {
+            _submitAvatorChange() {
+
+            },
+            _cancelResetPwd() {
+                this.$refs.psdForm.resetFields();
+                this.pwsFlag = false;
+            },
             _submitChangePwd() {
+                let vm = this;
                 this.$refs.psdForm.validate((valid) => {
                     if (valid) {
+                        let data = {};
+                        data.oldPwd = this.passWordForm.oldPwd;
+                        data.newPwd = this.passWordForm.newPwd;
+                        data.newPwdCheck = this.passWordForm.newPwdCheck;
+                        console.log(data);
+                        this.$http.post('', data).then((res) => {
+                            if (res.success) {
+                                this.$Modal.success({
+                                    content: '密码重置成功,请重新登录!',
+                                    okText: '重新登录',
+                                    onOk: function () {
+                                        vm.$store.commit('logout');
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
