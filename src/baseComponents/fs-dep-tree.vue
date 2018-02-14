@@ -62,8 +62,8 @@
             _getOrgTree() {
                 this.$http.get(this.url).then((res) => {
                     if (res.success) {
-                        this.orgTreeData = res.date;
-                        this.chooseNode = res.date[0];
+                        this.orgTreeData = res.data;
+                        this.chooseNode = res.data[0];
                     }
                 });
             }

@@ -30,17 +30,12 @@ axios.interceptors.response.use(response => {
         Vue.prototype.$Message.error(response.data.message);
         if (response.data.error_code === 403) {
             store.commit('logout');
-            router.push({
-                name: 'login'
-            });
         }
     }
     return response.data;
 }, function(error) {
     // Do something with response error
     Vue.prototype.$Message.error('服务器错误！');
-    // store.commit('logout');
-    // store.commit('clearOpenedSubmenu');
     return Promise.reject(error);
 });
 

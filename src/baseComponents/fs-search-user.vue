@@ -57,7 +57,7 @@
                 this.filterPeopleLoading = true;
                 this.$http.get('/user/getCheckUser', {params: data}).then((res) => {
                     if (res.success) {
-                        this.$emit('update:optionlist', res.date);
+                        this.$emit('update:optionlist', res.data);
                     }
                 }).finally(() => {
                     this.filterPeopleLoading = false;

@@ -45,7 +45,7 @@
                 this.$http.get('/notice/diaodongInfo', {params: data}).then((res) => {
                     if (res.success) {
                         let storeArr = [];
-                        res.date.forEach((item) => {
+                        res.data.forEach((item) => {
                             storeArr.push('【' + moment(item.nottime).format('YYYY-MM-DD') + '】' + item.content);
                         });
                         this.itemData = storeArr;

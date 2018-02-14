@@ -386,7 +386,7 @@
                         align: 'center',
                         render: (h, params) => {
                             if (params.row.kq_re) {
-                                let flag = params.row.exception === null || +params.row.exception === 0;
+                                let flag = params.row.exception === null || +params.row.exception === 0 || params.row.offdaytype === '正常';
                                 return h('Tag', {
                                     props: {
                                         color: flag ? 'green' : 'red'
@@ -501,7 +501,7 @@
                         width: 120,
                         render: (h, params) => {
                             let vm = this;
-                            let flag = params.row.exception === null || +params.row.exception === 0;
+                            let flag = params.row.exception === null || +params.row.exception === 0 || params.row.offdaytype === '正常';
                             return h('div', [
                                 h('Tooltip', {
                                     props: {

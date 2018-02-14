@@ -278,12 +278,12 @@
                 this.loading = true;
                 this.btnDisabled = true;
                 this.$http.get('/journal/typeList', {params: {time: ym}}).then((res) => {
-                    if (res.Success) {
-                        let storeArr = res.date.slice(0);
+                    if (res.success) {
+                        let storeArr = res.data.slice(0);
                         this._setLogList(storeArr);
                         let year = moment(ym).year();
                         let month = moment(ym).month();
-                        this.tableData = this.returnDateDetail(year, month, res.date);
+                        this.tableData = this.returnDateDetail(year, month, res.data);
                     }
                 }).finally(() => {
                     this.loading = false;
@@ -357,7 +357,7 @@
                     content: this.logDetail.editorContent
                 };
                 this.$http.post('/journal/addJournal', data).then((res) => {
-                    if (res.Success) {
+                    if (res.success) {
                         this.$Message.success('日志提交成功！');
                         this._getLogInfo(this.dateData);
                     } else {

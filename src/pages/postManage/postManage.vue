@@ -362,7 +362,7 @@
             _getOrgTree() {
                 this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
                     if (res.success) {
-                        this.orgTreeData = res.date;
+                        this.orgTreeData = res.data;
                     }
                 });
             }

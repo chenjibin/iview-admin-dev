@@ -280,7 +280,7 @@
                 data.record_month = month;
                 this.$http.get('/kq/singleStatistic', {params: data}).then((res) => {
                     if (res.success) {
-                        this.attendanceDetail = res.date.userRecords;
+                        this.attendanceDetail = res.data.userRecords;
                     }
                 }).finally(() => {
                     this.loading2 = false;

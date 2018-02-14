@@ -314,7 +314,7 @@
             _getOrgData() {
                 this.$http.get('/organize/organizeList?fatherId=-1').then((res) => {
                     if (res.success) {
-                        this.orgData = res.date;
+                        this.orgData = res.data;
                     }
                 });
             },

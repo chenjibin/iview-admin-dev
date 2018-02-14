@@ -12,7 +12,7 @@ const user = {
         },
         logout () {
             axios.get('/login/logout').then((res) => {
-                if (res.Success) {
+                if (res.success) {
                     Cookies.remove('user');
                     Cookies.remove('userInfo');
                     Cookies.remove('password');

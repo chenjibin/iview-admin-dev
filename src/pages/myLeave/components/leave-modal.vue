@@ -329,7 +329,7 @@
             _getChangePeopleOpt() {
                 this.$http.get('/od/changeArrangPerson').then((res) => {
                     if (res.success) {
-                        this.changePeopleOpt = res.date.map(x => x.realname);
+                        this.changePeopleOpt = res.data.map(x => x.realname);
                         this.leaveSendForm.changePeople = this.changePeopleOpt[0] || '';
                     }
                 });
@@ -437,7 +437,6 @@
                 data.content = sendForm.content;
                 data.numberDay = sendForm.numberDay;
                 this.loadingBtn = true;
-                console.log(data);
                 this.$http.post('/od/apply', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('请假申请成功!');
