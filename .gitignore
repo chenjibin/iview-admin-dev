@@ -5,8 +5,6 @@ node_modules
 .history
 .DS_Store
 \.settings/
-build/env.js
-build/webpack.dev.config.js
+build
 dist/
 package-lock.json
-.idea/
