@@ -159,7 +159,7 @@
                 }
             },
             validaWorkDesc(rule, value, callback) {
-                if (value === '' && this.row.numberday >= 3) {
+                if (value === '' && this.row.numberday >= 3 && this.odForm.agree === '同意') {
                     callback(new Error('排班说明不能为空!'));
                 } else {
                     callback();

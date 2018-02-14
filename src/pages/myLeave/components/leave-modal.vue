@@ -437,7 +437,6 @@
                 data.content = sendForm.content;
                 data.numberDay = sendForm.numberDay;
                 this.loadingBtn = true;
-                console.log(data);
                 this.$http.post('/od/apply', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('请假申请成功!');
