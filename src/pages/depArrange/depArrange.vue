@@ -509,7 +509,7 @@
                 return new Promise(resolve => {
                     this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
                         if (res.success) {
-                            this.treeData = res.date;
+                            this.treeData = res.data;
                             this.filterOpt.organizeId = '';
                             resolve();
                         }
@@ -578,9 +578,9 @@
                 this.loading2 = true;
                 this.$http.get('/kq/organizeArrangeStatistic', {params: this.getDetailData}).then((res) => {
                     if (res.success) {
-                        this.userIds = res.date.userIds;
-                        this.sendId = res.date.id;
-                        this.sendMonth = res.date.month;
+                        this.userIds = res.data.userIds;
+                        this.sendId = res.data.id;
+                        this.sendMonth = res.data.month;
                         let storeColum = [
                             {
                                 title: '姓名',
@@ -589,7 +589,7 @@
                                 fixed: 'left'
                             }
                         ];
-                        res.date.days.forEach((item, index) => {
+                        res.data.days.forEach((item, index) => {
                             let storeObj = {};
                             storeObj.title = item;
                             storeObj.key = 'day' + index;
@@ -599,7 +599,7 @@
                             storeColum.push(storeObj);
                         });
                         let storeData = [];
-                        _forEach(res.date.arrangeMap, (value, key) => {
+                        _forEach(res.data.arrangeMap, (value, key) => {
                             let storeObj = {};
                             storeObj.name = key;
                             if (value.length) {

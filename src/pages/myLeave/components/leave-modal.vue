@@ -329,7 +329,7 @@
             _getChangePeopleOpt() {
                 this.$http.get('/od/changeArrangPerson').then((res) => {
                     if (res.success) {
-                        this.changePeopleOpt = res.date.map(x => x.realname);
+                        this.changePeopleOpt = res.data.map(x => x.realname);
                         this.leaveSendForm.changePeople = this.changePeopleOpt[0] || '';
                     }
                 });

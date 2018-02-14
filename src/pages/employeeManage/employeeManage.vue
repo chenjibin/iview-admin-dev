@@ -442,7 +442,7 @@
                 if (val) {
                     this.$http.get('/organize/getLevel', {params: {id: val}}).then((res) => {
                         if (res.success) {
-                            this.levelCodeOpt.code = res.date.level.split(',')[0];
+                            this.levelCodeOpt.code = res.data.level.split(',')[0];
                             console.log(this.levelCodeOpt);
                         }
                     });
@@ -877,7 +877,7 @@
                 this.specAccessData.filterPeopleLoading = true;
                 this.$http.get('/user/getCheckUser', {params: data}).then((res) => {
                     if (res.success) {
-                        this.specAccessData.filterPeopleOpt = res.date;
+                        this.specAccessData.filterPeopleOpt = res.data;
                     }
                 }).finally(() => {
                     this.specAccessData.filterPeopleLoading = false;
@@ -909,9 +909,9 @@
                 data.id = this.specAccessData.userId;
                 this.$http.get('/user/getMySuperPro', {params: data}).then((res) => {
                     if (res.success) {
-                        this.specAccessData.filterPeopleOpt = res.date;
-                        this.specAccessData.filterPeopleData = res.date.length ? res.date.map(x => x.id) : [];
-                        this.remoteLabel = res.date.length ? res.date.map(x => x.realname) : [];
+                        this.specAccessData.filterPeopleOpt = res.data;
+                        this.specAccessData.filterPeopleData = res.data.length ? res.data.map(x => x.id) : [];
+                        this.remoteLabel = res.data.length ? res.data.map(x => x.realname) : [];
                         this.specAccessData.deps = this._returnAccessDeps(res.organizeIds);
                     }
                 });
@@ -1033,7 +1033,7 @@
                 this.$http.get('/user/dataList', {params: this.searchData}).then((res) => {
                     if (res.success) {
                         this.totalCount = res.totalCount;
-                        this.userData = res.date;
+                        this.userData = res.data;
                     }
                 }).finally(() => {
                     this.tableLoading = false;
@@ -1145,7 +1145,7 @@
                 return new Promise((resolve) => {
                     this.$http.get('/organize/getSetInfo', {params: data}).then((res) => {
                         if (res.success) {
-                            this.postList = this._returnNeedPostList(res.date.postids, res.date.postnames);
+                            this.postList = this._returnNeedPostList(res.data.postids, res.data.postnames);
                             resolve();
                         }
                     });
@@ -1154,7 +1154,7 @@
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
                     if (res.success) {
-                        this.guiderList = res.date;
+                        this.guiderList = res.data;
                     }
                 });
             },
@@ -1165,7 +1165,7 @@
             _getRoleData() {
                 this.$http.get('/role/getAllRole').then((res) => {
                     if (res.success) {
-                        this.roleData = res.date;
+                        this.roleData = res.data;
                     }
                 });
             },
@@ -1173,9 +1173,9 @@
                 return new Promise((resolve) => {
                     this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
                         if (res.success) {
-                            this.orgTreeData = res.date;
-                            this.searchData.nodeId = res.date[0].id;
-                            resolve(res.date[0].id);
+                            this.orgTreeData = res.data;
+                            this.searchData.nodeId = res.data[0].id;
+                            resolve(res.data[0].id);
                         }
                     });
                 });
@@ -1184,7 +1184,7 @@
                 this.tableBanciLoading = true;
                 this.$http.get('/user/getBanCi').then((res) => {
                     if (res.success) {
-                        this.banCiList = res.date;
+                        this.banCiList = res.data;
                     }
                 }).finally(() => {
                     this.tableBanciLoading = false;
@@ -1237,7 +1237,7 @@
             _getAccessMenu() {
                 this.$http.get('/jurisdiction/getAllMenu').then((res) => {
                     if (res.success) {
-                        this.accseeList = this._renturnAccessNeedArr(res.date);
+                        this.accseeList = this._renturnAccessNeedArr(res.data);
                     }
                 });
             },

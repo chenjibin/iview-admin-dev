@@ -456,8 +456,8 @@
                 return new Promise((resolve) => {
                     this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
                         if (res.success) {
-                            this.orgTreeData = res.date;
-                            resolve(res.date);
+                            this.orgTreeData = res.data;
+                            resolve(res.data);
                         }
                     });
                 });

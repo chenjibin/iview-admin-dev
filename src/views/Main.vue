@@ -178,7 +178,7 @@
             getPermissionData() {
                 return new Promise((resolve, reject) => {
                     this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
-                        resolve(res.date);
+                        resolve(res.data);
                     });
                 });
             }

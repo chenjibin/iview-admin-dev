@@ -189,8 +189,8 @@
                     month: month
                 };
                 this.$http.get('/arrange/getMyKqLogMonth', {params: data}).then((res) => {
-                    if (res.Success) {
-                        this.attendanceDetail = res.date;
+                    if (res.success) {
+                        this.attendanceDetail = res.data;
                     }
                 }).finally(() => {
                     this.loading2 = false;
@@ -204,9 +204,9 @@
                     pageSize: this.pageData.pageSize
                 };
                 this.$http.get('/arrange/getPersonStatistic', {params: data}).then((res) => {
-                    if (res.Success) {
-                        this.attendanceList = res.date;
-                        this.pageData.totalCount = res.count;
+                    if (res.success) {
+                        this.attendanceList = res.data;
+                        this.pageData.totalCount = res.totalCount;
                     }
                 }).finally(() => {
                     this.loading = false;

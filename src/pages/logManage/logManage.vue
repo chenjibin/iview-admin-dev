@@ -348,7 +348,7 @@
                 };
                 this.$http.get('/journal/guideJson', {params: data}).then((res) => {
                     if (res.success) {
-                        this.upGuider = res.date;
+                        this.upGuider = res.data;
                     }
                 });
             },

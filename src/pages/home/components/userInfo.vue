@@ -63,17 +63,17 @@
                 </Tooltip>
             </Col>
         </Row>
-        <Modal title="修改头像" v-model="changeAvatorFlag" width="600">
+        <Modal title="修改头像" v-model="changeAvatorFlag" width="800">
             <div id="change-avator-block">
                 <div class="img-wrapper">
                     <div class="fs-square-img">
                         <img :src="avatorPath" style="border-radius: 50%;"/>
                     </div>
                 </div>
-                <p>当前头像</p>
+                <p style="margin-top: 8px;font-weight: 700;">当前头像</p>
+                <fs-cropper-img></fs-cropper-img>
             </div>
             <div slot="footer">
-                <Button type="primary" @click="_submitAvatorChange">提交修改</Button>
                 <Button type="ghost" @click="changeAvatorFlag = false">取消</Button>
             </div>
         </Modal>
@@ -94,6 +94,7 @@
 </style>
 <script>
     import Cookies from 'js-cookie';
+    import fsCropperImg from '@/baseComponents/fs-cropper-img/fs-cropper-img';
     export default {
         data () {
             const validatePass = (rule, value, callback) => {
@@ -178,6 +179,8 @@
                 return localStorage.avatorImgPath;
             }
         },
-        components: {}
+        components: {
+            fsCropperImg
+        }
     };
 </script>

@@ -220,7 +220,7 @@
             _getAccessMenu() {
                 this.$http.get('/jurisdiction/getAllMenu').then((res) => {
                     if (res.success) {
-                        this.accseeList = this._renturnAccessNeedArr(res.date);
+                        this.accseeList = this._renturnAccessNeedArr(res.data);
                     }
                 });
             },

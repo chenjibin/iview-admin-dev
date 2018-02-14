@@ -79,8 +79,8 @@
             },
             handleSuccess (res, file) {
                 console.log(res);
-                file.url = '/oa/upload/' + res.date.filename;
-                file.name = res.date.filename;
+                file.url = '/oa/upload/' + res.data.filename;
+                file.name = res.data.filename;
                 this.updateUploadList();
             },
             handleFormatError () {

@@ -253,7 +253,7 @@
                 this.$http.get('/order/orderlist').then((res) => {
                     console.log(res);
                     if (res.success) {
-                        this.goodList = res.date;
+                        this.goodList = res.data;
                     }
                 });
             }

@@ -92,8 +92,8 @@ export default {
                 if (valid) {
                     this.loading = true;
                     this.$http.post('/login/login', this.form).then((res) => {
-                        if (res.Success) {
-                            let allUserInfo = res.date[0];
+                        if (res.success) {
+                            let allUserInfo = res.data[0];
                             let userInfo = {};
                             userInfo.userName = allUserInfo.realname;
                             userInfo.organizeName = allUserInfo.organizename;

@@ -547,9 +547,9 @@
                 return new Promise((resolve) => {
                     this.$http.get('/organize/organizeTreeByUserForEmployee').then((res) => {
                         if (res.success) {
-                            this.orgTreeData = res.date;
-                            this.filterOpt.organizeId = res.date[0].id;
-                            resolve(res.date[0].id);
+                            this.orgTreeData = res.data;
+                            this.filterOpt.organizeId = res.data[0].id;
+                            resolve(res.data[0].id);
                         }
                     });
                 });

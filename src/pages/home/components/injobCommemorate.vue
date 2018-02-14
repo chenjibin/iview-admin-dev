@@ -78,7 +78,7 @@
             _getInJobData () {
                 this.$http.get('/main/getRuZhi').then((res) => {
                     if (res.success) {
-                        this.inJobData = res.date;
+                        this.inJobData = res.data;
                     }
                 });
             }
