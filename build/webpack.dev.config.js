@@ -21,10 +21,10 @@ module.exports = merge(webpackBaseConfig, {
     },
     devServer: { //消炎 'http://192.168.15.22:80' 孙运超 'http://192.168.17.27:80'
         port: 8056,
-        host: '192.168.18.146',
+        // host: 'localhost',
         proxy: {
             "/oa": {
-                target: "http://192.168.15.22:80",
+                target: "http://localhost:8080",
                 changeOrigin: true
             }
         }
