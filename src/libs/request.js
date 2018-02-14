@@ -30,6 +30,9 @@ axios.interceptors.response.use(response => {
         Vue.prototype.$Message.error(response.data.message);
         if (response.data.error_code === 403) {
             store.commit('logout');
+            router.push({
+                name: 'login'
+            });
         }
     }
     return response.data;

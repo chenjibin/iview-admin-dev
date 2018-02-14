@@ -1,150 +1,87 @@
 <template>
     <div>
-        <Card>
-            <Form inline :label-width="60">
-                <FormItem label="姓名">
-                    <Input type="text" style="width: 120px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
-                           placeholder="筛选姓名"></Input>
-                </FormItem>
-                <FormItem label="状态">
-                    <Select v-model="filterOpt.kqstates" style="width: 120px" placeholder="筛选状态" @on-change="_inputDebounce" clearable>
-                        <Option value="-1">全部</Option>
-                        <Option value="0">离职</Option>
-                        <Option value="1">在职</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="部门">
-                    <Input type="text" style="width: 120px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.organizeName"
-                           placeholder="筛选部门"></Input>
-                </FormItem>
-                <FormItem label="岗位">
-                    <Input type="text" style="width: 120px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.postName"
-                           placeholder="筛选岗位"></Input>
-                </FormItem>
-                <FormItem label="学历">
-                    <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
-                            v-model="filterOpt.xueli"
-                            placeholder="筛选学历" clearable>
-                        <Option value="本科">本科</Option>
-                        <Option value="大专">大专</Option>
-                        <Option value="高中">高中</Option>
-                        <Option value="初中">初中</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="性别">
-                    <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
-                            v-model="filterOpt.sex"
-                            placeholder="筛选性别" clearable>
-                        <Option value="男">男</Option>
-                        <Option value="女">女</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="婚否">
-                    <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
-                            v-model="filterOpt.marryage" clearable>
-                        <Option value="已婚">已婚</Option>
-                        <Option value="未婚">未婚</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="政治面貌">
-                    <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
-                            v-model="filterOpt.party" clearable>
-                        <Option value="党员">党员</Option>
-                        <Option value="预备党员">预备党员</Option>
-                        <Option value="入党积极分子">入党积极分子</Option>
-                        <Option value="群众">群众</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="毕业院校">
-                    <Input type="text" style="width: 120px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.school"
-                           placeholder="筛选院校"></Input>
-                </FormItem>
-                <FormItem label="专业">
-                    <Input type="text" style="width: 120px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.profession"
-                           placeholder="筛选专业"></Input>
-                </FormItem>
-                <FormItem label="住址">
-                    <Input type="text" style="width: 120px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.address"
-                           placeholder="筛选住址"></Input>
-                </FormItem>
-                <FormItem label="离职原因">
-                    <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
-                            v-model="filterOpt.reasonLeaving" clearable>
-                        <Option value="个人原因">个人原因</Option>
-                        <Option value="公司劝退">公司劝退</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="离职级别">
-                    <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
-                            v-model="filterOpt.gradeLeaving" clearable>
-                        <Option value="p1">p1</Option>
-                        <Option value="p2">p2</Option>
-                        <Option value="p3">p3</Option>
-                        <Option value="p4">p4</Option>
-                        <Option value="p5">p5</Option>
-                        <Option value="p6">p6</Option>
-                        <Option value="p7">p7</Option>
-                        <Option value="p8">p8</Option>
-                        <Option value="m1">m1</Option>
-                        <Option value="m2">m2</Option>
-                        <Option value="m3">m3</Option>
-                        <Option value="m4">m4</Option>
-                        <Option value="m5">m5</Option>
-                        <Option value="m6">m6</Option>
-                        <Option value="m7">m7</Option>
-                        <Option value="m8">m8</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="入职日期">
-                    <DatePicker type="date" style="width: 120px"
-                                @on-change="_monthDateChange"
-                                :value="filterOpt.monthDate"></DatePicker>
-                </FormItem>
-                <FormItem label="到">
-                    <DatePicker type="date" style="width: 120px"
-                                @on-change="_monthEndDateChange"
-                                :value="filterOpt.endmonthDate"></DatePicker>
-                </FormItem>
-                <FormItem label="出生日期">
-                    <DatePicker type="date" style="width: 120px"
-                                placeholder="筛选出生日期"
-                                @on-change="_birthdayChange"
-                                :value="filterOpt.birthday"></DatePicker>
-                </FormItem>
-            </Form>
-        <Table :columns="postColumns"
-               ref="attendanceTable"
-               :loading="tableLoading"
-               :height="tableHeight"
-               :data="pageData.list">
-        </Table>
-        <Page :total="pageData.totalCount"
-              @on-change="_setPage"
-              @on-page-size-change="_setPageSize"
-              :page-size="pageData.pageSize"
-              show-sizer
-              show-total
-              show-elevator
-              style="margin-top: 16px;"></Page>
-        </Card>
+        <Row>
+            <Col :span="4">
+            <Card>
+                <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
+                <el-tree :data="orgTreeData"
+                         ref="treeDom"
+                         :filter-node-method="filterNode"
+                         :expand-on-click-node="false"
+                         :highlight-current="true"
+                         @node-click="_treeNodeClickHandler"
+                         style="margin-top: 10px;"
+                         :props="defaultProps"></el-tree>
+            </Card>
+            </Col>
+            <Col :span="20">
+            <Card>
+                <Form inline :label-width="60">
+                    <FormItem label="姓名">
+                        <Input type="text" style="width: 120px"
+                               @on-change="_inputDebounce"
+                               v-model="filterOpt.name"
+                               placeholder="筛选姓名"></Input>
+                    </FormItem>
+                    <FormItem label="状态">
+                        <Select v-model="filterOpt.kqstates" style="width: 120px" placeholder="筛选状态"
+                                @on-change="_inputDebounce">
+                            <Option value="-1">全部</Option>
+                            <Option value="0">离职</Option>
+                            <Option value="1">在职</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="岗位">
+                        <Input type="text" style="width: 120px"
+                               @on-change="_inputDebounce"
+                               v-model="filterOpt.postName"
+                               placeholder="筛选岗位"></Input>
+                    </FormItem>
+                    <FormItem label="学历">
+                        <Select type="text" style="width: 120px"
+                                @on-change="_inputDebounce"
+                                v-model="filterOpt.xueli"
+                                placeholder="筛选学历">
+                            <Option value="本科">本科</Option>
+                            <Option value="大专">大专</Option>
+                            <Option value="高中">高中</Option>
+                            <Option value="初中">初中</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="入职日期">
+                        <DatePicker type="date" style="width: 120px"
+                                    @on-change="_monthDateChange"
+                                    :value="filterOpt.monthDate"></DatePicker>
+                    </FormItem>
+                    <FormItem label="到">
+                        <DatePicker type="date" style="width: 120px"
+                                    @on-change="_monthEndDateChange"
+                                    :value="filterOpt.endmonthDate"></DatePicker>
+                    </FormItem>
+                    <FormItem label="出生日期">
+                        <DatePicker type="date" style="width: 120px"
+                                    placeholder="筛选出生日期"
+                                    @on-change="_birthdayChange"
+                                    :value="filterOpt.birthday"></DatePicker>
+                    </FormItem>
+                </Form>
+                <Table :columns="postColumns"
+                       ref="attendanceTable"
+                       :loading="tableLoading"
+                       :height="tableHeight"
+                       :data="pageData.list">
+                </Table>
+                <Page :total="pageData.totalCount"
+                      @on-change="_setPage"
+                      @on-page-size-change="_setPageSize"
+                      :page-size="pageData.pageSize"
+                      show-sizer
+                      show-total
+                      show-elevator
+                      style="margin-top: 16px;"></Page>
+            </Card>
+            </Col>
+        </Row>
         <Modal v-model="settingModalFlag"
                width="1000"
                :mask-closable="false">
@@ -186,7 +123,7 @@
                                 <Input type="text" v-model="baseForm.nation"></Input>
                             </FormItem>
                             <FormItem label="政治面貌" style="width:40%">
-                                <Select style="width: 120px" v-model="baseForm.party" >
+                                <Select style="width: 120px" v-model="baseForm.party">
                                     <Option value="党员">党员</Option>
                                     <Option value="预备党员">预备党员</Option>
                                     <Option value="入党积极分子">入党积极分子</Option>
@@ -212,10 +149,10 @@
                             <FormItem label="岗位经历" style="width:40%">
                                 <Input type="textarea" v-model="baseForm.posthistory"></Input>
                             </FormItem>
-                            <FormItem>
-                                <Button type="primary" :loading="btnLoading" @click="saveBase()">提交</Button>
-                                <Button type="ghost" @click="cancel()" style="margin-left: 8px">取消</Button>
-                            </FormItem>
+                            <!--<FormItem>-->
+                                <!--<Button type="primary" :loading="btnLoading" @click="saveBase()">提交</Button>-->
+                                <!--<Button type="ghost" @click="cancel()" style="margin-left: 8px">取消</Button>-->
+                            <!--</FormItem>-->
                         </Form>
                     </TabPane>
                     <TabPane label="教育状况">
@@ -239,15 +176,15 @@
                                 <FormItem label="主键" style="display: none">
                                     <Input type="text" v-model="item.id" ></Input>
                                 </FormItem>
-                                <FormItem label="操作" style="width:5%">
-                                    <Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'educationForm')"></Button>
-                                </FormItem>
+                                <!--<FormItem label="操作" style="width:5%">-->
+                                    <!--<Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'educationForm')"></Button>-->
+                                <!--</FormItem>-->
                             </div>
-                            <FormItem>
-                                <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(2,educationForm)">提交</Button>
-                                <Button type="success" icon="android-add"  style="margin-left: 8px" @click="educationForm.push({})">增加经历</Button>
-                                <Button type="ghost" @click="cancel()">取消修改</Button>
-                            </FormItem>
+                            <!--<FormItem>-->
+                                <!--<Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(2,educationForm)">提交</Button>-->
+                                <!--<Button type="success" icon="android-add"  style="margin-left: 8px" @click="educationForm.push({})">增加经历</Button>-->
+                                <!--<Button type="ghost" @click="cancel()">取消修改</Button>-->
+                            <!--</FormItem>-->
                         </Form>
                     </TabPane>
                     <TabPane label="工作经历">
@@ -280,15 +217,15 @@
                                 <FormItem label="主键" style="display: none">
                                     <Input type="text" v-model="item.id" ></Input>
                                 </FormItem>
-                                <FormItem label="操作" style="width:5%">
-                                    <Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'workingForm')"></Button>
-                                </FormItem>
+                                <!--<FormItem label="操作" style="width:5%">-->
+                                    <!--<Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'workingForm')"></Button>-->
+                                <!--</FormItem>-->
                             </div>
-                            <FormItem>
-                                <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(3,workingForm)">提交</Button>
-                                <Button type="success" icon="android-add"  style="margin-left: 8px" @click="workingForm.push({})">增加经历</Button>
-                                <Button type="ghost" @click="cancel()">取消修改</Button>
-                            </FormItem>
+                            <!--<FormItem>-->
+                                <!--<Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(3,workingForm)">提交</Button>-->
+                                <!--<Button type="success" icon="android-add"  style="margin-left: 8px" @click="workingForm.push({})">增加经历</Button>-->
+                                <!--<Button type="ghost" @click="cancel()">取消修改</Button>-->
+                            <!--</FormItem>-->
                         </Form>
                     </TabPane>
                     <TabPane label="社会关系">
@@ -318,9 +255,9 @@
                                 <FormItem label="主键" style="display: none">
                                     <Input type="text" v-model="item.id" ></Input>
                                 </FormItem>
-                                <FormItem label="操作" style="width:5%">
-                                    <Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'socailShipForm')"></Button>
-                                </FormItem>
+                                <!--<FormItem label="操作" style="width:5%">-->
+                                    <!--<Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'socailShipForm')"></Button>-->
+                                <!--</FormItem>-->
                             </div>
                             <FormItem label="紧急联系人" style="width:30%">
                                 <Input type="text" v-model="emergency.emergencycontact" ></Input>
@@ -331,11 +268,11 @@
                             <FormItem label="联系人电话" style="width:30%">
                                 <Input type="text" v-model="emergency.contactnumber" ></Input>
                             </FormItem>
-                            <FormItem style="width:100%">
-                                <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(1,socailShipForm)">提交</Button>
-                                <Button type="success" icon="android-add"  style="margin-left: 8px" @click="socailShipForm.push({})">增加关系</Button>
-                                <Button type="ghost" @click="cancel()">取消修改</Button>
-                            </FormItem>
+                            <!--<FormItem style="width:100%">-->
+                                <!--<Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(1,socailShipForm)">提交</Button>-->
+                                <!--<Button type="success" icon="android-add"  style="margin-left: 8px" @click="socailShipForm.push({})">增加关系</Button>-->
+                                <!--<Button type="ghost" @click="cancel()">取消修改</Button>-->
+                            <!--</FormItem>-->
                         </Form>
                     </TabPane>
                     <TabPane label="附件管理">
@@ -343,27 +280,27 @@
                             <Card >
                                 <Row :gutter="16">
                                     <Col span="12" v-for="(item,index) in fileList" style="margin-bottom: 16px;">
-                                        <Row>
-                                            <Col span="8">
-                                                <h4 style="width: 150px;text-overflow: ellipsis;overflow: hidden;white-space:nowrap;">文件名：{{item.file_name}}</h4>
-                                                <h4 style="margin-top: 10px">上传人：{{item.insert_username}}</h4>
-                                            <h4 style="margin-top: 10px">下载：<Button style="font-size: 20px;cursor: pointer" icon="ios-cloud-download-outline" @click="download(item.file_path)"></Button>  </h4>
-                                            </Col>
-                                            <Col span="15" class="fileImg">
-                                                <img style="width: 100%;cursor: pointer;height: 200px;display: block;position: relative" :src="item.file_path" alt="">
-                                                <div class="mouse-on-hover">
-                                                    <Icon type="ios-eye-outline" @click.native="handleView(item.file_path)"></Icon>
-                                                    <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
-                                                </div>
-                                            </Col>
-                                        </Row>
+                                    <Row>
+                                        <Col span="8">
+                                        <h4 style="width: 150px;text-overflow: ellipsis;overflow: hidden;white-space:nowrap;">文件名：{{item.file_name}}</h4>
+                                        <h4 style="margin-top: 10px">上传人：{{item.insert_username}}</h4>
+                                        <h4 style="margin-top: 10px">下载：<Button style="font-size: 20px;cursor: pointer" icon="ios-cloud-download-outline" @click="download(item.file_path)"></Button>  </h4>
+                                        </Col>
+                                        <Col span="15" class="fileImg">
+                                        <img style="width: 100%;cursor: pointer;height: 200px;display: block;position: relative" :src="item.file_path" alt="">
+                                        <div class="mouse-on-hover">
+                                            <Icon type="ios-eye-outline" @click.native="handleView(item.file_path)"></Icon>
+                                            <!--<Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>-->
+                                        </div>
+                                        </Col>
+                                    </Row>
                                     </Col>
                                 </Row>
                             </Card>
                         </div>
-                        <Upload name="ifile" multiple :data="{'ticketno':baseForm.userid}" action="/oa/ticket/uploadticketfiles">
-                            <Button type="ghost" icon="ios-cloud-upload-outline">上传</Button>
-                        </Upload>
+                        <!--<Upload name="ifile" multiple :data="{'ticketno':baseForm.userid}" action="/oa/ticket/uploadticketfiles">-->
+                            <!--<Button type="ghost" icon="ios-cloud-upload-outline">上传</Button>-->
+                        <!--</Upload>-->
                     </TabPane>
                 </Tabs>
             </div>
@@ -380,64 +317,82 @@
 <script>
     // 简单的axios薄层封装
     import pageMixin from '@/mixins/pageMixin';
+    // 时间控件
+    import moment from 'moment';
     // lodash输入延时
     import debounce from 'lodash/debounce';
     export default {
         name: 'employee-achives',
         data () {
             return {
+                filterText: '',
                 settingModalFlag: false,
                 btnLoading: false,
                 postColumns: [
                     {
                         title: '姓名',
                         key: 'name',
-                        align: 'center'
+                        align: 'center',
+                        width: 90
                     },
                     {
                         title: '部门',
                         key: 'deptement',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '职务',
                         key: 'postName',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '入职日期',
                         key: 'indate',
-                        align: 'center'
+                        align: 'center',
+                        width: 110
                     },
                     {
                         title: '工龄',
                         key: 'workingAge',
-                        align: 'center'
+                        align: 'center',
+                        width: 60
                     },
                     {
                         title: '转正时间',
                         key: 'contract_zhuanzheng_date',
-                        align: 'center'
+                        align: 'center',
+                        width: 110
                     },
                     {
                         title: '联系方式',
                         key: 'contact',
-                        align: 'center'
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '性别',
                         key: 'sex',
-                        align: 'center'
+                        align: 'center',
+                        width: 60
                     },
                     {
                         title: '学历',
                         key: 'xueli',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '生日',
                         key: 'birthday',
-                        align: 'center'
+                        align: 'center',
+                        width: 110,
+                        render: (h, params) => {
+                            if(params.birthday) {
+                                return moment(params.birthday).format('YYYY-MM-DD');
+                            }
+                        }
                     },
                     {
                         title: '离职原因',
@@ -447,12 +402,14 @@
                     {
                         title: '离职级别',
                         key: 'gradeLeaving',
-                        align: 'center'
+                        align: 'center',
+                        width: 90
                     },
                     {
                         title: '离职时间',
                         key: 'resignationTime',
-                        align: 'center'
+                        align: 'center',
+                        width: 110
                     },
                     {
                         title: '操作',
@@ -463,7 +420,7 @@
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
-                                        content: '档案编辑',
+                                        content: '简历查看',
                                         placement: 'top',
                                         transfer: true
                                     }
@@ -471,7 +428,7 @@
                                     h('Button', {
                                         props: {
                                             type: 'primary',
-                                            icon: 'edit',
+                                            icon: 'android-expand',
                                             shape: 'circle'
                                         },
                                         on: {
@@ -490,31 +447,51 @@
                 baseForm: {},
                 visible: false,
                 imgsrc: '',
+                defaultProps: {
+                    children: 'children',
+                    label: 'text'
+                },
+                orgTreeData: [],
                 fileList: [
                 ],
                 educationForm: [
                     {
-                        graduationtime: '',
-                        graduationschool: '',
-                        profession: '',
-                        education: ''
+                        graduationtime: '2014-2017',
+                        graduationschool: '南信院',
+                        profession: '软江工程',
+                        education: '专科'
+                    },
+                    {
+                        graduationtime: '2018-2019',
+                        graduationschool: '南信院2',
+                        profession: '软江工程2',
+                        education: '专科2'
                     }
                 ],
                 workingForm: [
                     {
-                        workingtime: '',
-                        employer: '',
-                        duties: '',
-                        monthlysalary: '',
-                        reasonleaving: '',
-                        witness: ''
+                        workingtime: '2014-2017',
+                        employer: '南信院',
+                        duties: 'zhiwu',
+                        monthlysalary: 'yuexing',
+                        reasonleaving: '不高兴',
+                        witness: 'ssss'
+                    },
+                    {
+                        workingtime: '2014-2017',
+                        employer: '南信院',
+                        duties: 'zhiwu',
+                        monthlysalary: 'yuexing',
+                        reasonleaving: '不高兴',
+                        witness: 'ssss',
+                        companyphone: '123123'
                     }
                 ],
                 socailShipForm: [],
                 emergency: {
-                    emergencycontact: '',
-                    contactrelationship: '',
-                    contactnumber: ''
+                    emergencycontact: '父亲',
+                    contactrelationship: 'aaaaaaa',
+                    contactnumber: 15996118723
                 },
                 tableLoading: true,
                 filterOpt: {
@@ -523,6 +500,7 @@
                     endmonthDate: '', // 入职日期右区间
                     kqstates: '', // 在职状态
                     organizeName: '', // 部门名称
+                    organizeId: 1,
                     postName: '', // 岗位
                     xueli: '', // 学历
                     birthday: '', // 出生日期
@@ -541,11 +519,41 @@
             };
         },
         mixins: [pageMixin],
+        watch: {
+            filterText(val) {
+                this.$refs.treeDom.filter(val);
+            }
+        },
         created () {
-            this._getPostData();
-            this._setTableHeight();
+            this._getOrgTree().then((res) => {
+                this.filterOpt.organizeId = res;
+                this._getPostData();
+                this._setTableHeight();
+            });
         },
         methods: {
+            // 过滤节点
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.text.indexOf(value) !== -1;
+            },
+            // 树点击事件
+            _treeNodeClickHandler(data) {
+                this.filterOpt.organizeId = data.id;
+                this._filterResultHandler();
+            },
+            // 获取部门树形结构
+            _getOrgTree() {
+                return new Promise((resolve) => {
+                    this.$http.get('/organize/organizeTreeByUserForEmployee').then((res) => {
+                        if (res.success) {
+                            this.orgTreeData = res.date;
+                            this.filterOpt.organizeId = res.date[0].id;
+                            resolve(res.date[0].id);
+                        }
+                    });
+                });
+            },
             // 下载图片
             download(path) {
                 console.log(path);
@@ -584,50 +592,50 @@
                 this.visible = true;
             },
             // 基本信息保存
-            saveBase() {
-                this.btnLoading = true;
-                this.$http.post('/user/addInfo', this.baseForm).then((res) => {
-                    if (res.success) {
-                        this.btnLoading = false;
-                        this.$Message.success('保存基本数据成功！');
-                    }
-                });
-            },
+            // saveBase() {
+            //     this.btnLoading = true;
+            //     this.$http.post('/user/addInfo', this.baseForm).then((res) => {
+            //         if (res.success) {
+            //             this.btnLoading = false;
+            //             this.$Message.success('保存基本数据成功！');
+            //         }
+            //     });
+            // },
             // 社会关系 教育程度 工作资历保存
-            saveRelation(typerelationship,data) {
-                var d = {};
-                this.btnLoading = true;
-                d.typerelationship = typerelationship;
-                for (let i = 0; i < data.length; i++) {
-                    d['data' + i] = JSON.stringify(data[i]);
-                }
-                if (typerelationship === 1) {
-                    for (let key in this.emergency) {
-                        d[key] = this.emergency[key];
-                    }
-                }
-                this.$http.post('/employees/addUserRelationship', d).then((res) => {
-                    this.btnLoading = false;
-                    this.$Message.success('保存附加数据成功！');
-                });
-            },
-            cancel() {
-                this.settingModalFlag = false;
-                var d = this.educationForm;
-                var d2 = this.workingForm;
-                // 删除自己新增的空数据
-                for (let i = d.length - 1; i > 0; i--) {
-                    if (!d[i].education) {
-                        d.splice(i, 1);
-                    }
-                }
-                for (let i = d2.length - 1; i > 0; i--) {
-                    if (!d2[i].education) {
-                        d2.splice(i, 1);
-                    }
-                }
-                // this.educationForm = d;
-            },
+            // saveRelation(typerelationship,data) {
+            //     var d = {};
+            //     this.btnLoading = true;
+            //     d.typerelationship = typerelationship;
+            //     for (let i = 0; i < data.length; i++) {
+            //         d['data' + i] = JSON.stringify(data[i]);
+            //     }
+            //     if (typerelationship === 1) {
+            //         for (let key in this.emergency) {
+            //             d[key] = this.emergency[key];
+            //         }
+            //     }
+            //     this.$http.post('/employees/addUserRelationship', d).then((res) => {
+            //         this.btnLoading = false;
+            //         this.$Message.success('保存附加数据成功！');
+            //     });
+            // },
+            // cancel() {
+            //     this.settingModalFlag = false;
+            //     var d = this.educationForm;
+            //     var d2 = this.workingForm;
+            //     // 删除自己新增的空数据
+            //     for (let i = d.length - 1; i > 0; i--) {
+            //         if (!d[i].education) {
+            //             d.splice(i, 1);
+            //         }
+            //     }
+            //     for (let i = d2.length - 1; i > 0; i--) {
+            //         if (!d2[i].education) {
+            //             d2.splice(i, 1);
+            //         }
+            //     }
+            //     // this.educationForm = d;
+            // },
             getUsersInfo(id) {
                 var that = this;
                 if (id === 0) {
@@ -673,13 +681,12 @@
                             }
                         }
                         that.fileList = res.data;
-                        // console.log(that.fileList);
                     }
                 });
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
-            }, 600),
+            }, 1500),
             _filterResultHandler() {
                 this.initPage();
                 this._getPostData();

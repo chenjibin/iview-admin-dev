@@ -10,3 +10,4 @@ dist/
 .idea
 .idea/inspectionProfiles/Project_Default.xml
 .idea/workspace.xml
+package-lock.json
