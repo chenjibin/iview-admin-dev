@@ -108,8 +108,6 @@ export default {
                             this.$router.push({
                                 name: 'home_index'
                             });
-                        } else {
-                            this.$Message.error(res.message);
                         }
                     }).finally(() => {
                         this.loading = false;
