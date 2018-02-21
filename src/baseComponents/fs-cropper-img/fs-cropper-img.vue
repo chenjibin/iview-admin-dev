@@ -47,14 +47,28 @@
             return {
                 btnLoading: false,
                 cropper: {},
+                fileData: {
+                    fileType: '',
+                    fileName: ''
+                },
                 fileType: '',
                 option1: {
                     cropedImg: ''
-                }
+                },
+                format: ['png', 'jpeg', 'gif', 'jpg']
             };
         },
         methods: {
+            _checkFormat() {
+                const fileFormat = this.fileData.fileName.split('.').pop().toLocaleLowerCase();
+                return this.format.some(item => item.toLocaleLowerCase() === fileFormat);
+            },
             _submitImgChange() {
+                const check = this._checkFormat();
+                if (!check) {
+                    this.$Message.error('图片只支持png, jpeg, gif, jpg');
+                    return;
+                }
                 let vm = this;
                 this.btnLoading = true;
                 this.cropper.getCroppedCanvas().toBlob(function (blob) {
@@ -70,12 +84,13 @@
                     // 开始上传
                     xhr.open('POST', '/oa/od/uploadfile', true);
                     xhr.send(formData);
-                }, vm.fileType || 'image/png');
+                }, vm.fileData.fileType || 'image/png');
             },
             handleChangeImg (e) {
                 let file = e.target.files[0];
                 console.log(file);
-                this.fileType = file.type;
+                this.fileData.fileType = file.type;
+                this.fileData.fileName = file.name;
                 let reader = new FileReader();
                 reader.onload = () => {
                     this.cropper.replace(reader.result);

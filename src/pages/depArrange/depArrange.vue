@@ -2,17 +2,9 @@
     <div class="#my-attendance">
         <Row :gutter="10">
             <Col :span="4">
-            <Card>
-                <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
-                <el-tree :data="treeData"
-                         ref="treeDom"
-                         :filter-node-method="filterNode"
-                         :expand-on-click-node="false"
-                         :highlight-current="true"
-                         style="margin-top: 10px;"
-                         @node-click="_treeNodeClickHandler"
-                         :props="defaultProps"></el-tree>
-            </Card>
+                <fs-dep-tree url="/organize/organizeTreeCertainVm?fatherId=-1"
+                             @node-change="_nodeChangeHandler($event)"
+                             :defaultProps="defaultProps"></fs-dep-tree>
             </Col>
             <Col :span="20">
             <Card>
@@ -230,6 +222,7 @@
 <script>
     import moment from 'moment';
     import pageMixin from '@/mixins/pageMixin';
+    import fsDepTree from '@/baseComponents/fs-dep-tree';
     import debounce from 'lodash/debounce';
     import _forEach from 'lodash/forEach';
     const NOW_MONTH = moment().format('YYYY-MM');
@@ -237,16 +230,12 @@
         name: 'depArrange',
         mixins: [pageMixin],
         watch: {
-            filterText(val) {
-                this.$refs.treeDom.filter(val);
-            },
             'filterOpt.organizeId'() {
                 this._filterResultHandler();
             }
         },
         data () {
             return {
-                filterText: '',
                 allType: 'del',
                 loading: false,
                 loading2: false,
@@ -258,7 +247,6 @@
                 addPersonModalFlag: false,
                 btnConfirmDis: false,
                 deleteMonth: NOW_MONTH,
-                treeData: [],
                 addDepForm: {
                     month: NOW_MONTH,
                     organizeName: ''
@@ -360,11 +348,11 @@
         },
         created() {
             this._setTableHeight();
-            this._getOrgTreeData().then(() => {
-                this._getAttendanceData();
-            });
         },
         methods: {
+            _nodeChangeHandler(node) {
+                this.filterOpt.organizeId = node.id === 1 ? '' : node.id;
+            },
             _confirmAddPerson() {
                 this.deleteLoading = true;
                 this.$http.post('/kq/addSingleArrangeByMonth', this.addPersonForm).then((res) => {
@@ -501,21 +489,6 @@
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
             },
-            filterNode(value, data) {
-                if (!value) return true;
-                return data.text.indexOf(value) !== -1;
-            },
-            _getOrgTreeData() {
-                return new Promise(resolve => {
-                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
-                        if (res.success) {
-                            this.treeData = res.data;
-                            this.filterOpt.organizeId = '';
-                            resolve();
-                        }
-                    });
-                });
-            },
             _setPage(page) {
                 this.pageData.page = page;
                 this._getAttendanceData();
@@ -534,10 +507,6 @@
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
             }, 600),
-            _treeNodeClickHandler(data) {
-                this.filterOpt.organizeId = data.id;
-                this.filterOpt.organizeName = data.text;
-            },
             _filterResultHandler() {
                 this.initPage();
                 this._getAttendanceData();
@@ -629,6 +598,8 @@
                 this.modelFlag = true;
             }
         },
-        components: {}
+        components: {
+            fsDepTree
+        }
     };
 </script>
