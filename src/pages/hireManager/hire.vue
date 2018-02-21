@@ -863,6 +863,7 @@
                     this.saveBtn2Loading = false;
                     if (res.success) {
                         this.$Message.success('保存成功');
+                        this._filterResultHandler();
                         if (type === 2) {
                             this.settingModalFlag = false;
                             return;
