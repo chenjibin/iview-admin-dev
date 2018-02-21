@@ -175,11 +175,11 @@
                 this.$http
                     .all([this.$http.get('/main/Ranking?page=1&pageSize=10000&type=1'), this.$http.get('/main/Ranking?page=1&pageSize=10000&type=2')])
                     .then(this.$http.spread((res1, res2) => {
-                        if (res1.Success) {
-                            this.rankDataBlack = res1.date;
+                        if (res1.success) {
+                            this.rankDataBlack = res1.data;
                         }
-                        if (res2.Success) {
-                            this.rankDataRed = res2.date;
+                        if (res2.success) {
+                            this.rankDataRed = res2.data;
                         }
                     })).finally(() => {
                         this.coinLoadingFlag = false;
@@ -201,8 +201,8 @@
                 };
                 this.$http.get('/main/getMyCoinLogList', {params: data}).then((res) => {
                     if (res.success) {
-                        this.pageData.totalData = res.count;
-                        this.rowData = res.date;
+                        this.pageData.totalData = res.totalCount;
+                        this.rowData = res.data;
                     }
                 }).finally(() => {
                     this.loading = false;
@@ -215,7 +215,7 @@
                 };
                 this.$http.get('/main/getMyCoinLogList', {params: data}).then((res) => {
                     if (res.success) {
-                        this.itemData = res.date;
+                        this.itemData = res.data;
                     }
                 });
             }

@@ -1,8 +1,8 @@
 <template>
     <div id="fs-cropper-img">
         <Row>
-            <Col :span="24" style="margin-bottom: 8px;">
-                <div class="image-editor-con1-btn-con margin-top-10">
+            <Col :span="24">
+                <div class="margin-top-10">
                     <input type="file"
                            accept="image/png, image/jpeg, image/gif, image/jpg"
                            @change="handleChangeImg"
@@ -15,26 +15,25 @@
                     </label>
                 </div>
             </Col>
-            <Col :span="12">
+            <Col :span="12" class="margin-top-8">
                 <div class="crop-img-wrapper">
                     <img id="crop-img"/>
                 </div>
             </Col>
-            <Col :span="12">
+            <Col :span="12" class="margin-top-8">
                 <div class="img-preview-wrapper">
                     <div id="preview1" class="preview"></div>
                 </div>
                 <p style="margin-top: 8px;font-size: 14px;font-weight: 700;text-align: center;">修改后的头像</p>
-                <Button></Button>
+                <div class="margin-top-8" style="text-align: center;">
+                    <Button type="primary" @click="_submitImgChange" :loading="btnLoading">提交修改</Button>
+                </div>
             </Col>
         </Row>
-        <Modal v-model="option1.showCropedImage">
-            <p slot="header">预览裁剪之后的图片</p>
-            <img :src="option1.cropedImg" alt="" v-if="option1.showCropedImage" style="width: 100%;">
-        </Modal>
     </div>
 </template>
 <style lang="less">
+    @import '../../styles/common.less';
     @import "./image-editor.less";
 </style>
 <script>
@@ -46,21 +45,37 @@
         },
         data () {
             return {
+                btnLoading: false,
                 cropper: {},
+                fileType: '',
                 option1: {
-                    showCropedImage: false,
                     cropedImg: ''
                 }
             };
         },
         methods: {
-            handlecrop () {
-                let file = this.cropper.getCroppedCanvas().toDataURL();
-                this.option1.cropedImg = file;
-                this.option1.showCropedImage = true;
+            _submitImgChange() {
+                let vm = this;
+                this.btnLoading = true;
+                this.cropper.getCroppedCanvas().toBlob(function (blob) {
+                    let xhr = new XMLHttpRequest();
+                    let formData = new FormData();
+                    formData.append('imgFile', blob);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.status === 200) {
+                            // xhr.responseText就是返回的数据
+                        }
+                        this.btnLoading = false;
+                    };
+                    // 开始上传
+                    xhr.open('POST', '/oa/od/uploadfile', true);
+                    xhr.send(formData);
+                }, vm.fileType || 'image/png');
             },
             handleChangeImg (e) {
                 let file = e.target.files[0];
+                console.log(file);
+                this.fileType = file.type;
                 let reader = new FileReader();
                 reader.onload = () => {
                     this.cropper.replace(reader.result);

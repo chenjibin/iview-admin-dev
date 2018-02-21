@@ -159,7 +159,7 @@
                         data.newPwd = this.passWordForm.newPwd;
                         data.newPwdCheck = this.passWordForm.newPwdCheck;
                         console.log(data);
-                        this.$http.post('', data).then((res) => {
+                        this.$http.post('/main/updatePwd', data).then((res) => {
                             if (res.success) {
                                 this.$Modal.success({
                                     content: '密码重置成功,请重新登录!',
