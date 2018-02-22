@@ -274,13 +274,13 @@
                         <Col :span="12" style="margin-bottom: 10px;" v-for="(cate, ci) in accseeList" :key="'cate-' + ci">
                             <Card style="height: 100%;">
                                 <h3 class="cate-title">{{cate.title}}</h3>
-                                <div class="each-page-wrapper" v-for="(page, pi) in cate.pages" :key="'page-' + pi">
-                                    <Checkbox :label="'page' + page.id" size="large">
+                                <div class="each-page-wrapper" v-for="(page, pi) in cate.page" :key="'page-' + pi">
+                                    <Checkbox :label="'page' + page.menu.id" size="large">
                                         <Icon type="document" size="18"></Icon>
-                                        <span>{{page.title}}</span>
+                                        <span>{{page.menu.title}}</span>
                                     </Checkbox>
                                     <div class="each-btn-wrapper">
-                                        <Checkbox :label="'btn' + btn.id" v-for="(btn, bi) in page.btns" :key="'btn-' + bi">
+                                        <Checkbox :label="'btn' + btn.id" v-for="(btn, bi) in page.btn" :key="'btn-' + bi">
                                             <Icon type="ios-toggle"></Icon>
                                             <span>{{btn.btnname}}</span>
                                         </Checkbox>
@@ -1237,7 +1237,8 @@
             _getAccessMenu() {
                 this.$http.get('/jurisdiction/getAllMenu').then((res) => {
                     if (res.success) {
-                        this.accseeList = this._renturnAccessNeedArr(res.data);
+                        // this.accseeList = this._renturnAccessNeedArr(res.data);
+                        this.accseeList = res.data;
                     }
                 });
             },

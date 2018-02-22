@@ -64,6 +64,7 @@
                    ref="attendanceTable"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
+                  :current="pageData.page"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
@@ -141,7 +142,7 @@
                 </div>
             </Modal>
             <Modal v-model="settingModalFlag"
-                   width="1150"
+                   width="1200"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>{{attendanceOpt.userName + ' ' + attendanceOpt.monthDate}} 考勤总汇</span>
@@ -408,13 +409,13 @@
                         title: '工种',
                         key: 'truetype',
                         align: 'center',
-                        width: 100
+                        width: 80
                     },
                     {
                         title: '迟到',
                         key: 'c_count',
                         align: 'center',
-                        width: 100,
+                        width: 120,
                         render: (h, params) => {
                             if (+params.row.exception !== 2) {
                                 let vm = this;
@@ -439,7 +440,7 @@
                         title: '早退',
                         key: 'z_count',
                         align: 'center',
-                        width: 100,
+                        width: 120,
                         render: (h, params) => {
                             if (+params.row.exception !== 2) {
                                 let vm = this;
@@ -464,7 +465,7 @@
                         title: '漏打卡',
                         key: 'l_count',
                         align: 'center',
-                        width: 100,
+                        width: 120,
                         render: (h, params) => {
                             if (+params.row.exception !== 2) {
                                 let vm = this;

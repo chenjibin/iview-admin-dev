@@ -20,6 +20,51 @@
             <Col span="8">
                 <span style="font-weight: 700;">金币余额:</span>
                 <span style="font-size: 24px;">{{userInfo.tmCoin}}</span>
+                <Poptip placement="right-start" width="600" v-model="coinDescFlag" :transfer="true">
+                    <div slot="content" style="white-space: normal;">
+                        <h2 style="text-align: center">天马金币说明</h2>
+                        <div class="">
+                            <h3>金币可以兑换什么？</h3>
+                            <ul>
+                                <li>1. 各类纸品（价格待定）</li>
+                                <li>2. 迟到卡 200 金币</li>
+                                <li>3. 带薪休假卡 1000 金币（1天）</li>
+                                <li>4. 各类饮料（价格待定）</li>
+                                <li>5. 各类样品仓商品（价格待定）</li>
+                                <li>6. 公司内购券面值 50-600 金币</li>
+                                <li>7. 抽奖机会50金币</li>
+                            </ul>
+                            <p >注： 金币每年年底不清零，可以累积使用。金币为负时，每月月底按10金币1元上交同等钱款到人事部后金币恢复为0。（因为正常写肯定是不会有负数现象，除非有违反制度现象，现在违反制度不直接扣现金，而是扣金币，每月统一转换为现金）连续三个月金币为负，记过处分。</p>
+                        </div>
+                        <div class="margin-top-8">
+                            <h3>获得金币有哪些途径？</h3>
+                            <p>一、写日志</p>
+                            <ul>
+                                <li>1. 新增一个工作日志 +10 金币</li>
+                                <li>2. 工作日志被评为优秀 +10 金币，每月最多 +150 金币</li>
+                                <li>3. 工作日志被批评 -5 金币，每月最多 -100 金币 </li>
+                                <li>4. 当天工作日志，未在次日8：30前写，每次-5金币（如在24小时内补写，分可补回，每月最多可补写4次）</li>
+                                <li>5. 直属上级对下级日志未在48小时内指导，每次扣 2 金币 </li>
+                                <li>6. 工作日志被列为范本 +20 金币 </li>
+                            </ul>
+                            <p>二、人工手工加减分项 </p>
+                            <ul>
+                                <li>A.提出合理化建议 +100 起金币（制度、文化、业务流程都可以）</li>
+                                <li>B.考试成绩优异者 +100 金币</li>
+                                <li>C.授课一次 +300 金币</li>
+                                <li>D.带新人被录用 +500 金币</li>
+                                <li>E.未执行公司制度 -100 起金币（如上班时间吃早饭、上私Q、看网页等）</li>
+                                <li>F.好人好事奖励 +50 起</li>
+                                <li>G.伯乐奖 +200 起（推荐员工并成功入职，根据被推荐者的岗位可有不同）</li>
+                                <li>H.其它奖惩</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <span style="cursor: pointer;" @click="coinDescFlag = true">
+                        <Icon type="help-circled"></Icon>
+                    </span>
+                </Poptip>
+
             </Col>
             <Col span="16" class="padding-left-8">
                 <Tooltip placement="top" content="修改头像" :transfer="true">
@@ -120,6 +165,7 @@
             return {
                 changeAvatorFlag: false,
                 pwsFlag: false,
+                coinDescFlag: false,
                 passWordForm: {
                     oldPwd: '',
                     newPwd: '',
