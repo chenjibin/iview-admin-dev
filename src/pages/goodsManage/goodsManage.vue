@@ -20,7 +20,7 @@
                 </FormItem>
                 <FormItem>
                     <ButtonGroup>
-                        <Button type="primary" @click="" >
+                        <Button type="primary" @click="_createGoods" >
                             <Icon type="plus-round"></Icon>
                             新增
                         </Button>
@@ -32,6 +32,7 @@
                    :height="tableHeight"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
+                  :current="pageData.page"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
@@ -41,12 +42,12 @@
                   show-elevator
                   style="margin-top: 16px;"></Page>
             <Modal v-model="editorSettingFlag"
-                   width="300"
+                   width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
+                    <span>新增商品</span>
                 </p>
-                <Form>
+                <Form :label-width="80">
                     <FormItem label="是否下架">
                         <i-switch v-model="editorSettingData.isDown" size="large">
                             <span slot="open">上架</span>
@@ -55,8 +56,7 @@
                     </FormItem>
                     <FormItem label="商品名称">
                         <Input type="text"
-                               v-model="editorSettingData.name"
-                               placeholder=""></Input>
+                               v-model="editorSettingData.goodsName"></Input>
                     </FormItem>
                     <FormItem label="所属分类">
                         <Select v-model="editorSettingData.type"
@@ -64,9 +64,9 @@
                                 style="width: 100px">
                             <Option value="纸品类">纸品类</Option>
                             <Option value="饮品类">饮品类</Option>
-                            <Option value="纸品类">食品类</Option>
-                            <Option value="饮品类">卡券类</Option>
-                            <Option value="饮品类">服饰类</Option>
+                            <Option value="食品类">食品类</Option>
+                            <Option value="卡券类">卡券类</Option>
+                            <Option value="服饰类">服饰类</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="价格">
@@ -74,11 +74,8 @@
                                v-model="editorSettingData.price"
                                placeholder=""></Input>
                     </FormItem>
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
-                                    placeholder="筛选考勤月份"
-                                    @on-change=""
-                                    :value="editorSettingData.month"></DatePicker>
+                    <FormItem label="商品图片">
+
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -109,11 +106,10 @@
                     status: ''
                 },
                 editorSettingData: {
-                    name: '',
-                    type: '',
+                    goodsName: '',
+                    type: '卡券类',
                     price: '',
-                    isDown: '',
-                    month: ''
+                    isDown: true
                 },
                 postColumns: [
                     {
@@ -193,6 +189,11 @@
         },
         methods: {
             _initEditorSettingData() {
+                let settingData = this.editorSettingData;
+                settingData.goodsName = '';
+                settingData.type = '卡券类';
+                settingData.price = '';
+                settingData.isDown = true;
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -213,6 +214,10 @@
                 this.pageData.pageSize = size;
                 this._getPostData();
             },
+            _createGoods() {
+                this._initEditorSettingData();
+                this.editorSettingFlag = true;
+            },
             _editorSetting(data) {
                 this._initEditorSettingData();
                 this.editorSettingFlag = true;
@@ -221,7 +226,7 @@
                 let data = {};
                 data.goodsName = this.filterOpt.goodsName;
                 data.status = this.filterOpt.status;
-                this.getList('', data);
+                this.getList('/order/goodslist', data);
             }
         },
         components: {}

@@ -255,6 +255,13 @@ export const appRouter = [
                 name: 'prizeManage',
                 title: '奖品管理',
                 component: resolve => { require(['@/pages/prizeManage/prizeManage.vue'], resolve); }
+            },
+            {
+                path: 'goodsExchangeManage',
+                icon: 'ios-pricetags',
+                name: 'goodsExchangeManage',
+                title: '兑换管理',
+                component: resolve => { require(['@/pages/goodsExchangeManage/goodsExchangeManage.vue'], resolve); }
             }
         ]
     },

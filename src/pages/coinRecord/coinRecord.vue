@@ -46,6 +46,7 @@
                    :height="tableHeight"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
+                  :current="pageData.page"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
@@ -149,7 +150,7 @@
                 data.option = this.filterOpt.option;
                 data.startDate = this.filterOpt.startDate;
                 data.endDate = this.filterOpt.endDate;
-                this.getList('', data);
+                this.getList('/order/journal_coinlist', data);
             }
         },
         components: {}

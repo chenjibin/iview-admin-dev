@@ -2,7 +2,7 @@
     <div>
         <Card>
             <Form inline :label-width="60">
-                <FormItem label="商品名称">
+                <FormItem label="奖品名称">
                     <Input type="text"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.goodsName"
@@ -32,6 +32,7 @@
                    :height="tableHeight"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
+                  :current="pageData.page"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
@@ -41,19 +42,19 @@
                   show-elevator
                   style="margin-top: 16px;"></Page>
             <Modal v-model="editorSettingFlag"
-                   width="300"
+                   width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
+                    <span>新增奖品</span>
                 </p>
-                <Form>
+                <Form :label-width="80">
                     <FormItem label="是否下架">
                         <i-switch v-model="editorSettingData.isDown" size="large">
                             <span slot="open">上架</span>
                             <span slot="close">下架</span>
                         </i-switch>
                     </FormItem>
-                    <FormItem label="商品名称">
+                    <FormItem label="奖品名称">
                         <Input type="text"
                                v-model="editorSettingData.name"
                                placeholder=""></Input>
@@ -122,36 +123,39 @@
                         align: 'center'
                     },
                     {
-                        title: '商品名称',
-                        key: 'organizename',
+                        title: '奖品名称',
+                        key: 'lottery_name',
                         align: 'center'
                     },
                     {
                         title: '图片',
-                        key: 'postname',
                         align: 'center',
                         render: (h, params) => {
-                            return h('span', moment(params.row['record_month']).format('YYYY-MM'));
+                            return h('img', {
+                                attrs: {
+                                    src: '/oa/upload/' + params.row.image_path
+                                }
+                            });
                         }
                     },
                     {
                         title: '数量',
-                        key: 'organizename',
+                        key: 'number',
                         align: 'center'
                     },
                     {
                         title: '价格',
-                        key: 'organizename',
+                        key: 'price',
                         align: 'center'
                     },
                     {
                         title: '概率',
-                        key: 'organizename',
+                        key: 'probability',
                         align: 'center'
                     },
                     {
                         title: '商品分类',
-                        key: 'user_name',
+                        key: 'classification',
                         align: 'center'
                     },
                     {
@@ -163,7 +167,7 @@
                             return h('Tag', {
                                 props: {
                                     type: 'border',
-                                    color: params.row.status === '未审核' ? 'red' : 'green'
+                                    color: params.row.status === '下架' ? 'red' : 'green'
                                 }
                             }, params.row.status);
                         }
@@ -236,7 +240,7 @@
                 let data = {};
                 data.goodsName = this.filterOpt.goodsName;
                 data.status = this.filterOpt.status;
-                this.getList('', data);
+                this.getList('/lottery/goodslist', data);
             }
         },
         components: {}
