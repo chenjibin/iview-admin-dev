@@ -188,8 +188,8 @@
                                 <Option value="10">人才市场</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="工作经验（年）" style="width:45%">
-                            <Input type="text" v-model="talentBean.yearswork"></Input>
+                        <FormItem label="工作经验" style="width:45%">
+                            <Input type="number" v-model="talentBean.yearswork" placeholder="单位：年"></Input>
                         </FormItem>
                         <FormItem label="电子邮箱" style="width:45%">
                             <Input type="text" v-model="talentBean.email"></Input>
@@ -206,10 +206,10 @@
                         <FormItem label="紧急联系人" style="width:45%">
                             <Input type="text" v-model="talentBean.emperson"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人关系" style="width:45%">
+                        <FormItem label="联系人关系" style="width:45%">
                             <Input type="text" v-model="talentBean.emrelate"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人号码" style="width:45%">
+                        <FormItem label="联系人号码" style="width:45%">
                             <Input type="text" v-model="talentBean.emphone"></Input>
                         </FormItem>
                         <FormItem label="政治面貌" style="width:45%">

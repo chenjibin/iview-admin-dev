@@ -39,11 +39,11 @@
                                 <Option value="10">人才市场</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="工作经验（年）" style="width:49%;margin-right: 1%;">
-                            <Input type="text" v-model="talentBean.yearswork"></Input>
+                        <FormItem label="工作经验" style="width:49%;margin-right: 1%;">
+                            <Input type="number" v-model="talentBean.yearswork" placeholder="单位：年"></Input>
                         </FormItem>
                         <FormItem label="电子邮箱" style="width:49%;margin-right: 0px;">
-                            <Input type="text" v-model="talentBean.email"></Input>
+                            <Input type="email" v-model="talentBean.email"></Input>
                         </FormItem>
                         <FormItem label="身份证号码" style="width:49%;margin-right: 1%;">
                             <Input type="text" v-model="talentBean.idnum"></Input>
@@ -188,9 +188,32 @@
                         </FormItem>
                     </Form>
                 </TabPane>
-                <Button type="primary" icon="checkmark-round" @click="saveForm" size="small" shape="circle" slot="extra">保存</Button>
+                <ButtonGroup slot="extra">
+                    <Button type="primary" icon="document" @click="saveForm" size="small" >保存</Button>
+                    <Button type="ghost" icon="edit" @click="searchUserModel = true" size="small">完善简历</Button>
+                </ButtonGroup>
             </Tabs>
         </Card>
+        <Modal v-model="searchUserModel" inline width="360" :mask-closable="false">
+            <p slot="header" style="color:#2b85e4;text-align:center;font-size: 14px">
+                <Icon type="information-circled"></Icon>
+                <span>简历数据</span>
+            </p>
+            <Form ref="searchUserForm" :model="searchUserForm" :rules="rules" inline style="font-size: 0px;" :closable="false">
+                <FormItem label="姓名" prop="name" style="width: 49%;margin-right: 1%">
+                    <Input type="text" v-model="searchUserForm.name"/>
+                </FormItem>
+                <FormItem label="手机号码" prop="phone" style="width: 49%;margin-right: 1%">
+                    <Input type="text" v-model.trim="searchUserForm.phone"/>
+                </FormItem>
+            </Form>
+            <div style="text-align:center;color: #666">
+                <p>维护您在本公司良好的简历，更容易被关注哦</p>
+            </div>
+            <div slot="footer">
+                <Button type="primary" size="large" long @click="checkUser()">继续编辑</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -206,78 +229,63 @@
                 }
             };
             return {
-                saveBtn2Loading: false, // 提交按钮加载
-                saveBtn1Loading: false, // 暂存按钮加载
+                searchUserModel: true,
+                searchUserForm: {
+                    name: '',
+                    phone: ''
+                },
                 educationForm: [
                     {
-                        graduatedschool: '南信院',
-                        starttime: '2017-02-06',
-                        endtime: '2017-02-07',
-                        profession: '软江工程',
-                        education: '1',
+                        graduatedschool: '',
+                        starttime: '',
+                        endtime: '',
+                        profession: '',
+                        education: '',
                         type: 2,
-                        descriptioncontent: '专业描述'
-                    },
-                    {
-                        graduatedschool: '南信院',
-                        starttime: '2017-02-06',
-                        endtime: '2017-02-07',
-                        profession: '软江工程',
-                        education: '2',
-                        type: 2,
-                        descriptioncontent: '专业描述'
+                        descriptioncontent: ''
                     }
                 ], // 简历教育历史
                 workingForm: [
                     {
-                        descriptioncontent: '工作描述',
-                        companyname: '公司名称',
-                        endtime: '2017-02-07',
-                        starttime: '2017-02-06',
-                        post: '职业',
+                        descriptioncontent: '',
+                        companyname: '',
+                        endtime: '',
+                        starttime: '',
+                        post: '',
                         type: 1,
-                        monthlysalary: 1231
-                    },
-                    {
-                        descriptioncontent: '工作描述2',
-                        companyname: '公司名称2',
-                        endtime: '2017-02-07',
-                        starttime: '2017-02-06',
-                        post: '职业2',
-                        type: 1,
-                        monthlysalary: 1231
+                        monthlysalary: 0
                     }
                 ], // 简历工作信息
                 talentBean: {
-                    id: '60',
-                    postname: '6',
-                    monthlysalary: '1000',
-                    resumesource: '2',
-                    name: '姓名',
-                    age: '24',
-                    yearswork: '3',
-                    sex: '1',
-                    marriage: '1',
-                    phone: '18752033222',
-                    email: 'email@1.com',
-                    address: '连云港市某个地方',
-                    account: '连云港市户籍',
-                    province_id: '310000',
-                    city_id: '310100',
-                    area_id: '310119',
-                    selfevaluation: '自我评价',
-                    expertiseskills: '专长技能',
-                    projectexperience: '项目经验',
-                    languageskills: '语言能力',
-                    trainingexperience: '培训经历',
-                    remarks: '+fdgsdfsd+ndfgdsffgsdf+12313123+12313131231+12312312313123+213123',
+                    id: '',
+                    postname: '',
+                    monthlysalary: '',
+                    resumesource: '',
+                    name: '',
+                    age: '',
+                    yearswork: '',
+                    sex: '',
+                    marriage: '',
+                    phone: '',
+                    email: '',
+                    address: '',
+                    account: '',
+                    province_id: '',
+                    city_id: '',
+                    area_id: '',
+                    selfevaluation: '',
+                    expertiseskills: '',
+                    projectexperience: '',
+                    languageskills: '',
+                    trainingexperience: '',
+                    remarks: '',
                     headimg: '',
-                    nation: '汉',
-                    idnum: '320723199909180041',
-                    politicalstatus: '预备党员',
-                    emperson: '紧急联系人',
-                    emrelate: '紧急关系',
-                    emphone: '联系人电话'
+                    nation: '',
+                    idnum: '',
+                    politicalstatus: '',
+                    emperson: '',
+                    emrelate: '',
+                    emphone: ''
                 }, // 简历基本信息模块
                 rules: {
                     name: [
@@ -339,6 +347,22 @@
                 this.filterOpt.status = status;
                 this._filterResultHandler();
             },
+            checkUser() {
+                var g = this;
+                this.$refs['searchUserForm'].validate((valid) => {
+                    if (!valid) {
+                        return false;
+                    }
+                    g.$http.post('/talentLibrary/checkUser', g.searchUserForm).then((res) => {
+                        if (res.success) {
+                            g._findUser(res.message).then((res) => {
+                                g.$Message.success('读取成功');
+                                g.searchUserModel = false;
+                            });
+                        }
+                    });
+                });
+            },
             saveForm() {
                 var g = this;
                 this.$refs['talentBean'].validate((valid) => {
@@ -395,7 +419,7 @@
                 ##     ##  ##  ##   ##   ##
                 ##     ##  ##  ##    ##  ##
                 ##     ## #### ##     ## ######## `);
-                console.log('%c或许是机缘巧合让我们在devtool相遇。天马网络科技集团技术部诚邀技术爱好者，欢迎您的加入。', 'color:#ddd;font-size:14px');
+                console.log('%c或许是机缘巧合让我们相遇。天马网络科技集团技术部诚邀技术爱好者，欢迎您的加入。', 'color:#666;font-size:14px');
             }
         }
     };
@@ -418,7 +442,7 @@
         .custom-div{
             margin: 5px auto;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgb(243, 243, 243);
+            border-bottom: 1px solid #cccccc;
         }
         .ivu-table-body {
             overflow: auto;

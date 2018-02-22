@@ -11,7 +11,7 @@ export const loginRouter = {
 };
 export const guestRouter = {
     path: '/guest',
-    name: '社会招聘',
+    name: 'guest',
     meta: {
         title: '社会招聘'
     },
