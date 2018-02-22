@@ -1,3 +1,4 @@
+require('es6-promise').polyfill();
 import Vue from 'vue';
 import iView from 'iview';
 import { Tree, Cascader, Checkbox } from 'element-ui';
@@ -8,7 +9,6 @@ import '@/locale';
 import 'iview/dist/styles/iview.css';
 import VueI18n from 'vue-i18n';
 import request from './libs/request';
-
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Tree);

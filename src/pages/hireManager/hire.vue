@@ -135,6 +135,7 @@
                 </div>
             </div>
             <Page :total="pageData.totalCount"
+                  :current="pageData.page"
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
