@@ -9,6 +9,14 @@ export const loginRouter = {
     },
     component: resolve => { require(['@/views/login.vue'], resolve); }
 };
+export const guestRouter = {
+    path: '/guest',
+    name: '社会招聘',
+    meta: {
+        title: '社会招聘'
+    },
+    component: resolve => { require(['@/pages/hireManager/guest.vue'], resolve); }
+};
 
 export const page404 = {
     path: '/*',
@@ -479,6 +487,7 @@ export const appRouter = [
 export const routers = [
     loginRouter,
     otherRouter,
+    guestRouter,
     preview,
     locking,
     page500,
