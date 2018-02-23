@@ -51,10 +51,6 @@
                             <Icon type="ios-trash-outline"></Icon>
                             删除
                         </Button>
-                        <!--<Button type="ghost" @click="_exportCsv">-->
-                            <!--<Icon type="ios-cloud-download-outline"></Icon>-->
-                            <!--导出CSV-->
-                        <!--</Button>-->
                     </ButtonGroup>
                 </FormItem>
             </Form>
