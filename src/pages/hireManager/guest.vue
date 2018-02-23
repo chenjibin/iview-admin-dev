@@ -392,8 +392,6 @@
                             if (res.success) {
                                 g.$Message.success('保存成功');
                                 g._findUser(res.message);
-                            } else {
-                                g.$Message.error('保存失败' + (res.message || ''));
                             }
                         });
                     } else {

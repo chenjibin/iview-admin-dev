@@ -360,8 +360,6 @@
                     if (res.success) {
                         this.$Message.success('日志提交成功！');
                         this._getLogInfo(this.dateData);
-                    } else {
-                        this.$Message.error(res.message);
                     }
                 }).finally(() => {
                     this.modelFlag = false;
