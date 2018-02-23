@@ -1,69 +1,68 @@
 <template>
     <div id="guest">
-        <Card style="height: 99%">
+        <Card  :class="device.mobile&&device.width<=490?'mobileTabHeight':'pcTabHeight'">
             <Tabs type="card" style="height: 100%;">
                 <TabPane label="基本信息" style="height: 100%">
                     <Form ref="talentBean" :model="talentBean" :rules="rules" style="font-size: 0px;overflow-y: auto;overflow-x: hidden;height: 100%;" inline>
                         <Input type="text" style="display: none" v-model="talentBean.id"></Input>
-                        <FormItem label="姓名" prop="name" style="width:49%;margin-right: 1%;">
+                        <FormItem label="姓名" prop="name" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model.trim="talentBean.name"></Input>
                         </FormItem>
-
-                        <FormItem label="性别" style="width:49%;margin-right: 0px;">
-                            <Select type="text" v-model="talentBean.sex">
-                                <Option value="1">男</Option>
-                                <Option value="2">女</Option>
+                        <FormItem label="性别" :class="device.mobile?'mobileFormRight':'pcFormItem'">
+                            <Select type="text" style="width: 100%" v-model.number="talentBean.sex">
+                                <Option :value="1">男</Option>
+                                <Option :value="2">女</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="年龄" prop="age" style="width:49%;margin-right: 1%;">
-                            <Input type="text" v-model.number="talentBean.age"></Input>
+                        <FormItem label="年龄" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                            <InputNumber style="width: 100%" :min="0" :max="99" :step="10" :precision='0' v-model="talentBean.age"></InputNumber>
                         </FormItem>
-                        <FormItem label="手机" prop="phone" style="width:49%;margin-right: 0px;">
+                        <FormItem label="手机" prop="phone" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.phone"></Input>
                         </FormItem>
-                        <FormItem label="期望月薪" style="width:49%;margin-right: 1%;">
+                        <FormItem label="期望月薪" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model="talentBean.monthlysalary"></Input>
                         </FormItem>
-                        <FormItem label="信息来源" style="width:49%;margin-right: 0px;">
+                        <FormItem label="信息来源"  :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.resumesource">
                                 <Option value="">请选择</Option>
-                                <Option value="1">58同城</Option>
-                                <Option value="2">智联</Option>
-                                <Option value="3">前程无忧</Option>
-                                <Option value="4">其它</Option>
-                                <Option value="5">现场招聘会</Option>
-                                <Option value="6">微信公众号</Option>
-                                <Option value="7">来电</Option>
-                                <Option value="8">介绍</Option>
-                                <Option value="9">校招</Option>
-                                <Option value="10">人才市场</Option>
+                                <Option :value="1">58同城</Option>
+                                <Option :value="2">智联</Option>
+                                <Option :value="3">前程无忧</Option>
+                                <Option :value="4">其它</Option>
+                                <Option :value="5">现场招聘会</Option>
+                                <Option :value="6">微信公众号</Option>
+                                <Option :value="7">来电</Option>
+                                <Option :value="8">介绍</Option>
+                                <Option :value="9">校招</Option>
+                                <Option :value="10">人才市场</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="工作经验" style="width:49%;margin-right: 1%;">
-                            <Input type="number" v-model="talentBean.yearswork" placeholder="单位：年"></Input>
+                        <FormItem label="工作经验" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                            <InputNumber style="width: 100%" :min="0" :max="50" :step="1" :precision='0' v-model="talentBean.yearswork" placeholder="单位：年"></InputNumber>
                         </FormItem>
-                        <FormItem label="电子邮箱" style="width:49%;margin-right: 0px;">
-                            <Input type="email" v-model="talentBean.email"></Input>
+                        <FormItem label="电子邮箱" :class="device.mobile?'mobileFormRight':'pcFormItem'">
+                            <Input type="text" v-model="talentBean.email"></Input>
                         </FormItem>
-                        <FormItem label="身份证号码" style="width:49%;margin-right: 1%;">
+                        <FormItem label="身份证号码" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model="talentBean.idnum"></Input>
                         </FormItem>
-                        <FormItem label="籍贯" style="width:49%;margin-right: 0px;">
+                        <FormItem label="籍贯" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.account"></Input>
                         </FormItem>
-                        <FormItem label="民族" style="width:49%;margin-right: 1%;">
+                        <FormItem label="民族" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model="talentBean.nation"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人" style="width:49%;margin-right: 0px;">
+                        <FormItem label="紧急联系人" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.emperson"></Input>
                         </FormItem>
-                        <FormItem label="联系人关系" style="width:49%;margin-right: 1%;">
+                        <FormItem label="联系人关系" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model="talentBean.emrelate"></Input>
                         </FormItem>
-                        <FormItem label="联系人号码" style="width:49%;margin-right: 0px;">
+                        <FormItem label="联系人号码" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.emphone"></Input>
                         </FormItem>
-                        <FormItem label="政治面貌" style="width:49%;margin-right: 1%;">
+                        <FormItem label="政治面貌" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Select type="text" v-model="talentBean.politicalstatus">
                                 <Option value="党员">党员</Option>
                                 <Option value="预备党员">预备党员</Option>
@@ -72,13 +71,13 @@
                                 <Option value="群众">群众</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="婚姻状况" style="width:49%;margin-right: 0px;">
+                        <FormItem label="婚姻状况" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.marriage">
-                                <Option value="1">已婚</Option>
-                                <Option value="2">未婚</Option>
+                                <Option :value=1>已婚</Option>
+                                <Option :value=2>未婚</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="详细住址" style="width:49%;margin-right: 1%;">
+                        <FormItem label="详细住址" style="width:48.5%;margin-right: 1%;">
                             <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.address"></Input>
                         </FormItem>
                         <FormItem label="专长技能" style="width:49%;margin-right: 1%;">
@@ -101,27 +100,27 @@
                 <TabPane id="education" label="教育状况" style="height: 100%">
                     <Form :gutter="1" ref="educationForm" inline style="font-size: 0px;overflow-y: auto; overflow-x: hidden;height: 100%;">
                         <div v-for="(item,index) in educationForm" class="custom-div">
-                            <FormItem label="开始时间" style="width:49%;margin-right: 1%;">
+                            <FormItem label="开始时间" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
                                 <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
-                            <FormItem label="结束时间" style="width:50%;margin-right: 0px;">
+                            <FormItem label="结束时间" :class="device.mobile?'mobileFormRight':'pcEducationFormItem'">
                                 <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
-                            <FormItem label="毕业院校	" style="width:49%;margin-right: 1%;">
+                            <FormItem label="毕业院校	" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
                                 <Input type="text" v-model="item.graduatedschool"></Input>
                             </FormItem>
-                            <FormItem label="专业" style="width:50%;margin-right: 0px;">
+                            <FormItem label="专业" :class="device.mobile?'mobileFormRight':'pcEducationFormItem'">
                                 <Input type="text" v-model="item.profession"></Input>
                             </FormItem>
-                            <FormItem label="学历" style="width:49%;margin-right: 1%;">
+                            <FormItem label="学历" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
                                 <Select type="text" v-model="item.education">
-                                    <Option value="1">博士研究生</Option>
-                                    <Option value="2">硕士研究生</Option>
-                                    <Option value="3">本科</Option>
-                                    <Option value="4">专科</Option>
-                                    <Option value="5">中专</Option>
-                                    <Option value="6">高中</Option>
-                                    <Option value="7">初中</Option>
+                                    <Option :value=1>博士研究生</Option>
+                                    <Option :value=2>硕士研究生</Option>
+                                    <Option :value=3>本科</Option>
+                                    <Option :value=4>专科</Option>
+                                    <Option :value=5>中专</Option>
+                                    <Option :value=6>高中</Option>
+                                    <Option :value=7>初中</Option>
                                 </Select>
                             </FormItem>
                             <FormItem label="主键" style="display: none">
@@ -149,22 +148,22 @@
                 <TabPane id="working" label="工作经历">
                     <Form ref="workingForm" inline style="font-size: 0px;overflow-y: auto; overflow-x: hidden;height: 100%;">
                         <div v-for="(item,index) in workingForm" class="custom-div">
-                            <FormItem label="开始时间" style="width:49%;margin-right: 1%;">
+                            <FormItem label="开始时间" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
-                            <FormItem label="结束时间" style="width:50%;margin-right: 0;">
+                            <FormItem label="结束时间" :class="device.mobile?'mobileFormRight':'pcWorkingFormItem'">
                                 <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
-                            <FormItem label="公司名称" style="width:49%;margin-right: 1%;">
+                            <FormItem label="公司名称" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.companyname"></Input>
                             </FormItem>
-                            <FormItem label="职务" style="width:50%;margin-right: 0;">
+                            <FormItem label="职务" :class="device.mobile?'mobileFormRight':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
-                            <FormItem label="月薪" style="width:49%;margin-right: 51%;">
-                                <Input type="text" v-model="item.monthlysalary"></Input>
+                            <FormItem label="月薪" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
+                                <InputNumber style="width: 100%" :min="0" :max="1000000" :step="500" :precision='0' v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
-                            <FormItem label="工作描述" style="width:49%;margin-right: 1%;">
+                            <FormItem label="工作描述" style="width:79%;margin-right: 1%;">
                                 <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>
                             </FormItem>
                             <FormItem label="主键" style="display: none">
@@ -188,12 +187,24 @@
                         </FormItem>
                     </Form>
                 </TabPane>
-                <ButtonGroup slot="extra">
+                <ButtonGroup v-if="!device.mobile&&device.width>=490" slot="extra">
                     <Button type="primary" icon="document" @click="saveForm" size="small" >保存</Button>
                     <Button type="ghost" icon="edit" @click="searchUserModel = true" size="small">完善简历</Button>
                 </ButtonGroup>
-            </Tabs>
+                </Tabs>
         </Card>
+        <Row v-if="device.mobile&&device.width<=490" style="height: 6%;">
+            <Col span="12" style="height: 100%;border-top:1px #f0f0f0;">
+                <Button type="ghost" class="mobileTabButton" icon="edit" long @click="searchUserModel = true" size="large">
+                    完善简历
+                </Button>
+            </Col>
+            <Col span="12" style="height: 100%;">
+                <Button type="ghost" class="mobileTabButton" icon="ios-star-outline" long @click="saveForm" size="large" >
+                    保存简历
+                </Button>
+            </Col>
+        </Row>
         <Modal v-model="searchUserModel" inline width="360" :mask-closable="false">
             <p slot="header" style="color:#2b85e4;text-align:center;font-size: 14px">
                 <Icon type="information-circled"></Icon>
@@ -204,7 +215,7 @@
                     <Input type="text" v-model="searchUserForm.name"/>
                 </FormItem>
                 <FormItem label="手机号码" prop="phone" style="width: 49%;margin-right: 1%">
-                    <Input type="text" v-model.trim="searchUserForm.phone"/>
+                    <Input type="text" v-model="searchUserForm.phone"/>
                 </FormItem>
             </Form>
             <div style="text-align:center;color: #666">
@@ -231,8 +242,12 @@
             return {
                 searchUserModel: true,
                 searchUserForm: {
-                    name: '',
-                    phone: ''
+                    name: '张一一',
+                    phone: '18752033222'
+                },
+                device: {
+                    mobile: false,
+                    width: 0
                 },
                 educationForm: [
                     {
@@ -262,8 +277,8 @@
                     monthlysalary: '',
                     resumesource: '',
                     name: '',
-                    age: '',
-                    yearswork: '',
+                    age: 20,
+                    yearswork: 0,
                     sex: '',
                     marriage: '',
                     phone: '',
@@ -294,26 +309,12 @@
                     phone: [
                         {required: true, message: '手机号码必填', trigger: 'blur'},
                         {validator: validateMobile, trigger: 'blur'}
-                    ],
-                    age: [
-                        {required: false, type: 'number', message: '年龄不合法', trigger: 'change'}
-                    ],
-                    interviewtime: [
-                        { required: true, message: '面试时间必填', trigger: 'change', type: 'date' }
-                    ],
-                    testtime: [
-                        { required: true, message: '试岗时间必填', trigger: 'change', type: 'date' }
-                    ],
-                    testresults: [
-                        { required: true, message: '试岗成绩必填', trigger: 'blur' }
-                    ],
-                    status: [
-                        { required: true, message: '是否合格或到达必填', trigger: 'change' }
                     ]
                 }
             };
         },
         created () {
+            this.checkDevice();
             this.hire();
         },
         methods: {
@@ -363,26 +364,45 @@
                     });
                 });
             },
+            checkDevice() {
+                // 获取访问的user-agent
+                var ua = navigator.userAgent.toLowerCase() || window.navigator.userAgent.toLowerCase();
+                this.device.width = document.body.clientWidth;
+                // 判断user-agent
+                var isWX = /MicroMessenger/i.test(ua); // 微信端
+                var isIOS = /(iPhone|iPod|iOS)/i.test(ua); // 苹果家族
+                var isAndroid = /(android|nexus)/i.test(ua); // 安卓家族
+                var isWindows = /(Windows Phone|windows[\s+]phone)/i.test(ua); // 微软家族
+                var isBlackBerry = /BlackBerry/i.test(ua); // 黑莓家族
+                if (isWX || isIOS || isAndroid || isWindows || isBlackBerry) {
+                    this.device.mobile = true;
+                }
+            },
             saveForm() {
                 var g = this;
                 this.$refs['talentBean'].validate((valid) => {
-                    console.log(1);
-                    console.log(valid);
-                    var d = {};
-                    d.bean = JSON.stringify(this.talentBean);
-                    d.workingForm = JSON.stringify(this.workingForm);
-                    d.educationForm = JSON.stringify(this.educationForm);
-                    g.$http.post('/talentLibrary/saveGuest', d).then((res) => {
-                        g.saveBtn1Loading = false;
-                        g.saveBtn2Loading = false;
-                        if (res.success) {
-                            g.$Message.success('保存成功');
-                            g._findUser(res.message);
-                        } else {
-                            g.$Message.error('保存失败' + (res.message || ''));
-                        }
-                    });
+                    if (valid) {
+                        var d = {};
+                        d.bean = JSON.stringify(this.talentBean);
+                        d.workingForm = JSON.stringify(this.workingForm);
+                        d.educationForm = JSON.stringify(this.educationForm);
+                        g.$http.post('/talentLibrary/saveGuest', d).then((res) => {
+                            g.saveBtn1Loading = false;
+                            g.saveBtn2Loading = false;
+                            if (res.success) {
+                                g.$Message.success('保存成功');
+                                g._findUser(res.message);
+                            }
+                        });
+                    } else {
+                        return false;
+                    }
                 });
+            },
+            preventMove(){
+                // $('body').on('touchmove', function (event) {
+                //     event.preventDefault();
+                // });
             },
             _filterResultHandler () {
                 this._getPostData();
@@ -400,10 +420,12 @@
                 return new Promise(function (resolve, reject) {
                     vm.$http.post('/talentLibrary/find', {id: id}).then((res) => {
                         if (res.success) {
-                            resolve();
+                            console.log(res.educations);
                             vm.educationForm = res.educations;
+                            console.log(vm.educationForm);
                             vm.workingForm = res.workings;
                             vm.talentBean = res.talentLibrary;
+                            resolve();
                         } else {
                             reject(new Error('数据不存在'));
                         }
@@ -427,7 +449,43 @@
 
 <style lang="less">
     #guest {
+        -webkit-overflow-scrolling: touch;
         height: 100%;
+        .bottomTab{
+            height: 4%;
+        }
+        .mobileTabHeight{
+            height: 94%;
+        }
+        .pcTabHeight{
+            height: 99%;
+        }
+        .mobileTabButton{
+            border-radius: 0px;
+            font-size: 14px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            border: none;
+            background-color: #ffffff;
+        }
+        .mobileFormItemLeft{
+            width:49%;margin-right: 1%;
+        }
+        .mobileFormRight{
+            width:49%;margin-right: 1%;
+        }
+        .pcFormItem {
+            width:24%;margin-right: 1%;
+        }
+        .pcEducationFormItem{
+            width:17.5%;margin-right: 1%;
+        }
+        .pcWorkingFormItem{
+            width:19%;margin-right: 1%;
+        }
         .ivu-card-body{
             height: 100%;
             .ivu-tabs-content{
@@ -440,8 +498,8 @@
         }
 
         .custom-div{
-            margin: 5px auto;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 20px;
             border-bottom: 1px solid #cccccc;
         }
         .ivu-table-body {

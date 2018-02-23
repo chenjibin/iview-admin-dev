@@ -983,8 +983,6 @@
                             vm.changUserStatusModel = false;
                             vm.modalFlag2 = false;
                             vm._filterResultHandler();
-                        } else {
-                            vm.$Message.error(res.message);
                         }
                     });
                 });
