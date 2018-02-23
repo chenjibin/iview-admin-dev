@@ -21,9 +21,7 @@ router.beforeEach((to, from, next) => {
     Util.title(to.meta.title);
     if (to.name === 'guest') {
         next();
-        return;
-    }
-    if (Cookies.get('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
+    } else if (Cookies.get('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
         next({
             replace: true,
             name: 'locking'
