@@ -31,10 +31,27 @@
                         <Option value="2">已取消</Option>
                     </Select>
                 </FormItem>
+                <FormItem>
+                    <ButtonGroup>
+                        <Button type="primary"
+                                :disabled="!chooseDataArr.length"
+                                @click="_allExchange">
+                            <Icon type="navicon-round"></Icon>
+                            批量领取
+                        </Button>
+                        <Button type="primary"
+                                :disabled="!chooseDataArr.length"
+                                @click="">
+                            <Icon type="navicon-round"></Icon>
+                            批量取消
+                        </Button>
+                    </ButtonGroup>
+                </FormItem>
             </Form>
             <Table :columns="postColumns"
                    :loading="tableLoading"
                    :height="tableHeight"
+                   @on-selection-change="_tableSelectChange"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
                   @on-change="_setPage"
@@ -63,6 +80,11 @@
                     status: ''
                 },
                 postColumns: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
                     {
                         title: '商品名称',
                         key: 'goods_name'
@@ -202,7 +224,8 @@
                         }
                     }
                 ],
-                tableHeight: 500
+                tableHeight: 500,
+                chooseDataArr: []
             };
         },
         mixins: [pageMixin],
@@ -211,6 +234,16 @@
             this._setTableHeight();
         },
         methods: {
+            _allExchange() {
+                let data = {};
+                data.ids = this.chooseDataArr.map(x => x.id).join(',');
+                data.status = 1;
+                console.log(data);
+            },
+            _tableSelectChange(data) {
+                this.chooseDataArr = data;
+                console.log(data);
+            },
             _confirmExchangeGoods(data) {
                 let vm = this;
                 console.log(data);
@@ -221,9 +254,11 @@
                     onOk: function () {
                         let sendData = {};
                         sendData.id = data.id;
-                        vm.$http.post('', data).then((res) => {
+                        sendData.status = 1;
+                        vm.$http.post('/order/updateStatus', sendData).then((res) => {
                             if (res.success) {
-                                this.$Message.success('操作成功!');
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
                             }
                         });
                     }
@@ -239,9 +274,11 @@
                     onOk: function () {
                         let sendData = {};
                         sendData.id = data.id;
-                        vm.$http.post('', data).then((res) => {
+                        sendData.status = 2;
+                        vm.$http.post('/order/updateStatus', sendData).then((res) => {
                             if (res.success) {
-                                this.$Message.success('操作成功!');
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
                             }
                         });
                     }

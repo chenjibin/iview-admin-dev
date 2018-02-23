@@ -2,7 +2,7 @@
     <div>
         <Card>
             <Form inline :label-width="60">
-                <FormItem label="商品名称">
+                <FormItem label="员工姓名">
                     <Input type="text"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.name"
@@ -14,8 +14,8 @@
                             @on-change="_filterResultHandler"
                             placeholder="筛选类型"
                             style="width: 100px">
-                        <Option value="加金币记录">加金币记录</Option>
-                        <Option value="扣金币记录">扣金币记录</Option>
+                        <Option value="0">加金币记录</Option>
+                        <Option value="1">扣金币记录</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="属性">
@@ -60,7 +60,6 @@
 </template>
 <script>
     import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
     import debounce from 'lodash/debounce';
     export default {
         name: 'coinRecord',
@@ -77,46 +76,53 @@
                 postColumns: [
                     {
                         title: '姓名',
-                        key: 'organizename',
-                        align: 'center'
+                        key: 'user_name',
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '金币数量',
-                        key: 'postname',
-                        align: 'center'
+                        align: 'center',
+                        width: 120,
+                        render: (h, params) => {
+                            return h('span', {
+                                style: {
+                                    color: params.row.flag ? '#ed3f14' : '#19be6b'
+                                }
+                            }, params.row.opt_num);
+                        }
                     },
                     {
                         title: '属性',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'property',
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '说明',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'reason'
                     },
                     {
                         title: '日期',
-                        key: 'user_name',
+                        key: 'opt_time',
                         align: 'center'
                     },
                     {
                         title: '操作人',
-                        key: 'states',
-                        align: 'center',
-                        width: 120,
-                        render: (h, params) => {
-                            return h('Tag', {
-                                props: {
-                                    type: 'border',
-                                    color: params.row.status === '未审核' ? 'red' : 'green'
-                                }
-                            }, params.row.status);
-                        }
+                        key: 'opter',
+                        width: 120
                     }
                 ],
                 tableHeight: 500
             };
+        },
+        watch: {
+            'filterOpt.startDate'() {
+                this._filterResultHandler();
+            },
+            'filterOpt.endDate'() {
+                this._filterResultHandler();
+            }
         },
         mixins: [pageMixin],
         created() {
@@ -145,12 +151,12 @@
             },
             _getPostData() {
                 let data = {};
-                data.name = this.filterOpt.name;
-                data.plusType = this.filterOpt.plusType;
-                data.option = this.filterOpt.option;
+                data.userName = this.filterOpt.name;
+                data.exampleFlag = this.filterOpt.plusType;
+                data.proper = this.filterOpt.option;
                 data.startDate = this.filterOpt.startDate;
                 data.endDate = this.filterOpt.endDate;
-                this.getList('/order/journal_coinlist', data);
+                this.getList('/coin/coinlist', data);
             }
         },
         components: {}

@@ -20,7 +20,7 @@
                 </FormItem>
                 <FormItem>
                     <ButtonGroup>
-                        <Button type="primary" @click="_createGoods" >
+                        <Button type="primary" @click="_createGoods">
                             <Icon type="plus-round"></Icon>
                             新增
                         </Button>
@@ -60,7 +60,6 @@
                     </FormItem>
                     <FormItem label="所属分类">
                         <Select v-model="editorSettingData.type"
-                                placeholder=""
                                 style="width: 100px">
                             <Option value="纸品类">纸品类</Option>
                             <Option value="饮品类">饮品类</Option>
