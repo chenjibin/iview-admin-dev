@@ -45,16 +45,19 @@
                    width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>新增商品</span>
+                    <span>{{editorType === 'create' ? '新增商品' : '修改商品'}}</span>
                 </p>
-                <Form :label-width="80">
+                <Form :label-width="80"
+                      :rules="formRule"
+                      ref="formFo"
+                      :model="editorSettingData">
                     <FormItem label="是否下架">
                         <i-switch v-model="editorSettingData.isDown" size="large">
                             <span slot="open">上架</span>
                             <span slot="close">下架</span>
                         </i-switch>
                     </FormItem>
-                    <FormItem label="商品名称">
+                    <FormItem label="商品名称" prop="goodsName">
                         <Input type="text"
                                v-model="editorSettingData.goodsName"></Input>
                     </FormItem>
@@ -69,19 +72,23 @@
                         </Select>
                     </FormItem>
                     <FormItem label="价格">
-                        <Input type="text"
-                               v-model="editorSettingData.price"
-                               placeholder=""></Input>
+                        <InputNumber :precision="0" v-model="editorSettingData.price"></InputNumber>
+                        <!--<Input type="text"-->
+                               <!--v-model="editorSettingData.price"-->
+                               <!--placeholder=""></Input>-->
                     </FormItem>
-                    <FormItem label="商品图片">
-
+                    <FormItem label="商品图片" required>
+                            <fs-img-upload action="/oa/order/uploadfile"
+                                           path="/oa/upload/"
+                                           ref="imgUploadFo"
+                                           :upload.sync="imgFile"></fs-img-upload>
                     </FormItem>
                 </Form>
                 <div slot="footer">
                     <Button type="primary"
                             :loading="btnLoading"
-                            @click="">
-                        添加商品
+                            @click="_confirmAddGoods">
+                        {{editorType === 'create' ? '添加商品' : '修改商品'}}
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
                 </div>
@@ -91,15 +98,21 @@
 </template>
 <script>
     import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
+    import fsImgUpload from '@/baseComponents/fs-img-upload-new';
     import debounce from 'lodash/debounce';
     export default {
         name: 'goodsManage',
         data () {
             return {
                 editorSettingFlag: false,
+                editorType: 'create',
                 btnLoading: false,
-                postFormType: 'update',
+                imgFile: [],
+                formRule: {
+                    goodsName: [
+                        { required: true, message: '商品名称不能为空!', trigger: 'blur' }
+                    ]
+                },
                 filterOpt: {
                     goodsName: '',
                     status: ''
@@ -107,8 +120,10 @@
                 editorSettingData: {
                     goodsName: '',
                     type: '卡券类',
-                    price: '',
-                    isDown: true
+                    price: 0,
+                    isDown: true,
+                    goodPic: '',
+                    id: 0
                 },
                 postColumns: [
                     {
@@ -135,6 +150,11 @@
                                 }
                             });
                         }
+                    },
+                    {
+                        title: '价格',
+                        key: 'price',
+                        align: 'center'
                     },
                     {
                         title: '商品分类',
@@ -175,7 +195,7 @@
                                         },
                                         on: {
                                             click: function () {
-                                                vm._editorSetting(params.row);
+                                                vm._updateEditor(params.row);
                                             }
                                         }
                                     })
@@ -187,18 +207,66 @@
                 tableHeight: 500
             };
         },
+        watch: {
+            imgFile(val) {
+                this.editorSettingData.goodPic = val.length ? val[0].name : '';
+            }
+        },
         mixins: [pageMixin],
         created() {
             this._getPostData();
             this._setTableHeight();
         },
         methods: {
+            _confirmAddGoods() {
+                let vm = this;
+                vm.$refs.formFo.validate((valid) => {
+                    if (valid) {
+                        let data = {};
+                        let settingData = vm.editorSettingData;
+                        if (!settingData.goodPic) {
+                            vm.$Message.error('商品图片不能为空!');
+                            return;
+                        }
+                        data.content = settingData.goodsName;
+                        data.statistic = settingData.isDown ? '上架' : '下架';
+                        data.classify = settingData.type;
+                        data.price = settingData.price;
+                        data.uploadName = settingData.goodPic;
+                        data.id = settingData.id;
+                        vm.$http.post('/order/addGoods', data).then((res) => {
+                            if (res.success) {
+                                vm.$Message.success('');
+                            }
+                        });
+                        console.log(data);
+                    }
+                });
+            },
+            _updateEditor(data) {
+                console.log(data);
+                this.editorType = 'update';
+                this._initEditorSettingData();
+                let settingData = this.editorSettingData;
+                settingData.id = data.id;
+                settingData.price = data.price;
+                settingData.goodsName = data.name;
+                settingData.goodPic = data.image_path;
+                settingData.type = data.classify;
+                settingData.isDown = data.statistic === '上架';
+                this.imgFile = [{url: '/oa/upload/' + data.image_path, name: data.image_path}];
+                this.editorSettingFlag = true;
+            },
             _initEditorSettingData() {
                 let settingData = this.editorSettingData;
                 settingData.goodsName = '';
                 settingData.type = '卡券类';
-                settingData.price = '';
+                settingData.price = 0;
                 settingData.isDown = true;
+                settingData.goodPic = '';
+                settingData.id = 0;
+                this.imgFile = [];
+                this.$refs.imgUploadFo.removeAllPicFlie();
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -221,6 +289,7 @@
             },
             _createGoods() {
                 this._initEditorSettingData();
+                this.editorType = 'create';
                 this.editorSettingFlag = true;
             },
             _editorSetting(data) {
@@ -234,6 +303,8 @@
                 this.getList('/order/goodslist', data);
             }
         },
-        components: {}
+        components: {
+            fsImgUpload
+        }
     };
 </script>

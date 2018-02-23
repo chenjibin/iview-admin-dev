@@ -39,13 +39,13 @@
                     <ButtonGroup>
                         <Button type="primary"
                                 :disabled="!chooseDataArr.length"
-                                @click="_allExchange">
+                                @click="_allHandler(1)">
                             <Icon type="navicon-round"></Icon>
                             批量领取
                         </Button>
                         <Button type="primary"
                                 :disabled="!chooseDataArr.length"
-                                @click="">
+                                @click="_allHandler(2)">
                             <Icon type="navicon-round"></Icon>
                             批量取消
                         </Button>
@@ -237,16 +237,16 @@
             };
         },
         watch: {
-            'filterOpt.userId'(val) {
-                if (!val) {
-                    this.filterOpt.userName = '';
-                    return;
-                }
-                this.filterOpt.userName = this.nameOpt.filter(x => x.id === val)[0].realname;
-            },
-            'filterOpt.userName'() {
-                this._filterResultHandler();
-            }
+            // 'filterOpt.userId'(val) {
+            //     if (!val) {
+            //         this.filterOpt.userName = '';
+            //         return;
+            //     }
+            //     this.filterOpt.userName = this.nameOpt.filter(x => x.id === val)[0].realname;
+            // },
+            // 'filterOpt.userName'() {
+            //     this._filterResultHandler();
+            // }
         },
         mixins: [pageMixin],
         created() {
@@ -262,27 +262,29 @@
                 return flag;
             },
             _allHandler(status) {
-                let data = {};
-                data.ids = this.chooseDataArr.map(x => x.id).join(',');
-                data.status = status;
-                this.$http.post('/order/operation', data).then((res) => {
-                    if (res.success) {
-                        this.$Message.success('操作成功!');
-                        this._getPostData();
+                let vm = this;
+                let flag = vm._checkChooseStatus(this.chooseDataArr);
+                if (!flag) {
+                    this.$Message.error('只有待领取状态下的兑换订单才可以操作！');
+                    return;
+                }
+                let content = status === 1 ? '领取' : '取消';
+                vm.$Modal.confirm({
+                    content: '确认批量' + content + '选中的订单么?',
+                    okText: '确认' + content,
+                    cancelText: '关闭',
+                    onOk: function () {
+                        let data = {};
+                        data.ids = vm.chooseDataArr.map(x => x.id).join(',');
+                        data.status = status;
+                        vm.$http.post('/order/operation', data).then((res) => {
+                            if (res.success) {
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
+                            }
+                        });
                     }
                 });
-            },
-            _allExchange() {
-                let data = {};
-                data.ids = this.chooseDataArr.map(x => x.id).join(',');
-                data.status = 1;
-                console.log(data);
-            },
-            _allCancel() {
-                let data = {};
-                data.ids = this.chooseDataArr.map(x => x.id).join(',');
-                data.status = 2;
-                console.log(data);
             },
             _tableSelectChange(data) {
                 this.chooseDataArr = data;
@@ -351,6 +353,7 @@
                 this.editorSettingFlag = true;
             },
             _getPostData() {
+                this.chooseDataArr = [];
                 let data = {};
                 data.name = this.filterOpt.name;
                 data.status = this.filterOpt.status;
