@@ -1,7 +1,7 @@
 <template>
     <div id="hire">
         <Card>
-            <Form inline :label-width="60">
+            <Form inline :label-width="90">
                 <FormItem label="姓名">
                     <Input type="text" style="width: 120px"
                            @on-change="_inputDebounce"
@@ -155,25 +155,25 @@
                     <Form ref="talentBean" :label-width="100"
                           style="overflow-y: auto; overflow-x: hidden; max-height: 600px;margin-right: -12px;" inline>
                         <Input type="text" style="display: none" v-model="talentBean.id"></Input>
-                        <FormItem label="姓名" style="width:40%">
+                        <FormItem label="姓名" style="width:45%">
                             <Input type="text" v-model="talentBean.name"></Input>
                         </FormItem>
-                        <FormItem label="性别" style="width:40%">
+                        <FormItem label="性别" style="width:45%">
                             <Select type="text" v-model="talentBean.sex">
                                 <Option value="1">男</Option>
                                 <Option value="2">女</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="年龄" style="width:40%">
+                        <FormItem label="年龄" style="width:45%">
                             <Input type="text" v-model="talentBean.age"></Input>
                         </FormItem>
-                        <FormItem label="手机" style="width:40%">
+                        <FormItem label="手机" style="width:45%">
                             <Input type="text" v-model="talentBean.phone"></Input>
                         </FormItem>
-                        <FormItem label="期望月薪" style="width:40%">
+                        <FormItem label="期望月薪" style="width:45%">
                             <Input type="text" v-model="talentBean.monthlysalary"></Input>
                         </FormItem>
-                        <FormItem label="信息来源" style="width:40%">
+                        <FormItem label="信息来源" style="width:45%">
                             <Select type="text" v-model="talentBean.resumesource">
                                 <Option value="">请选择</Option>
                                 <Option value="1">58同城</Option>
@@ -188,31 +188,31 @@
                                 <Option value="10">人才市场</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="工作经验" style="width:40%">
-                            <Input type="text" v-model="talentBean.yearswork"></Input>
+                        <FormItem label="工作经验" style="width:45%">
+                            <Input type="number" v-model="talentBean.yearswork" placeholder="单位：年"></Input>
                         </FormItem>
-                        <FormItem label="电子邮箱" style="width:40%">
+                        <FormItem label="电子邮箱" style="width:45%">
                             <Input type="text" v-model="talentBean.email"></Input>
                         </FormItem>
-                        <FormItem label="身份证号码" style="width:40%">
+                        <FormItem label="身份证号码" style="width:45%">
                             <Input type="text" v-model="talentBean.idnum"></Input>
                         </FormItem>
-                        <FormItem label="籍贯" style="width:40%">
+                        <FormItem label="籍贯" style="width:45%">
                             <Input type="text" v-model="talentBean.account"></Input>
                         </FormItem>
-                        <FormItem label="民族" style="width:40%">
+                        <FormItem label="民族" style="width:45%">
                             <Input type="text" v-model="talentBean.nation"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人" style="width:40%">
+                        <FormItem label="紧急联系人" style="width:45%">
                             <Input type="text" v-model="talentBean.emperson"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人关系" style="width:40%">
+                        <FormItem label="联系人关系" style="width:45%">
                             <Input type="text" v-model="talentBean.emrelate"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人号码" style="width:40%">
+                        <FormItem label="联系人号码" style="width:45%">
                             <Input type="text" v-model="talentBean.emphone"></Input>
                         </FormItem>
-                        <FormItem label="政治面貌" style="width:40%">
+                        <FormItem label="政治面貌" style="width:45%">
                             <Select type="text" v-model="talentBean.politicalstatus">
                                 <Option value="党员">党员</Option>
                                 <Option value="预备党员">预备党员</Option>
@@ -221,31 +221,31 @@
                                 <Option value="群众">群众</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="婚姻状况" style="width:40%">
+                        <FormItem label="婚姻状况" style="width:45%">
                             <Select type="text" v-model="talentBean.marriage">
                                 <Option value="1">已婚</Option>
                                 <Option value="2">未婚</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="详细住址" style="width:40%">
+                        <FormItem label="详细住址" style="width:45%">
                             <Input type="textarea" v-model="talentBean.address"></Input>
                         </FormItem>
-                        <FormItem label="项目经验" style="width:40%">
+                        <FormItem label="项目经验" style="width:45%">
                             <Input type="textarea" v-model="talentBean.projectexperience"></Input>
                         </FormItem>
-                        <FormItem label="专长技能" style="width:40%">
+                        <FormItem label="专长技能" style="width:45%">
                             <Input type="textarea" v-model="talentBean.expertiseskills"></Input>
                         </FormItem>
-                        <FormItem label="语言能力" style="width:40%">
+                        <FormItem label="语言能力" style="width:45%">
                             <Input type="textarea" v-model="talentBean.languageskills"></Input>
                         </FormItem>
-                        <FormItem label="自我评价" style="width:40%">
+                        <FormItem label="自我评价" style="width:45%">
                             <Input type="textarea" v-model="talentBean.selfevaluation"></Input>
                         </FormItem>
-                        <FormItem label="培训经历" style="width:40%">
+                        <FormItem label="培训经历" style="width:45%">
                             <Input type="textarea" v-model="talentBean.trainingexperience"></Input>
                         </FormItem>
-                        <FormItem label="面试意见" style="width:40%">
+                        <FormItem label="面试意见" style="width:45%">
                             <Input type="textarea" v-model="talentBean.remarks"></Input>
                         </FormItem>
                     </Form>
@@ -254,10 +254,10 @@
                     <Form :gutter="1" ref="educationForm" inline>
                         <div v-for="(item,index) in educationForm">
                             <FormItem label="开始时间" style="width:17%">
-                                <DatePicker type="date" v-model="item.starttime"></DatePicker>
+                                <DatePicker type="date" @on-change="_infoDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" style="width:17%">
-                                <DatePicker type="date" v-model="item.endtime"></DatePicker>
+                                <DatePicker type="date" @on-change="_infoDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="毕业院校	" style="width:17%">
                                 <Input type="text" v-model="item.graduatedschool"></Input>
@@ -301,10 +301,10 @@
                     <Form ref="workingForm" inline style="overflow-y: auto;overflow-x: hidden;max-height: 600px;margin-right: -12px;">
                         <div v-for="(item,index) in workingForm" style="margin: 10px auto;border-bottom: 1px solid #f3f3f3;">
                             <FormItem label="开始时间" style="width:18%">
-                                <DatePicker type="date" v-model="item.starttime"></DatePicker>
+                                <DatePicker type="date" @on-change="_infoDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" style="width:18%">
-                                <DatePicker type="date" v-model="item.endtime"></DatePicker>
+                                <DatePicker type="date" @on-change="_infoDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="公司名称" style="width:18%">
                                 <Input type="text" v-model="item.companyname"></Input>
@@ -864,11 +864,12 @@
                     this.saveBtn2Loading = false;
                     if (res.success) {
                         this.$Message.success('保存成功');
+                        this._filterResultHandler();
                         if (type === 2) {
                             this.settingModalFlag = false;
                             return;
                         }
-                        this._findUser(res.msg);
+                        this._findUser(res.message);
                     }
                 });
             },
@@ -963,6 +964,9 @@
             saveStatus() {
                 var vm = this;
                 this.$refs['statusForm'].validate((valid) => {
+                    if (!valid) {
+                        return false;
+                    }
                     var d = vm.statusForm;
                     // debugger;
                     for (var key in d) {
@@ -980,7 +984,7 @@
                             vm.modalFlag2 = false;
                             vm._filterResultHandler();
                         } else {
-                            vm.$Message.error(res.msg);
+                            vm.$Message.error(res.message);
                         }
                     });
                 });
@@ -1033,6 +1037,14 @@
             _birthdayChange (val) {
                 this.filterOpt.birthday = val;
                 this._filterResultHandler();
+            },
+            _infoDateChange (type, index, key, value) {
+                if (type === 1) {
+                    this.educationForm[index][key] = value;
+                }
+                if (type === 2) {
+                    this.workingForm[index][key] = value;
+                }
             },
             initPage () {
                 this.pageData.page = 1;
