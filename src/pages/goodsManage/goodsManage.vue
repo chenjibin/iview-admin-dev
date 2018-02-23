@@ -8,16 +8,16 @@
                            v-model="filterOpt.goodsName"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
-                <FormItem label="上架状态">
-                    <Select v-model="filterOpt.isDown"
-                            clearable
-                            @on-change="_filterResultHandler"
-                            placeholder="筛选状态"
-                            style="width: 100px">
-                        <Option value="下架">下架</Option>
-                        <Option value="下架">上架</Option>
-                    </Select>
-                </FormItem>
+                <!--<FormItem label="上架状态">-->
+                    <!--<Select v-model="filterOpt.isDown"-->
+                            <!--clearable-->
+                            <!--@on-change="_filterResultHandler"-->
+                            <!--placeholder="筛选状态"-->
+                            <!--style="width: 100px">-->
+                        <!--<Option value="下架">下架</Option>-->
+                        <!--<Option value="下架">上架</Option>-->
+                    <!--</Select>-->
+                <!--</FormItem>-->
                 <FormItem>
                     <ButtonGroup>
                         <Button type="primary" @click="_createGoods">
@@ -118,34 +118,40 @@
                     },
                     {
                         title: '商品名称',
-                        key: 'organizename',
-                        align: 'center'
+                        key: 'name'
                     },
                     {
-                        title: '图片',
+                        title: '商品图片',
                         key: 'postname',
                         align: 'center',
+                        width: 160,
                         render: (h, params) => {
-                            return h('span', moment(params.row['record_month']).format('YYYY-MM'));
+                            return h('img', {
+                                attrs: {
+                                    src: 'http://tm.xyyzi.com:9090/oa/upload/' + params.row.image_path
+                                },
+                                style: {
+                                    maxWidth: '100%'
+                                }
+                            });
                         }
                     },
                     {
                         title: '商品分类',
-                        key: 'user_name',
+                        key: 'classify',
                         align: 'center'
                     },
                     {
                         title: '状态',
                         key: 'states',
                         align: 'center',
-                        width: 120,
                         render: (h, params) => {
                             return h('Tag', {
                                 props: {
                                     type: 'border',
-                                    color: params.row.status === '未审核' ? 'red' : 'green'
+                                    color: params.row.statistic === '下架' ? 'red' : 'green'
                                 }
-                            }, params.row.status);
+                            }, params.row.statistic);
                         }
                     },
                     {

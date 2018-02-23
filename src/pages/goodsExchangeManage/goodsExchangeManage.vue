@@ -9,6 +9,10 @@
                            placeholder="筛选商品名称"></Input>
                 </FormItem>
                 <FormItem label="兑换人">
+                    <!--<fs-search-user v-model="filterOpt.userId"-->
+                                    <!--:optionlist.sync="nameOpt"-->
+                                    <!--:clearable="true"-->
+                                    <!--:label="filterOpt.userName"></fs-search-user>-->
                     <Input type="text"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.userName"
@@ -69,15 +73,19 @@
 <script>
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
+    // import fsSearchUser from '@/baseComponents/fs-search-user';
     export default {
         name: 'goodsExchangeManage',
         data () {
             return {
+                nameOpt: [],
+                nameLabel: '',
                 filterOpt: {
                     name: '',
                     userName: '',
                     department: '',
-                    status: ''
+                    status: '',
+                    userId: ''
                 },
                 postColumns: [
                     {
@@ -228,16 +236,52 @@
                 chooseDataArr: []
             };
         },
+        watch: {
+            'filterOpt.userId'(val) {
+                if (!val) {
+                    this.filterOpt.userName = '';
+                    return;
+                }
+                this.filterOpt.userName = this.nameOpt.filter(x => x.id === val)[0].realname;
+            },
+            'filterOpt.userName'() {
+                this._filterResultHandler();
+            }
+        },
         mixins: [pageMixin],
         created() {
             this._getPostData();
             this._setTableHeight();
         },
         methods: {
+            _checkChooseStatus(arr) {
+                let flag = true;
+                arr.forEach(item => {
+                    if (item.status !== 0) flag = false;
+                });
+                return flag;
+            },
+            _allHandler(status) {
+                let data = {};
+                data.ids = this.chooseDataArr.map(x => x.id).join(',');
+                data.status = status;
+                this.$http.post('/order/operation', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('操作成功!');
+                        this._getPostData();
+                    }
+                });
+            },
             _allExchange() {
                 let data = {};
                 data.ids = this.chooseDataArr.map(x => x.id).join(',');
                 data.status = 1;
+                console.log(data);
+            },
+            _allCancel() {
+                let data = {};
+                data.ids = this.chooseDataArr.map(x => x.id).join(',');
+                data.status = 2;
                 console.log(data);
             },
             _tableSelectChange(data) {
@@ -315,6 +359,8 @@
                 this.getList('/order/orderlist', data);
             }
         },
-        components: {}
+        components: {
+            // fsSearchUser
+        }
     };
 </script>
