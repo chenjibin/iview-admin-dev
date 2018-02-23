@@ -19,26 +19,29 @@ export const router = new VueRouter(RouterConfig);
 router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();
     Util.title(to.meta.title);
-    if (to.name === 'guest') {
-        next();
-    } else if (Cookies.get('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
-        next({
-            replace: true,
-            name: 'locking'
-        });
-    } else if (Cookies.get('locking') === '0' && to.name === 'locking') {
-        next(false);
-    } else {
-        if (!Cookies.get('user') && to.name !== 'login') { // 判断是否已经登录且前往的页面不是登录页
+    if (!Cookies.get('user')) {
+        if (to.meta.white) {
+            next();
+        } else if (to.name !== 'login') {
             next({
                 name: 'login'
             });
-        } else if (Cookies.get('user') && to.name === 'login') { // 判断是否已经登录且前往的是登录页
+        }
+    } else {
+        if (Cookies.get('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
+            next({
+                replace: true,
+                name: 'locking'
+            });
+        } else if (Cookies.get('locking') === '0' && to.name === 'locking') {
+            next(false);
+        } else if (to.name === 'login') { // 判断是否已经登录且前往的是登录页
             Util.title();
+            console.log('33333');
             next({
                 name: 'home_index'
             });
-        } else if (Cookies.get('user') && to.name !== 'login') {
+        } else if (to.name !== 'login') {
             if (!store.state.app.premissionMenu.length) {
                 Util.getPermissionData().then((data) => {
                     let userInfo = JSON.parse(Cookies.get('userInfo'));
@@ -49,13 +52,12 @@ router.beforeEach((to, from, next) => {
             } else {
                 Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to.name, router, next);
             }
-        } else {
-            Util.toDefaultPage(routers, to.name, router, next);
         }
     }
 });
 
 router.afterEach((to) => {
+    console.log(to);
     Util.openNewPage(router.app, to.name, to.params, to.query);
     iView.LoadingBar.finish();
     window.scrollTo(0, 0);
