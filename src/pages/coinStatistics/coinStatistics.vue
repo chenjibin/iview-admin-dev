@@ -24,6 +24,7 @@
             <Table :columns="postColumns"
                    :loading="tableLoading"
                    :height="tableHeight"
+                   @on-sort-change="_sortChange"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
                   :current="pageData.page"
@@ -35,56 +36,6 @@
                   show-total
                   show-elevator
                   style="margin-top: 16px;"></Page>
-            <Modal v-model="editorSettingFlag"
-                   width="300"
-                   :mask-closable="false">
-                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
-                </p>
-                <Form>
-                    <FormItem label="是否下架">
-                        <i-switch v-model="editorSettingData.isDown" size="large">
-                            <span slot="open">上架</span>
-                            <span slot="close">下架</span>
-                        </i-switch>
-                    </FormItem>
-                    <FormItem label="商品名称">
-                        <Input type="text"
-                               v-model="editorSettingData.name"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="所属分类">
-                        <Select v-model="editorSettingData.type"
-                                placeholder=""
-                                style="width: 100px">
-                            <Option value="纸品类">纸品类</Option>
-                            <Option value="饮品类">饮品类</Option>
-                            <Option value="纸品类">食品类</Option>
-                            <Option value="饮品类">卡券类</Option>
-                            <Option value="饮品类">服饰类</Option>
-                        </Select>
-                    </FormItem>
-                    <FormItem label="价格">
-                        <Input type="text"
-                               v-model="editorSettingData.price"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
-                                    placeholder="筛选考勤月份"
-                                    @on-change=""
-                                    :value="editorSettingData.month"></DatePicker>
-                    </FormItem>
-                </Form>
-                <div slot="footer">
-                    <Button type="primary"
-                            :loading="btnLoading"
-                            @click="">
-                        添加商品
-                    </Button>
-                    <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
-                </div>
-            </Modal>
         </Card>
     </div>
 </template>
@@ -96,60 +47,59 @@
         name: 'coinStatistics',
         data () {
             return {
-                editorSettingFlag: false,
-                btnLoading: false,
-                postFormType: 'update',
                 filterOpt: {
                     name: '',
                     dep: '',
-                    year: ''
-                },
-                editorSettingData: {
-                    name: '',
-                    type: '',
-                    price: '',
-                    isDown: '',
-                    month: ''
+                    year: '',
+                    sort: {
+                        key: '',
+                        order: ''
+                    }
                 },
                 postColumns: [
                     {
                         title: '姓名',
-                        key: 'organizename',
+                        key: 'realname',
                         align: 'center'
                     },
                     {
                         title: '所在部门',
-                        key: 'postname',
+                        key: 'department',
                         align: 'center'
                     },
                     {
                         title: '财富点',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'treasure',
+                        align: 'center',
+                        sortable: true
                     },
                     {
                         title: '技能点',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'skill',
+                        align: 'center',
+                        sortable: true
                     },
                     {
                         title: '伯乐点',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'talentscout',
+                        align: 'center',
+                        sortable: true
                     },
                     {
                         title: '智慧点',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'wisdom',
+                        align: 'center',
+                        sortable: true
                     },
                     {
                         title: '综合能力值',
-                        key: 'user_name',
-                        align: 'center'
+                        key: 'total',
+                        align: 'center',
+                        sortable: true
                     },
                     {
                         title: '统计日期',
-                        key: 'user_name',
+                        key: 'date',
                         align: 'center',
                         width: 120
                     }
@@ -157,13 +107,21 @@
                 tableHeight: 500
             };
         },
+        watch: {
+            'filterOpt.year'() {
+                this._filterResultHandler();
+            }
+        },
         mixins: [pageMixin],
         created() {
             this._getPostData();
             this._setTableHeight();
         },
         methods: {
-            _initEditorSettingData() {
+            _sortChange(sort) {
+                this.filterOpt.sort.key = sort.key;
+                this.filterOpt.sort.order = sort.order === 'normal' ? '' : sort.order;
+                this._filterResultHandler();
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -184,15 +142,13 @@
                 this.pageData.pageSize = size;
                 this._getPostData();
             },
-            _editorSetting(data) {
-                this._initEditorSettingData();
-                this.editorSettingFlag = true;
-            },
             _getPostData() {
                 let data = {};
-                data.goodsName = this.filterOpt.goodsName;
-                data.status = this.filterOpt.status;
-                this.getList('', data);
+                data.name = this.filterOpt.name;
+                data.dpname = this.filterOpt.dep;
+                data.year = this.filterOpt.year;
+                data.sort = JSON.stringify(this.filterOpt.sort);
+                this.getList('/coin/propertyList', data);
             }
         },
         components: {}

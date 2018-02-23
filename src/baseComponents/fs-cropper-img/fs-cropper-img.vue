@@ -72,17 +72,24 @@
                 let vm = this;
                 this.btnLoading = true;
                 this.cropper.getCroppedCanvas().toBlob(function (blob) {
+                    console.log(blob);
                     let xhr = new XMLHttpRequest();
                     let formData = new FormData();
                     formData.append('imgFile', blob);
                     xhr.onreadystatechange = function() {
-                        if (xhr.status === 200) {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                             // xhr.responseText就是返回的数据
+                            let respondData = JSON.parse(xhr.responseText);
+                            if (respondData.success) {
+                                vm.$Message.success('头像修改成功！');
+                                vm.$emit('change-success');
+                            }
+                            console.log(respondData);
                         }
-                        this.btnLoading = false;
+                        vm.btnLoading = false;
                     };
                     // 开始上传
-                    xhr.open('POST', '/oa/od/uploadfile', true);
+                    xhr.open('POST', '/oa/user/addHeadpic', true);
                     xhr.send(formData);
                 }, vm.fileData.fileType || 'image/png');
             },

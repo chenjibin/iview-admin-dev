@@ -5,7 +5,8 @@ export const loginRouter = {
     path: '/login',
     name: 'login',
     meta: {
-        title: 'Login - 登录'
+        title: 'Login - 登录',
+        white: true
     },
     component: resolve => { require(['@/views/login.vue'], resolve); }
 };
@@ -13,7 +14,8 @@ export const guestRouter = {
     path: '/guest',
     name: 'guest',
     meta: {
-        title: '社会招聘'
+        title: '社会招聘',
+        white: true
     },
     component: resolve => { require(['@/pages/hireManager/guest.vue'], resolve); }
 };
@@ -22,7 +24,8 @@ export const page404 = {
     path: '/*',
     name: 'error-404',
     meta: {
-        title: '404-页面不存在'
+        title: '404-页面不存在',
+        white: true
     },
     component: resolve => { require(['@/views/error-page/404.vue'], resolve); }
 };
@@ -30,7 +33,8 @@ export const page404 = {
 export const page403 = {
     path: '/403',
     meta: {
-        title: '403-权限不足'
+        title: '403-权限不足',
+        white: true
     },
     name: 'error-403',
     component: resolve => { require(['@//views/error-page/403.vue'], resolve); }
@@ -39,7 +43,8 @@ export const page403 = {
 export const page500 = {
     path: '/500',
     meta: {
-        title: '500-服务端错误'
+        title: '500-服务端错误',
+        white: true
     },
     name: 'error-500',
     component: resolve => { require(['@/views/error-page/500.vue'], resolve); }

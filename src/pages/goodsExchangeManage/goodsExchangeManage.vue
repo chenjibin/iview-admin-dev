@@ -9,6 +9,10 @@
                            placeholder="筛选商品名称"></Input>
                 </FormItem>
                 <FormItem label="兑换人">
+                    <!--<fs-search-user v-model="filterOpt.userId"-->
+                                    <!--:optionlist.sync="nameOpt"-->
+                                    <!--:clearable="true"-->
+                                    <!--:label="filterOpt.userName"></fs-search-user>-->
                     <Input type="text"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.userName"
@@ -31,10 +35,27 @@
                         <Option value="2">已取消</Option>
                     </Select>
                 </FormItem>
+                <FormItem>
+                    <ButtonGroup>
+                        <Button type="primary"
+                                :disabled="!chooseDataArr.length"
+                                @click="_allHandler(1)">
+                            <Icon type="navicon-round"></Icon>
+                            批量领取
+                        </Button>
+                        <Button type="primary"
+                                :disabled="!chooseDataArr.length"
+                                @click="_allHandler(2)">
+                            <Icon type="navicon-round"></Icon>
+                            批量取消
+                        </Button>
+                    </ButtonGroup>
+                </FormItem>
             </Form>
             <Table :columns="postColumns"
                    :loading="tableLoading"
                    :height="tableHeight"
+                   @on-selection-change="_tableSelectChange"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
                   @on-change="_setPage"
@@ -52,17 +73,26 @@
 <script>
     import pageMixin from '@/mixins/pageMixin';
     import debounce from 'lodash/debounce';
+    // import fsSearchUser from '@/baseComponents/fs-search-user';
     export default {
         name: 'goodsExchangeManage',
         data () {
             return {
+                nameOpt: [],
+                nameLabel: '',
                 filterOpt: {
                     name: '',
                     userName: '',
                     department: '',
-                    status: ''
+                    status: '',
+                    userId: ''
                 },
                 postColumns: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
                     {
                         title: '商品名称',
                         key: 'goods_name'
@@ -202,8 +232,21 @@
                         }
                     }
                 ],
-                tableHeight: 500
+                tableHeight: 500,
+                chooseDataArr: []
             };
+        },
+        watch: {
+            // 'filterOpt.userId'(val) {
+            //     if (!val) {
+            //         this.filterOpt.userName = '';
+            //         return;
+            //     }
+            //     this.filterOpt.userName = this.nameOpt.filter(x => x.id === val)[0].realname;
+            // },
+            // 'filterOpt.userName'() {
+            //     this._filterResultHandler();
+            // }
         },
         mixins: [pageMixin],
         created() {
@@ -211,6 +254,42 @@
             this._setTableHeight();
         },
         methods: {
+            _checkChooseStatus(arr) {
+                let flag = true;
+                arr.forEach(item => {
+                    if (item.status !== 0) flag = false;
+                });
+                return flag;
+            },
+            _allHandler(status) {
+                let vm = this;
+                let flag = vm._checkChooseStatus(this.chooseDataArr);
+                if (!flag) {
+                    this.$Message.error('只有待领取状态下的兑换订单才可以操作！');
+                    return;
+                }
+                let content = status === 1 ? '领取' : '取消';
+                vm.$Modal.confirm({
+                    content: '确认批量' + content + '选中的订单么?',
+                    okText: '确认' + content,
+                    cancelText: '关闭',
+                    onOk: function () {
+                        let data = {};
+                        data.ids = vm.chooseDataArr.map(x => x.id).join(',');
+                        data.status = status;
+                        vm.$http.post('/order/operation', data).then((res) => {
+                            if (res.success) {
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
+                            }
+                        });
+                    }
+                });
+            },
+            _tableSelectChange(data) {
+                this.chooseDataArr = data;
+                console.log(data);
+            },
             _confirmExchangeGoods(data) {
                 let vm = this;
                 console.log(data);
@@ -221,9 +300,11 @@
                     onOk: function () {
                         let sendData = {};
                         sendData.id = data.id;
-                        vm.$http.post('', data).then((res) => {
+                        sendData.status = 1;
+                        vm.$http.post('/order/updateStatus', sendData).then((res) => {
                             if (res.success) {
-                                this.$Message.success('操作成功!');
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
                             }
                         });
                     }
@@ -239,9 +320,11 @@
                     onOk: function () {
                         let sendData = {};
                         sendData.id = data.id;
-                        vm.$http.post('', data).then((res) => {
+                        sendData.status = 2;
+                        vm.$http.post('/order/updateStatus', sendData).then((res) => {
                             if (res.success) {
-                                this.$Message.success('操作成功!');
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
                             }
                         });
                     }
@@ -270,6 +353,7 @@
                 this.editorSettingFlag = true;
             },
             _getPostData() {
+                this.chooseDataArr = [];
                 let data = {};
                 data.name = this.filterOpt.name;
                 data.status = this.filterOpt.status;
@@ -278,6 +362,8 @@
                 this.getList('/order/orderlist', data);
             }
         },
-        components: {}
+        components: {
+            // fsSearchUser
+        }
     };
 </script>
