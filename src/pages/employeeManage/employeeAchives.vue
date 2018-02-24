@@ -519,7 +519,7 @@
                 },
                 tableLoading: true,
                 filterOpt: {
-                    name: '1', // 员工姓名
+                    name: '', // 员工姓名
                     monthDate: '', // 入职日期左区间
                     endmonthDate: '', // 入职日期右区间
                     kqstates: '1', // 在职状态
