@@ -51,7 +51,6 @@ module.exports = merge(webpackBaseConfig, {
         //     mangle: true,
         //     compressor: {
         //       warnings: false,
-        //       drop_console: true,
         //       drop_debugger: true
         //      }
         // }),

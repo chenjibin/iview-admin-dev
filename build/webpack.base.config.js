@@ -3,6 +3,7 @@ const os = require('os');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HappyPack = require('happypack');
+const UglifyJsParallelPlugin = require('webpack-uglify-parallel');
 var happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 
 function resolve (dir) {
@@ -79,6 +80,18 @@ module.exports = {
             loaders: ['babel-loader'],
             threadPool: happyThreadPool,
             verbose: true
+        }),
+        new HappyPack({
+            id: 'less',
+            // threads: 4,
+            threadPool: happyThreadPool,
+            loaders: ['css-loader', 'less-loader']
+        }),
+        new HappyPack({
+            id: 'css',
+            // threads: 4,
+            threadPool: happyThreadPool,
+            loaders: ['css-loader', 'postcss-loader'],
         })
     ],
     resolve: {
