@@ -33,6 +33,9 @@
         background: #f0f0f0;
         overflow: hidden;
     }
+    .ivu-btn-text:focus {
+        box-shadow: none;
+    }
     .fs-square-img {
         position: relative;
         padding-top: 100%;

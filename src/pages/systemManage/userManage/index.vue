@@ -2,80 +2,80 @@
     <div id="employee-manage">
         <Row :gutter="10">
             <Col :span="4">
-                <Card>
-                    <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
-                    <el-tree :data="orgTreeData"
-                             ref="treeDom"
-                             :filter-node-method="filterNode"
-                             :expand-on-click-node="false"
-                             :highlight-current="true"
-                             @node-click="_treeNodeClickHandler"
-                             style="margin-top: 10px;"
-                             :props="defaultProps"></el-tree>
-                </Card>
+            <Card>
+                <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
+                <el-tree :data="orgTreeData"
+                         ref="treeDom"
+                         :filter-node-method="filterNode"
+                         :expand-on-click-node="false"
+                         :highlight-current="true"
+                         @node-click="_treeNodeClickHandler"
+                         style="margin-top: 10px;"
+                         :props="defaultProps"></el-tree>
+            </Card>
             </Col>
             <Col :span="20">
-                <Card>
-                    <Form ref="searchData" :model="searchData" inline :label-width="50">
-                        <FormItem prop="realName" label="姓名">
-                            <Input type="text"
-                                   @on-change="_inputDebounce"
-                                   v-model="searchData.realName"
-                                   placeholder="筛选姓名"></Input>
-                        </FormItem>
-                        <FormItem prop="postName" label="岗位">
-                            <Input type="text"
-                                   @on-change="_inputDebounce"
-                                   v-model="searchData.postName"
-                                   placeholder="筛选岗位"></Input>
-                        </FormItem>
-                        <FormItem label="角色">
-                            <Select v-model="searchData.roleId" clearable :transfer="true" placeholder="筛选角色" style="width: 120px">
-                                <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem label="状态">
-                            <Select v-model="searchData.states"
-                                    clearable
-                                    placeholder="筛选状态"
-                                    style="width: 100px">
-                                <Option value="1">启用</Option>
-                                <Option value="0">禁用</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem>
-                            <ButtonGroup>
-                                <Button type="primary" @click="_addUserOpen">
-                                    <Icon type="plus-round"></Icon>
-                                    新增人员
-                                </Button>
-                                <Button type="primary" @click="_openCoinSettingHandler">
-                                    <Icon type="cash"></Icon>
-                                    金币操作
-                                </Button>
-                                <Button type="primary" @click="banciModalFlag = true">
-                                    <Icon type="ios-book-outline"></Icon>
-                                    班次管理
-                                </Button>
-                            </ButtonGroup>
-                        </FormItem>
-                    </Form>
-                    <Table :columns="columns1"
-                           :loading="tableLoading"
-                           @on-sort-change="_tableSortChange"
-                           @on-selection-change="_tableSelectChange"
-                           :height="tableHeight"
-                           :data="userData"></Table>
-                    <Page :total="totalCount"
-                          @on-change="_setPage"
-                          @on-page-size-change="_setPageSize"
-                          :page-size="searchData.pageSize"
-                          placement="top"
-                          show-sizer
-                          show-total
-                          show-elevator
-                          style="margin-top: 16px;"></Page>
-                </Card>
+            <Card>
+                <Form ref="searchData" :model="searchData" inline :label-width="50">
+                    <FormItem prop="realName" label="姓名">
+                        <Input type="text"
+                               @on-change="_inputDebounce"
+                               v-model="searchData.realName"
+                               placeholder="筛选姓名"></Input>
+                    </FormItem>
+                    <FormItem prop="postName" label="岗位">
+                        <Input type="text"
+                               @on-change="_inputDebounce"
+                               v-model="searchData.postName"
+                               placeholder="筛选岗位"></Input>
+                    </FormItem>
+                    <FormItem label="角色">
+                        <Select v-model="searchData.roleId" clearable :transfer="true" placeholder="筛选角色" style="width: 120px">
+                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="状态">
+                        <Select v-model="searchData.states"
+                                clearable
+                                placeholder="筛选状态"
+                                style="width: 100px">
+                            <Option value="1">启用</Option>
+                            <Option value="0">禁用</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem>
+                        <ButtonGroup>
+                            <Button type="primary" @click="_addUserOpen">
+                                <Icon type="plus-round"></Icon>
+                                新增人员
+                            </Button>
+                            <Button type="primary" @click="_openCoinSettingHandler">
+                                <Icon type="cash"></Icon>
+                                金币操作
+                            </Button>
+                            <Button type="primary" @click="banciModalFlag = true">
+                                <Icon type="ios-book-outline"></Icon>
+                                班次管理
+                            </Button>
+                        </ButtonGroup>
+                    </FormItem>
+                </Form>
+                <Table :columns="columns1"
+                       :loading="tableLoading"
+                       @on-sort-change="_tableSortChange"
+                       @on-selection-change="_tableSelectChange"
+                       :height="tableHeight"
+                       :data="userData"></Table>
+                <Page :total="totalCount"
+                      @on-change="_setPage"
+                      @on-page-size-change="_setPageSize"
+                      :page-size="searchData.pageSize"
+                      placement="top"
+                      show-sizer
+                      show-total
+                      show-elevator
+                      style="margin-top: 16px;"></Page>
+            </Card>
             </Col>
         </Row>
         <Modal v-model="settingModalFlag"
@@ -90,39 +90,39 @@
                   :label-width="80">
                 <Row>
                     <Col :span="8">
-                        <FormItem label="状态">
-                            <i-switch v-model="userSettingForm.states" size="large">
-                                <span slot="open">启用</span>
-                                <span slot="close">禁用</span>
-                            </i-switch>
-                        </FormItem>
+                    <FormItem label="状态">
+                        <i-switch v-model="userSettingForm.states" size="large">
+                            <span slot="open">启用</span>
+                            <span slot="close">禁用</span>
+                        </i-switch>
+                    </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="是否写日志">
-                            <i-switch v-model="userSettingForm.isLog" size="large">
-                                <span slot="open">写</span>
-                                <span slot="close">不写</span>
-                            </i-switch>
-                        </FormItem>
+                    <FormItem label="是否写日志">
+                        <i-switch v-model="userSettingForm.isLog" size="large">
+                            <span slot="open">写</span>
+                            <span slot="close">不写</span>
+                        </i-switch>
+                    </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="入职时间" prop="inJobTime">
-                            <DatePicker type="date"
-                                        @on-change="_inJobDateChange"
-                                        :value="userSettingForm.inJobTime"></DatePicker>
-                        </FormItem>
+                    <FormItem label="入职时间" prop="inJobTime">
+                        <DatePicker type="date"
+                                    @on-change="_inJobDateChange"
+                                    :value="userSettingForm.inJobTime"></DatePicker>
+                    </FormItem>
                     </Col>
                 </Row>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="账号" prop="account">
-                            <Input v-model="userSettingForm.account" :disabled="userFormType === 'update'"></Input>
-                        </FormItem>
+                    <FormItem label="账号" prop="account">
+                        <Input v-model="userSettingForm.account" :disabled="userFormType === 'update'"></Input>
+                    </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="姓名" prop="name">
-                            <Input v-model="userSettingForm.name" placeholder=""></Input>
-                        </FormItem>
+                    <FormItem label="姓名" prop="name">
+                        <Input v-model="userSettingForm.name" placeholder=""></Input>
+                    </FormItem>
                     </Col>
                     <Col :span="8">
                     <FormItem label="初始密码" v-if="userFormType === 'add'">
@@ -138,40 +138,40 @@
                 </FormItem>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="角色" prop="role">
-                            <Select v-model="userSettingForm.role">
-                                <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
-                            </Select>
-                        </FormItem>
+                    <FormItem label="角色" prop="role">
+                        <Select v-model="userSettingForm.role">
+                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
                     </Col>
                     <Col :span="16">
-                        <FormItem label="部门" prop="dep">
-                            <el-cascader
-                                    :options="orgTreeData"
-                                    :props="depProps"
-                                    v-model="userSettingForm.dep"
-                                    change-on-select
-                                    size="small"
-                                    style="width: 100%"
-                                    @change="_depChange"
-                            ></el-cascader>
-                        </FormItem>
+                    <FormItem label="部门" prop="dep">
+                        <el-cascader
+                                :options="orgTreeData"
+                                :props="depProps"
+                                v-model="userSettingForm.dep"
+                                change-on-select
+                                size="small"
+                                style="width: 100%"
+                                @change="_depChange"
+                        ></el-cascader>
+                    </FormItem>
                     </Col>
                 </Row>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="岗位" prop="post">
-                            <Select v-model="userSettingForm.post" :disabled="!userSettingForm.dep.length">
-                                <Option v-for="item in postList" :value="item.id" :key="item.id">{{item.name}}</Option>
-                            </Select>
-                        </FormItem>
+                    <FormItem label="岗位" prop="post">
+                        <Select v-model="userSettingForm.post" :disabled="!userSettingForm.dep.length">
+                            <Option v-for="item in postList" :value="item.id" :key="item.id">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="职级" prop="level">
-                            <Select v-model="userSettingForm.level" :disabled="!userSettingForm.post">
-                                <Option :value="levelCodeOpt.code" :key="'level-' + levelCodeOpt.code">{{levelCodeOpt.code}}</Option>
-                            </Select>
-                        </FormItem>
+                    <FormItem label="职级" prop="level">
+                        <Select v-model="userSettingForm.level" :disabled="!userSettingForm.post">
+                            <Option :value="levelCodeOpt.code" :key="'level-' + levelCodeOpt.code">{{levelCodeOpt.code}}</Option>
+                        </Select>
+                    </FormItem>
                     </Col>
                 </Row>
                 <FormItem label="班次设置" :label-width="100" prop="banci">
@@ -272,21 +272,21 @@
                 <CheckboxGroup v-model="social">
                     <Row :gutter="10" type="flex">
                         <Col :span="12" style="margin-bottom: 10px;" v-for="(cate, ci) in accseeList" :key="'cate-' + ci">
-                            <Card style="height: 100%;">
-                                <h3 class="cate-title">{{cate.title}}</h3>
-                                <div class="each-page-wrapper" v-for="(page, pi) in cate.page" :key="'page-' + pi">
-                                    <Checkbox :label="'page' + page.menu.id" size="large">
-                                        <Icon type="document" size="18"></Icon>
-                                        <span>{{page.menu.title}}</span>
+                        <Card style="height: 100%;">
+                            <h3 class="cate-title">{{cate.title}}</h3>
+                            <div class="each-page-wrapper" v-for="(page, pi) in cate.page" :key="'page-' + pi">
+                                <Checkbox :label="'page' + page.menu.id" size="large">
+                                    <Icon type="document" size="18"></Icon>
+                                    <span>{{page.menu.title}}</span>
+                                </Checkbox>
+                                <div class="each-btn-wrapper">
+                                    <Checkbox :label="'btn' + btn.id" v-for="(btn, bi) in page.btn" :key="'btn-' + bi">
+                                        <Icon type="ios-toggle"></Icon>
+                                        <span>{{btn.btnname}}</span>
                                     </Checkbox>
-                                    <div class="each-btn-wrapper">
-                                        <Checkbox :label="'btn' + btn.id" v-for="(btn, bi) in page.btn" :key="'btn-' + bi">
-                                            <Icon type="ios-toggle"></Icon>
-                                            <span>{{btn.btnname}}</span>
-                                        </Checkbox>
-                                    </div>
                                 </div>
-                            </Card>
+                            </div>
+                        </Card>
                         </Col>
                     </Row>
                 </CheckboxGroup>
@@ -305,64 +305,64 @@
             <div id="fs-spec-access-block">
                 <Row :gutter="16">
                     <Col :span="14">
-                        <h3 class="title">虚拟可查看部门</h3>
-                        <div class="">
-                            <div class="each-dep-wrapper"
-                                 v-for="(dep, index) in specAccessData.deps"
-                                 :key="'dep-' + index">
-                                <el-cascader
-                                        :options="orgTreeData"
-                                        :props="depProps"
-                                        v-model="dep.dep"
-                                        change-on-select
-                                        size="small"
-                                        class="dep-choose"
-                                ></el-cascader>
-                                <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeDep(index)"></Button>
-                            </div>
-                            <Button
-                                    type="ghost"
-                                    shape="circle"
-                                    @click="_addNewDep"
-                                    icon="plus-round"></Button>
+                    <h3 class="title">虚拟可查看部门</h3>
+                    <div class="">
+                        <div class="each-dep-wrapper"
+                             v-for="(dep, index) in specAccessData.deps"
+                             :key="'dep-' + index">
+                            <el-cascader
+                                    :options="orgTreeData"
+                                    :props="depProps"
+                                    v-model="dep.dep"
+                                    change-on-select
+                                    size="small"
+                                    class="dep-choose"
+                            ></el-cascader>
+                            <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeDep(index)"></Button>
                         </div>
+                        <Button
+                                type="ghost"
+                                shape="circle"
+                                @click="_addNewDep"
+                                icon="plus-round"></Button>
+                    </div>
                     </Col>
                     <Col :span="10">
-                        <h3 class="title">虚拟可查看人员</h3>
-                        <div class="">
-                            <Select v-model="specAccessData.filterPeopleData"
-                                    multiple
-                                    filterable
-                                    remote
-                                    :label="remoteLabel"
-                                    :remote-method="_filterPeopleRemote"
-                                    :loading="specAccessData.filterPeopleLoading">
-                                <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
-                            </Select>
-                        </div>
+                    <h3 class="title">虚拟可查看人员</h3>
+                    <div class="">
+                        <Select v-model="specAccessData.filterPeopleData"
+                                multiple
+                                filterable
+                                remote
+                                :label="remoteLabel"
+                                :remote-method="_filterPeopleRemote"
+                                :loading="specAccessData.filterPeopleLoading">
+                            <Option v-for="(option, index) in specAccessData.filterPeopleOpt" :value="option.id" :key="'user' + option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
+                        </Select>
+                    </div>
                     </Col>
                     <Col :span="14" style="margin-top: 16px;">
-                        <h3 class="title">虚拟可查看排班部门</h3>
-                        <div class="">
-                            <div class="each-dep-wrapper"
-                                 v-for="(dep, index) in specAccessData.arrangeDeps"
-                                 :key="'arrangedep-' + index">
-                                <el-cascader
-                                        :options="orgTreeData"
-                                        :props="depProps"
-                                        v-model="dep.dep"
-                                        change-on-select
-                                        size="small"
-                                        class="dep-choose"
-                                ></el-cascader>
-                                <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeArrangeDep(index)"></Button>
-                            </div>
-                            <Button
-                                    type="ghost"
-                                    shape="circle"
-                                    @click="_addNewArrangeDep"
-                                    icon="plus-round"></Button>
+                    <h3 class="title">虚拟可查看排班部门</h3>
+                    <div class="">
+                        <div class="each-dep-wrapper"
+                             v-for="(dep, index) in specAccessData.arrangeDeps"
+                             :key="'arrangedep-' + index">
+                            <el-cascader
+                                    :options="orgTreeData"
+                                    :props="depProps"
+                                    v-model="dep.dep"
+                                    change-on-select
+                                    size="small"
+                                    class="dep-choose"
+                            ></el-cascader>
+                            <Button type="ghost" shape="circle" icon="ios-trash-outline" @click="_removeArrangeDep(index)"></Button>
                         </div>
+                        <Button
+                                type="ghost"
+                                shape="circle"
+                                @click="_addNewArrangeDep"
+                                icon="plus-round"></Button>
+                    </div>
                     </Col>
                 </Row>
             </div>
