@@ -17,7 +17,7 @@ export const guestRouter = {
         title: '社会招聘',
         white: true
     },
-    component: resolve => { require(['@/pages/hireManager/guest.vue'], resolve); }
+    component: resolve => { require(['@/pages/hireManager/guest/index.vue'], resolve); }
 };
 
 export const page404 = {
@@ -196,9 +196,9 @@ export const appRouter = [
         ]
     },
     {
-        path: '/achiveManager',
+        path: '/employeeFileManager',
         icon: 'ios-book',
-        name: 'achiveManager',
+        name: 'employeeFileManager',
         title: '员工档案管理',
         component: Main,
         children: [
@@ -207,14 +207,14 @@ export const appRouter = [
                 icon: 'ios-book',
                 name: 'employeeAchives',
                 title: '员工档案',
-                component: resolve => { require(['@/pages/employeeManage/employeeAchives.vue'], resolve); }
+                component: resolve => { require(['@/pages/employeeFileManager/employeeAchives/index.vue'], resolve); }
             },
             {
                 path: 'employeeOrganize',
                 icon: 'ios-book',
                 name: 'employeeOrganize',
                 title: '部门员工档案',
-                component: resolve => { require(['@/pages/employeeManage/employeeOrganize.vue'], resolve); }
+                component: resolve => { require(['@/pages/employeeFileManager/employeeOrganize/index.vue'], resolve); }
             }
         ]
     },
@@ -230,7 +230,7 @@ export const appRouter = [
                 icon: 'compose',
                 name: 'hire',
                 title: '员工招聘',
-                component: resolve => { require(['@/pages/hireManager/hire.vue'], resolve); }
+                component: resolve => { require(['@/pages/hireManager/hire/index.vue'], resolve); }
             }
         ]
     },
