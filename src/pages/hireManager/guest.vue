@@ -163,6 +163,15 @@
                             <FormItem label="月薪" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <InputNumber style="width: 100%" :min="0" :max="1000000" :step="500" :precision='0' v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
+                            <FormItem label="离职原因" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
+                                <Input type="text" v-model="item.reasonleaving"></Input>
+                            </FormItem>
+                            <FormItem label="证明人" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
+                                <Input type="text" v-model="item.witness"></Input>
+                            </FormItem>
+                            <FormItem label="公司电话" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
+                                <Input type="text" v-model="item.phone"></Input>
+                            </FormItem>
                             <FormItem label="工作描述" style="width:79%;margin-right: 1%;">
                                 <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>
                             </FormItem>
@@ -484,7 +493,7 @@
             width:17.5%;margin-right: 1%;
         }
         .pcWorkingFormItem{
-            width:19%;margin-right: 1%;
+            width:11.5%;margin-right: 1%;
         }
         .ivu-card-body{
             height: 100%;
