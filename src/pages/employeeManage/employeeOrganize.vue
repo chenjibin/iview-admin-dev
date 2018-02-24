@@ -16,21 +16,21 @@
             </Col>
             <Col :span="20">
             <Card>
-                <Form inline :label-width="60">
+                <Form inline :label-width="90">
                     <FormItem label="姓名">
                         <Input type="text" style="width: 120px"
                                @on-change="_inputDebounce"
                                v-model="filterOpt.name"
                                placeholder="筛选姓名"></Input>
                     </FormItem>
-                    <FormItem label="状态">
-                        <Select v-model="filterOpt.kqstates" style="width: 120px" placeholder="筛选状态"
-                                @on-change="_inputDebounce">
-                            <Option value="-1">全部</Option>
-                            <Option value="0">离职</Option>
-                            <Option value="1">在职</Option>
-                        </Select>
-                    </FormItem>
+                    <!--<FormItem label="状态">-->
+                        <!--<Select v-model="filterOpt.kqstates" style="width: 120px" placeholder="筛选状态"-->
+                                <!--@on-change="_inputDebounce">-->
+                            <!--<Option value="-1">全部</Option>-->
+                            <!--<Option value="0">离职</Option>-->
+                            <!--<Option value="1">在职</Option>-->
+                        <!--</Select>-->
+                    <!--</FormItem>-->
                     <FormItem label="岗位">
                         <Input type="text" style="width: 120px"
                                @on-change="_inputDebounce"
@@ -93,38 +93,38 @@
                 <Tabs type="card">
                     <TabPane label="基本信息">
                         <Form ref="baseForm" :label-width="100" inline>
-                            <FormItem label="姓名" style="width:40%">
+                            <FormItem label="姓名" style="width:45%">
                                 <Input type="text" v-model="baseForm.name"></Input>
                             </FormItem>
-                            <FormItem label="性别" style="width:40%">
+                            <FormItem label="性别" style="width:45%">
                                 <Input type="text" v-model="baseForm.sex" disabled></Input>
                             </FormItem>
-                            <FormItem label="手机" style="width:40%">
+                            <FormItem label="手机" style="width:45%">
                                 <Input type="text" v-model="baseForm.cellphone" ></Input>
                             </FormItem>
-                            <FormItem label="QQ" style="width:40%">
-                                <Input type="text" v-model="baseForm.inphone" ></Input>
-                            </FormItem>
-                            <FormItem label="电子邮箱" style="width:40%">
+                            <!--<FormItem label="QQ" style="width:45%">-->
+                                <!--<Input type="text" v-model="baseForm.inphone" ></Input>-->
+                            <!--</FormItem>-->
+                            <FormItem label="电子邮箱" style="width:45%">
                                 <Input type="text" v-model="baseForm.email" ></Input>
                             </FormItem>
-                            <FormItem label="身份证号码" style="width:40%">
+                            <FormItem label="身份证号码" style="width:45%">
                                 <Input type="text" v-model="baseForm.idcard" ></Input>
                             </FormItem>
-                            <FormItem label="出生日期" style="width:40%">
+                            <FormItem label="出生日期" style="width:45%">
                                 <Input type="text" v-model="baseForm.birthday" disabled></Input>
                             </FormItem>
-                            <FormItem label="籍贯" style="width:40%">
+                            <FormItem label="籍贯" style="width:45%">
                                 <Input type="text" v-model="baseForm.origin"></Input>
                             </FormItem>
-                            <FormItem label="民族" style="width:40%">
+                            <FormItem label="民族" style="width:45%">
                                 <Input type="text" v-model="baseForm.account"></Input>
                             </FormItem>
-                            <FormItem label="年龄" style="width:40%">
+                            <FormItem label="年龄" style="width:45%">
                                 <Input type="text" v-model="baseForm.nation"></Input>
                             </FormItem>
-                            <FormItem label="政治面貌" style="width:40%">
-                                <Select style="width: 120px" v-model="baseForm.party">
+                            <FormItem label="政治面貌" style="width:45%;margin-right:1%;">
+                                <Select style="width: 100%" v-model="baseForm.party" >
                                     <Option value="党员">党员</Option>
                                     <Option value="预备党员">预备党员</Option>
                                     <Option value="入党积极分子">入党积极分子</Option>
@@ -132,23 +132,23 @@
                                     <Option value="群众">群众</Option>
                                 </Select>
                             </FormItem>
-                            <FormItem label="婚姻状况" style="width:40%">
-                                <Select type="text" style="width: 120px" v-model="baseForm.marryage">
+                            <FormItem label="婚姻状况" style="width:45%;margin-right:1%;">
+                                <Select type="text" style="width: 100%" v-model="baseForm.marryage">
                                     <Option value="已婚">已婚</Option>
                                     <Option value="未婚">未婚</Option>
                                 </Select>
                             </FormItem>
-                            <FormItem label="档案编号" style="width:40%">
+                            <FormItem label="档案编号" style="width:45%;">
                                 <Input type="text" v-model="baseForm.filenum"></Input>
                             </FormItem>
-                            <FormItem label="详细住址" style="width:40%">
-                                <Input type="textarea" v-model="baseForm.address"></Input>
+                            <FormItem label="详细住址" style="width:45%">
+                                <Input type="textarea" :rows="6" v-model="baseForm.address"></Input>
                             </FormItem>
-                            <FormItem label="部门经历" style="width:40%">
-                                <Input type="textarea" v-model="baseForm.organizehistory"></Input>
+                            <FormItem label="部门经历" style="width:45%">
+                                <Input type="textarea" :rows="6" v-model="baseForm.organizehistory"></Input>
                             </FormItem>
-                            <FormItem label="岗位经历" style="width:40%">
-                                <Input type="textarea" v-model="baseForm.posthistory"></Input>
+                            <FormItem label="岗位经历" style="width:45%">
+                                <Input type="textarea" :rows="6" v-model="baseForm.posthistory"></Input>
                             </FormItem>
                             <!--<FormItem>-->
                                 <!--<Button type="primary" :loading="btnLoading" @click="saveBase()">提交</Button>-->
@@ -499,7 +499,7 @@
                     name: '', // 员工姓名
                     monthDate: '', // 入职日期左区间
                     endmonthDate: '', // 入职日期右区间
-                    kqstates: '', // 在职状态
+                    kqstates: 1, // 在职状态
                     organizeName: '', // 部门名称
                     organizeId: 1,
                     postName: '', // 岗位

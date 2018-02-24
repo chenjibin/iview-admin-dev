@@ -151,68 +151,67 @@
                 <span>新建简历</span>
             </p>
             <Tabs type="card">
-                <TabPane label="基本信息" style="overflow: hidden">
-                    <Form ref="talentBean" :label-width="100"
-                          style="overflow-y: auto; overflow-x: hidden; max-height: 600px;margin-right: -12px;" inline>
+                <TabPane label="基本信息" style="overflow: hidden;">
+                    <Form ref="talentBean" :label-width="100" style="overflow-y: auto;height: 600px;width: 981px;" inline>
                         <Input type="text" style="display: none" v-model="talentBean.id"></Input>
-                        <FormItem label="姓名" style="width:45%">
+                        <FormItem label="姓名" style="width:430px">
                             <Input type="text" v-model="talentBean.name"></Input>
                         </FormItem>
-                        <FormItem label="性别" style="width:45%">
+                        <FormItem label="性别" style="width:430px">
                             <Select type="text" v-model="talentBean.sex">
-                                <Option value="1">男</Option>
-                                <Option value="2">女</Option>
+                                <Option :value="1">男</Option>
+                                <Option :value="2">女</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="年龄" style="width:45%">
+                        <FormItem label="年龄" style="width:430px">
                             <Input type="text" v-model="talentBean.age"></Input>
                         </FormItem>
-                        <FormItem label="手机" style="width:45%">
+                        <FormItem label="手机" style="width:430px">
                             <Input type="text" v-model="talentBean.phone"></Input>
                         </FormItem>
-                        <FormItem label="期望月薪" style="width:45%">
+                        <FormItem label="期望月薪" style="width:430px">
                             <Input type="text" v-model="talentBean.monthlysalary"></Input>
                         </FormItem>
-                        <FormItem label="信息来源" style="width:45%">
+                        <FormItem label="信息来源" style="width:430px">
                             <Select type="text" v-model="talentBean.resumesource">
                                 <Option value="">请选择</Option>
-                                <Option value="1">58同城</Option>
-                                <Option value="2">智联</Option>
-                                <Option value="3">前程无忧</Option>
-                                <Option value="4">其它</Option>
-                                <Option value="5">现场招聘会</Option>
-                                <Option value="6">微信公众号</Option>
-                                <Option value="7">来电</Option>
-                                <Option value="8">介绍</Option>
-                                <Option value="9">校招</Option>
-                                <Option value="10">人才市场</Option>
+                                <Option :value="1">58同城</Option>
+                                <Option :value="2">智联</Option>
+                                <Option :value="3">前程无忧</Option>
+                                <Option :value="4">其它</Option>
+                                <Option :value="5">现场招聘会</Option>
+                                <Option :value="6">微信公众号</Option>
+                                <Option :value="7">来电</Option>
+                                <Option :value="8">介绍</Option>
+                                <Option :value="9">校招</Option>
+                                <Option :value="10">人才市场</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="工作经验" style="width:45%">
-                            <Input type="number" v-model="talentBean.yearswork" placeholder="单位：年"></Input>
+                        <FormItem label="工作经验" style="width:430px">
+                            <InputNumber style="width: 100%" :min="0" :max="50" :step="1" :precision='0' v-model="talentBean.yearswork" placeholder="单位：年"></InputNumber>
                         </FormItem>
-                        <FormItem label="电子邮箱" style="width:45%">
+                        <FormItem label="电子邮箱" style="width:430px">
                             <Input type="text" v-model="talentBean.email"></Input>
                         </FormItem>
-                        <FormItem label="身份证号码" style="width:45%">
+                        <FormItem label="身份证号码" style="width:430px">
                             <Input type="text" v-model="talentBean.idnum"></Input>
                         </FormItem>
-                        <FormItem label="籍贯" style="width:45%">
+                        <FormItem label="籍贯" style="width:430px">
                             <Input type="text" v-model="talentBean.account"></Input>
                         </FormItem>
-                        <FormItem label="民族" style="width:45%">
+                        <FormItem label="民族" style="width:430px">
                             <Input type="text" v-model="talentBean.nation"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人" style="width:45%">
+                        <FormItem label="紧急联系人" style="width:430px">
                             <Input type="text" v-model="talentBean.emperson"></Input>
                         </FormItem>
-                        <FormItem label="联系人关系" style="width:45%">
+                        <FormItem label="联系人关系" style="width:430px">
                             <Input type="text" v-model="talentBean.emrelate"></Input>
                         </FormItem>
-                        <FormItem label="联系人号码" style="width:45%">
+                        <FormItem label="联系人号码" style="width:430px">
                             <Input type="text" v-model="talentBean.emphone"></Input>
                         </FormItem>
-                        <FormItem label="政治面貌" style="width:45%">
+                        <FormItem label="政治面貌" style="width:430px">
                             <Select type="text" v-model="talentBean.politicalstatus">
                                 <Option value="党员">党员</Option>
                                 <Option value="预备党员">预备党员</Option>
@@ -221,37 +220,37 @@
                                 <Option value="群众">群众</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="婚姻状况" style="width:45%">
+                        <FormItem label="婚姻状况" style="width:430px">
                             <Select type="text" v-model="talentBean.marriage">
-                                <Option value="1">已婚</Option>
-                                <Option value="2">未婚</Option>
+                                <Option :value="1">已婚</Option>
+                                <Option :value="2">未婚</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="详细住址" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.address"></Input>
+                        <FormItem label="详细住址" style="width:430px">
+                            <Input type="textarea" :rows="5" v-model="talentBean.address"></Input>
                         </FormItem>
-                        <FormItem label="项目经验" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.projectexperience"></Input>
+                        <FormItem label="项目经验" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.projectexperience"></Input>
                         </FormItem>
-                        <FormItem label="专长技能" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.expertiseskills"></Input>
+                        <FormItem label="专长技能" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.expertiseskills"></Input>
                         </FormItem>
-                        <FormItem label="语言能力" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.languageskills"></Input>
+                        <FormItem label="语言能力" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.languageskills"></Input>
                         </FormItem>
-                        <FormItem label="自我评价" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.selfevaluation"></Input>
+                        <FormItem label="自我评价" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.selfevaluation"></Input>
                         </FormItem>
-                        <FormItem label="培训经历" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.trainingexperience"></Input>
+                        <FormItem label="培训经历" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.trainingexperience"></Input>
                         </FormItem>
-                        <FormItem label="面试意见" style="width:45%">
-                            <Input type="textarea" v-model="talentBean.remarks"></Input>
+                        <FormItem label="面试意见" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.remarks"></Input>
                         </FormItem>
                     </Form>
                 </TabPane>
-                <TabPane label="教育状况">
-                    <Form :gutter="1" ref="educationForm" inline>
+                <TabPane label="教育状况" style="overflow: hidden;width: 967px;">
+                    <Form :gutter="1" ref="educationForm" style="overflow-y: auto;height: 600px;width: 981px;" inline>
                         <div v-for="(item,index) in educationForm">
                             <FormItem label="开始时间" style="width:17%">
                                 <DatePicker type="date" @on-change="_infoDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
@@ -267,13 +266,13 @@
                             </FormItem>
                             <FormItem label="学历" style="width:17%">
                                 <Select type="text" v-model="item.education">
-                                    <Option value="1">博士研究生</Option>
-                                    <Option value="2">硕士研究生</Option>
-                                    <Option value="3">本科</Option>
-                                    <Option value="4">专科</Option>
-                                    <Option value="5">中专</Option>
-                                    <Option value="6">高中</Option>
-                                    <Option value="7">初中</Option>
+                                    <Option :value="1">博士研究生</Option>
+                                    <Option :value="2">硕士研究生</Option>
+                                    <Option :value="3">本科</Option>
+                                    <Option :value="4">专科</Option>
+                                    <Option :value="5">中专</Option>
+                                    <Option :value="6">高中</Option>
+                                    <Option :value="7">初中</Option>
                                 </Select>
                             </FormItem>
                             <FormItem label="主键" style="display: none">
@@ -297,8 +296,8 @@
                         </FormItem>
                     </Form>
                 </TabPane>
-                <TabPane label="工作经历">
-                    <Form ref="workingForm" inline style="overflow-y: auto;overflow-x: hidden;max-height: 600px;margin-right: -12px;">
+                <TabPane label="工作经历" style="padding-left: 1px;">
+                    <Form ref="workingForm" inline style="overflow-y: auto;height: 600px;width: 981px;">
                         <div v-for="(item,index) in workingForm" style="margin: 10px auto;border-bottom: 1px solid #f3f3f3;">
                             <FormItem label="开始时间" style="width:18%">
                                 <DatePicker type="date" @on-change="_infoDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
@@ -316,7 +315,7 @@
                                 <Input type="text" v-model="item.monthlysalary"></Input>
                             </FormItem>
                             <FormItem label="工作描述" style="width:37%">
-                                <Input type="textarea" v-model="item.descriptioncontent"></Input>
+                                <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>
                             </FormItem>
                             <FormItem label="主键" style="display: none">
                                 <Input type="text" v-model="item.id"></Input>
@@ -539,7 +538,7 @@
                     resumesource: '',
                     name: '',
                     age: '',
-                    yearswork: '',
+                    yearswork: 0,
                     sex: '',
                     marriage: '',
                     phone: '',
@@ -894,6 +893,7 @@
                         okText: '回退',
                         cancelText: '取消',
                         onOk () {
+                            vm.$Modal.remove();
                             vm.changUserStatusModel = true;
                         },
                         onCancel () {
@@ -1008,6 +1008,9 @@
             },
             showAddNew () {
                 this.settingModalFlag = true;
+                this.educationForm = [];
+                this.workingForm = [];
+                this.talentBean = {};
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();

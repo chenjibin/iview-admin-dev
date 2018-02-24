@@ -362,7 +362,7 @@
                                 </Row>
                             </Card>
                         </div>
-                        <Upload name="ifile" multiple :data="{'ticketno':baseForm.userid}" action="/oa/ticket/uploadticketfiles">
+                        <Upload name="ifile" :on-success="handleSuccess" :show-upload-list="false" multiple :data="{'ticketno':baseForm.userid}" action="/oa/ticket/uploadticketfiles">
                             <Button type="ghost" icon="ios-cloud-upload-outline">上传</Button>
                         </Upload>
                     </TabPane>
@@ -519,10 +519,10 @@
                 },
                 tableLoading: true,
                 filterOpt: {
-                    name: '', // 员工姓名
+                    name: '哈哈', // 员工姓名
                     monthDate: '', // 入职日期左区间
                     endmonthDate: '', // 入职日期右区间
-                    kqstates: '', // 在职状态
+                    kqstates: '1', // 在职状态
                     organizeName: '', // 部门名称
                     postName: '', // 岗位
                     xueli: '', // 学历
@@ -549,8 +549,33 @@
         methods: {
             // 下载图片
             download(path) {
-                console.log(path);
                 window.open('http://' + window.location.host + path);
+            },
+            handleSuccess(res, file) {
+                if (res.success) {
+                    this.getTicketList(res.message);
+                    this.$Message.success('上传成功');
+                }
+            },
+            // 删除附件
+            handleRemove(item) {
+                var vm = this;
+                this.$Modal.confirm({
+                    title: '删除提醒',
+                    content: '是否确认删除？',
+                    okText: '删除',
+                    cancelText: '取消',
+                    loading: true,
+                    onOk () {
+                        this.$http.post('/ticket/deleteTicketFile', item).then((res) => {
+                            if (res.success) {
+                                vm.getTicketList(item.ticket_no);
+                                vm.$Modal.remove();
+                                vm.$Message.success('删除成功');
+                            }
+                        });
+                    }
+                });
             },
             // 删除关系
             delForm(index, formName) {
@@ -663,18 +688,20 @@
                     }
                 });
                 // 附件列表
+                this.getTicketList(id);
+            },
+            getTicketList(id) {
+                var that = this;
                 this.$http.post('/ticket/ticketFileslist', {'ticketno': id}).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         var d = res.data;
                         for (let i = 0; i < d.length; i++) {
                             d[i].file_path = d[i].file_path.replace('\\..', '\\oa');
-                            if (d[i].file_path.indexOf('/oa')) {
+                            if (d[i].file_path.indexOf('/oa')<0) {
                                 d[i].file_path = '/oa' + d[i].file_path;
                             }
                         }
                         that.fileList = res.data;
-                        // console.log(that.fileList);
                     }
                 });
             },
