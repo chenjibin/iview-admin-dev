@@ -19,12 +19,12 @@ module.exports = merge(webpackBaseConfig, {
         filename: '[name].js',
         chunkFilename: '[name].chunk.js'
     },
-    devServer: { //消炎 'http://192.168.15.22:80' 孙运超 'http://192.168.17.27:80' 张瑞 'http://192.168.15.169:8080'
+    devServer: { //肖岩 'http://192.168.15.22:80' 孙运超 'http://192.168.17.27:80' 张瑞 'http://192.168.15.169:8080'
         port: 8056,
-        host: '192.168.18.146',
+        host: '192.168.15.169',
         proxy: {
             "/oa": {
-                target: "http://192.168.15.22:80",
+                target: "http://localhost:8080",
                 changeOrigin: true
             }
         }
