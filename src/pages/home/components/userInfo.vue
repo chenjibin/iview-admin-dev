@@ -3,14 +3,16 @@
         <Row type="flex" class="user-infor">
             <Col span="8">
                 <Row class-name="made-child-con-middle" type="flex" align="middle">
-                    <img class="avator-img" :src="avatorPath" style="border-radius: 50%;"/>
+                    <img class="avator-img"
+                         :src="avatorPath"
+                         style="border-radius: 50%;"/>
                 </Row>
             </Col>
             <Col span="16" style="padding-left:6px;">
                 <Row class-name="made-child-con-middle" type="flex" align="middle">
                     <div>
-                        <b class="card-user-infor-name">{{userInfo.userName}}</b>
-                        <p>{{userInfo.organizeName + '（' + userInfo.postName + '）'}}</p>
+                        <b class="card-user-infor-name">{{userName}}</b>
+                        <p>{{organizeName + '（' + postName + '）'}}</p>
                     </div>
                 </Row>
             </Col>
@@ -19,7 +21,7 @@
         <Row class="margin-top-8">
             <Col span="8">
                 <span style="font-weight: 700;">金币余额:</span>
-                <span style="font-size: 24px;">{{userInfo.tmCoin}}</span>
+                <span style="font-size: 24px;">{{tmCoin}}</span>
                 <Poptip placement="right-start" width="1200" v-model="coinDescFlag" :transfer="true">
                     <div slot="content" style="white-space: normal;max-height: 600px;overflow: auto;">
                         <img src="../../../images/coin_rule_01.jpg"  style="max-width: 100%;"/>
@@ -152,12 +154,11 @@
                     newPwdCheck: [
                         {required: true, validator: validatePassCheck, trigger: 'blur'}
                     ]
-                },
-                userInfo: null
+                }
             };
         },
         created() {
-            this.userInfo = JSON.parse(Cookies.get('userInfo'));
+            // this.userInfo = JSON.parse(Cookies.get('userInfo'));
         },
         methods: {
             _submitAvatorChange() {
@@ -193,7 +194,19 @@
         },
         computed: {
             avatorPath () {
-                return localStorage.avatorImgPath;
+                return '/oa/upload/head/' + this.$store.state.user.userInfo.headimagepath;
+            },
+            userName() {
+                return this.$store.state.user.userInfo.realname;
+            },
+            organizeName() {
+                return this.$store.state.user.userInfo.organizename;
+            },
+            postName() {
+                return this.$store.state.user.userInfo.postname;
+            },
+            tmCoin() {
+                return this.$store.state.user.userInfo.tm_coin;
             }
         },
         components: {

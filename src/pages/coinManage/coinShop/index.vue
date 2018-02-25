@@ -1,38 +1,54 @@
 <template>
     <div id="coin-shop">
-        <Row :gutter="8">
-            <Col :xs="12"
-                 :sm="6"
-                 :lg="4"
-                 :md="6"
-                 v-for="(item, index) in goodList"
-                 :key="'good-item-' + index"
-                 style="margin-bottom: 8px;">
-                <Card class="good-item-wrapper">
-                    <div class="fs-square-img" style="margin-bottom: 8px;">
-                        <img :src="'/oa/upload/' + item.image_path">
+        <Row :gutter="16">
+            <Col :xs="24" :sm="24" :md="14" :lg="16">
+                <Card :dis-hover="true">
+                    <h3 class="margin-bottom-10">商品列表</h3>
+                    <div :style="{height: listHeight}" style="overflow: auto;padding: 16px;">
+                        <Row :gutter="8">
+                            <Col :xs="12"
+                                 :sm="12"
+                                 :md="6"
+                                 :lg="6"
+                                 v-for="(item, index) in goodList"
+                                 :key="'good-item-' + index"
+                                 style="margin-bottom: 8px;">
+                            <Card class="good-item-wrapper">
+                                <div class="fs-square-img" style="margin-bottom: 8px;">
+                                    <img :src="'/oa/upload/' + item.image_path">
+                                </div>
+                                <Tooltip placement="top-start" :transfer="true">
+                                    <div slot="content">
+                                        <p style="white-space: normal">{{item.name}}</p>
+                                    </div>
+                                    <p class="title">{{item.name}}</p>
+                                </Tooltip>
+                                <Row style="text-align: center;">
+                                    <Col>
+                                    <span class="coin">{{item.price}}</span>
+                                    <span>金币</span>
+                                    </Col>
+                                    <Col>
+                                    <Button type="primary"
+                                            shape="circle"
+                                            @click="_openBuy(item)"
+                                            icon="bag">立即兑换</Button>
+                                    </Col>
+                                </Row>
+                            </Card>
+                            </Col>
+                        </Row>
                     </div>
-                    <Tooltip placement="top-start" :transfer="true">
-                        <div slot="content">
-                            <p style="white-space: normal">{{item.name}}</p>
-                        </div>
-                        <p class="title">{{item.name}}</p>
-                    </Tooltip>
-                    <Row type="flex" justify="space-between" align="middle" style="margin-top: 8px;">
-                        <Col>
-                            <span class="coin">{{item.price}}</span>
-                            <span>金币</span>
-                        </Col>
-                        <Col>
-                        <Button type="primary"
-                                shape="circle"
-                                @click="_openBuy(item)"
-                                icon="bag">立即兑换</Button>
-                        </Col>
-                    </Row>
+                </Card>
+            </Col>
+            <Col :xs="24" :sm="24" :md="10" :lg="8">
+                <Card :dis-hover="true">
+                    <h3>我的订单</h3>
+                    <order-list></order-list>
                 </Card>
             </Col>
         </Row>
+
         <Modal v-model="buyFlag"
                :mask-closable="false"
                width="600">
@@ -78,6 +94,7 @@
     </div>
 </template>
 <style lang="less">
+    @import "../../../styles/common";
     .coin-shop-form {
         .result-block {
             display: flex;
@@ -117,12 +134,14 @@
 </style>
 <script>
     import countTo from '@/baseComponents/CountTo';
+    import orderList from './myOrderList';
     export default {
         name: 'coinShop',
         data () {
             return {
                 subLoading: false,
                 buyFlag: false,
+                listHeight: '300px',
                 goodList: [],
                 goodDesc: {
                     name: '',
@@ -145,6 +164,7 @@
         },
         created() {
             this._getGoodList();
+            this._setListHeight();
         },
         methods: {
             _initData() {
@@ -168,10 +188,9 @@
                 let data = {};
                 data.id = this.buyForm.id;
                 data.quality = this.buyForm.quality;
-                // data.price = this.goodDesc.coin;
-                // data.totalPrice = data.price * data.quality;
                 this.$http.post('/order/add', data).then((res) => {
                     if (res.success) {
+                        this.$store.commit('updateUserInfo');
                         this.$Message.success('商品兑换成功!');
                         this.buyFlag = false;
                     }
@@ -186,10 +205,15 @@
                         this.goodList = res.data;
                     }
                 });
+            },
+            _setListHeight() {
+                let dm = document.body.clientHeight;
+                this.listHeight = dm - 190 + 'px';
             }
         },
         components: {
-            countTo
+            countTo,
+            orderList
         }
     };
 </script>

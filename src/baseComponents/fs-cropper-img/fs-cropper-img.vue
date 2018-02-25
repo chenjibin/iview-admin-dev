@@ -81,6 +81,7 @@
                             // xhr.responseText就是返回的数据
                             let respondData = JSON.parse(xhr.responseText);
                             if (respondData.success) {
+                                vm.$store.commit('updateUserInfo');
                                 vm.$Message.success('头像修改成功！');
                                 vm.$emit('change-success');
                             }
@@ -89,7 +90,7 @@
                         vm.btnLoading = false;
                     };
                     // 开始上传
-                    xhr.open('POST', '/oa/user/addHeadpic', true);
+                    xhr.open('POST', '/oa/user/uploadfile', true);
                     xhr.send(formData);
                 }, vm.fileData.fileType || 'image/png');
             },

@@ -4,9 +4,9 @@
             <template v-for="list in dateList">
                 <h2 class="year-title">{{list.year}}</h2>
                 <Row :gutter="10" style="margin-bottom: 24px;">
-                    <Col :lg="4" :md="6" :sm="8" :xs="12" v-for="(date, dateIndex) in list.data" :key="'date-' + dateIndex">
+                    <Col :lg="4" :md="6" :sm="8" :xs="12" v-for="(date, dateIndex) in list.date" :key="'date-' + dateIndex">
                         <Card class="my-arrange-card" @click.native="_cardClick(date)">
-                            <p class="month">{{date.data}}</p>
+                            <p class="month">{{date.date}}</p>
                             <Tag color="green" @click.native="_cardClick(date)" v-if="date.type === '已设置'">{{date.type}}</Tag>
                             <Tag color="red"  v-else>{{date.type}}</Tag>
                         </Card>
@@ -94,7 +94,7 @@
                         render: this._rowRender(6),
                         align: 'center'
                     }
-                ],
+                ]
             };
         },
         created() {
@@ -146,6 +146,7 @@
                 this._getArrangeDetail(date.date);
             },
             _getArrangeDetail(time) {
+                console.log(time);
                 this.loading = true;
                 this.$http.get('/arrange/getOneMonthArrange', {params: {month: time}}).then((res) => {
                     console.log(res);
@@ -163,6 +164,7 @@
                 this.$http.get('/arrange/getArrangeStatistic').then((res) => {
                     if (res.success) {
                         this.dateList = res.dateList;
+                        console.log(this.dateList);
                     }
                 });
             }

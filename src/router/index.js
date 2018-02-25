@@ -44,8 +44,8 @@ router.beforeEach((to, from, next) => {
         } else if (to.name !== 'login') {
             if (!store.state.app.premissionMenu.length) {
                 Util.getPermissionData().then((data) => {
-                    let userInfo = JSON.parse(Cookies.get('userInfo'));
-                    store.commit('setUserInfo', userInfo);
+                    // let userInfo = JSON.parse(Cookies.get('userInfo'));
+                    store.commit('updateUserInfo');
                     Util.initMenu(router, store, data);
                     Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to.name, router, next);
                 });

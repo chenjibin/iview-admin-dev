@@ -82,7 +82,7 @@
                         </Col>
                     </Row>
                     <FormItem label="奖品图片" required>
-                        <fs-img-upload action="/oa/order/uploadfile"
+                        <fs-img-upload action="/oa/lottery/uploadfile"
                                        path="/oa/upload/"
                                        ref="imgUploadFo"
                                        :upload.sync="imgFile"></fs-img-upload>
@@ -242,14 +242,15 @@
                             vm.$Message.error('商品图片不能为空!');
                             return;
                         }
-                        data.content = settingData.goodsName;
+                        data.lottery_name = settingData.goodsName;
                         data.statistic = settingData.isDown ? '上架' : '下架';
                         data.classify = settingData.type;
                         data.price = settingData.price;
+                        data.probability = settingData.probability;
                         data.uploadName = settingData.goodPic;
                         data.id = settingData.id;
                         console.log(data);
-                        vm.$http.post('/order/addGoods', data).then((res) => {
+                        vm.$http.post('/lottery/addGoods', data).then((res) => {
                             if (res.success) {
                                 vm.editorSettingFlag = false;
                                 vm.$Message.success('操作成功!');
@@ -285,6 +286,8 @@
                 settingData.price = 0;
                 settingData.isDown = true;
                 settingData.goodPic = '';
+                settingData.probability = 0;
+                settingData.number = 0;
                 settingData.id = 0;
                 this.imgFile = [];
                 this.$refs.imgUploadFo.removeAllPicFlie();

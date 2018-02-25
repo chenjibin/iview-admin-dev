@@ -50,7 +50,7 @@
                                     <DropdownItem name="loginout" divided>退出登录</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
-                            <Avatar :src="avatorPath" style="background: #619fe7;margin-left: 10px;"></Avatar>
+                            <Avatar :src="avatorPath" style="margin-left: 10px;"></Avatar>
                         </Row>
                     </div>
                 </div>
@@ -92,12 +92,14 @@
         data () {
             return {
                 shrink: true,
-                userName: '',
                 isFullScreen: false,
                 openedSubmenuArr: this.$store.state.app.openedSubmenuArr
             };
         },
         computed: {
+            userName() {
+                return this.$store.state.user.userInfo.realname;
+            },
             menuList () {
                 return this.$store.state.app.menuList;
             },
@@ -108,7 +110,7 @@
                 return this.$store.state.app.currentPath; // 当前面包屑数组
             },
             avatorPath () {
-                return localStorage.avatorImgPath;
+                return '/oa/upload/head/' + this.$store.state.user.userInfo.headimagepath;
             },
             cachePage () {
                 return this.$store.state.app.cachePage;
@@ -130,7 +132,6 @@
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
-                this.userName = JSON.parse(Cookies.get('userInfo')).userName;
                 let messageCount = 3;
                 this.messageCount = messageCount.toString();
                 this.checkTag(this.$route.name);

@@ -10,6 +10,13 @@ const user = {
         setUserInfo(state, userInfo) {
             state.userInfo = userInfo;
         },
+        updateUserInfo(state) {
+            axios.get('/user/myUserInfo').then((res) => {
+                if (res.success) {
+                    state.userInfo = res.data;
+                }
+            });
+        },
         logout () {
             axios.get('/login/logout').then((res) => {
                 if (res.success) {
