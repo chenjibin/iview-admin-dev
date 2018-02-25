@@ -1,12 +1,12 @@
 <template>
     <div>
         <Card>
-            <Form inline :label-width="60">
+            <Form inline :label-width="60" @submit.native.prevent>
                 <FormItem label="商品名称">
                     <Input type="text"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.goodsName"
-                           placeholder="筛选姓名"></Input>
+                           placeholder="筛选商品名称"></Input>
                 </FormItem>
                 <!--<FormItem label="上架状态">-->
                     <!--<Select v-model="filterOpt.isDown"-->
@@ -18,7 +18,7 @@
                         <!--<Option value="下架">上架</Option>-->
                     <!--</Select>-->
                 <!--</FormItem>-->
-                <FormItem>
+                <FormItem :label-width="0.1">
                     <ButtonGroup>
                         <Button type="primary" @click="_createGoods">
                             <Icon type="plus-round"></Icon>
@@ -143,7 +143,7 @@
                         render: (h, params) => {
                             return h('img', {
                                 attrs: {
-                                    src: 'http://tm.xyyzi.com:9090/oa/upload/' + params.row.image_path
+                                    src: '/oa/upload/' + params.row.image_path
                                 },
                                 style: {
                                     maxWidth: '100%'
@@ -208,8 +208,11 @@
             };
         },
         watch: {
-            imgFile(val) {
-                this.editorSettingData.goodPic = val.length ? val[0].name : '';
+            imgFile: {
+                handler(val) {
+                    this.editorSettingData.goodPic = val.length ? val[0].name : '';
+                },
+                deep: true
             }
         },
         mixins: [pageMixin],
@@ -234,12 +237,14 @@
                         data.price = settingData.price;
                         data.uploadName = settingData.goodPic;
                         data.id = settingData.id;
+                        console.log(data);
                         vm.$http.post('/order/addGoods', data).then((res) => {
                             if (res.success) {
-                                vm.$Message.success('');
+                                vm.editorSettingFlag = false;
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
                             }
                         });
-                        console.log(data);
                     }
                 });
             },
@@ -254,7 +259,7 @@
                 settingData.goodPic = data.image_path;
                 settingData.type = data.classify;
                 settingData.isDown = data.statistic === '上架';
-                this.imgFile = [{url: '/oa/upload/' + data.image_path, name: data.image_path}];
+                this.imgFile = [{url: '/oa/upload/' + data.image_path, name: data.image_path, status: 'finished'}];
                 this.editorSettingFlag = true;
             },
             _initEditorSettingData() {
@@ -292,14 +297,10 @@
                 this.editorType = 'create';
                 this.editorSettingFlag = true;
             },
-            _editorSetting(data) {
-                this._initEditorSettingData();
-                this.editorSettingFlag = true;
-            },
             _getPostData() {
                 let data = {};
-                data.goodsName = this.filterOpt.goodsName;
-                data.status = this.filterOpt.status;
+                data.name = this.filterOpt.goodsName;
+                // data.status = this.filterOpt.status;
                 this.getList('/order/goodslist', data);
             }
         },

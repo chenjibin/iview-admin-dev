@@ -1,26 +1,15 @@
 <template>
     <div>
         <Card>
-            <Form inline :label-width="60">
+            <Form inline :label-width="60" @submit.native.prevent>
                 <FormItem label="奖品名称">
-                    <Input type="text"
-                           @on-change="_inputDebounce"
+                    <Input @on-change="_inputDebounce"
                            v-model="filterOpt.goodsName"
-                           placeholder="筛选姓名"></Input>
+                           placeholder="筛选奖品名称"></Input>
                 </FormItem>
-                <FormItem label="上架状态">
-                    <Select v-model="filterOpt.isDown"
-                            clearable
-                            @on-change="_filterResultHandler"
-                            placeholder="筛选状态"
-                            style="width: 100px">
-                        <Option value="2">下架</Option>
-                        <Option value="1">上架</Option>
-                    </Select>
-                </FormItem>
-                <FormItem>
+                <FormItem :label-width="0.1">
                     <ButtonGroup>
-                        <Button type="primary" @click="deleteModalFlag = true" >
+                        <Button type="primary" @click="_createGoods">
                             <Icon type="plus-round"></Icon>
                             新增
                         </Button>
@@ -45,48 +34,65 @@
                    width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>新增奖品</span>
+                    <span>{{editorType === 'create' ? '新增奖品' : '修改奖品'}}</span>
                 </p>
-                <Form :label-width="80">
+                <Form :label-width="80"
+                      :rules="formRule"
+                      ref="formFo"
+                      :model="editorSettingData">
                     <FormItem label="是否下架">
                         <i-switch v-model="editorSettingData.isDown" size="large">
                             <span slot="open">上架</span>
                             <span slot="close">下架</span>
                         </i-switch>
                     </FormItem>
-                    <FormItem label="奖品名称">
+                    <FormItem label="奖品名称" prop="goodsName">
                         <Input type="text"
-                               v-model="editorSettingData.name"
-                               placeholder=""></Input>
+                               v-model="editorSettingData.goodsName"></Input>
                     </FormItem>
                     <FormItem label="所属分类">
                         <Select v-model="editorSettingData.type"
-                                placeholder=""
                                 style="width: 100px">
+                            <Option value="实物类">实物类</Option>
+                            <Option value="虚拟类">虚拟类</Option>
+                            <Option value="金币">金币</Option>
+                            <Option value="未中奖">未中奖</Option>
                             <Option value="纸品类">纸品类</Option>
                             <Option value="饮品类">饮品类</Option>
-                            <Option value="纸品类">食品类</Option>
-                            <Option value="饮品类">卡券类</Option>
-                            <Option value="饮品类">服饰类</Option>
+                            <Option value="食品类">食品类</Option>
+                            <Option value="卡券类">卡券类</Option>
+                            <Option value="服饰类">服饰类</Option>
                         </Select>
                     </FormItem>
-                    <FormItem label="价格">
-                        <Input type="text"
-                               v-model="editorSettingData.price"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
-                                    placeholder="筛选考勤月份"
-                                    @on-change=""
-                                    :value="editorSettingData.month"></DatePicker>
+                    <Row>
+                        <Col :span="8">
+                        <FormItem label="奖品数量">
+                            <InputNumber :precision="0" v-model="editorSettingData.number"></InputNumber>
+                        </FormItem>
+                        </Col>
+                        <Col :span="8">
+                        <FormItem label="奖品价格">
+                            <InputNumber :precision="0" v-model="editorSettingData.price"></InputNumber>
+                        </FormItem>
+                        </Col>
+                        <Col :span="8">
+                        <FormItem label="奖品概率">
+                            <InputNumber :precision="0" v-model="editorSettingData.probability"></InputNumber>
+                        </FormItem>
+                        </Col>
+                    </Row>
+                    <FormItem label="奖品图片" required>
+                        <fs-img-upload action="/oa/order/uploadfile"
+                                       path="/oa/upload/"
+                                       ref="imgUploadFo"
+                                       :upload.sync="imgFile"></fs-img-upload>
                     </FormItem>
                 </Form>
                 <div slot="footer">
                     <Button type="primary"
                             :loading="btnLoading"
-                            @click="">
-                        添加商品
+                            @click="_confirmAddGoods">
+                        {{editorType === 'create' ? '添加商品' : '修改商品'}}
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
                 </div>
@@ -96,7 +102,7 @@
 </template>
 <script>
     import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
+    import fsImgUpload from '@/baseComponents/fs-img-upload-new';
     import debounce from 'lodash/debounce';
     export default {
         name: 'prizeManage',
@@ -104,17 +110,20 @@
             return {
                 editorSettingFlag: false,
                 btnLoading: false,
-                postFormType: 'update',
+                editorType: 'create',
                 filterOpt: {
                     goodsName: '',
                     status: ''
                 },
                 editorSettingData: {
-                    name: '',
-                    type: '',
-                    price: '',
-                    isDown: '',
-                    month: ''
+                    goodsName: '',
+                    type: '卡券类',
+                    number: 0,
+                    price: 0,
+                    probability: 0,
+                    isDown: true,
+                    goodPic: '',
+                    id: 0
                 },
                 postColumns: [
                     {
@@ -202,8 +211,20 @@
                         }
                     }
                 ],
+                imgFile: [],
+                formRule: {
+                    goodsName: [
+                        { required: true, message: '商品名称不能为空!', trigger: 'blur' }
+                    ]
+                },
                 tableHeight: 500
             };
+        },
+        imgFile: {
+            handler(val) {
+                this.editorSettingData.goodPic = val.length ? val[0].name : '';
+            },
+            deep: true
         },
         mixins: [pageMixin],
         created() {
@@ -211,7 +232,62 @@
             this._setTableHeight();
         },
         methods: {
+            _confirmAddGoods() {
+                let vm = this;
+                vm.$refs.formFo.validate((valid) => {
+                    if (valid) {
+                        let data = {};
+                        let settingData = vm.editorSettingData;
+                        if (!settingData.goodPic) {
+                            vm.$Message.error('商品图片不能为空!');
+                            return;
+                        }
+                        data.content = settingData.goodsName;
+                        data.statistic = settingData.isDown ? '上架' : '下架';
+                        data.classify = settingData.type;
+                        data.price = settingData.price;
+                        data.uploadName = settingData.goodPic;
+                        data.id = settingData.id;
+                        console.log(data);
+                        vm.$http.post('/order/addGoods', data).then((res) => {
+                            if (res.success) {
+                                vm.editorSettingFlag = false;
+                                vm.$Message.success('操作成功!');
+                                vm._getPostData();
+                            }
+                        });
+                    }
+                });
+            },
+            _updateEditor(data) {
+                console.log(data);
+                this.editorType = 'update';
+                this._initEditorSettingData();
+                let settingData = this.editorSettingData;
+                settingData.id = data.id;
+                settingData.price = data.price;
+                settingData.goodsName = data.name;
+                settingData.goodPic = data.image_path;
+                settingData.type = data.classify;
+                settingData.isDown = data.statistic === '上架';
+                this.imgFile = [{url: '/oa/upload/' + data.image_path, name: data.image_path, status: 'finished'}];
+                this.editorSettingFlag = true;
+            },
+            _createGoods() {
+                this._initEditorSettingData();
+                this.editorType = 'create';
+                this.editorSettingFlag = true;
+            },
             _initEditorSettingData() {
+                let settingData = this.editorSettingData;
+                settingData.goodsName = '';
+                settingData.type = '卡券类';
+                settingData.price = 0;
+                settingData.isDown = true;
+                settingData.goodPic = '';
+                settingData.id = 0;
+                this.imgFile = [];
+                this.$refs.imgUploadFo.removeAllPicFlie();
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -238,11 +314,13 @@
             },
             _getPostData() {
                 let data = {};
-                data.goodsName = this.filterOpt.goodsName;
-                data.status = this.filterOpt.status;
+                data.name = this.filterOpt.goodsName;
+                // data.status = this.filterOpt.status;
                 this.getList('/lottery/goodslist', data);
             }
         },
-        components: {}
+        components: {
+            fsImgUpload
+        }
     };
 </script>

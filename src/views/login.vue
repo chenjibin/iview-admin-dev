@@ -32,7 +32,10 @@
                                     <Icon :size="16" type="android-checkmark-circle"></Icon>
                                 </span>
                             </Input>
-                            <img src="/oa/login/geneCode" id="validate-code-img" @click="getCode" ref="codeImg" style="cursor: pointer;"/>
+                            <img src="/oa/login/geneCode"
+                                 id="validate-code-img"
+                                 @click="getCode"
+                                 ref="codeImg" style="cursor: pointer;"/>
                         </FormItem>
                         <FormItem>
                             <Button @click="handleSubmit"

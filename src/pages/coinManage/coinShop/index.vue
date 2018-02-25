@@ -10,7 +10,7 @@
                  style="margin-bottom: 8px;">
                 <Card class="good-item-wrapper">
                     <div class="fs-square-img" style="margin-bottom: 8px;">
-                        <img :src="item.pic">
+                        <img :src="'/oa/upload/' + item.image_path">
                     </div>
                     <Tooltip placement="top-start" :transfer="true">
                         <div slot="content">
@@ -20,7 +20,7 @@
                     </Tooltip>
                     <Row type="flex" justify="space-between" align="middle" style="margin-top: 8px;">
                         <Col>
-                            <span class="coin">{{item.coin}}</span>
+                            <span class="coin">{{item.price}}</span>
                             <span>金币</span>
                         </Col>
                         <Col>
@@ -123,78 +123,7 @@
             return {
                 subLoading: false,
                 buyFlag: false,
-                goodList: [
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'DZ 工作牌带子',
-                        coin: 200,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1500002183174.jpg'
-                    },
-                    {
-                        name: 'C3710 心相印红悦系列10包装四层纸手帕10包',
-                        coin: 50,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1428485049746.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'DZ 工作牌带子',
-                        coin: 200,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1500002183174.jpg'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    },
-                    {
-                        name: 'NGQ01 天马体育专卖店50元现金券',
-                        coin: 100,
-                        pic: 'http://tm.xyyzi.com:9090/oa/upload/1_1507890861765.png'
-                    }
-                ],
+                goodList: [],
                 goodDesc: {
                     name: '',
                     pic: '',
@@ -227,10 +156,11 @@
             },
             _openBuy(data) {
                 this._initData();
+                this.buyForm.id = data.id;
                 this.buyFlag = true;
                 this.goodDesc.name = data.name;
-                this.goodDesc.pic = data.pic;
-                this.goodDesc.coin = data.coin;
+                this.goodDesc.pic = '/oa/upload/' + data.image_path;
+                this.goodDesc.coin = data.price;
                 console.log(data);
             },
             _submitBuy() {
@@ -238,9 +168,9 @@
                 let data = {};
                 data.id = this.buyForm.id;
                 data.quality = this.buyForm.quality;
-                data.price = this.goodDesc.coin;
-                data.totalPrice = data.price * data.quality;
-                this.$http.post('', data).then((res) => {
+                // data.price = this.goodDesc.coin;
+                // data.totalPrice = data.price * data.quality;
+                this.$http.post('/order/add', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('商品兑换成功!');
                         this.buyFlag = false;
@@ -250,7 +180,7 @@
                 });
             },
             _getGoodList() {
-                this.$http.get('/order/orderlist').then((res) => {
+                this.$http.get('/order/goldMall').then((res) => {
                     console.log(res);
                     if (res.success) {
                         this.goodList = res.data;
