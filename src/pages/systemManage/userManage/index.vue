@@ -1065,9 +1065,12 @@
                 data.no_write = this.userSettingForm.isLog ? 0 : 1;
                 data.banci = this.userSettingForm.banci.join(',');
                 data.organizeId = this.userSettingForm.dep.slice(-1)[0];
+                data.lv = data.organizeId;
                 data.level = this.userSettingForm.level;
+                data.levelcode = this.userSettingForm.level;
                 data.postId = this.userSettingForm.post;
                 data.roleId = this.userSettingForm.role;
+                data.kq_type = data.banci;
 
                 this.$http.post('/user/setUserInfo ', data).then((res) => {
                     if (res.success) {

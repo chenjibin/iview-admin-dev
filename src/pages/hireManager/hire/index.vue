@@ -953,9 +953,6 @@
                         this.calcStatus = 'finish';
                     }
                 }
-                console.log(row.status);
-                console.log(this.calcStep);
-                console.log(this.calcStatus);
             },
             getStatusText (num) {
                 var text = ['未预约', '已预约', '已到达', '未到达', '面试合格', '待定', '面试不合格', '合格到达', '合格未到达', '试岗通过', '试岗未通过'];
@@ -1014,7 +1011,7 @@
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
-            }, 1200),
+            }, 1600),
             _filterResultHandler () {
                 this.initPage();
                 this._getPostData();

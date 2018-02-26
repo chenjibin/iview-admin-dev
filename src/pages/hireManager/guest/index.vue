@@ -1,6 +1,6 @@
 <template>
     <div id="guest">
-        <Card  :class="device.mobile&&device.width<=490?'mobileTabHeight':'pcTabHeight'">
+        <Card style="background: #fafafa;"  :class="device.mobile&&device.width<=490?'mobileTabHeight':'pcTabHeight'">
             <Tabs type="card" style="height: 100%;">
                 <TabPane label="基本信息" style="height: 100%">
                     <Form ref="talentBean" :model="talentBean" :rules="rules" style="font-size: 0px;overflow-y: auto;overflow-x: hidden;height: 100%;" inline>
@@ -196,13 +196,13 @@
                         </FormItem>
                     </Form>
                 </TabPane>
-                <ButtonGroup v-if="!device.mobile&&device.width>=490" slot="extra">
+                <ButtonGroup v-show="!device.mobile&&device.width>490&&talentBean.id" slot="extra">
                     <Button type="primary" icon="document" @click="saveForm" size="small" >保存</Button>
                     <Button type="ghost" icon="edit" @click="searchUserModel = true" size="small">完善简历</Button>
                 </ButtonGroup>
                 </Tabs>
-        </Card>
-        <Row v-if="device.mobile&&device.width<=490" style="height: 6%;">
+        </Card>-
+        <Row v-show="device.mobile&&device.width<=490&&talentBean.id" class="bottomTab">
             <Col span="12" style="height: 100%;border-top:1px #f0f0f0;">
                 <Button type="ghost" class="mobileTabButton" icon="edit" long @click="searchUserModel = true" size="large">
                     完善简历
@@ -214,7 +214,7 @@
                 </Button>
             </Col>
         </Row>
-        <Modal v-model="searchUserModel" inline width="360" :mask-closable="false">
+        <Modal v-model="searchUserModel" inline width="360" :closable="false"  :mask-closable="false">
             <p slot="header" style="color:#2b85e4;text-align:center;font-size: 14px">
                 <Icon type="information-circled"></Icon>
                 <span>简历数据</span>
@@ -251,8 +251,8 @@
             return {
                 searchUserModel: true,
                 searchUserForm: {
-                    name: '张一一',
-                    phone: '18752033222'
+                    name: '',
+                    phone: ''
                 },
                 device: {
                     mobile: false,
@@ -281,7 +281,6 @@
                     }
                 ], // 简历工作信息
                 talentBean: {
-                    id: '',
                     postname: '',
                     monthlysalary: '',
                     resumesource: '',
@@ -343,8 +342,6 @@
                                     vm.$Modal.remove();
                                     vm[formName].splice(index, 1);
                                     vm.$Message.success('删除成功');
-                                } else {
-                                    vm.$Message.error('删除失败');
                                 }
                             });
                         }
@@ -404,6 +401,7 @@
                             }
                         });
                     } else {
+                        g.$Message.error('缺少必填信息');
                         return false;
                     }
                 });
@@ -429,9 +427,7 @@
                 return new Promise(function (resolve, reject) {
                     vm.$http.post('/talentLibrary/find', {id: id}).then((res) => {
                         if (res.success) {
-                            console.log(res.educations);
                             vm.educationForm = res.educations;
-                            console.log(vm.educationForm);
                             vm.workingForm = res.workings;
                             vm.talentBean = res.talentLibrary;
                             resolve();
@@ -461,15 +457,16 @@
         -webkit-overflow-scrolling: touch;
         height: 100%;
         .bottomTab{
-            height: 4%;
+            height: 7%;
         }
         .mobileTabHeight{
-            height: 94%;
+            height: 93%;
         }
         .pcTabHeight{
             height: 99%;
         }
         .mobileTabButton{
+            padding: 0;
             border-radius: 0px;
             font-size: 14px;
             height: 100%;
@@ -497,6 +494,7 @@
         }
         .ivu-card-body{
             height: 100%;
+            padding-bottom: 0px;
             .ivu-tabs-content{
                 @diff : 32px;
                 height: calc(~"100% - " @diff);
