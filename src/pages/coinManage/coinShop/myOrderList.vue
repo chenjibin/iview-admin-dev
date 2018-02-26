@@ -131,8 +131,8 @@
                     data.pageSize = this.pageData.pageSize;
                     data.status = this.pageData.status === '3' ? '' : this.pageData.status;
                     let totalPage = Math.ceil(this.pageData.totalCount / this.pageData.pageSize);
-                    console.log(totalPage)
                     if (data.page > totalPage) {
+                        resolve();
                         this.loadingText = '已经加载完全部订单!';
                         return;
                     }
