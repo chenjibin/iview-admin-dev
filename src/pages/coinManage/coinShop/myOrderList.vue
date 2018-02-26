@@ -127,7 +127,6 @@
                 return new Promise((resolve) => {
                     let data = {};
                     data.page = ++this.pageData.page;
-                    console.log(data.page)
                     data.pageSize = this.pageData.pageSize;
                     data.status = this.pageData.status === '3' ? '' : this.pageData.status;
                     let totalPage = Math.ceil(this.pageData.totalCount / this.pageData.pageSize);
