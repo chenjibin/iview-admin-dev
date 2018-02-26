@@ -1,24 +1,34 @@
 <template>
     <div>
         <Card>
-            <Form inline :label-width="60">
-                <FormItem label="姓名">
+            <Form inline :label-width="60"  @submit.native.prevent>
+                <FormItem label="试题名称">
                     <Input type="text"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.name"
-                           placeholder="筛选姓名"></Input>
+                           placeholder="筛选试题名称"></Input>
                 </FormItem>
-                <FormItem label="部门">
-                    <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.dep"
-                           placeholder="筛选部门"></Input>
+                <FormItem label="试题分类">
+                    <Select v-model="filterOpt.subject"
+                            clearable
+                            @on-change="_filterResultHandler"
+                            placeholder="筛选分类"
+                            style="width: 100px">
+                        <Option :value="item.id" v-for="item, index in subjectList">{{item.name}}</Option>
+                    </Select>
                 </FormItem>
-                <FormItem label="日期">
-                    <DatePicker type="year"
-                                @on-change="filterOpt.year = $event"
-                                clearable
-                                :value="filterOpt.year"></DatePicker>
+                <FormItem label="试题类型">
+                    <Select v-model="filterOpt.type"
+                            clearable
+                            @on-change="_filterResultHandler"
+                            placeholder="筛选类型"
+                            style="width: 100px">
+                        <Option value="1">单选题</Option>
+                        <Option value="2">多选题</Option>
+                        <Option value="3">判断题</Option>
+                        <Option value="4">填空题</Option>
+                        <Option value="5">问答题</Option>
+                    </Select>
                 </FormItem>
             </Form>
             <Table :columns="postColumns"
@@ -101,65 +111,78 @@
                 postFormType: 'update',
                 filterOpt: {
                     name: '',
-                    dep: '',
-                    year: ''
+                    subject: '',
+                    type: ''
                 },
                 editorSettingData: {
                     name: '',
                     type: '',
                     price: '',
-                    isDown: '',
                     month: ''
                 },
                 postColumns: [
                     {
-                        title: '姓名',
-                        key: 'organizename',
+                        title: '试题名称',
+                        key: 'name',
                         align: 'center'
                     },
                     {
-                        title: '所在部门',
+                        title: '试题分类',
                         key: 'postname',
                         align: 'center'
                     },
                     {
-                        title: '财富点',
+                        title: '试题类型',
                         key: 'user_name',
                         align: 'center'
                     },
                     {
-                        title: '技能点',
+                        title: '试题分数',
                         key: 'user_name',
                         align: 'center'
                     },
                     {
-                        title: '伯乐点',
+                        title: '创建日期',
                         key: 'user_name',
                         align: 'center'
                     },
                     {
-                        title: '智慧点',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '综合能力值',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '统计日期',
-                        key: 'user_name',
-                        align: 'center',
-                        width: 120
+                        title: '操作',
+                        width: 100,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                h('Tooltip', {
+                                    props: {
+                                        content: '考勤设置',
+                                        placement: 'top',
+                                        transfer: true
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            icon: 'ios-gear',
+                                            shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function () {
+                                            }
+                                        }
+                                    })
+                                ])
+                            ]);
+                        }
                     }
                 ],
+                subjectList: [],
                 tableHeight: 500
             };
         },
         mixins: [pageMixin],
         created() {
             this._getPostData();
+            this._getSubjectList();
             this._setTableHeight();
         },
         methods: {
@@ -190,9 +213,17 @@
             },
             _getPostData() {
                 let data = {};
-                data.goodsName = this.filterOpt.goodsName;
-                data.status = this.filterOpt.status;
-                this.getList('', data);
+                data.name = this.filterOpt.name;
+                data.type = this.filterOpt.type;
+                data.subject = this.filterOpt.subject;
+                this.getList('/examquestion/getQuestionList', data);
+            },
+            _getSubjectList() {
+                this.$http.get('/examquestion/getSubjectList').then((res) => {
+                    if (res.success) {
+                        this.subjectList = res.data;
+                    }
+                });
             }
         },
         components: {}
