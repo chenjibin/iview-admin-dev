@@ -159,7 +159,6 @@
             _setHeight() {
                 let dm = document.body.clientHeight;
                 this.scrollHeight = dm - 240;
-                console.log(this.scrollHeight);
             }
         },
         components: {}
