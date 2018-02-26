@@ -13,7 +13,7 @@
                 <Button type="primary"
                         shape="circle"
                         icon="ios-search"
-                        @click.stop="modelFlag = true">查看更多</Button>
+                        @click.stop="modelFlag = true">我的金币动态</Button>
             </Col>
         </Row>
         <div class="coin-change-list">

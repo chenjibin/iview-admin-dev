@@ -44,7 +44,7 @@
             <Col :xs="24" :sm="24" :md="10" :lg="8">
                 <Card :dis-hover="true">
                     <h3>我的订单</h3>
-                    <order-list></order-list>
+                    <order-list ref="orderList"></order-list>
                 </Card>
             </Col>
         </Row>
@@ -194,6 +194,7 @@
                     if (res.success) {
                         this.$store.commit('updateUserInfo');
                         this.$Message.success('商品兑换成功!');
+                        this.$refs.orderList.upDateOrderList();
                         this.buyFlag = false;
                     }
                 }).finally(() => {

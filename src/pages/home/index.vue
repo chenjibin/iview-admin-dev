@@ -22,20 +22,14 @@
                                         btn-text="考勤"
                                         @card-click="$router.push('myAttendance')"></info-btn>
                             </Col>
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
-                                <info-btn
-                                        iconType="ios-grid-view"
-                                        color="#ff9900"
-                                        btn-text="抽奖"
-                                        @card-click=""></info-btn>
-                            </Col>
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
-                                <info-btn
-                                        iconType="cash"
-                                        color="#f25e43"
-                                        btn-text="金币商城"
-                                        @card-click="$router.push('coinShop')"></info-btn>
-                            </Col>
+                            <!--<Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">-->
+                                <!--<info-btn-->
+                                        <!--iconType="ios-grid-view"-->
+                                        <!--color="#ff9900"-->
+                                        <!--btn-text="抽奖"-->
+                                        <!--@card-click=""></info-btn>-->
+                            <!--</Col>-->
+
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
                                         iconType="compose"
@@ -49,6 +43,13 @@
                                         color="#19be6b"
                                         btn-text="排班"
                                         @card-click="$router.push('myArrange')"></info-btn>
+                            </Col>
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                            <info-btn
+                                    iconType="cash"
+                                    color="#f25e43"
+                                    btn-text="金币商城"
+                                    @card-click="$router.push('coinShop')"></info-btn>
                             </Col>
                         </Row>
                     </Col>

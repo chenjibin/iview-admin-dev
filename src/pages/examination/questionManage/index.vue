@@ -14,7 +14,7 @@
                             @on-change="_filterResultHandler"
                             placeholder="筛选分类"
                             style="width: 100px">
-                        <Option :value="item.id" v-for="item, index in subjectList">{{item.name}}</Option>
+                        <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="试题类型">

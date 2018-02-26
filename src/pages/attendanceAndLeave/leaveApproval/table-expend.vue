@@ -148,7 +148,7 @@
             };
         },
         created() {
-            this.userName = this.$store.state.user.userInfo.userName;
+            this.userName = this.$store.state.user.userInfo.realname;
         },
         methods: {
             validaContent(rule, value, callback) {

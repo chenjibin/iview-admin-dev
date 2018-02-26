@@ -120,8 +120,14 @@
                     <span>导出考勤</span>
                 </p>
                 <Form >
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
+                    <FormItem label="导出类型">
+                        <RadioGroup v-model="exportType">
+                            <Radio label="month">月份</Radio>
+                            <Radio label="year">年份</Radio>
+                        </RadioGroup>
+                    </FormItem>
+                    <FormItem :label="exportType === 'month' ? '考勤月份' : '考勤年份'">
+                        <DatePicker :type="exportType"
                                     placeholder="筛选考勤月份"
                                     @on-change="_exportMonthChange"
                                     :value="exportMonth"></DatePicker>
@@ -225,6 +231,7 @@
                 recordId: '',
                 exportMonth: moment().format('YYYY-MM'),
                 deleteMonth: moment().format('YYYY-MM'),
+                exportType: 'month',
                 strangeSettingForm: {
                     type: '',
                     days: '',
@@ -557,6 +564,12 @@
             };
         },
         mixins: [pageMixin],
+        watch: {
+            exportType(val) {
+                if (val === 'month') this.exportMonth = moment().format('YYYY-MM');
+                else this.exportMonth = moment().format('YYYY');
+            }
+        },
         created() {
             this._getPostData();
             this._setTableHeight();
@@ -586,10 +599,12 @@
                 this.exportLoading = true;
                 let data = {};
                 data.date = this.exportMonth;
-                this.$http.get('/kq/export', {params: data}).then((res) => {
+                let getUrl = this.exportType === 'month' ? '/kq/export' : '/kq/exportYear';
+                this.$http.get(getUrl, {params: data}).then((res) => {
+                    console.log(res);
                     if (res.success) {
-                        document.getElementById('hrefToExportTable').href = res.url;
-                        document.getElementById('hrefToExportTable').download = this.exportMonth + '考勤统计表.xls';
+                        document.getElementById('hrefToExportTable').href = '/oa/download/' + res.data;
+                        document.getElementById('hrefToExportTable').download = res.data;
                         document.getElementById('hrefToExportTable').click();
                         this.exportModalFlag = false;
                     }
