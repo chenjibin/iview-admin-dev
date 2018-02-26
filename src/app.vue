@@ -27,6 +27,19 @@
 </script>
 
 <style>
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+        border: 1px #808080 solid;
+        background: #999;
+    }
+    ::-webkit-scrollbar-track {
+        border: 1px #d3d3d3 solid;
+        box-shadow: 0 0 3px #dfdfdf inset;
+        background: #eee;
+    }
     html,body{
         width: 100%;
         height: 100%;

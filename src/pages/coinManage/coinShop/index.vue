@@ -79,7 +79,9 @@
                 <Col :span="12">
                     <div class="result-block">
                         <p class="title">总消费</p>
-                        <count-to :endVal="totalCost" :count-style="contStyle"></count-to>
+                        <count-to :endVal="totalCost" :count-style="contStyle">
+                            <span slot="rightText" style="font-weight: 700;">金币</span>
+                        </count-to>
                     </div>
                 </Col>
             </Row>
