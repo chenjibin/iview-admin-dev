@@ -1,21 +1,21 @@
 <template>
     <div id="hire">
         <Card>
-            <Form inline :label-width="90">
+            <Form inline :label-width="60">
                 <FormItem label="姓名">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.name"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="岗位">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.postids"
                            placeholder="筛选岗位"></Input>
                 </FormItem>
                 <FormItem label="学历">
-                    <Select type="text" style="width: 120px"
+                    <Select type="text" style="width: 173px"
                             @on-change="_inputDebounce"
                             v-model="filterOpt.education"
                             placeholder="筛选学历" clearable>
@@ -26,7 +26,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="性别">
-                    <Select type="text" style="width: 120px"
+                    <Select type="text" style="width: 173px"
                             @on-change="_inputDebounce"
                             v-model="filterOpt.sex"
                             placeholder="筛选性别" clearable>
@@ -35,11 +35,11 @@
                     </Select>
                 </FormItem>
                 <FormItem label="电话">
-                    <Input type="text" v-model="filterOpt.phone" style="width: 120px" placeholder="筛选号码"
+                    <Input type="text" v-model="filterOpt.phone" style="width: 173px" placeholder="筛选号码"
                            @on-change="_inputDebounce"></Input>
                 </FormItem>
                 <FormItem label="信息来源">
-                    <Select type="text" v-model="filterOpt.resumesource" style="width: 120px" placeholder="筛选来源"
+                    <Select type="text" v-model="filterOpt.resumesource" style="width: 173px" placeholder="筛选来源"
                             @on-change="_inputDebounce" clearable>
                         <Option value="1">58同城</Option>
                         <Option value="2">智联</Option>
@@ -54,25 +54,25 @@
                     </Select>
                 </FormItem>
                 <FormItem label="毕业院校">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.graduatedschool"
                            placeholder="筛选院校"></Input>
                 </FormItem>
                 <FormItem label="专业">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.profession"
                            placeholder="筛选专业"></Input>
                 </FormItem>
                 <FormItem label="工作单位">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
                            v-model="filterOpt.companyname"
                            placeholder="筛选单位"></Input>
                 </FormItem>
                 <FormItem label="婚否">
-                    <Select type="text" style="width: 120px"
+                    <Select type="text" style="width: 173px"
                             @on-change="_inputDebounce"
                             v-model="filterOpt.marriage" clearable>
                         <Option value="已婚">已婚</Option>
@@ -80,26 +80,26 @@
                     </Select>
                 </FormItem>
                 <FormItem label="预约时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 180px"
+                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('startdate',$event)"
                                 :value="filterOpt.startdate"></DatePicker>
                 </FormItem>
                 <FormItem label="面试时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 180px"
+                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('interviewtime',$event)"
                                 :value="filterOpt.interviewtime"></DatePicker>
                 </FormItem>
                 <FormItem label="试岗时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 180px"
+                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('testtime',$event)"
                                 :value="filterOpt.testtime"></DatePicker>
                 </FormItem>
-                <FormItem label="移入时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 180px"
+                <FormItem label="移入时间" style="margin-right: 0;">
+                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px;"
                                 @on-change="_monthDateChange('sparetime',$event)"
                                 :value="filterOpt.sparetime"></DatePicker>
                 </FormItem>
-                <Button type="success" @click="showAddNew()" style="margin-left: 8px">新建简历</Button>
+                <Button type="success" @click="showAddNew()" style="padding: 6px 5px;">新增</Button>
             </Form>
             <div style="position: relative">
                 <Table :columns="postColumns"
@@ -163,14 +163,46 @@
                                 <Option :value="2">女</Option>
                             </Select>
                         </FormItem>
+                        <FormItem label="岗位" style="width:430px">
+                            <Select class="" id="postName" name="postName">
+                                <Option :value="1">售前客服</Option>
+                                <Option :value="2">专卖店店长</Option>
+                                <Option :value="3">对账专员</Option>
+                                <Option :value="4">售后</Option>
+                                <Option :value="5">渠道专员</Option>
+                                <Option :value="6">美工</Option>
+                                <Option :value="7">操作工</Option>
+                                <Option :value="8">采购专员</Option>
+                                <Option :value="9">专卖店导购</Option>
+                                <Option :value="10">渠道售后</Option>
+                                <Option :value="11">微信客服</Option>
+                                <Option :value="12">商品专员</Option>
+                                <Option :value="13">仓库储备干部</Option>
+                                <Option :value="14">营销专员</Option>
+                                <Option :value="15">保姆</Option>
+                                <Option :value="16">保安</Option>
+                                <Option :value="17">货运司机</Option>
+                                <Option :value="18">总账会计</Option>
+                                <Option :value="19">微信运营专员</Option>
+                                <Option :value="20">设计</Option>
+                                <Option :value="21">仓库临时工</Option>
+                                <Option :value="22">java</Option>
+                                <Option :value="23">PHP</Option>
+                                <Option :value="24">开票会计</Option>
+                                <Option :value="25">人事专员</Option>
+                                <Option :value="26">培训讲师</Option>
+                                <Option :value="27">运营助理</Option>
+                                <Option :value="28">电商储备干部</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem label="期望月薪" style="width:430px">
+                            <Input type="text" v-model="talentBean.monthlysalary"></Input>
+                        </FormItem>
                         <FormItem label="年龄" style="width:430px">
                             <Input type="text" v-model="talentBean.age"></Input>
                         </FormItem>
                         <FormItem label="手机" style="width:430px">
                             <Input type="text" v-model="talentBean.phone"></Input>
-                        </FormItem>
-                        <FormItem label="期望月薪" style="width:430px">
-                            <Input type="text" v-model="talentBean.monthlysalary"></Input>
                         </FormItem>
                         <FormItem label="信息来源" style="width:430px">
                             <Select type="text" v-model="talentBean.resumesource">
@@ -192,6 +224,11 @@
                         </FormItem>
                         <FormItem label="电子邮箱" style="width:430px">
                             <Input type="text" v-model="talentBean.email"></Input>
+                        </FormItem>
+                        <FormItem label="预约时间" style="width:430px">
+                            <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 100%"
+                                        @on-change="_infoDateChange(0,0,'appointment',$event)"
+                                        :value="talentBean.appointment"></DatePicker>
                         </FormItem>
                         <FormItem label="身份证号码" style="width:430px">
                             <Input type="text" v-model="talentBean.idnum"></Input>
@@ -455,6 +492,39 @@
                 </Button>
             </div>
         </Modal>
+        <Modal  v-model="showAttachModel" width="800" >
+            <div style="max-height: 400px;overflow-x: hidden;overflow-y: auto;">
+                <Card >
+                    <Row :gutter="16">
+                        <Col span="12" v-for="(item,index) in fileList" style="margin-bottom: 16px;" :key="index">
+                            <Row>
+                                <Col span="8">
+                                    <h4 style="width: 150px;text-overflow: ellipsis;overflow: hidden;white-space:nowrap;">文件名：{{item.file_name}}</h4>
+                                    <h4 style="margin-top: 10px">上传人：{{item.insert_username}}</h4>
+                                    <h4 style="margin-top: 10px">下载：<Button style="font-size: 20px;cursor: pointer" icon="ios-cloud-download-outline" @click="download(item.file_path)"></Button>  </h4>
+                                </Col>
+                                <Col span="15" class="fileImg">
+                                    <img style="width: 100%;cursor: pointer;height: 200px;display: block;position: relative" :src="item.file_path" alt="">
+                                    <div class="mouse-on-hover">
+                                        <Icon type="ios-eye-outline" @click.native="handleView(item.file_path)"></Icon>
+                                        <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                </Card>
+            </div>
+            <Upload name="ifile" :on-success="handleSuccess" :show-upload-list="false" multiple :data="{'ticketno':ticketNo}" action="/oa/ticket/uploadticketfiles">
+                <Button type="ghost" icon="ios-cloud-upload-outline">上传</Button>
+            </Upload>
+        </Modal>
+        <Modal title="查看图片" v-model="visible" width="1000">
+            <div style="max-height: 700px;max-width:1100px;overflow:auto;text-align: center;">
+                <img :src="imgsrc" style="margin: 0 auto" v-if="visible">
+            </div>
+            <div slot="footer"></div>
+        </Modal>
     </div>
 </template>
 
@@ -488,6 +558,9 @@
             };
             return {
                 changUserStatusModel: false, // 点击上下一步弹出
+                showAttachModel: false, // 附件上传按钮
+                visible: false, // 用户图片放大
+                ticketNo: 0,
                 modalFlag2: false, // 员工考核周期弹出
                 settingModalFlag: false, // 简历模块弹出
                 saveBtn2Loading: false, // 提交按钮加载
@@ -536,6 +609,7 @@
                     postname: '',
                     monthlysalary: '',
                     resumesource: '',
+                    appointment: '',
                     name: '',
                     age: '',
                     yearswork: 0,
@@ -608,6 +682,7 @@
                         { validator: validateUsername, trigger: 'blur' }
                     ]
                 },
+                fileList: [],
                 educationMapping: ['', '博士研究生', '硕士研究生', '本科', '专科', '中专', '高中', '初中'],
                 resumeSourceMapping: ['', '58同城', '智联', '前程无忧', '其他网络渠道', '现场招聘会', '微信公众号', '来电', '介绍'],
                 postColumns: [
@@ -671,7 +746,7 @@
                         title: '电话',
                         key: 'phone',
                         align: 'center',
-                        width: 105
+                        width: 110
                     },
                     {
                         title: '信息来源',
@@ -691,14 +766,12 @@
                     {
                         title: '面试时间',
                         key: 'interviewtime',
-                        align: 'center',
-                        width: 110
+                        align: 'center'
                     },
                     {
                         title: '试岗时间',
                         key: 'testtime',
-                        align: 'center',
-                        width: 110
+                        align: 'center'
                     },
                     {
                         title: '所在周期',
@@ -720,6 +793,7 @@
                     {
                         title: '面试意见',
                         key: 'remarks',
+                        width: 120,
                         align: 'center',
                         render: (h, params) => {
                             return h('div', {}, [
@@ -748,7 +822,7 @@
                         key: 'action',
                         align: 'center',
                         fixed: 'right',
-                        width: 100,
+                        width: 110,
                         render: (h, params) => {
                             var vm = this;
                             return h('div', {
@@ -800,6 +874,27 @@
                                         }
                                     }
                                     )
+                                ]),
+                                h('Tooltip', {
+                                    props: {
+                                        content: '查看附件',
+                                        placement: 'top',
+                                        transfer: true
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'ghost',
+                                            icon: 'arrow-expand',
+                                            shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function () {
+                                                vm.showAttach(params.row);
+                                            }
+                                        }
+                                    }
+                                    )
                                 ])
                             ]);
                         }
@@ -816,6 +911,60 @@
             editUser(row) {
                 this._findUser(row.id).then((res) => {
                     this.settingModalFlag = true;
+                });
+            },
+            handleSuccess(res, file) {
+                if (res.success) {
+                    this.getTicketList(res.message);
+                    this.$Message.success('上传成功');
+                }
+            },
+            handleView(filePath) {
+                this.imgsrc = filePath;
+                this.visible = true;
+            },
+            // 删除附件
+            handleRemove(item) {
+                var vm = this;
+                this.$Modal.confirm({
+                    title: '删除提醒',
+                    content: '是否确认删除？',
+                    okText: '删除',
+                    cancelText: '取消',
+                    loading: true,
+                    onOk () {
+                        this.$http.post('/ticket/deleteTicketFile', item).then((res) => {
+                            if (res.success) {
+                                vm.getTicketList(item.ticket_no);
+                                vm.$Modal.remove();
+                                vm.$Message.success('删除成功');
+                            }
+                        });
+                    }
+                });
+            },
+            // 下载图片
+            download(path) {
+                window.open('http://' + window.location.host + path);
+            },
+            showAttach(user) {
+                this.ticketNo = user.id + 666587;
+                this.getTicketList(this.ticketNo);
+                this.showAttachModel = true;
+            },
+            getTicketList(id) {
+                var that = this;
+                this.$http.post('/ticket/ticketFileslist', { 'ticketno': id }).then((res) => {
+                    if (res.success) {
+                        var d = res.data;
+                        for (let i = 0; i < d.length; i++) {
+                            d[i].file_path = d[i].file_path.replace('\\..', '\\oa');
+                            if (d[i].file_path.indexOf('/oa') < 0) {
+                                d[i].file_path = '/oa' + d[i].file_path;
+                            }
+                        }
+                        that.fileList = res.data;
+                    }
                 });
             },
             delForm(index, formName) {
@@ -1037,6 +1186,9 @@
                 this._filterResultHandler();
             },
             _infoDateChange (type, index, key, value) {
+                if (type === 0) {
+                    this.talentBean[key] = value;
+                }
                 if (type === 1) {
                     this.educationForm[index][key] = value;
                 }
@@ -1089,12 +1241,32 @@
             }
         }
         .ivu-table-wrapper{
-            width: 99%;
+            width: 98%;
         }
     }
     .showUserInfoItem {
         width: 45%;
         font-size: 18px;
         font-weight: bold;
+    }
+    .mouse-on-hover{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,.6);
+        display: none;
+    }
+    .mouse-on-hover i{
+        color: #fff;
+        font-size: 60px;
+        cursor: pointer;
+        margin: 30px;
+    }
+    .fileImg:hover .mouse-on-hover{
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
