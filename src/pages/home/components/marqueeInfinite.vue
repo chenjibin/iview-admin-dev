@@ -47,22 +47,12 @@
         },
         watch: {
             itemData() {
-                console.log('itemDate');
                 this.$nextTick(() => {
                     this.innerHeight = this.$refs.innerDom.clientHeight;
                     this.animationY = +this.height;
-                    console.log(this.innerHeight);
                     this._run();
                 });
             }
-        },
-        mounted() {
-            // this.$nextTick(() => {
-            //     this.innerHeight = this.$refs.innerDom.clientHeight;
-            //     this.animationY = +this.height;
-            //     console.log(this.innerHeight);
-            //     this._run();
-            // });
         },
         destroyed() {
             cancelAnimationFrame(this.animationFram);

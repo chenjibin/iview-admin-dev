@@ -2,7 +2,7 @@
     <Card class="coin-change">
         <Row type="flex" justify="space-between" class="coin-change-header">
             <Col>
-                <p class="coin-change-title">我的金币动态</p>
+                <p class="coin-change-title">金币奖惩记录</p>
             </Col>
             <Col>
                 <Button type="primary"
@@ -17,19 +17,8 @@
             </Col>
         </Row>
         <div class="coin-change-list">
-            <Row class="coin-change-list-item" type="flex" align="middle" v-for="(item, index) in itemData" :key="'coin-change-' + index">
-                <Col :span="4">
-                    <div class="coin-change-list-item-num">
-                        <span class="tag" :class="[Number(item.opt_num) > 0 ? 'up': 'down']">{{item.opt_num}}</span>
-                    </div>
-                </Col>
-                <Col :span="12">
-                    <div class="coin-change-list-item-desc">{{item.reason}}</div>
-                </Col>
-                <Col :span="8">
-                    <div class="coin-change-list-item-time">{{item.opt_time}}</div>
-                </Col>
-            </Row>
+            <fs-table-page :columns="coinRecordCol"
+                           url="/coin/getCredit"></fs-table-page>
         </div>
         <Modal v-model="modelCoinFlag" width="800" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
@@ -37,20 +26,20 @@
             </p>
             <Row :gutter="5" style="margin-bottom: 10px;">
                 <Col :md="12" :lg="12">
-                <coin-ranking
-                        :loading="coinLoadingFlag"
-                        tag-color="#19be6b"
-                        coin-title="金币排行红榜"
-                        :row-data="rankDataRed">
-                </coin-ranking>
+                    <coin-ranking
+                            :loading="coinLoadingFlag"
+                            tag-color="#19be6b"
+                            coin-title="金币排行红榜"
+                            :row-data="rankDataRed">
+                    </coin-ranking>
                 </Col>
                 <Col :md="12" :lg="12">
-                <coin-ranking
-                        :loading="coinLoadingFlag"
-                        tag-color="#ed3f14"
-                        coin-title="金币排行黑榜"
-                        :row-data="rankDataBlack">
-                </coin-ranking>
+                    <coin-ranking
+                            :loading="coinLoadingFlag"
+                            tag-color="#ed3f14"
+                            coin-title="金币排行黑榜"
+                            :row-data="rankDataBlack">
+                    </coin-ranking>
                 </Col>
             </Row>
             <div slot="footer">
@@ -60,17 +49,8 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>我的金币动态</span>
             </p>
-            <Table height="400"
-                   :columns="columns"
-                   :data="rowData"
-                   :loading="loading"
-                   class="sys-notice-table"></Table>
-            <Page :total="pageData.totalData"
-                  size="small"
-                  @on-change="pageChangeHandler"
-                  @on-page-size-change="pageSizeChangeHandler"
-                  show-elevator
-                  show-sizer></Page>
+            <fs-table-page :columns="columns"
+                           url="/main/getMyCoinLogList"></fs-table-page>
             <div slot="footer">
             </div>
         </Modal>
@@ -86,30 +66,11 @@
             font-size: 18px;
             font-weight: 700;
         }
-        &-list {
-            &-item {
-                padding: 8px 0;
-                &-num {
-                    text-align: center;
-                    .tag {
-                        padding: 4px 8px;
-                        display: inline-block;
-                        border-radius: 6px;
-                        color: #fff;
-                        &.up {
-                            background-color: #19be6b;
-                        }
-                        &.down {
-                            background-color: #ed3f14;
-                        }
-                    }
-                }
-            }
-        }
     }
 </style>
 <script>
     import coinRanking from './coinRanking';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     export default {
         data () {
             return {
@@ -118,11 +79,6 @@
                 coinLoadingFlag: false,
                 rankDataRed: [],
                 rankDataBlack: [],
-                pageData: {
-                    totalData: 0,
-                    pageSize: 10,
-                    current: 1
-                },
                 modelFlag: false,
                 itemData: [],
                 columns: [
@@ -161,13 +117,43 @@
                         width: 80
                     }
                 ],
+                coinRecordCol: [
+                    {
+                        title: '姓名',
+                        key: 'user_name',
+                        width: 100,
+                        align: 'center'
+                    },
+                    {
+                        title: '金币动态',
+                        key: 'opt_num',
+                        width: 100,
+                        align: 'center',
+                        render: (h, params) => {
+                            let color = params.row.flag ? '#ed3f14' : '#19be6b';
+                            return h('span', {
+                                style: {
+                                    color: color
+                                }
+                            }, params.row.opt_num);
+                        }
+                    },
+                    {
+                        title: '说明',
+                        key: 'reason'
+                    },
+                    {
+                        title: '日期',
+                        key: 'opt_time',
+                        width: 180,
+                        align: 'center'
+                    }
+                ],
                 rowData: []
             };
         },
         created() {
-            this._getLatestData();
             this._getRankData();
-            this._getData(this.pageData.current, this.pageData.pageSize);
         },
         methods: {
             _getRankData() {
@@ -184,44 +170,11 @@
                     })).finally(() => {
                         this.coinLoadingFlag = false;
                     });
-            },
-            pageChangeHandler(current) {
-                this._getData(current, this.pageData.pageSize);
-                this.pageData.current = current;
-            },
-            pageSizeChangeHandler(size) {
-                this._getData(1, size);
-                this.pageData.pageSize = size;
-            },
-            _getData(page, pageSize) {
-                this.loading = true;
-                let data = {
-                    page: page,
-                    pageSize: pageSize
-                };
-                this.$http.get('/main/getMyCoinLogList', {params: data}).then((res) => {
-                    if (res.success) {
-                        this.pageData.totalData = res.totalCount;
-                        this.rowData = res.data;
-                    }
-                }).finally(() => {
-                    this.loading = false;
-                });
-            },
-            _getLatestData() {
-                let data = {
-                    page: 1,
-                    pageSize: 5
-                };
-                this.$http.get('/main/getMyCoinLogList', {params: data}).then((res) => {
-                    if (res.success) {
-                        this.itemData = res.data;
-                    }
-                });
             }
         },
         components: {
-            coinRanking
+            coinRanking,
+            fsTablePage
         }
     };
 </script>

@@ -183,7 +183,6 @@
                 this.goodDesc.name = data.name;
                 this.goodDesc.pic = '/oa/upload/' + data.image_path;
                 this.goodDesc.coin = data.price;
-                console.log(data);
             },
             _submitBuy() {
                 this.subLoading = true;
@@ -203,7 +202,6 @@
             },
             _getGoodList() {
                 this.$http.get('/order/goldMall').then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.goodList = res.data;
                     }

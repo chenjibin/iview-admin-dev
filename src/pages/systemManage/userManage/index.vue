@@ -443,7 +443,6 @@
                     this.$http.get('/organize/getLevel', {params: {id: val}}).then((res) => {
                         if (res.success) {
                             this.levelCodeOpt.code = res.data.level.split(',')[0];
-                            console.log(this.levelCodeOpt);
                         }
                     });
                 }
@@ -813,7 +812,6 @@
             };
         },
         created() {
-            this._getAccessButtons();
             this._getBanCiData();
             this._setTableHeight();
             this._getAllMenu();
@@ -916,14 +914,6 @@
                     }
                 });
             },
-            _getAccessButtons() {
-                let data = {
-                    name: this.$route.name
-                };
-                this.$http.get('/jurisdiction/getMyoneBtns', {params: data}).then((res) => {
-                    console.log(res);
-                });
-            },
             _inJobDateChange(val) {
                 this.userSettingForm.inJobTime = val;
             },
@@ -1018,7 +1008,6 @@
                 });
             },
             _tableSortChange(data) {
-                console.log(data);
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -1095,14 +1084,12 @@
                         data.postId = this.userSettingForm.post;
                         // data.leaderName = this.userSettingForm.vUp;
                         data.roleId = this.userSettingForm.role;
-                        console.log(data);
                         this.$http.post('/user/setUserInfo ', data).then((res) => {
                             if (res.success) {
                                 this.$Message.success('用户添加成功!');
                                 this._getUserData();
                                 this.settingModalFlag = false;
                             }
-                            console.log(res);
                         });
                     }
                 });

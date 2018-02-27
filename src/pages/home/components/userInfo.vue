@@ -176,7 +176,6 @@
                         data.oldPwd = this.passWordForm.oldPwd;
                         data.newPwd = this.passWordForm.newPwd;
                         data.newPwdCheck = this.passWordForm.newPwdCheck;
-                        console.log(data);
                         this.$http.post('/main/updatePwd', data).then((res) => {
                             if (res.success) {
                                 this.$Modal.success({

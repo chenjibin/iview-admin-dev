@@ -339,7 +339,6 @@
                 this.depSettingFlag = true;
             },
             editInfo(store, data) {
-                console.log(data);
                 this._initFormData();
                 this.depId = data.id;
                 this.formType = 'update';
@@ -382,7 +381,6 @@
                 this.backShow.chargerNameLabel = data.chargerUserName;
                 this.depSettingForm.chargerUserId = data.chargerUserId;
                 this.depSettingFlag = true;
-                console.log(this.backShow);
             },
             remove(store, data) {
                 if (data.children && data.children.length !== 0) {

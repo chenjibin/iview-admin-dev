@@ -72,7 +72,6 @@
                 let vm = this;
                 this.btnLoading = true;
                 this.cropper.getCroppedCanvas().toBlob(function (blob) {
-                    console.log(blob);
                     let xhr = new XMLHttpRequest();
                     let formData = new FormData();
                     formData.append('imgFile', blob);
@@ -85,7 +84,6 @@
                                 vm.$Message.success('头像修改成功！');
                                 vm.$emit('change-success');
                             }
-                            console.log(respondData);
                         }
                         vm.btnLoading = false;
                     };
@@ -96,7 +94,6 @@
             },
             handleChangeImg (e) {
                 let file = e.target.files[0];
-                console.log(file);
                 this.fileData.fileType = file.type;
                 this.fileData.fileName = file.name;
                 let reader = new FileReader();

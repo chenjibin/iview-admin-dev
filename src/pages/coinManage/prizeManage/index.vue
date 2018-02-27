@@ -249,7 +249,6 @@
                         data.probability = settingData.probability;
                         data.uploadName = settingData.goodPic;
                         data.id = settingData.id;
-                        console.log(data);
                         vm.$http.post('/lottery/addGoods', data).then((res) => {
                             if (res.success) {
                                 vm.editorSettingFlag = false;
@@ -261,7 +260,6 @@
                 });
             },
             _updateEditor(data) {
-                console.log(data);
                 this.editorType = 'update';
                 this._initEditorSettingData();
                 let settingData = this.editorSettingData;

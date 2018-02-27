@@ -284,7 +284,6 @@
             _setHeight() {
                 let dm = document.body.clientHeight;
                 this.logMaxHeight = dm - 190 + 'px';
-                console.log(this.logMaxHeight);
             },
             _getLogInfo(ym) {
                 this.loading = true;
@@ -347,7 +346,6 @@
                 });
             },
             _logRowClick(obj) {
-                console.log(obj);
                 if (obj.type === 4) {
                     this.$Message.error('超过48小时不可再补写日志！');
                     return;

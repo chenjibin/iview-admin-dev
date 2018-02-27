@@ -121,6 +121,7 @@
             _orderStatusChange(name) {
                 this.pageData.page = 1;
                 this.pageData.status = name;
+                this.loadingText = '加载中';
                 this._getMyOrderList();
             },
             handleReachTop() {

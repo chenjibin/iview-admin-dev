@@ -95,7 +95,6 @@
         },
         methods: {
             _tableSortChange(data) {
-                console.log(data);
                 this.filterOpt.sort.key = data.key;
                 this.filterOpt.sort.order = data.order;
                 this._filterResultHandler();

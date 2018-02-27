@@ -584,7 +584,6 @@
                         this.$Message.success(this.deleteMonth + '考勤数据删除成功!');
                         this.deleteModalFlag = false;
                     }
-                    console.log(res);
                 }).finally(() => {
                     this.deleteLoading = false;
                 });
@@ -601,7 +600,6 @@
                 data.date = this.exportMonth;
                 let getUrl = this.exportType === 'month' ? '/kq/export' : '/kq/exportYear';
                 this.$http.get(getUrl, {params: data}).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         document.getElementById('hrefToExportTable').href = '/oa/download/' + res.data;
                         document.getElementById('hrefToExportTable').download = res.data;
@@ -692,10 +690,8 @@
                 this._getPostData();
             },
             _uploadSuccess(response, file, fileList) {
-                console.log(response);
             },
             _uploadFail(error, file, fileList) {
-                console.log(error);
             },
             _uploadFormatErr() {
                 this.$Message.error('上传文件的后缀必须为.xls');

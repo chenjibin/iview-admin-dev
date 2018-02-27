@@ -34,7 +34,6 @@
         },
         methods: {
             pageChangeHandler(current) {
-                console.log(current);
             },
             getChangeInfo() {
                 let data = {

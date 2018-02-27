@@ -232,7 +232,6 @@
                 this._getPostData();
             },
             _delPost() {
-                console.log('aa');
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -261,7 +260,6 @@
                 this.postSettingForm.maxCoin = data.maxpoints;
                 this.postSettingForm.levelType = data.type + '';
                 this.settingModalFlag = true;
-                console.log(data);
             },
             _getPostData() {
                 let data = {};

@@ -263,18 +263,15 @@
                     menuid: pageArr.join(','),
                     btnid: btnArr.join(',')
                 };
-                console.log(data);
                 this.$http.post('/jurisdiction/setRoleMenu', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('授权成功!');
                         this.roleAccessModalFlag = false;
                         this._getPostData();
                     }
-                    console.log(res);
                 });
             },
             _postAccessOpen(data) {
-                console.log(data);
                 let pageArr = data.relate ? data.relate.split(',').map(x => 'page' + x) : [];
                 let btnArr = data.btnid ? data.btnid.split(',').map(x => 'btn' + x) : [];
                 this.social = pageArr.concat(btnArr);

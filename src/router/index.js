@@ -37,7 +37,6 @@ router.beforeEach((to, from, next) => {
             next(false);
         } else if (to.name === 'login') { // 判断是否已经登录且前往的是登录页
             Util.title();
-            console.log('33333');
             next({
                 name: 'home_index'
             });
