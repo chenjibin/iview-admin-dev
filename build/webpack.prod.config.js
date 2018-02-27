@@ -18,12 +18,13 @@ fs.open('./build/env.js', 'w', function(err, fd) {
 
 module.exports = merge(webpackBaseConfig, {
     output: {
-        publicPath: 'http://localhost:3000/static/dist/dist/',  // 修改 https://iv...admin 这部分为你的服务器域名
+        path: path.resolve(__dirname, '../build_folder/resource'),
+        publicPath: '/oa/resource/',
         filename: '[name].[hash].js',
         chunkFilename: '[name].[hash].chunk.js'
     },
     plugins: [
-        new cleanWebpackPlugin(['dist/*'], {
+        new cleanWebpackPlugin(['build_folder/*'], {
             root: path.resolve(__dirname, '../')
         }),
         new ExtractTextPlugin({
@@ -66,7 +67,7 @@ module.exports = merge(webpackBaseConfig, {
                 from: 'src/views/main-components/theme-switch/theme'
             },
             {
-                from: 'src/views/my-components/text-editor/tinymce'
+                from: 'src/baseComponents/tinymce'
             }
         ], {
             ignore: [

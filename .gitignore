@@ -7,7 +7,7 @@ node_modules
 \.settings/
 build/env.js
 dist/
+build_folder
 .idea
 .idea/inspectionProfiles/Project_Default.xml
 .idea/workspace.xml
-package-lock.json
