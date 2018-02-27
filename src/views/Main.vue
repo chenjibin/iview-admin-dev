@@ -15,7 +15,7 @@
                 :open-names="openedSubmenuArr"
                 :menu-list="menuList">
                 <div slot="top" class="logo-con">
-                    <img v-show="!shrink"  src="../images/logo.jpg" key="max-logo" />
+                    <img v-show="!shrink"  src="../images/tianma_logo_big.jpg" key="max-logo" />
                     <img v-show="shrink"  class="small" src="../images/tianma_logo.jpg" key="min-logo" />
                 </div>
             </shrinkable-menu>
@@ -39,8 +39,7 @@
                     <theme-switch></theme-switch>
                     <div class="coin-left">
                         <Tooltip content="金币余额" placement="bottom">
-                            <!--<Avatar icon="cash" style="background: #666;"/>-->
-                            <Icon type="cash" :size="23"></Icon>
+                            <fs-icon type="moneynew" :size="26" color="#FF5722"></fs-icon>
                         </Tooltip>
                         <span class="coin">{{tmCoin}}</span>
                     </div>

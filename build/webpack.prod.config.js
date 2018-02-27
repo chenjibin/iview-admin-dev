@@ -76,7 +76,7 @@ module.exports = merge(webpackBaseConfig, {
         }),
         new HtmlWebpackPlugin({
             title: '天马人事管理系统',
-            favicon: './td_icon.ico',
+            favicon: './favicon.ico',
             filename: '../index.html',
             template: './src/template/index.ejs',
             inject: false
