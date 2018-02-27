@@ -76,9 +76,9 @@
                         <Button type="ghost" shape="circle" icon="lock-combination"></Button>
                     </Tooltip>
                 </Poptip>
-                <Tooltip placement="top" content="商品订单" :transfer="true">
-                    <Button type="ghost" shape="circle" icon="android-list"></Button>
-                </Tooltip>
+                <!--<Tooltip placement="top" content="商品订单" :transfer="true">-->
+                    <!--<Button type="ghost" shape="circle" icon="android-list"></Button>-->
+                <!--</Tooltip>-->
             </Col>
         </Row>
         <Modal title="修改头像" v-model="changeAvatorFlag" width="800">
@@ -176,7 +176,6 @@
                         data.oldPwd = this.passWordForm.oldPwd;
                         data.newPwd = this.passWordForm.newPwd;
                         data.newPwdCheck = this.passWordForm.newPwdCheck;
-                        console.log(data);
                         this.$http.post('/main/updatePwd', data).then((res) => {
                             if (res.success) {
                                 this.$Modal.success({

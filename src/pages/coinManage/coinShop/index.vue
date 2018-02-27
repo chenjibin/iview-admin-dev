@@ -44,7 +44,7 @@
             <Col :xs="24" :sm="24" :md="10" :lg="8">
                 <Card :dis-hover="true">
                     <h3>我的订单</h3>
-                    <order-list></order-list>
+                    <order-list ref="orderList"></order-list>
                 </Card>
             </Col>
         </Row>
@@ -183,7 +183,6 @@
                 this.goodDesc.name = data.name;
                 this.goodDesc.pic = '/oa/upload/' + data.image_path;
                 this.goodDesc.coin = data.price;
-                console.log(data);
             },
             _submitBuy() {
                 this.subLoading = true;
@@ -194,6 +193,7 @@
                     if (res.success) {
                         this.$store.commit('updateUserInfo');
                         this.$Message.success('商品兑换成功!');
+                        this.$refs.orderList.upDateOrderList();
                         this.buyFlag = false;
                     }
                 }).finally(() => {
@@ -202,7 +202,6 @@
             },
             _getGoodList() {
                 this.$http.get('/order/goldMall').then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.goodList = res.data;
                     }

@@ -288,11 +288,9 @@
             },
             _tableSelectChange(data) {
                 this.chooseDataArr = data;
-                console.log(data);
             },
             _confirmExchangeGoods(data) {
                 let vm = this;
-                console.log(data);
                 this.$Modal.confirm({
                     content: '确认' + data.user_name + ' 兑换【' + data.goods_name + '】么?',
                     okText: '确认兑换',
@@ -312,7 +310,6 @@
             },
             _confirmCancelGoods(data) {
                 let vm = this;
-                console.log(data);
                 this.$Modal.confirm({
                     content: '确认取消 ' + data.user_name + ' 兑换【' + data.goods_name + '】么?',
                     okText: '确认取消',

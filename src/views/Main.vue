@@ -37,7 +37,13 @@
                     <lock-screen></lock-screen>
                     <!--<message-tip v-model="mesCount"></message-tip>-->
                     <theme-switch></theme-switch>
-
+                    <div class="coin-left">
+                        <Tooltip content="金币余额" placement="bottom">
+                            <!--<Avatar icon="cash" style="background: #666;"/>-->
+                            <Icon type="cash" :size="23"></Icon>
+                        </Tooltip>
+                        <span class="coin">{{tmCoin}}</span>
+                    </div>
                     <div class="user-dropdown-menu-con">
                         <Row type="flex" justify="end" align="middle" class="user-dropdown-innercon">
                             <Dropdown transfer trigger="click" @on-click="handleClickUserDropdown">
@@ -46,8 +52,8 @@
                                     <Icon type="arrow-down-b"></Icon>
                                 </a>
                                 <DropdownMenu slot="list">
-                                    <DropdownItem name="ownSpace">个人中心</DropdownItem>
-                                    <DropdownItem name="loginout" divided>退出登录</DropdownItem>
+                                    <!--<DropdownItem name="ownSpace">个人中心</DropdownItem>-->
+                                    <DropdownItem name="loginout">安全退出</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                             <Avatar :src="avatorPath" style="margin-left: 10px;"></Avatar>
@@ -100,6 +106,9 @@
             userName() {
                 return this.$store.state.user.userInfo.realname;
             },
+            tmCoin() {
+                return this.$store.state.user.userInfo.tm_coin;
+            },
             menuList () {
                 return this.$store.state.app.menuList;
             },
@@ -128,7 +137,6 @@
         methods: {
             init () {
                 let pathArr = util.setCurrentPath(this, this.$route.name);
-                // this.$store.commit('updateMenulist');
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
@@ -175,18 +183,10 @@
             },
             fullscreenChange (isFullScreen) {
                 // console.log(isFullScreen);
-            },
-            getPermissionData() {
-                return new Promise((resolve, reject) => {
-                    this.$http.get('/jurisdiction/getMySystemMenu').then((res) => {
-                        resolve(res.data);
-                    });
-                });
             }
         },
         watch: {
             '$route' (to) {
-                console.log(to)
                 this.$store.commit('setCurrentPageName', to.name);
                 let pathArr = util.setCurrentPath(this, to.name);
                 if (pathArr.length > 2) {

@@ -73,7 +73,6 @@
         methods: {
             updateUploadList() {
                 let fileList = this.$refs.uploadDom.fileList;
-                console.log(fileList);
                 this.$emit('update:upload', fileList);
             },
             handleView (name) {
@@ -92,7 +91,6 @@
                 this.$refs.uploadDom.fileList = [];
             },
             handleSuccess (res, file) {
-                console.log(res);
                 file.url = this.path + res.data.filename;
                 file.name = res.data.filename;
                 this.updateUploadList();

@@ -110,20 +110,28 @@
             overflow: hidden;
         }
         .header-avator-con{
+            display: flex;
+            align-items: center;
             position: absolute;
             right: 0;
             top: 0;
             height: 100%;
-            width: 300px;
+            width: 340px;
+            .coin-left {
+                display: flex;
+                padding: 0 12px;
+                .coin {
+                    margin-left: 8px;
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+            }
             .switch-theme-con{
-                display: inline-block;
                 width: 40px;
                 height: 100%;
             }
             .message-con{
-                display: inline-block;
                 width: 30px;
-                padding: 18px 0;
                 text-align: center;
                 cursor: pointer;
                 i{
@@ -162,9 +170,7 @@
                 }
             }
             .full-screen-btn-con{
-                display: inline-block;
                 width: 30px;
-                padding: 18px 0;
                 text-align: center;
                 cursor: pointer;
                 i{
@@ -172,9 +178,7 @@
                 }
             }
             .lock-screen-btn-con{
-                display: inline-block;
                 width: 30px;
-                padding: 18px 0;
                 text-align: center;
                 cursor: pointer;
                 i{

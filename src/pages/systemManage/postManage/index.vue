@@ -292,7 +292,6 @@
                 this.postId = data.id;
 
                 this.settingModalFlag = true;
-                console.log(data);
             },
             _addPost() {
                 this.$refs.postForm.validate((valid) => {

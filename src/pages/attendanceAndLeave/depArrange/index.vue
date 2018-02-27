@@ -389,7 +389,6 @@
                 let data = {};
                 data.ids = storeArr.join(',');
                 this.$http.post('/kq/deleteOrganizeArrange', data).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.$Message.success('删除成功!');
                         this._getAttendanceData();

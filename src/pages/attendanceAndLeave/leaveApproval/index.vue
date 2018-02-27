@@ -62,7 +62,7 @@
     import debounce from 'lodash/debounce';
     import tableExpend from './table-expend';
     export default {
-        name: 'employeeLeave',
+        name: 'leaveApproval',
         mixins: [pageMixin],
         data () {
             return {

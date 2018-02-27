@@ -146,15 +146,12 @@
                 this._getArrangeDetail(date.date);
             },
             _getArrangeDetail(time) {
-                console.log(time);
                 this.loading = true;
                 this.$http.get('/arrange/getOneMonthArrange', {params: {month: time}}).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         let year = moment(time).year();
                         let month = moment(time).month();
                         this.tableData = this.returnDateDetail(year, month, res.dateList);
-                        console.log(this.tableData);
                     }
                 }).finally(() => {
                     this.loading = false;
@@ -164,7 +161,6 @@
                 this.$http.get('/arrange/getArrangeStatistic').then((res) => {
                     if (res.success) {
                         this.dateList = res.dateList;
-                        console.log(this.dateList);
                     }
                 });
             }

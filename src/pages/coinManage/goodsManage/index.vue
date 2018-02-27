@@ -8,16 +8,6 @@
                            v-model="filterOpt.goodsName"
                            placeholder="筛选商品名称"></Input>
                 </FormItem>
-                <!--<FormItem label="上架状态">-->
-                    <!--<Select v-model="filterOpt.isDown"-->
-                            <!--clearable-->
-                            <!--@on-change="_filterResultHandler"-->
-                            <!--placeholder="筛选状态"-->
-                            <!--style="width: 100px">-->
-                        <!--<Option value="下架">下架</Option>-->
-                        <!--<Option value="下架">上架</Option>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
                 <FormItem :label-width="0.1">
                     <ButtonGroup>
                         <Button type="primary" @click="_createGoods">
@@ -237,7 +227,6 @@
                         data.price = settingData.price;
                         data.uploadName = settingData.goodPic;
                         data.id = settingData.id;
-                        console.log(data);
                         vm.$http.post('/order/addGoods', data).then((res) => {
                             if (res.success) {
                                 vm.editorSettingFlag = false;
@@ -249,7 +238,6 @@
                 });
             },
             _updateEditor(data) {
-                console.log(data);
                 this.editorType = 'update';
                 this._initEditorSettingData();
                 let settingData = this.editorSettingData;
@@ -300,7 +288,6 @@
             _getPostData() {
                 let data = {};
                 data.name = this.filterOpt.goodsName;
-                // data.status = this.filterOpt.status;
                 this.getList('/order/goodslist', data);
             }
         },

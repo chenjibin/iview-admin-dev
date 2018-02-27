@@ -76,9 +76,11 @@
             <Col :lg="10" :md="10">
                 <Card>
                     <p  class="log-title">{{dateData}} 日志概览</p>
-                    <div class="each-log-look" v-for="item in logLookList">
-                        <p class="time-title">{{item.date}}</p>
-                        <div class="" v-html="item.content"></div>
+                    <div class="each-log-wrapper" :style="{maxHeight: logMaxHeight}">
+                        <div class="each-log-look" v-for="item in logLookList">
+                            <p class="time-title">{{item.date}}</p>
+                            <div class="" v-html="item.content"></div>
+                        </div>
                     </div>
                 </Card>
             </Col>
@@ -88,6 +90,9 @@
 <style lang="less">
     @import "../../styles/fsBase";
     #my-log {
+        .each-log-wrapper {
+            overflow-y: auto;
+        }
         .log-title {
             color: @fs-title-color;
             font-size: 18px;
@@ -163,6 +168,7 @@
                 open: true,
                 btnDisabled: false,
                 dateData: null,
+                logMaxHeight: '300px',
                 editorOpt: {
                     menubar: '',
                     plugins: [
@@ -240,6 +246,7 @@
         },
         created() {
             this.dateData = moment().format('YYYY-MM');
+            this._setHeight();
         },
         filters: {
             _returnCommentResult(val) {
@@ -274,6 +281,10 @@
             }
         },
         methods: {
+            _setHeight() {
+                let dm = document.body.clientHeight;
+                this.logMaxHeight = dm - 190 + 'px';
+            },
             _getLogInfo(ym) {
                 this.loading = true;
                 this.btnDisabled = true;
@@ -335,7 +346,6 @@
                 });
             },
             _logRowClick(obj) {
-                console.log(obj);
                 if (obj.type === 4) {
                     this.$Message.error('超过48小时不可再补写日志！');
                     return;

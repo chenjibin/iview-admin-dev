@@ -78,7 +78,6 @@
                 this.updateUploadList();
             },
             handleSuccess (res, file) {
-                console.log(res);
                 file.url = '/oa/upload/' + res.data.filename;
                 file.name = res.data.filename;
                 this.updateUploadList();

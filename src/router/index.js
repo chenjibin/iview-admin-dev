@@ -37,7 +37,6 @@ router.beforeEach((to, from, next) => {
             next(false);
         } else if (to.name === 'login') { // 判断是否已经登录且前往的是登录页
             Util.title();
-            console.log('33333');
             next({
                 name: 'home_index'
             });
@@ -57,7 +56,6 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-    console.log(to);
     Util.openNewPage(router.app, to.name, to.params, to.query);
     iView.LoadingBar.finish();
     window.scrollTo(0, 0);

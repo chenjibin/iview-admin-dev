@@ -98,13 +98,13 @@
             _returnColor(val) {
                 let color = 'default';
                 if (val === 0) color = 'red';
-                else color = 'green';
+                else if (val === 1) color = 'green';
                 return color;
             },
             _returnStatus(val) {
                 let status = '已取消';
                 if (val === 0) status = '待领取';
-                else status = '已领取';
+                else if (val === 1) status = '已领取';
                 return status;
             }
         },
@@ -113,21 +113,28 @@
             this._setHeight();
         },
         methods: {
-            _orderStatusChange(name) {
-                this.pageData.status = name;
+            upDateOrderList() {
+                this.pageData.page = 1;
+                this.pageData.status = '3';
                 this._getMyOrderList();
-                console.log(name);
+            },
+            _orderStatusChange(name) {
+                this.pageData.page = 1;
+                this.pageData.status = name;
+                this.loadingText = '加载中';
+                this._getMyOrderList();
             },
             handleReachTop() {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve) => {
                     let data = {};
-                    data.page = this.pageData.page++;
+                    data.page = ++this.pageData.page;
                     data.pageSize = this.pageData.pageSize;
-                    data.status = this.pageData.status;
+                    data.status = this.pageData.status === '3' ? '' : this.pageData.status;
                     let totalPage = Math.ceil(this.pageData.totalCount / this.pageData.pageSize);
                     if (data.page > totalPage) {
+                        resolve();
                         this.loadingText = '已经加载完全部订单!';
-                        reject(new Error('已经加载完全部订单!'));
+                        return;
                     }
                     this.$http.get('/order/myOrderlist', {params: data}).then((res) => {
                         if (res.success) {
@@ -142,19 +149,17 @@
                 let data = {};
                 data.page = this.pageData.page;
                 data.pageSize = this.pageData.pageSize;
-                data.status = this.pageData.status;
+                data.status = this.pageData.status === '3' ? '' : this.pageData.status;
                 this.$http.get('/order/myOrderlist', {params: data}).then((res) => {
                     if (res.success) {
                         this.orderList = res.data;
                         this.pageData.totalCount = res.totalCount;
-                        console.log(this.orderList);
                     }
                 });
             },
             _setHeight() {
                 let dm = document.body.clientHeight;
                 this.scrollHeight = dm - 240;
-                console.log(this.scrollHeight);
             }
         },
         components: {}
