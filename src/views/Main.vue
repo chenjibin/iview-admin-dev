@@ -15,7 +15,7 @@
                 :open-names="openedSubmenuArr"
                 :menu-list="menuList">
                 <div slot="top" class="logo-con">
-                    <img v-show="!shrink"  src="../images/tianma_logo_big.jpg" key="max-logo" />
+                    <img v-show="!shrink"  src="../images/tianma_logo_big.jpg" key="max-logo" style="border-radius: 6px;"/>
                     <img v-show="shrink"  class="small" src="../images/tianma_logo.jpg" key="min-logo" />
                 </div>
             </shrinkable-menu>
@@ -118,7 +118,7 @@
                 return this.$store.state.app.currentPath; // 当前面包屑数组
             },
             avatorPath () {
-                return '/oa/upload/head/' + this.$store.state.user.userInfo.headimagepath;
+                return this.$store.state.user.userInfo.headimagepath;
             },
             cachePage () {
                 return this.$store.state.app.cachePage;

@@ -193,7 +193,7 @@
         },
         computed: {
             avatorPath () {
-                return '/oa/upload/head/' + this.$store.state.user.userInfo.headimagepath;
+                return this.$store.state.user.userInfo.headimagepath;
             },
             userName() {
                 return this.$store.state.user.userInfo.realname;

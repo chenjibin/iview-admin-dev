@@ -28,7 +28,7 @@
                     <div class="list-item-top">
                         <div class="list-item-top-img-wrapper">
                             <div class="fs-square-img">
-                                <img :src="'/oa/upload/' + item.image_path" />
+                                <img v-lazy="'/oa/upload/' + item.image_path"/>
                             </div>
                         </div>
                         <div class="list-item-top-content">
