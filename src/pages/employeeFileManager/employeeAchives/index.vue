@@ -705,7 +705,7 @@
                         var d = res.data;
                         for (let i = 0; i < d.length; i++) {
                             d[i].file_path = d[i].file_path.replace('\\..', '\\oa');
-                            if (d[i].file_path.indexOf('/oa')<0) {
+                            if (d[i].file_path.indexOf('/oa') < 0) {
                                 d[i].file_path = '/oa' + d[i].file_path;
                             }
                         }
@@ -715,7 +715,7 @@
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
-            }, 600),
+            }, 1500),
             _filterResultHandler() {
                 this.initPage();
                 this._getPostData();

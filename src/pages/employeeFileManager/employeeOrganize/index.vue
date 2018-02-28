@@ -557,7 +557,6 @@
             },
             // 下载图片
             download(path) {
-                console.log(path);
                 window.open('http://' + window.location.host + path);
             },
             // 删除关系
@@ -672,7 +671,6 @@
                 });
                 // 附件列表
                 this.$http.post('/ticket/ticketFileslist', {'ticketno': id}).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         var d = res.data;
                         for (let i = 0; i < d.length; i++) {
