@@ -323,7 +323,7 @@
     // lodash输入延时
     import debounce from 'lodash/debounce';
     export default {
-        name: 'employee-achives',
+        name: 'employeeOrganize',
         data () {
             return {
                 filterText: '',

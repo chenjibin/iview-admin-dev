@@ -385,7 +385,7 @@
     import debounce from 'lodash/debounce';
     import moment from 'moment';
     export default {
-        name: 'employee-achives',
+        name: 'employeeAchives',
         data () {
             return {
                 settingModalFlag: false,
