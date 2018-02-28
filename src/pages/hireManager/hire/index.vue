@@ -1,7 +1,7 @@
 <template>
     <div id="hire">
         <Card>
-            <Form inline :label-width="60">
+            <Form inline :label-width="90">
                 <FormItem label="姓名">
                     <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
@@ -16,7 +16,7 @@
                 </FormItem>
                 <FormItem label="学历">
                     <Select type="text" style="width: 173px"
-                            @on-change="_inputDebounce"
+                            @on-change="_filterResultHandler"
                             v-model="filterOpt.education"
                             placeholder="筛选学历" clearable>
                         <Option value="本科">本科</Option>
@@ -27,7 +27,7 @@
                 </FormItem>
                 <FormItem label="性别">
                     <Select type="text" style="width: 173px"
-                            @on-change="_inputDebounce"
+                            @on-change="_filterResultHandler"
                             v-model="filterOpt.sex"
                             placeholder="筛选性别" clearable>
                         <Option value="男">男</Option>
@@ -40,7 +40,7 @@
                 </FormItem>
                 <FormItem label="信息来源">
                     <Select type="text" v-model="filterOpt.resumesource" style="width: 173px" placeholder="筛选来源"
-                            @on-change="_inputDebounce" clearable>
+                            @on-change="_filterResultHandler" clearable>
                         <Option value="1">58同城</Option>
                         <Option value="2">智联</Option>
                         <Option value="3">前程无忧</Option>
@@ -73,7 +73,7 @@
                 </FormItem>
                 <FormItem label="婚否">
                     <Select type="text" style="width: 173px"
-                            @on-change="_inputDebounce"
+                            @on-change="_filterResultHandler"
                             v-model="filterOpt.marriage" clearable>
                         <Option value="已婚">已婚</Option>
                         <Option value="未婚">未婚</Option>
@@ -104,7 +104,6 @@
             <div style="position: relative">
                 <Table :columns="postColumns"
                        ref="attendanceTable"
-                       width="95%"
                        :loading="tableLoading"
                        :height="tableHeight"
                        :data="pageData.list">
@@ -698,7 +697,7 @@
                         key: 'poststring',
                         align: 'center',
                         fixed: 'left',
-                        width: 100
+                        width: 160
                     },
                     {
                         title: '性别',
@@ -733,54 +732,54 @@
                     {
                         title: '毕业院校',
                         key: 'graduatedschool',
-                        align: 'center',
-                        width: 120
+                        width: 200
                     },
                     {
                         title: '专业',
                         key: 'profession',
-                        align: 'center',
-                        width: 120
+                        width: 200
                     },
                     {
                         title: '电话',
                         key: 'phone',
                         align: 'center',
-                        width: 110
+                        width: 120
                     },
                     {
                         title: '信息来源',
                         key: 'resumeSource',
                         align: 'center',
-                        width: 100,
+                        width: 150,
                         render: (h, params) => {
-                            return this.resumeSourceMapping[params.row.resumeSource];
+                            return this.resumeSourceMapping[+params.row.resumesource];
                         }
                     },
                     {
                         title: '预约时间',
                         key: 'appointment',
                         align: 'center',
-                        width: 110
+                        width: 120
                     },
                     {
                         title: '面试时间',
                         key: 'interviewtime',
-                        align: 'center'
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '试岗时间',
                         key: 'testtime',
-                        align: 'center'
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '所在周期',
                         key: 'status',
-                        width: 100,
+                        width: 120,
                         align: 'center',
                         render: (h, params) => {
-                            var vm = this;
-                            var text = vm.getStatusText(params.row.status);
+                            let vm = this;
+                            let text = vm.getStatusText(params.row.status);
                             return text;
                         }
                     },
@@ -793,28 +792,14 @@
                     {
                         title: '面试意见',
                         key: 'remarks',
-                        width: 120,
-                        align: 'center',
+                        width: 400,
                         render: (h, params) => {
-                            return h('div', {}, [
-                                h('Tooltip', {
-                                    props: {
-                                        content: params.row.remarks,
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('span', {
-                                        style: {
-                                            width: '120px',
-                                            display: 'inline-block',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }
-                                    }, params.row.remarks)
-                                ])
-                            ]);
+                            return h('span', {
+                                style: {
+                                    lineHeight: '2',
+                                    fontSize: '14px'
+                                }
+                            }, params.row.remarks);
                         }
                     },
                     {
@@ -1224,8 +1209,8 @@
 <style lang="less">
     #hire {
         .ivu-table-body {
-            overflow: auto;
-            margin-right: -10px;
+            /*overflow: auto;*/
+            /*margin-right: -10px;*/
         }
         #btn-fix-container {
             position: absolute;
@@ -1241,7 +1226,6 @@
             }
         }
         .ivu-table-wrapper{
-            width: 98%;
         }
     }
     .showUserInfoItem {

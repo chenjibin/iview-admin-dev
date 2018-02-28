@@ -2,6 +2,7 @@ require('es6-promise').polyfill();
 import Vue from 'vue';
 import iView from 'iview';
 import { Tree, Cascader, Checkbox } from 'element-ui';
+import fsIcon from './baseComponents/fs-icon';
 import { router } from './router/index';
 import store from './store';
 import App from './app.vue';
@@ -9,11 +10,18 @@ import '@/locale';
 import 'iview/dist/styles/iview.css';
 import VueI18n from 'vue-i18n';
 import request from './libs/request';
+import VueLazyload from 'vue-lazyload';
+Vue.use(VueLazyload, {
+    preLoad: 1.3,
+    error: '/oa/upload/initListImage.png',
+    attempt: 1
+});
 Vue.use(VueI18n);
 Vue.use(iView);
 Vue.use(Tree);
 Vue.use(Cascader);
 Vue.use(Checkbox);
+Vue.component('fsIcon', fsIcon);
 Vue.prototype.$http = request;
 
 new Vue({

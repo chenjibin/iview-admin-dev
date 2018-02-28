@@ -4,7 +4,9 @@ import axios from 'axios';
 
 const user = {
     state: {
-        userInfo: {}
+        userInfo: {
+            headimagepath: '/oa/upload/init/initHead.png'
+        }
     },
     mutations: {
         setUserInfo(state, userInfo) {
@@ -13,6 +15,8 @@ const user = {
         updateUserInfo(state) {
             axios.get('/user/myUserInfo').then((res) => {
                 if (res.success) {
+                    if (!res.data.headimagepath) res.data.headimagepath = '/oa/upload/init/initHead.png';
+                    res.data.headimagepath = '/oa/upload/head/' + res.data.headimagepath;
                     state.userInfo = res.data;
                 }
             });

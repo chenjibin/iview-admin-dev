@@ -15,7 +15,7 @@
                                  style="margin-bottom: 8px;">
                             <Card class="good-item-wrapper">
                                 <div class="fs-square-img" style="margin-bottom: 8px;">
-                                    <img :src="'/oa/upload/' + item.image_path">
+                                    <img v-lazy="'/oa/upload/' + item.image_path">
                                 </div>
                                 <Tooltip placement="top-start" :transfer="true">
                                     <div slot="content">
@@ -64,7 +64,7 @@
                         <FormItem label="商品预览:">
                             <div style="width: 160px">
                                 <div class="fs-square-img">
-                                    <img :src="goodDesc.pic"/>
+                                    <img v-lazy="goodDesc.pic"/>
                                 </div>
                             </div>
                         </FormItem>

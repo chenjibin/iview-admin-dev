@@ -63,9 +63,6 @@
                     </FormItem>
                     <FormItem label="价格">
                         <InputNumber :precision="0" v-model="editorSettingData.price"></InputNumber>
-                        <!--<Input type="text"-->
-                               <!--v-model="editorSettingData.price"-->
-                               <!--placeholder=""></Input>-->
                     </FormItem>
                     <FormItem label="商品图片" required>
                             <fs-img-upload action="/oa/order/uploadfile"
@@ -137,6 +134,11 @@
                                 },
                                 style: {
                                     maxWidth: '100%'
+                                },
+                                on: {
+                                    error: function (e) {
+                                        e.target.setAttribute('src', '/oa/upload/initListImage.png');
+                                    }
                                 }
                             });
                         }
