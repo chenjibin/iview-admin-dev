@@ -46,7 +46,7 @@ export default {
     },
     computed: {
         avatorPath () {
-            return localStorage.avatorImgPath;
+            return this.$store.state.user.userInfo.headimagepath;
         }
     },
     methods: {

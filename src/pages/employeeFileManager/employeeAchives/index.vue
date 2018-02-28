@@ -1,7 +1,7 @@
 <template>
     <div>
         <Card>
-            <Form inline :label-width="90">
+            <Form inline :label-width="60">
                 <FormItem label="姓名">
                     <Input type="text" style="width: 120px"
                            @on-change="_inputDebounce"
@@ -383,6 +383,7 @@
     import pageMixin from '@/mixins/pageMixin';
     // lodash输入延时
     import debounce from 'lodash/debounce';
+    import moment from 'moment';
     export default {
         name: 'employee-achives',
         data () {
@@ -408,7 +409,8 @@
                     {
                         title: '入职日期',
                         key: 'indate',
-                        align: 'center'
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '工龄',
@@ -423,7 +425,8 @@
                     {
                         title: '联系方式',
                         key: 'contact',
-                        align: 'center'
+                        align: 'center',
+                        width: 120
                     },
                     {
                         title: '性别',
@@ -438,7 +441,12 @@
                     {
                         title: '生日',
                         key: 'birthday',
-                        align: 'center'
+                        align: 'center',
+                        width: 120,
+                        render: (h, params) => {
+                            let birthday = params.row.birthday;
+                            return birthday ? moment(birthday).format('YYYY-MM-DD') : '';
+                        }
                     },
                     {
                         title: '离职原因',
@@ -460,7 +468,7 @@
                         key: 'action',
                         width: 120,
                         render: (h, params) => {
-                            var vm = this;
+                            let vm = this;
                             return h('div', [
                                 h('Tooltip', {
                                     props: {

@@ -1,7 +1,7 @@
 <template>
     <div id="hire">
         <Card>
-            <Form inline :label-width="90">
+            <Form inline :label-width="60">
                 <FormItem label="姓名">
                     <Input type="text" style="width: 120px"
                            @on-change="_inputDebounce"
@@ -138,6 +138,7 @@
                   @on-change="_setPage"
                   @on-page-size-change="_setPageSize"
                   :page-size="pageData.pageSize"
+                  placement="top"
                   show-sizer
                   show-total
                   show-elevator
@@ -803,8 +804,8 @@
                 });
             },
             delForm(index, formName) {
-                var row = this[formName][index];
-                var vm = this;
+                let row = this[formName][index];
+                let vm = this;
                 if (row.id) {
                     this.$Modal.confirm({
                         title: '删除提醒',
