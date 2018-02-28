@@ -217,6 +217,22 @@ export const appRouter = [
         ]
     },
     {
+        path: '/assetsManager',
+        icon: 'ios-people',
+        name: 'assetsManager',
+        title: '资产管理',
+        component: Main,
+        children: [
+            {
+                path: 'assetslocation',
+                icon: 'compose',
+                name: 'assetslocation',
+                title: '资产位置',
+                component: resolve => { require(['@/pages/assetsManager/assetLocation/index.vue'], resolve); }
+            }
+        ]
+    },
+    {
         path: '/examination',
         icon: 'university',
         name: 'examination',
