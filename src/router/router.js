@@ -229,6 +229,13 @@ export const appRouter = [
                 name: 'assetslocation',
                 title: '资产位置',
                 component: resolve => { require(['@/pages/assetsManager/assetLocation/index.vue'], resolve); }
+            },
+            {
+                path: 'assetsCategory',
+                icon: 'compose',
+                name: 'assetsCategory',
+                title: '资产分类',
+                component: resolve => { require(['@/pages/assetsManager/assetsCategory/index.vue'], resolve); }
             }
         ]
     },
