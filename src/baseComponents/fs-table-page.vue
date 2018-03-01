@@ -12,15 +12,14 @@
               @on-change="pageChangeHandler"
               @on-page-size-change="pageSizeChangeHandler"
               show-elevator
+              show-total
               style="margin-top: 16px;"
               show-sizer></Page>
     </div>
 </template>
-<style>
-
-</style>
 <script>
     import pageMixin from '@/mixins/pageMixin';
+    import debounce from 'lodash/debounce';
     export default {
         name: 'fsTablePage',
         props: {
@@ -50,10 +49,52 @@
             return {
             };
         },
+        watch: {
+            params: {
+                handler(newVal, oldVal) {
+                    let type = this.returnDiffType(newVal, oldVal);
+                    console.log(type);
+                    if (type === 'select') {
+                        this._inputDebounce();
+                    } else {
+                        this._filterResultHandler();
+                    }
+                },
+                deep: true
+            }
+        },
         created() {
             this.getListData();
         },
         methods: {
+            returnDiffType(newVal, oldVal) {
+                let type = '';
+                for (let key in newVal) {
+                    if (newVal.hasOwnProperty(key)) {
+                        if (newVal[key].value !== oldVal[key].value) {
+                            type = newVal[key]['type'];
+                            break;
+                        }
+                    }
+                }
+                return type;
+            },
+            returnNeedParams() {
+                let params = {};
+                for (let key in this.params) {
+                    if (this.params.hasOwnProperty(key)) {
+                        params[key] = this.params[key].value;
+                    }
+                }
+                return params;
+            },
+            _inputDebounce: debounce(function () {
+                this._filterResultHandler();
+            }, 600),
+            _filterResultHandler() {
+                this.initPage();
+                this.getListData();
+            },
             pageChangeHandler() {
                 this.getListData();
             },
@@ -63,7 +104,8 @@
                 this.getListData();
             },
             getListData() {
-                this.getList(this.url, this.params);
+                let params = this.returnNeedParams();
+                this.getList(this.url, params);
             }
         }
     };

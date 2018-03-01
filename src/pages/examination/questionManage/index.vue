@@ -4,23 +4,20 @@
             <Form inline :label-width="60"  @submit.native.prevent>
                 <FormItem label="试题名称">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
+                           v-model="filterOpt.name.value"
                            placeholder="筛选试题名称"></Input>
                 </FormItem>
                 <FormItem label="试题分类">
-                    <Select v-model="filterOpt.subject"
+                    <Select v-model="filterOpt.subject.value"
                             clearable
-                            @on-change="_filterResultHandler"
                             placeholder="筛选分类"
                             style="width: 100px">
                         <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="试题类型">
-                    <Select v-model="filterOpt.type"
+                    <Select v-model="filterOpt.type.value"
                             clearable
-                            @on-change="_filterResultHandler"
                             placeholder="筛选类型"
                             style="width: 100px">
                         <Option value="1">单选题</Option>
@@ -31,20 +28,11 @@
                     </Select>
                 </FormItem>
             </Form>
-            <Table :columns="postColumns"
-                   :loading="tableLoading"
-                   :height="tableHeight"
-                   :data="pageData.list"></Table>
-            <Page :total="pageData.totalCount"
-                  :current="pageData.page"
-                  @on-change="_setPage"
-                  @on-page-size-change="_setPageSize"
-                  :page-size="pageData.pageSize"
-                  placement="top"
-                  show-sizer
-                  show-total
-                  show-elevator
-                  style="margin-top: 16px;"></Page>
+            <fs-table-page :columns="postColumns"
+                           :size="null"
+                           :height="tableHeight"
+                           :params="filterOpt"
+                           url="/examquestion/getQuestionList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="300"
                    :mask-closable="false">
@@ -99,7 +87,7 @@
     </div>
 </template>
 <script>
-    import pageMixin from '@/mixins/pageMixin';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     import moment from 'moment';
     import debounce from 'lodash/debounce';
     export default {
@@ -110,9 +98,18 @@
                 btnLoading: false,
                 postFormType: 'update',
                 filterOpt: {
-                    name: '',
-                    subject: '',
-                    type: ''
+                    name: {
+                        value: '',
+                        type: 'input'
+                    },
+                    subject: {
+                        value: '',
+                        type: 'select'
+                    },
+                    type: {
+                        value: '',
+                        type: 'select'
+                    }
                 },
                 editorSettingData: {
                     name: '',
@@ -179,44 +176,27 @@
                 tableHeight: 500
             };
         },
-        mixins: [pageMixin],
         created() {
-            this._getPostData();
             this._getSubjectList();
             this._setTableHeight();
         },
         methods: {
             _initEditorSettingData() {
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
-            },
+            // _inputDebounce: debounce(function () {
+            //     this._filterResultHandler();
+            // }, 600),
+            // _filterResultHandler() {
+            //     this.initPage();
+            //     this._getPostData();
+            // },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
             },
-            _setPage(page) {
-                this.pageData.page = page;
-                this._getPostData();
-            },
-            _setPageSize(size) {
-                this.pageData.pageSize = size;
-                this._getPostData();
-            },
             _editorSetting(data) {
                 this._initEditorSettingData();
                 this.editorSettingFlag = true;
-            },
-            _getPostData() {
-                let data = {};
-                data.name = this.filterOpt.name;
-                data.type = this.filterOpt.type;
-                data.subject = this.filterOpt.subject;
-                this.getList('/examquestion/getQuestionList', data);
             },
             _getSubjectList() {
                 this.$http.get('/examquestion/getSubjectList').then((res) => {
@@ -226,6 +206,8 @@
                 });
             }
         },
-        components: {}
+        components: {
+            fsTablePage
+        }
     };
 </script>
