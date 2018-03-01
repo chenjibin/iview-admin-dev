@@ -5,7 +5,11 @@ import axios from 'axios';
 const user = {
     state: {
         userInfo: {
-            headimagepath: '/oa/upload/init/initHead.png'
+            headimagepath: '/oa/upload/init/initHead.png',
+            realname: '...',
+            tm_coin: '...',
+            organizename: '...',
+            postname: '...'
         }
     },
     mutations: {

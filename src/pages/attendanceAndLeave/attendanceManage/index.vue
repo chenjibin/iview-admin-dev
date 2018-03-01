@@ -77,6 +77,8 @@
                 </p>
                 <Upload
                         type="drag"
+                        :show-upload-list="false"
+                        :on-progress="_uploadProgress"
                         :on-format-error="_uploadFormatErr"
                         :on-success="_uploadSuccess"
                         :on-error="_uploadFail"
@@ -86,6 +88,7 @@
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>点击或者拖拽文件到这里上传(后缀为.xls的文件)</p>
                     </div>
+                    <Spin size="large" fix v-if="spinShow">数据导入中...</Spin>
                 </Upload>
                 <div slot="footer"></div>
             </Modal>
@@ -227,6 +230,7 @@
                 exportLoading: false,
                 deleteLoading: false,
                 strangeModalFlag: false,
+                spinShow: false,
                 postFormType: 'update',
                 recordId: '',
                 exportMonth: moment().format('YYYY-MM'),
@@ -387,7 +391,6 @@
                         title: '打卡记录',
                         key: 'kq_re',
                         width: '240',
-                        align: 'center',
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = params.row.exception === null || +params.row.exception === 0 || params.row.offdaytype === '正常';
@@ -689,9 +692,21 @@
                 this.initPage();
                 this._getPostData();
             },
+            _uploadProgress(event) {
+                this.spinShow = true;
+            },
             _uploadSuccess(response, file, fileList) {
+                if (response.success) {
+                    this.$Message.success('数据导入成功!');
+                    this.importModalFlag = false;
+                    this._getPostData();
+                } else {
+                    this.$Message.error(response.message);
+                }
+                this.spinShow = false;
             },
             _uploadFail(error, file, fileList) {
+                console.log(error);
             },
             _uploadFormatErr() {
                 this.$Message.error('上传文件的后缀必须为.xls');

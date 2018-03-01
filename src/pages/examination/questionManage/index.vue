@@ -20,12 +20,16 @@
                             clearable
                             placeholder="筛选类型"
                             style="width: 100px">
-                        <Option value="1">单选题</Option>
-                        <Option value="2">多选题</Option>
-                        <Option value="3">判断题</Option>
-                        <Option value="4">填空题</Option>
-                        <Option value="5">问答题</Option>
+                        <Option :value="item.value" v-for="item, index in typeOptMap" :key="index">{{item.label}}</Option>
                     </Select>
+                </FormItem>
+                <FormItem>
+                    <ButtonGroup>
+                        <Button type="ghost">
+                            <Icon type="plus-round"></Icon>
+                            添加试题
+                        </Button>
+                    </ButtonGroup>
                 </FormItem>
             </Form>
             <fs-table-page :columns="postColumns"
@@ -131,16 +135,19 @@
                     {
                         title: '试题类型',
                         key: 'user_name',
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            return this.typeOptMap[params.row.type - 1].label;
+                        }
                     },
                     {
                         title: '试题分数',
-                        key: 'user_name',
+                        key: 'questionmark',
                         align: 'center'
                     },
                     {
                         title: '创建日期',
-                        key: 'user_name',
+                        key: 'createbydate',
                         align: 'center'
                     },
                     {
@@ -151,7 +158,7 @@
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
-                                        content: '考勤设置',
+                                        content: '修改试题',
                                         placement: 'top',
                                         transfer: true
                                     }
@@ -159,7 +166,7 @@
                                     h('Button', {
                                         props: {
                                             type: 'primary',
-                                            icon: 'ios-gear',
+                                            icon: 'edit',
                                             shape: 'circle'
                                         },
                                         on: {
@@ -170,6 +177,28 @@
                                 ])
                             ]);
                         }
+                    }
+                ],
+                typeOptMap: [
+                    {
+                        value: '1',
+                        label: '单选题'
+                    },
+                    {
+                        value: '2',
+                        label: '多选题'
+                    },
+                    {
+                        value: '3',
+                        label: '判断题'
+                    },
+                    {
+                        value: '4',
+                        label: '填空题'
+                    },
+                    {
+                        value: '5',
+                        label: '问答题'
                     }
                 ],
                 subjectList: [],
