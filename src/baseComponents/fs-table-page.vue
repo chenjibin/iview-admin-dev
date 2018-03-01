@@ -49,35 +49,21 @@
             return {
             };
         },
-        watch: {
-            params: {
-                handler(newVal, oldVal) {
-                    let type = this.returnDiffType(newVal, oldVal);
-                    console.log(type);
-                    if (type === 'select') {
-                        this._inputDebounce();
-                    } else {
-                        this._filterResultHandler();
-                    }
-                },
-                deep: true
-            }
-        },
         created() {
             this.getListData();
+            this.initWatch();
         },
         methods: {
-            returnDiffType(newVal, oldVal) {
-                let type = '';
-                for (let key in newVal) {
-                    if (newVal.hasOwnProperty(key)) {
-                        if (newVal[key].value !== oldVal[key].value) {
-                            type = newVal[key]['type'];
-                            break;
+            initWatch() {
+                for (let key in this.params) {
+                    this.$watch(`params.${key}.value`, function () {
+                        if (this.params[key].type === 'input') {
+                            this._inputDebounce();
+                        } else {
+                            this._filterResultHandler();
                         }
-                    }
+                    });
                 }
-                return type;
             },
             returnNeedParams() {
                 let params = {};

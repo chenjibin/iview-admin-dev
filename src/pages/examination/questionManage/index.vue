@@ -183,13 +183,6 @@
         methods: {
             _initEditorSettingData() {
             },
-            // _inputDebounce: debounce(function () {
-            //     this._filterResultHandler();
-            // }, 600),
-            // _filterResultHandler() {
-            //     this.initPage();
-            //     this._getPostData();
-            // },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
