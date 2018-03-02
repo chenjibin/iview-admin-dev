@@ -112,7 +112,7 @@
                                 <Input type="text" v-model="baseForm.idcard" ></Input>
                             </FormItem>
                             <FormItem label="出生日期" style="width:45%">
-                                <Input type="text" v-model="baseForm.birthday" disabled></Input>
+                                <DatePicker style="width: 100%" type="date" v-model="baseForm.birthday" disabled></DatePicker>
                             </FormItem>
                             <FormItem label="籍贯" style="width:45%">
                                 <Input type="text" v-model="baseForm.origin"></Input>
@@ -132,6 +132,7 @@
                                     <Option value="群众">群众</Option>
                                 </Select>
                             </FormItem>
+
                             <FormItem label="婚姻状况" style="width:45%;margin-right:1%;">
                                 <Select type="text" style="width: 100%" v-model="baseForm.marryage">
                                     <Option value="已婚">已婚</Option>
@@ -139,7 +140,7 @@
                                 </Select>
                             </FormItem>
                             <FormItem label="档案编号" style="width:45%;">
-                                <Input type="text" v-model="baseForm.filenum"></Input>
+                                <Input type="text" v-model="baseForm.filenum" disabled></Input>
                             </FormItem>
                             <FormItem label="详细住址" style="width:45%">
                                 <Input type="textarea" :rows="6" v-model="baseForm.address"></Input>
@@ -339,66 +340,56 @@
                     {
                         title: '部门',
                         key: 'deptement',
-                        align: 'center',
-                        width: 100
+                        align: 'center'
                     },
                     {
                         title: '职务',
                         key: 'postName',
-                        align: 'center',
-                        width: 100
+                        align: 'center'
                     },
                     {
                         title: '入职日期',
                         key: 'indate',
-                        align: 'center',
-                        width: 110
+                        align: 'center'
                     },
                     {
                         title: '工龄',
                         key: 'workingAge',
-                        align: 'center',
-                        width: 60
+                        align: 'center'
                     },
                     {
                         title: '转正时间',
                         key: 'contract_zhuanzheng_date',
-                        align: 'center',
-                        width: 110
+                        align: 'center'
                     },
                     {
                         title: '联系方式',
                         key: 'contact',
-                        align: 'center',
-                        width: 120
+                        align: 'center'
                     },
                     {
                         title: '性别',
                         key: 'sex',
-                        align: 'center',
-                        width: 60
+                        align: 'center'
                     },
                     {
                         title: '学历',
                         key: 'xueli',
-                        align: 'center',
-                        width: 100
+                        align: 'center'
                     },
                     {
                         title: '生日',
                         key: 'birthday',
                         align: 'center',
-                        width: 110,
                         render: (h, params) => {
-                            if(params.birthday) {
-                                return moment(params.birthday).format('YYYY-MM-DD');
+                            if (params.row.birthday) {
+                                return moment(params.row.birthday).format('YYYY-MM-DD');
                             }
                         }
                     },
                     {
                         title: '操作',
                         key: 'action',
-                        width: 120,
                         render: (h, params) => {
                             var vm = this;
                             return h('div', [

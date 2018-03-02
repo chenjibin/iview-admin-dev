@@ -218,7 +218,7 @@ export const appRouter = [
     },
     {
         path: '/assetsManager',
-        icon: 'ios-people',
+        icon: 'printer',
         name: 'assetsManager',
         title: '资产管理',
         component: Main,
