@@ -396,23 +396,6 @@
                         }
                     },
                     {
-                        title: '离职原因',
-                        key: 'reasonLeaving',
-                        align: 'center'
-                    },
-                    {
-                        title: '离职级别',
-                        key: 'gradeLeaving',
-                        align: 'center',
-                        width: 90
-                    },
-                    {
-                        title: '离职时间',
-                        key: 'resignationTime',
-                        align: 'center',
-                        width: 110
-                    },
-                    {
                         title: '操作',
                         key: 'action',
                         width: 120,
