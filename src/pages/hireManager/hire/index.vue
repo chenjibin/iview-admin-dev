@@ -226,7 +226,7 @@
                             <Input type="text" v-model="talentBean.email"></Input>
                         </FormItem>
                         <FormItem label="预约时间" style="width:430px">
-                            <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 100%"
+                            <DatePicker format="yyyy-MM-dd" type="date" style="width: 100%"
                                         @on-change="_infoDateChange(0,0,'appointment',$event)"
                                         :value="talentBean.appointment"></DatePicker>
                         </FormItem>
