@@ -75,6 +75,7 @@
             updateUploadList() {
                 let fileList = this.$refs.uploadDom.fileList;
                 this.$emit('update:upload', fileList);
+                this.$emit('update', fileList);
             },
             handleView (name) {
                 this.imgName = name;
@@ -117,6 +118,7 @@
 </script>
 <style lang="less">
     #fs-upload-list {
+        display: flex;
         .demo-upload-list {
             display: inline-block;
             width: 60px;

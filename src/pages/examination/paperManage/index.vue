@@ -4,37 +4,37 @@
             <Form inline :label-width="60">
                 <FormItem label="姓名">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
+                           v-model="filterOpt.name.value"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
-                <FormItem label="部门">
-                    <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.dep"
-                           placeholder="筛选部门"></Input>
+                <FormItem label="试题分类">
+                    <Select v-model="filterOpt.status.value"
+                            clearable
+                            placeholder="筛选状态"
+                            style="width: 100px">
+                        <Option :value="item.status" v-for="item, index in statusList" :key="index">{{item.name}}</Option>
+                    </Select>
                 </FormItem>
-                <FormItem label="日期">
-                    <DatePicker type="year"
-                                @on-change="filterOpt.year = $event"
-                                clearable
-                                :value="filterOpt.year"></DatePicker>
+                <FormItem :label-width="0.1">
+                    <ButtonGroup>
+                        <Button type="ghost" @click="editorSettingFlag = true">
+                            <Icon type="plus-round"></Icon>
+                            添加试卷
+                        </Button>
+                    </ButtonGroup>
+                    <ButtonGroup>
+                        <Button type="ghost">
+                            <Icon type="plus-round"></Icon>
+                            添加试卷(随机)
+                        </Button>
+                    </ButtonGroup>
                 </FormItem>
             </Form>
-            <Table :columns="postColumns"
-                   :loading="tableLoading"
-                   :height="tableHeight"
-                   :data="pageData.list"></Table>
-            <Page :total="pageData.totalCount"
-                  :current="pageData.page"
-                  @on-change="_setPage"
-                  @on-page-size-change="_setPageSize"
-                  :page-size="pageData.pageSize"
-                  placement="top"
-                  show-sizer
-                  show-total
-                  show-elevator
-                  style="margin-top: 16px;"></Page>
+            <fs-table-page :columns="postColumns"
+                           :size="null"
+                           :height="tableHeight"
+                           :params="filterOpt"
+                           url="/examquestion/getQuestionList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="300"
                    :mask-closable="false">
@@ -89,9 +89,7 @@
     </div>
 </template>
 <script>
-    import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
-    import debounce from 'lodash/debounce';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     export default {
         name: 'paperManage',
         data () {
@@ -99,10 +97,29 @@
                 editorSettingFlag: false,
                 btnLoading: false,
                 postFormType: 'update',
+                statusList: [
+                    {
+                        status: 1,
+                        name: '待发布'
+                    },
+                    {
+                        status: 2,
+                        name: '已发布'
+                    },
+                    {
+                        status: 3,
+                        name: '已关闭'
+                    }
+                ],
                 filterOpt: {
-                    name: '',
-                    dep: '',
-                    year: ''
+                    name: {
+                        value: '',
+                        type: 'input'
+                    },
+                    status: {
+                        value: '',
+                        type: 'select'
+                    }
                 },
                 editorSettingData: {
                     name: '',
@@ -113,88 +130,56 @@
                 },
                 postColumns: [
                     {
-                        title: '姓名',
-                        key: 'organizename',
-                        align: 'center'
+                        title: '试卷名称',
+                        key: 'organizename'
                     },
                     {
-                        title: '所在部门',
+                        title: '总分',
                         key: 'postname',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
-                        title: '财富点',
+                        title: '状态',
                         key: 'user_name',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
-                        title: '技能点',
+                        title: '创建人',
                         key: 'user_name',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
-                        title: '伯乐点',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '智慧点',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '综合能力值',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '统计日期',
+                        title: '创建日期',
                         key: 'user_name',
                         align: 'center',
                         width: 120
+                    },
+                    {
+                        title: '操作',
+                        key: 'user_name',
+                        align: 'center',
+                        width: 400
                     }
                 ],
                 tableHeight: 500
             };
         },
-        mixins: [pageMixin],
         created() {
-            this._getPostData();
             this._setTableHeight();
         },
         methods: {
             _initEditorSettingData() {
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
-            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
-            },
-            _setPage(page) {
-                this.pageData.page = page;
-                this._getPostData();
-            },
-            _setPageSize(size) {
-                this.pageData.pageSize = size;
-                this._getPostData();
-            },
-            _editorSetting(data) {
-                this._initEditorSettingData();
-                this.editorSettingFlag = true;
-            },
-            _getPostData() {
-                let data = {};
-                data.goodsName = this.filterOpt.goodsName;
-                data.status = this.filterOpt.status;
-                this.getList('', data);
             }
         },
-        components: {}
+        components: {
+            fsTablePage
+        }
     };
 </script>

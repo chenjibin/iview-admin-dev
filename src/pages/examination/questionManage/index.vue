@@ -75,9 +75,9 @@
                             </FormItem>
                         </Col>
                     </Row>
-                    <FormItem label="答案选项">
+                    <FormItem label="答案选项" v-show="['1', '2'].indexOf(editorSettingData.type) > -1">
                         <Table :columns="answerColumns"
-                               :context="self"
+                               disabled-hover
                                :data="editorSettingData.questionList"></Table>
                         <div class="" style="margin-top: 8px;text-align: right">
                             <Button type="ghost"
@@ -87,19 +87,39 @@
                         </div>
                     </FormItem>
                     <FormItem label="试题答案">
-                        <RadioGroup v-model="editorSettingData.singleType">
+                        <RadioGroup v-model="editorSettingData.singleType"
+                                    v-show="editorSettingData.type === '1'">
                             <Radio :label="index | indexToBigCode"
                                    v-for="item, index in editorSettingData.questionList"
                                    :key="index">{{index | indexToBigCode}}</Radio>
                         </RadioGroup>
-                        <CheckboxGroup v-model="editorSettingData.multiType">
+                        <CheckboxGroup v-model="editorSettingData.multiType"
+                                       v-show="editorSettingData.type === '2'">
                             <Checkbox :label="index | indexToBigCode"
                                       v-for="item, index in editorSettingData.questionList"
                                       :key="index"></Checkbox>
                         </CheckboxGroup>
-                        <Input type="text"
-                               v-model="editorSettingData.answer"
-                               placeholder=""></Input>
+                        <RadioGroup v-model="editorSettingData.trueOrFalseType"
+                                    v-show="editorSettingData.type === '3'">
+                            <Radio label="正确">正确</Radio>
+                            <Radio label="错误">错误</Radio>
+                        </RadioGroup>
+                        <div class="" v-show="editorSettingData.type === '4'">
+                            <InputNumber :min="0" v-model="editorSettingData.fillNumber"></InputNumber><span style="margin-left: 8px;">个空</span>
+                            <Row :gutter="8" style="margin-top: 16px">
+                                <Col :span="6"
+                                     style="margin-bottom: 8px;"
+                                     v-for="item, index in editorSettingData.fillType"
+                                     :key="index">
+                                    <Input type="text" v-model="item.content"></Input>
+                                </Col>
+                            </Row>
+                        </div>
+                        <Input type="textarea"
+                               v-show="editorSettingData.type === '5'"
+                               v-model="editorSettingData.questionType"
+                               :autosize="{minRows: 2,maxRows: 4}"
+                               placeholder="得分关键字"></Input>
                     </FormItem>
                     <FormItem label="试题解析">
                         <Input type="textarea"
@@ -112,7 +132,7 @@
                     <Button type="primary"
                             :loading="btnLoading"
                             @click="">
-                        添加商品
+                        添加试题
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
                 </div>
@@ -129,7 +149,6 @@
             return {
                 editorSettingFlag: false,
                 btnLoading: false,
-                self: this,
                 postFormType: 'update',
                 filterOpt: {
                     name: {
@@ -157,23 +176,99 @@
                     },
                     {
                         title: '答案内容',
-                        key: 'answerContent'
+                        key: 'answerContent',
+                        render: (h, params) => {
+                            let currentNow = this.editorSettingData.questionList[params.index];
+                            return h('Row', {
+                                props: {
+                                    type: 'flex',
+                                    align: 'middle'
+                                }
+                            }, [
+                                h('Col', {
+                                    props: {
+                                        span: '22'
+                                    }
+                                }, [
+                                    params.row.editorNow ? h('Input', {
+                                        props: {
+                                            type: 'textarea',
+                                            autosize: {minRows: 2, maxRows: 4},
+                                            value: params.row.answerContent
+                                        },
+                                        on: {
+                                            'on-change' (event) {
+                                                params.row.answerContent = event.target.value;
+                                            }
+                                        }
+                                    }) : h('p', {
+                                        style: {
+                                            lineHeight: '1.5'
+                                        }
+                                    }, params.row.answerContent)
+                                ]),
+                                h('Col', {
+                                    props: {
+                                        span: '2'
+                                    }
+                                }, [
+                                    params.row.editorNow ? h('Button', {
+                                        props: {
+                                            type: 'text',
+                                            icon: 'checkmark'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                currentNow.editorNow = false;
+                                                currentNow.answerContent = params.row.answerContent;
+                                            }
+                                        }
+                                    }) : h('Button', {
+                                        props: {
+                                            type: 'text',
+                                            icon: 'edit'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                currentNow.editorNow = true;
+                                            }
+                                        }
+                                    })
+                                ])
+                            ]);
+                        }
                     },
                     {
                         title: '图片',
                         align: 'center',
-                        width: 120,
-                        render(row, column, index) {
-                            return `<fs-img-upload
-                                       action="/oa/lottery/uploadfile"
-                                       path="/oa/upload/"
-                                       :upload.sync="${row.pic}"></fs-img-upload>`;
+                        width: 98,
+                        render: (h, params) => {
+                            let currentNow = this.editorSettingData.questionList[params.index];
+                            return h('div', {
+                                style: {
+                                    padding: '8px 0'
+                                }
+                            }, [
+                                h(fsImgUpload, {
+                                    props: {
+                                        path: '/oa/upload/',
+                                        action: '/oa/lottery/uploadfile',
+                                        upload: params.row.pic
+                                    },
+                                    on: {
+                                        'update'(val) {
+                                            console.log(val);
+                                            currentNow.pic = val;
+                                        }
+                                    }
+                                })
+                            ]);
                         }
                     },
                     {
                         title: '操作',
                         align: 'center',
-                        width: 60,
+                        width: 90,
                         render: (h, params) => {
                             let vm = this;
                             return h('div', [
@@ -186,7 +281,7 @@
                                 }, [
                                     h('Button', {
                                         props: {
-                                            type: 'primary',
+                                            type: 'error',
                                             icon: 'trash-a',
                                             shape: 'circle'
                                         },
@@ -208,10 +303,15 @@
                     mark: 0,
                     singleType: '',
                     multiType: [],
+                    trueOrFalseType: '',
+                    questionType: '',
+                    fillNumber: 0,
+                    fillType: [],
                     questionList: [
                         {
                             answerContent: '',
-                            pic: []
+                            pic: [],
+                            editorNow: false
                         }
                     ],
                     desc: '',
@@ -301,6 +401,17 @@
                 tableHeight: 300
             };
         },
+        watch: {
+            'editorSettingData.fillNumber'(val) {
+                let arr = [];
+                for (let i = 0, length = val; i < length; i++) {
+                    let obj = {};
+                    obj.content = '';
+                    arr.push(obj);
+                }
+                this.editorSettingData.fillType = arr;
+            }
+        },
         created() {
             this._getSubjectList();
             this._setTableHeight();
@@ -314,7 +425,8 @@
             _addNewAnswer() {
                 let obj = {};
                 obj.answerContent = '';
-                obj.pic = '';
+                obj.pic = [];
+                obj.editorNow = false;
                 this.editorSettingData.questionList.push(obj);
             },
             _initEditorSettingData() {
@@ -330,7 +442,6 @@
                     return;
                 }
                 this.editorSettingData.questionList.splice(data._index, 1);
-                console.log(data);
             },
             _editorSetting(data) {
                 this._initEditorSettingData();

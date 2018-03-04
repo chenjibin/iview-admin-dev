@@ -2,39 +2,17 @@
     <div>
         <Card>
             <Form inline :label-width="60">
-                <FormItem label="姓名">
+                <FormItem label="考试名称">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
-                           placeholder="筛选姓名"></Input>
-                </FormItem>
-                <FormItem label="部门">
-                    <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.dep"
-                           placeholder="筛选部门"></Input>
-                </FormItem>
-                <FormItem label="日期">
-                    <DatePicker type="year"
-                                @on-change="filterOpt.year = $event"
-                                clearable
-                                :value="filterOpt.year"></DatePicker>
+                           v-model="filterOpt.examName.value"
+                           placeholder="筛选试卷"></Input>
                 </FormItem>
             </Form>
-            <Table :columns="postColumns"
-                   :loading="tableLoading"
-                   :height="tableHeight"
-                   :data="pageData.list"></Table>
-            <Page :total="pageData.totalCount"
-                  :current="pageData.page"
-                  @on-change="_setPage"
-                  @on-page-size-change="_setPageSize"
-                  :page-size="pageData.pageSize"
-                  placement="top"
-                  show-sizer
-                  show-total
-                  show-elevator
-                  style="margin-top: 16px;"></Page>
+            <fs-table-page :columns="postColumns"
+                           :size="null"
+                           :height="tableHeight"
+                           :params="filterOpt"
+                           url="/examquestion/getQuestionList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="300"
                    :mask-closable="false">
@@ -89,9 +67,7 @@
     </div>
 </template>
 <script>
-    import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
-    import debounce from 'lodash/debounce';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     export default {
         name: 'peopleCheck',
         data () {
@@ -100,9 +76,10 @@
                 btnLoading: false,
                 postFormType: 'update',
                 filterOpt: {
-                    name: '',
-                    dep: '',
-                    year: ''
+                    examName: {
+                        value: '',
+                        type: 'input'
+                    }
                 },
                 editorSettingData: {
                     name: '',
@@ -113,88 +90,61 @@
                 },
                 postColumns: [
                     {
-                        title: '姓名',
-                        key: 'organizename',
-                        align: 'center'
+                        title: '考试名称',
+                        key: 'organizename'
                     },
                     {
-                        title: '所在部门',
+                        title: '试卷名称',
                         key: 'postname',
-                        align: 'center'
+                        align: 'center',
                     },
                     {
-                        title: '财富点',
+                        title: '考试时间',
                         key: 'user_name',
-                        align: 'center'
+                        align: 'center',
+                        width: 160
                     },
                     {
-                        title: '技能点',
+                        title: '考试时长',
                         key: 'user_name',
-                        align: 'center'
+                        align: 'center',
+                        width: 160
                     },
                     {
-                        title: '伯乐点',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '智慧点',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '综合能力值',
-                        key: 'user_name',
-                        align: 'center'
-                    },
-                    {
-                        title: '统计日期',
+                        title: '总分',
                         key: 'user_name',
                         align: 'center',
                         width: 120
+                    },
+                    {
+                        title: '结束时间',
+                        key: 'user_name',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        title: '操作',
+                        key: 'user_name',
+                        align: 'center',
+                        width: 100
                     }
                 ],
                 tableHeight: 500
             };
         },
-        mixins: [pageMixin],
         created() {
-            this._getPostData();
             this._setTableHeight();
         },
         methods: {
             _initEditorSettingData() {
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
-            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
-            },
-            _setPage(page) {
-                this.pageData.page = page;
-                this._getPostData();
-            },
-            _setPageSize(size) {
-                this.pageData.pageSize = size;
-                this._getPostData();
-            },
-            _editorSetting(data) {
-                this._initEditorSettingData();
-                this.editorSettingFlag = true;
-            },
-            _getPostData() {
-                let data = {};
-                data.goodsName = this.filterOpt.goodsName;
-                data.status = this.filterOpt.status;
-                this.getList('', data);
             }
         },
-        components: {}
+        components: {
+            fsTablePage
+        }
     };
 </script>
