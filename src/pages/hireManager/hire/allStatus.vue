@@ -20,7 +20,7 @@
 
 <script>
     export default {
-        name: 'all-status',
+        name: 'allStatus',
         props: {
             width: {
                 type: Number,
