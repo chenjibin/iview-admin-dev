@@ -115,19 +115,19 @@
                             <Button type="ghost" @click="changeType(1)" title="只看预约">预</Button>
                         </Poptip>
                         <Poptip trigger="hover" title="详细过滤" placement="left">
-                            <all-status v-on:status="changeStatus" :type1="2" slot="content"></all-status>
+                            <allStatus v-on:status="changeStatus" :type1="2" slot="content"></allStatus>
                             <Button type="ghost" @click="changeType(2)" title="只看面试">面</Button>
                         </Poptip>
                         <Poptip trigger="hover" title="详细过滤" placement="left">
-                            <all-status v-on:status="changeStatus" :type1="3" slot="content"></all-status>
+                            <allStatus v-on:status="changeStatus" :type1="3" slot="content"></allStatus>
                             <Button type="ghost" @click="changeType(3)" title="只看试岗">岗</Button>
                         </Poptip>
                         <Poptip trigger="hover" title="详细过滤" placement="left">
-                            <all-status v-on:status="changeStatus" :type1="4" slot="content"></all-status>
+                            <allStatus v-on:status="changeStatus" :type1="4" slot="content"></allStatus>
                             <Button type="ghost" @click="changeType(4)" title="只看备选人才">才</Button>
                         </Poptip>
                         <Poptip trigger="hover" title="详细过滤" placement="left">
-                            <all-status v-on:status="changeStatus" :type1="0" slot="content"></all-status>
+                            <allStatus v-on:status="changeStatus" :type1="0" slot="content"></allStatus>
                             <Button type="ghost" @click="changeType(0)" title="全部">全</Button>
                         </Poptip>
                     </ButtonGroup>
