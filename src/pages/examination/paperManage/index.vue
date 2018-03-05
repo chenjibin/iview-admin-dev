@@ -2,12 +2,12 @@
     <div>
         <Card>
             <Form inline :label-width="60">
-                <FormItem label="姓名">
+                <FormItem label="试卷名称">
                     <Input type="text"
                            v-model="filterOpt.name.value"
-                           placeholder="筛选姓名"></Input>
+                           placeholder="筛选试卷"></Input>
                 </FormItem>
-                <FormItem label="试题分类">
+                <FormItem label="试卷状态">
                     <Select v-model="filterOpt.status.value"
                             clearable
                             placeholder="筛选状态"
@@ -34,7 +34,7 @@
                            :size="null"
                            :height="tableHeight"
                            :params="filterOpt"
-                           url="/examquestion/getQuestionList"></fs-table-page>
+                           url="/exampaper/getPaperList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="300"
                    :mask-closable="false">
@@ -131,11 +131,11 @@
                 postColumns: [
                     {
                         title: '试卷名称',
-                        key: 'organizename'
+                        key: 'name'
                     },
                     {
                         title: '总分',
-                        key: 'postname',
+                        key: 'totlemark',
                         align: 'center',
                         width: 100
                     },
@@ -143,19 +143,22 @@
                         title: '状态',
                         key: 'user_name',
                         align: 'center',
-                        width: 100
+                        width: 100,
+                        render: (h, params) => {
+                            return this.statusList[params.row.status - 1].name;
+                        }
                     },
                     {
                         title: '创建人',
-                        key: 'user_name',
+                        key: 'createbyname',
                         align: 'center',
                         width: 100
                     },
                     {
-                        title: '创建日期',
-                        key: 'user_name',
+                        title: '创建时间',
+                        key: 'createbydate',
                         align: 'center',
-                        width: 120
+                        width: 200
                     },
                     {
                         title: '操作',

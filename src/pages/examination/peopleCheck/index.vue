@@ -4,7 +4,7 @@
             <Form inline :label-width="60">
                 <FormItem label="考试名称">
                     <Input type="text"
-                           v-model="filterOpt.examName.value"
+                           v-model="filterOpt.name.value"
                            placeholder="筛选试卷"></Input>
                 </FormItem>
             </Form>
@@ -12,7 +12,7 @@
                            :size="null"
                            :height="tableHeight"
                            :params="filterOpt"
-                           url="/examquestion/getQuestionList"></fs-table-page>
+                           url="/examtestpaper/getTestPaperList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="300"
                    :mask-closable="false">
@@ -76,7 +76,7 @@
                 btnLoading: false,
                 postFormType: 'update',
                 filterOpt: {
-                    examName: {
+                    name: {
                         value: '',
                         type: 'input'
                     }
@@ -91,42 +91,41 @@
                 postColumns: [
                     {
                         title: '考试名称',
-                        key: 'organizename'
+                        key: 'name'
                     },
                     {
                         title: '试卷名称',
-                        key: 'postname',
-                        align: 'center',
+                        key: 'papername'
                     },
                     {
                         title: '考试时间',
-                        key: 'user_name',
+                        key: 'starttime',
                         align: 'center',
                         width: 160
                     },
                     {
                         title: '考试时长',
-                        key: 'user_name',
+                        key: 'totletime',
                         align: 'center',
                         width: 160
                     },
                     {
                         title: '总分',
-                        key: 'user_name',
+                        key: 'totlemark',
                         align: 'center',
                         width: 120
                     },
                     {
                         title: '结束时间',
-                        key: 'user_name',
+                        key: 'modifybydate',
                         align: 'center',
-                        width: 160
+                        width: 200
                     },
                     {
                         title: '操作',
                         key: 'user_name',
                         align: 'center',
-                        width: 100
+                        width: 160
                     }
                 ],
                 tableHeight: 500

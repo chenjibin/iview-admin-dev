@@ -320,13 +320,14 @@
                 postColumns: [
                     {
                         title: '试题名称',
-                        key: 'name',
-                        align: 'center'
+                        key: 'name'
                     },
                     {
                         title: '试题分类',
-                        key: 'postname',
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            return (this.subjectList.filter(x => x.id === params.row.subject))[0].name;
+                        }
                     },
                     {
                         title: '试题类型',
@@ -367,6 +368,7 @@
                                         },
                                         on: {
                                             click: function () {
+                                                vm._editorSetting(params.row);
                                             }
                                         }
                                     })
@@ -398,7 +400,8 @@
                     }
                 ],
                 subjectList: [],
-                tableHeight: 300
+                tableHeight: 300,
+                timer: null
             };
         },
         watch: {
@@ -444,6 +447,7 @@
                 this.editorSettingData.questionList.splice(data._index, 1);
             },
             _editorSetting(data) {
+                console.log(data);
                 this._initEditorSettingData();
                 this.editorSettingFlag = true;
             },

@@ -9,7 +9,7 @@
                 </FormItem>
                 <FormItem label="部门名称">
                     <Input type="text"
-                           v-model="filterOpt.depName.value"
+                           v-model="filterOpt.orgName.value"
                            placeholder="筛选部门"></Input>
                 </FormItem>
                 <FormItem label="参考人">
@@ -30,7 +30,7 @@
                            :size="null"
                            :height="tableHeight"
                            :params="filterOpt"
-                           url="/examquestion/getQuestionList"></fs-table-page>
+                           url="/examtest/getScoreManageList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="300"
                    :mask-closable="false">
@@ -98,7 +98,7 @@
                         value: '',
                         type: 'input'
                     },
-                    depName: {
+                    orgName: {
                         value: '',
                         type: 'input'
                     },
@@ -117,40 +117,40 @@
                 postColumns: [
                     {
                         title: '考试名称',
-                        key: 'organizename'
+                        key: 'name'
                     },
                     {
                         title: '部门名称',
-                        key: 'postname',
-                        align: 'center',
+                        key: 'organizename',
+                        align: 'center'
                     },
                     {
                         title: '考试人',
-                        key: 'user_name',
+                        key: 'stuname',
                         align: 'center',
                         width: 100
                     },
                     {
                         title: '考试时间',
-                        key: 'user_name',
+                        key: 'starttime',
                         align: 'center',
                         width: 160
                     },
                     {
                         title: '考试时长(分钟)',
-                        key: 'user_name',
+                        key: 'totletime',
                         align: 'center',
                         width: 120
                     },
                     {
                         title: '总分',
-                        key: 'user_name',
+                        key: 'score',
                         align: 'center',
                         width: 100
                     },
                     {
                         title: '排名',
-                        key: 'user_name',
+                        key: 'ranking',
                         align: 'center',
                         width: 100
                     }

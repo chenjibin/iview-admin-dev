@@ -4,11 +4,11 @@
             <Form inline :label-width="60">
                 <FormItem label="考试名称">
                     <Input type="text"
-                           v-model="filterOpt.examName.value"
+                           v-model="filterOpt.name.value"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="考试状态">
-                    <Select v-model="filterOpt.examStatus.value"
+                    <Select v-model="filterOpt.status.value"
                             clearable
                             placeholder="筛选状态"
                             style="width: 100px">
@@ -28,14 +28,14 @@
                            :size="null"
                            :height="tableHeight"
                            :params="filterOpt"
-                           url="/examquestion/getQuestionList"></fs-table-page>
+                           url="/examtestpaper/getTestPaperList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
-                   width="300"
+                   width="500"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
+                    <span>添加考试</span>
                 </p>
-                <Form>
+                <Form :label-width="60">
                     <FormItem label="是否下架">
                         <i-switch v-model="editorSettingData.isDown" size="large">
                             <span slot="open">上架</span>
@@ -106,11 +106,11 @@
                     }
                 ],
                 filterOpt: {
-                    examName: {
+                    name: {
                         value: '',
                         type: 'input'
                     },
-                    examStatus: {
+                    status: {
                         value: '',
                         type: 'select'
                     }
@@ -125,33 +125,36 @@
                 postColumns: [
                     {
                         title: '考试名称',
-                        key: 'organizename'
+                        key: 'name'
                     },
                     {
                         title: '试卷名称',
-                        key: 'organizename'
+                        key: 'papername'
                     },
                     {
                         title: '考试时间',
-                        key: 'organizename',
+                        key: 'starttime',
                         width: 160
                     },
                     {
                         title: '考试时长',
-                        key: 'organizename',
+                        key: 'totletime',
+                        align: 'center',
                         width: 100
                     },
                     {
                         title: '总分',
-                        key: 'postname',
+                        key: 'totlemark',
                         align: 'center',
                         width: 100
                     },
                     {
                         title: '状态',
-                        key: 'user_name',
                         align: 'center',
-                        width: 100
+                        width: 100,
+                        render: (h, params) => {
+                            return this.statusList[params.row.status - 1].name;
+                        }
                     },
                     {
                         title: '操作',
