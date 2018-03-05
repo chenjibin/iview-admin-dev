@@ -25,7 +25,7 @@
                 </FormItem>
                 <FormItem :label-width="0.1">
                     <ButtonGroup>
-                        <Button type="ghost" @click="editorSettingFlag = true">
+                        <Button type="ghost" @click="_addQuestionOpen">
                             <Icon type="plus-round"></Icon>
                             添加试题
                         </Button>
@@ -36,6 +36,7 @@
                            :size="null"
                            :height="tableHeight"
                            :params="filterOpt"
+                           ref="tablePage"
                            url="/examquestion/getQuestionList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
                    width="800"
@@ -49,6 +50,12 @@
                                :autosize="{minRows: 2,maxRows: 4}"
                                v-model="editorSettingData.name"
                                placeholder=""></Input>
+                    </FormItem>
+                    <FormItem label="试题图片">
+                        <fs-img-upload action="/oa/examquestion/uploadfile"
+                                       path="/oa/upload/exam/"
+                                       ref="imgUploadFo"
+                                       :upload.sync="editorSettingData.questionPic"></fs-img-upload>
                     </FormItem>
                     <Row>
                         <Col :span="8">
@@ -131,7 +138,7 @@
                 <div slot="footer">
                     <Button type="primary"
                             :loading="btnLoading"
-                            @click="">
+                            @click="_addQuestionConfirm">
                         添加试题
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
@@ -251,8 +258,8 @@
                             }, [
                                 h(fsImgUpload, {
                                     props: {
-                                        path: '/oa/upload/',
-                                        action: '/oa/lottery/uploadfile',
+                                        path: '/oa/upload/exam/',
+                                        action: '/oa/examquestion/uploadfile',
                                         upload: params.row.pic
                                     },
                                     on: {
@@ -298,6 +305,7 @@
                 ],
                 editorSettingData: {
                     name: '',
+                    questionPic: [],
                     type: '1',
                     subject: '',
                     mark: 0,
@@ -425,6 +433,55 @@
             }
         },
         methods: {
+            _addQuestionConfirm() {
+                let editorSettingData = this.editorSettingData;
+                let data = {};
+                data.name = editorSettingData.name;
+                data.questionPic = editorSettingData.questionPic[0] ? editorSettingData.questionPic[0].name : '';
+                data.subject = editorSettingData.subject;
+                data.type = editorSettingData.type;
+                data.questionMark = editorSettingData.mark;
+                if (['1', '2'].indexOf(data.type) > -1) {
+                    let questionList = [];
+                    editorSettingData.questionList.forEach((item, index) => {
+                        let obj = {};
+                        obj.order = String.fromCharCode(index + 65);
+                        obj.content = item.answerContent;
+                        obj.pic = item.pic[0] ? item.pic[0].name : '';
+                        questionList.push(obj);
+                    });
+                    data.questionList = JSON.stringify(questionList);
+                }
+                switch (data.type) {
+                    case '1':
+                        data.answer = editorSettingData.singleType;
+                        break;
+                    case '2':
+                        data.answer = editorSettingData.multiType.join(',');
+                        break;
+                    case '3':
+                        data.answer = editorSettingData.trueOrFalseType;
+                        break;
+                    case '4':
+                        data.answer = editorSettingData.fillType.map(x => x.content).join(',');
+                        break;
+                    case '5':
+                        data.answer = editorSettingData.questionType;
+                }
+                data.analysis = editorSettingData.desc;
+                // this.$http.post('/examquestion/addOptions', data).then((res) => {
+                //     if (res.success) {
+                //         this.$Message.success('试题添加成功!');
+                //         this.editorSettingFlag = false;
+                //         this.$refs.tablePage.getListData();
+                //     }
+                // });
+                console.log(data);
+            },
+            _addQuestionOpen() {
+                this._initEditorSettingData();
+                this.editorSettingFlag = true;
+            },
             _addNewAnswer() {
                 let obj = {};
                 obj.answerContent = '';
@@ -433,6 +490,26 @@
                 this.editorSettingData.questionList.push(obj);
             },
             _initEditorSettingData() {
+                let editorSettingData = this.editorSettingData;
+                editorSettingData.name = '';
+                editorSettingData.questionPic = [];
+                this.$refs.imgUploadFo.removeAllPicFlie();
+                editorSettingData.type = '1';
+                editorSettingData.subject = this.subjectList[0].id;
+                editorSettingData.mark = 0;
+                editorSettingData.singleType = '';
+                editorSettingData.multiType = [];
+                editorSettingData.trueOrFalseType = '';
+                editorSettingData.questionType = '';
+                editorSettingData.fillNumber = 0;
+                editorSettingData.questionList = [
+                    {
+                        answerContent: '',
+                        pic: [],
+                        editorNow: false
+                    }
+                ];
+                editorSettingData.desc = '';
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -444,6 +521,8 @@
                     this.$Message.error('答案选项至少一个!');
                     return;
                 }
+                this.editorSettingData.singleType = '';
+                this.editorSettingData.multiType = [];
                 this.editorSettingData.questionList.splice(data._index, 1);
             },
             _editorSetting(data) {

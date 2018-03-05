@@ -35,6 +35,9 @@
         </ul>
         <Modal title="预览图片"
                width="800"
+               :styles="{zIndex: 1000}"
+               :mask-closable="false"
+               class-name="fs-img-pre"
                v-model="visible">
             <div style="max-height: 500px;overflow-y: auto;">
                 <img :src="path + imgName" v-if="visible" style="max-width: 100%">
@@ -117,6 +120,9 @@
     };
 </script>
 <style lang="less">
+    .ivu-modal-wrap.fs-img-pre {
+        z-index: 1001;
+    }
     #fs-upload-list {
         display: flex;
         .demo-upload-list {
