@@ -202,26 +202,26 @@
             <Form :model="coinSettingForm"
                   :rules="coinRules"
                   ref="coinForm"
-                  :label-width="80">
-                <FormItem prop="target" label="操作对象" :label-width="80">
+                  :label-width="90">
+                <FormItem prop="target" label="操作对象">
                     <Input type="text"
                            readonly
                            v-model="coinSettingForm.target"></Input>
                 </FormItem>
-                <FormItem label="类型">
-                    <Select @on-change="_coinTypeChangeHandler">
-                        <Option :value="item.value" v-for="item in coinTypeSelect" :key="'coin-type-' + item.value">{{item.label}}</Option>
-                    </Select>
-                </FormItem>
+                <!--<FormItem label="类型">-->
+                    <!--<Select @on-change="_coinTypeChangeHandler">-->
+                        <!--<Option :value="item.value" v-for="item in coinTypeSelect" :key="'coin-type-' + item.value">{{item.label}}</Option>-->
+                    <!--</Select>-->
+                <!--</FormItem>-->
                 <FormItem label="属性" prop="coinProperty">
                     <Select v-model="coinSettingForm.coinProperty">
                         <Option :value="item.value" v-for="(item, index) in coinOptSelect" :key="'coin-property' + index">{{item.label}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="金币数量" :label-width="80" prop="coinNumber">
+                <FormItem label="金币数量" prop="coinNumber">
                     <Input type="text" v-model="coinSettingForm.coinNumber"></Input>
                 </FormItem>
-                <FormItem label="说明" :label-width="80" prop="content">
+                <FormItem label="说明" prop="content">
                     <Input v-model="coinSettingForm.content" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
                 </FormItem>
             </Form>
@@ -954,13 +954,13 @@
                 this._initPage();
                 this._getUserData();
             },
-            _coinTypeChangeHandler(val) {
-                let storeArr = this.coinTypeSelect.filter((item) => {
-                    return +item.value === +val;
-                });
-                this.coinSettingForm.coinNumber = storeArr[0].coin;
-                this.coinSettingForm.content = storeArr[0].label;
-            },
+            // _coinTypeChangeHandler(val) {
+            //     let storeArr = this.coinTypeSelect.filter((item) => {
+            //         return +item.value === +val;
+            //     });
+            //     this.coinSettingForm.coinNumber = storeArr[0].coin;
+            //     this.coinSettingForm.content = storeArr[0].label;
+            // },
             _storeFilter(root, path, id) {
                 root.forEach((item) => {
                     if (item.id === id) this.storePath = [...path, id];
