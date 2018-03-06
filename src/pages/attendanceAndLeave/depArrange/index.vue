@@ -27,24 +27,25 @@
                     </FormItem>
                     <FormItem>
                         <ButtonGroup>
-                            <Button type="ghost" @click="_createMonthOpen">
+                            <Button type="ghost" @click="_createMonthOpen" v-if="accessBtn.indexOf(24) > -1">
                                 <Icon type="plus-round"></Icon>
                                 新建
                             </Button>
-                            <Button type="warning" @click="_delMonthOpen">
+                            <Button type="warning" @click="_delMonthOpen" v-if="accessBtn.indexOf(25) > -1">
                                 <Icon type="ios-trash-outline"></Icon>
                                 删除
                             </Button>
-                            <Button type="ghost" @click="addPersonModalFlag = true">
+                            <Button type="ghost" @click="addPersonModalFlag = true" v-if="accessBtn.indexOf(26) > -1">
                                 <Icon type="plus-round"></Icon>
                                 添加个人
                             </Button>
-                            <Button type="ghost" @click="addDepModalFlag = true">
+                            <Button type="ghost" @click="addDepModalFlag = true" v-if="accessBtn.indexOf(27) > -1">
                                 <Icon type="plus-round"></Icon>
                                 添加部门
                             </Button>
                             <Button type="warning"
                                     :disabled="!chooseDataArr.length"
+                                    v-if="accessBtn.indexOf(28) > -1"
                                     @click="_delDepChoose">
                                 <Icon type="ios-trash-outline"></Icon>
                                 删除部门
@@ -344,10 +345,12 @@
                     record_month: '',
                     organizeName: '',
                     status: ''
-                }
+                },
+                accessBtn: []
             };
         },
         created() {
+            this.accessBtn = this.$route.meta.btn.map(x => x.id);
             this._setTableHeight();
         },
         methods: {

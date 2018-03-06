@@ -54,10 +54,10 @@
                         </Row>
                     </Col>
                     <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
-                        <coin-change></coin-change>
+                        <things-to-do></things-to-do>
                     </Col>
                     <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
-                        <injob-commemorate></injob-commemorate>
+                        <coin-change></coin-change>
                     </Col>
                 </Row>
             </Col>
@@ -68,6 +68,11 @@
                 <Row>
                     <people-change></people-change>
                 </Row>
+            <Row>
+                <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
+                    <injob-commemorate></injob-commemorate>
+                </Col>
+            </Row>
             </Col>
         </Row>
     </div>
@@ -80,6 +85,7 @@ import Notice from './components/notice';
 import peopleChange from './components/peopleChange';
 import injobCommemorate from './components/injobCommemorate';
 import coinChange from './components/coinChange';
+import thingsToDo from './components/thingsToDo';
 export default {
     name: 'home_index',
     components: {
@@ -88,7 +94,8 @@ export default {
         peopleChange,
         injobCommemorate,
         coinChange,
-        userInfo
+        userInfo,
+        thingsToDo
     }
 };
 </script>

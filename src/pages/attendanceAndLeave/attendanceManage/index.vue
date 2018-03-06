@@ -620,6 +620,7 @@
                 this.$http.post('/kq/completeExamine', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('操作成功!');
+                        this._getPostData();
                         this.settingModalFlag = false;
                     }
                 });
