@@ -164,35 +164,8 @@
                             </Select>
                         </FormItem>
                         <FormItem label="岗位" style="width:430px">
-                            <Select class="" id="postName" name="postName">
-                                <Option :value="1">售前客服</Option>
-                                <Option :value="2">专卖店店长</Option>
-                                <Option :value="3">对账专员</Option>
-                                <Option :value="4">售后</Option>
-                                <Option :value="5">渠道专员</Option>
-                                <Option :value="6">美工</Option>
-                                <Option :value="7">操作工</Option>
-                                <Option :value="8">采购专员</Option>
-                                <Option :value="9">专卖店导购</Option>
-                                <Option :value="10">渠道售后</Option>
-                                <Option :value="11">微信客服</Option>
-                                <Option :value="12">商品专员</Option>
-                                <Option :value="13">仓库储备干部</Option>
-                                <Option :value="14">营销专员</Option>
-                                <Option :value="15">保姆</Option>
-                                <Option :value="16">保安</Option>
-                                <Option :value="17">货运司机</Option>
-                                <Option :value="18">总账会计</Option>
-                                <Option :value="19">微信运营专员</Option>
-                                <Option :value="20">设计</Option>
-                                <Option :value="21">仓库临时工</Option>
-                                <Option :value="22">java</Option>
-                                <Option :value="23">PHP</Option>
-                                <Option :value="24">开票会计</Option>
-                                <Option :value="25">人事专员</Option>
-                                <Option :value="26">培训讲师</Option>
-                                <Option :value="27">运营助理</Option>
-                                <Option :value="28">电商储备干部</Option>
+                            <Select name="postname" v-model="talentBean.postname">
+                                <Option :value="item.id" v-for="item, index in positionData" :key="item.id">{{item.name}}</Option>
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" style="width:430px">
@@ -458,7 +431,13 @@
                     </Select>
                 </FormItem>
                 <FormItem v-if="statusTemp === 3" label="师傅" style="width: 45%">
-                    <fsSearchUser v-model="statusForm.master"></fsSearchUser>
+                    <Select v-model="statusForm.master"
+                            filterable
+                            remote
+                            :remote-method="_filterPeopleRemote"
+                            :loading="filterPeopleLoading">
+                        <Option v-for="(option, index) in optionlist" :value="option.id" :key="option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="试岗时间" prop="testtime"  style="width: 45%" v-if="statusTemp === 6">
                     <DatePicker v-model="statusForm.testtime"  style="width: 100%" format="yyyy-MM-dd" type="date" ></DatePicker>
@@ -582,6 +561,7 @@
                     interviewtime: [], // 面试时间
                     sparetime: [] // 移入人才库时间
                 }, // 查询
+                positionData: [],
                 educationForm: [
                     {
                         graduatedschool: '',
@@ -593,6 +573,7 @@
                         descriptioncontent: ''
                     }
                 ], // 简历教育历史
+                optionlist:[],
                 workingForm: [
                     {
                         descriptioncontent: '',
@@ -648,6 +629,7 @@
                     id: '',
                     status: '',
                     remarks: '',
+                    master:'',
                     joindate: '', // 入职时间
                     appointment: '', // 预约时间
                     interviewtime: '', // 面试时间
@@ -885,15 +867,23 @@
                             ]);
                         }
                     }
-                ]
+                ],
+                filterPeopleLoading: false
             };
         },
         mixins: [pageMixin],
         created () {
             this._getPostData();
+            this.getPositionData(); // 岗位下拉框
             this._setTableHeight();
         },
         methods: {
+            getPositionData() {
+                var vm = this;
+                this.$http.post('/talentPosition/findTalentPositionList').then((res) => {
+                    vm.positionData = res.data;
+                });
+            },
             editUser(row) {
                 this._findUser(row.id).then((res) => {
                     this.settingModalFlag = true;
@@ -1021,6 +1011,8 @@
                 this.statusForm = {};
                 this.statusForm.id = this.showUser.id;
                 this.statusForm.remarks = this.showUser.remarks;
+                this.statusForm.master = this.showUser.master;
+                this.statusForm.master = this.showUser.master;
                 if (this.showUser.createaccount === 2) {
                     this.$Modal.confirm({
                         title: '回退提醒',
@@ -1147,6 +1139,28 @@
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
             }, 1600),
+            _filterPeopleRemote(val) {
+                let data = {};
+                data.name = val;
+                this.filterPeopleLoading = true;
+                this.$http.get('/user/getCheckUser', {params: data}).then((res) => {
+                    if (res.success) {
+                        var d = res.data;
+                        this.optionlist = d.map(item => {
+                            return {
+                                'label': item.realname,
+                                'value': item.id,
+                                'id': item.id,
+                                'realname': item.realname,
+                                'organizename': item.organizename
+                            };
+                        });
+                        console.log(this.optionlist);
+                    }
+                }).finally(() => {
+                    this.filterPeopleLoading = false;
+                });
+            },
             _filterResultHandler () {
                 this.initPage();
                 this._getPostData();
@@ -1187,6 +1201,9 @@
             },
             _findUser(id) {
                 var vm = this;
+                vm.educationForm = [];
+                vm.workingForm = [];
+                vm.talentBean = {};
                 return new Promise(function (resolve, reject) {
                     vm.$http.post('/talentLibrary/find', {id: id}).then((res) => {
                         if (res.success) {

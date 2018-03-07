@@ -213,6 +213,20 @@ export const appRouter = [
                 name: 'hire',
                 title: '员工招聘',
                 component: resolve => { require(['@/pages/hireManager/hire/index.vue'], resolve); }
+            },
+            {
+                path: 'position',
+                icon: 'compose',
+                name: 'position',
+                title: '岗位设置',
+                component: resolve => { require(['@/pages/hireManager/position/index.vue'], resolve); }
+            },
+            {
+                path: 'statistics',
+                icon: 'compose',
+                name: 'statistics',
+                title: '数据统计',
+                component: resolve => { require(['@/pages/hireManager/statistics/index.vue'], resolve); }
             }
         ]
     },
@@ -236,6 +250,13 @@ export const appRouter = [
                 name: 'assetsCategory',
                 title: '资产分类',
                 component: resolve => { require(['@/pages/assetsManager/assetsCategory/index.vue'], resolve); }
+            },
+            {
+                path: 'assetsApply',
+                icon: 'compose',
+                name: 'assetsApply',
+                title: '资产申请/报废',
+                component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
             }
         ]
     },
