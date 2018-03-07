@@ -17,13 +17,13 @@
                 </FormItem>
                 <FormItem :label-width="0.1">
                     <ButtonGroup>
-                        <Button type="ghost" @click="editorSettingFlag = true">
+                        <Button type="primary" @click="editorSettingFlag = true">
                             <Icon type="plus-round"></Icon>
                             添加试卷
                         </Button>
                     </ButtonGroup>
                     <ButtonGroup>
-                        <Button type="ghost">
+                        <Button type="primary">
                             <Icon type="plus-round"></Icon>
                             添加试卷(随机)
                         </Button>

@@ -160,7 +160,7 @@
                 tableLoading: false,
                 checkLogFlag: false,
                 commentData: {
-                    advice: '',
+                    advice: 'ok',
                     result: '2'
                 },
                 commentRules: {
@@ -304,7 +304,7 @@
                 this.searchData.depId = node.id;
             },
             _initCommentData() {
-                this.commentData.advice = '';
+                this.commentData.advice = 'ok';
                 this.commentData.result = '2';
             },
             _inputDebounce: debounce(function () {

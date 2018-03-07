@@ -8,7 +8,7 @@
 </style>
 <script>
     export default {
-        name: 'depGrade',
+        name: 'examinationCategory',
         data () {
             return {};
         },
