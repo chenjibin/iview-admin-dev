@@ -105,10 +105,15 @@
                         render: (h, params) => {
                             return h('img', {
                                 attrs: {
-                                    src: 'http://tm.xyyzi.com:9090/oa/upload/' + params.row.image_path
+                                    src: '/oa/upload/' + params.row.image_path
                                 },
                                 style: {
                                     maxWidth: '100%'
+                                },
+                                on: {
+                                    error: function (e) {
+                                        e.target.setAttribute('src', '/oa/upload/initListImage.png');
+                                    }
                                 }
                             });
                         }

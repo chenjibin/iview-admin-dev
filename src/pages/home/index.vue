@@ -29,7 +29,6 @@
                                         <!--btn-text="抽奖"-->
                                         <!--@card-click=""></info-btn>-->
                             <!--</Col>-->
-
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
                                 <info-btn
                                         iconType="compose"
