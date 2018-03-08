@@ -19,9 +19,9 @@
                 </FormItem>
                 <FormItem :label-width="0.1">
                     <ButtonGroup>
-                        <Button type="ghost">
-                            <Icon type="ios-cloud-download-outline"></Icon>
-                            导出
+                        <Button type="primary" :loading="exportLoading" icon="ios-cloud-download-outline" @click="_exportGrade">
+                            <span v-if="!exportLoading">导出</span>
+                            <span v-else>导出中...</span>
                         </Button>
                     </ButtonGroup>
                 </FormItem>
@@ -31,56 +31,6 @@
                            :height="tableHeight"
                            :params="filterOpt"
                            url="/examtest/getScoreManageList"></fs-table-page>
-            <Modal v-model="editorSettingFlag"
-                   width="300"
-                   :mask-closable="false">
-                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
-                </p>
-                <Form>
-                    <FormItem label="是否下架">
-                        <i-switch v-model="editorSettingData.isDown" size="large">
-                            <span slot="open">上架</span>
-                            <span slot="close">下架</span>
-                        </i-switch>
-                    </FormItem>
-                    <FormItem label="商品名称">
-                        <Input type="text"
-                               v-model="editorSettingData.name"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="所属分类">
-                        <Select v-model="editorSettingData.type"
-                                placeholder=""
-                                style="width: 100px">
-                            <Option value="纸品类">纸品类</Option>
-                            <Option value="饮品类">饮品类</Option>
-                            <Option value="纸品类">食品类</Option>
-                            <Option value="饮品类">卡券类</Option>
-                            <Option value="饮品类">服饰类</Option>
-                        </Select>
-                    </FormItem>
-                    <FormItem label="价格">
-                        <Input type="text"
-                               v-model="editorSettingData.price"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
-                                    placeholder="筛选考勤月份"
-                                    @on-change=""
-                                    :value="editorSettingData.month"></DatePicker>
-                    </FormItem>
-                </Form>
-                <div slot="footer">
-                    <Button type="primary"
-                            :loading="btnLoading"
-                            @click="">
-                        添加商品
-                    </Button>
-                    <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
-                </div>
-            </Modal>
         </Card>
     </div>
 </template>
@@ -93,6 +43,7 @@
                 editorSettingFlag: false,
                 btnLoading: false,
                 postFormType: 'update',
+                exportLoading: false,
                 filterOpt: {
                     paperName: {
                         value: '',
@@ -106,13 +57,6 @@
                         value: '',
                         type: 'input'
                     }
-                },
-                editorSettingData: {
-                    name: '',
-                    type: '',
-                    price: '',
-                    isDown: '',
-                    month: ''
                 },
                 postColumns: [
                     {
@@ -162,7 +106,27 @@
             this._setTableHeight();
         },
         methods: {
-            _initEditorSettingData() {
+            downloadFile(url, name) {
+                let downloadDom = document.createElement('a');
+                downloadDom.href = url;
+                downloadDom.download = name;
+                downloadDom.click();
+            },
+            _exportGrade() {
+                this.exportLoading = true;
+                let data = {};
+                let filterOpt = this.filterOpt;
+                data.paperName = filterOpt.paperName.value;
+                data.orgName = filterOpt.orgName.value;
+                data.name = filterOpt.name.value;
+                this.$http.post('/examtest/export', data).then((res) => {
+                    console.log(res);
+                    if (res.success) {
+                        this.downloadFile('/oa/upload/' + res.data, res.data);
+                    }
+                }).finally(() => {
+                    this.exportLoading = false;
+                });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;

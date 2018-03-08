@@ -85,7 +85,6 @@
     import lockScreen from './main-components/lockscreen/lockscreen.vue';
     import messageTip from './main-components/message-tip.vue';
     import themeSwitch from './main-components/theme-switch/theme-switch.vue';
-    import Cookies from 'js-cookie';
     import util from '@/libs/util.js';
 
     export default {

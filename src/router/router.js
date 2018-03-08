@@ -282,20 +282,6 @@ export const appRouter = [
                 component: resolve => { require(['@/pages/examination/depGrade/index.vue'], resolve); }
             },
             {
-                path: 'categoryManage',
-                icon: 'university',
-                name: 'categoryManage',
-                title: '分类管理',
-                component: resolve => { require(['@/pages/examination/categoryManage/index.vue'], resolve); }
-            },
-            {
-                path: 'depGrade',
-                icon: 'university',
-                name: 'depGrade',
-                title: '部门成绩',
-                component: resolve => { require(['@/pages/examination/depGrade/index.vue'], resolve); }
-            },
-            {
                 path: 'peopleCheck',
                 icon: 'university',
                 name: 'peopleCheck',
@@ -306,7 +292,7 @@ export const appRouter = [
                 path: 'examinationCategory',
                 icon: 'university',
                 name: 'examinationCategory',
-                title: '考试分类',
+                title: '分类管理',
                 component: resolve => { require(['@/pages/examination/examinationCategory/index.vue'], resolve); }
             }
         ]

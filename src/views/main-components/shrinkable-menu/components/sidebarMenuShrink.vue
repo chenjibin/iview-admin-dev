@@ -26,7 +26,7 @@
 </template>
 <style>
     .ivu-select-dropdown {
-        max-height: 240px;
+        max-height: 260px;
     }
 </style>
 <script>
