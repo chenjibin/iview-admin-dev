@@ -8,8 +8,8 @@
                         <FormItem label="姓名" prop="name" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model.trim="talentBean.name"></Input>
                         </FormItem>
-                        <FormItem label="性别" :class="device.mobile?'mobileFormRight':'pcFormItem'">
-                            <Select type="text" style="width: 100%" v-model.number="talentBean.sex">
+                        <FormItem label="性别" prop="sex" :class="device.mobile?'mobileFormRight':'pcFormItem'">
+                            <Select type="text" style="width: 100%" v-model="talentBean.sex">
                                 <Option :value="1">男</Option>
                                 <Option :value="2">女</Option>
                             </Select>
@@ -20,10 +20,15 @@
                         <FormItem label="手机" prop="phone" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.phone"></Input>
                         </FormItem>
+                        <FormItem label="岗位" prop="postname" :class="device.mobile?'mobileFormRight':'pcFormItem'">
+                            <Select name="postname" v-model="talentBean.postname">
+                                <Option :value="item.id" v-for="item, index in positionData" :key="item.id">{{item.name}}</Option>
+                            </Select>
+                        </FormItem>
                         <FormItem label="期望月薪" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Input type="text" v-model="talentBean.monthlysalary"></Input>
                         </FormItem>
-                        <FormItem label="信息来源"  :class="device.mobile?'mobileFormRight':'pcFormItem'">
+                        <FormItem label="信息来源"  prop="resumesource" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.resumesource">
                                 <Option value="">请选择</Option>
                                 <Option :value="1">58同城</Option>
@@ -48,16 +53,16 @@
                             <Input type="text" v-model="talentBean.idnum"></Input>
                         </FormItem>
                         <FormItem label="籍贯" :class="device.mobile?'mobileFormRight':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.account"></Input>
+                            <Input type="text" v-model="talentBean.account" placeholder="省市"></Input>
                         </FormItem>
-                        <FormItem label="民族" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.nation"></Input>
-                        </FormItem>
+                        <!--<FormItem label="民族" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">-->
+                            <!--<Input type="text" v-model="talentBean.nation"></Input>-->
+                        <!--</FormItem>-->
                         <FormItem label="紧急联系人" :class="device.mobile?'mobileFormRight':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.emperson"></Input>
+                            <Input type="text" v-model="talentBean.emperson" placeholder="姓名"></Input>
                         </FormItem>
                         <FormItem label="联系人关系" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.emrelate"></Input>
+                            <Input type="text" v-model="talentBean.emrelate" placeholder="父/母/子女"></Input>
                         </FormItem>
                         <FormItem label="联系人号码" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.emphone"></Input>
@@ -201,7 +206,7 @@
                     <Button type="ghost" icon="edit" @click="searchUserModel = true" size="small">完善简历</Button>
                 </ButtonGroup>
                 </Tabs>
-        </Card>-
+        </Card>
         <Row v-show="device.mobile&&device.width<=490&&talentBean.id" class="bottomTab">
             <Col span="12" style="height: 100%;border-top:1px #f0f0f0;">
                 <Button type="ghost" class="mobileTabButton" icon="edit" long @click="searchUserModel = true" size="large">
@@ -258,6 +263,7 @@
                     mobile: false,
                     width: 0
                 },
+                positionData: [],
                 educationForm: [
                     {
                         graduatedschool: '',
@@ -314,6 +320,15 @@
                     name: [
                         {required: true, message: '姓名必填', trigger: 'blur'}
                     ],
+                    sex: [
+                        {type: 'number', required: true, message: '性别必填', trigger: 'change'}
+                    ],
+                    resumesource: [
+                        {type: 'number', required: true, message: '简历来源必填', trigger: 'change'}
+                    ],
+                    postname: [
+                        {type: 'number', required: true, message: '岗位必填', trigger: 'change'}
+                    ],
                     phone: [
                         {required: true, message: '手机号码必填', trigger: 'blur'},
                         {validator: validateMobile, trigger: 'blur'}
@@ -323,9 +338,16 @@
         },
         created () {
             this.checkDevice();
+            this.getPositionData(); // 岗位下拉框
             this.hire();
         },
         methods: {
+            getPositionData() {
+                var vm = this;
+                this.$http.post('/talentPosition/findTalentPositionList').then((res) => {
+                    vm.positionData = res.data;
+                });
+            },
             delForm(index, formName) {
                 var row = this[formName][index];
                 var vm = this;
@@ -405,11 +427,6 @@
                         return false;
                     }
                 });
-            },
-            preventMove(){
-                // $('body').on('touchmove', function (event) {
-                //     event.preventDefault();
-                // });
             },
             _filterResultHandler () {
                 this._getPostData();
