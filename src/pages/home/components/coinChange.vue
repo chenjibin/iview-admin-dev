@@ -24,21 +24,17 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>金币排行榜</span>
             </p>
-            <Row :gutter="5" style="margin-bottom: 10px;">
+            <Row :gutter="6" style="margin-bottom: 10px;">
                 <Col :md="12" :lg="12">
-                    <coin-ranking
-                            :loading="coinLoadingFlag"
-                            tag-color="#19be6b"
-                            coin-title="金币排行红榜"
-                            :row-data="rankDataRed">
+                    <coin-ranking tag-color="#19be6b"
+                                  coin-title="金币排行红榜"
+                                  url="/main/Ranking?type=1">
                     </coin-ranking>
                 </Col>
                 <Col :md="12" :lg="12">
-                    <coin-ranking
-                            :loading="coinLoadingFlag"
-                            tag-color="#ed3f14"
-                            coin-title="金币排行黑榜"
-                            :row-data="rankDataBlack">
+                    <coin-ranking tag-color="#ed3f14"
+                                  coin-title="金币排行黑榜"
+                                  url="/main/Ranking?type=2">
                     </coin-ranking>
                 </Col>
             </Row>
@@ -74,11 +70,7 @@
     export default {
         data () {
             return {
-                loading: false,
                 modelCoinFlag: false,
-                coinLoadingFlag: false,
-                rankDataRed: [],
-                rankDataBlack: [],
                 modelFlag: false,
                 itemData: [],
                 columns: [
@@ -151,26 +143,6 @@
                 ],
                 rowData: []
             };
-        },
-        created() {
-            this._getRankData();
-        },
-        methods: {
-            _getRankData() {
-                this.coinLoadingFlag = true;
-                this.$http
-                    .all([this.$http.get('/main/Ranking?page=1&pageSize=10000&type=1'), this.$http.get('/main/Ranking?page=1&pageSize=10000&type=2')])
-                    .then(this.$http.spread((res1, res2) => {
-                        if (res1.success) {
-                            this.rankDataBlack = res1.data;
-                        }
-                        if (res2.success) {
-                            this.rankDataRed = res2.data;
-                        }
-                    })).finally(() => {
-                        this.coinLoadingFlag = false;
-                    });
-            }
         },
         components: {
             coinRanking,

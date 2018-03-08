@@ -4,10 +4,13 @@
             <Table :columns="columns1"
                    :data="attendanceList"
                    :loading="loading"
+                   :height="tableHeight"
                    @on-row-click="_checkDetail"
                    :row-class-name="_returnRowClass"
                    style="margin-bottom: 10px;"></Table>
             <Page :total="pageData.totalCount"
+                  :page-size="pageData.pageSize"
+                  :current="pageData.page"
                   @on-change="_pageChangeHandler"></Page>
             <Modal v-model="modelFlag" width="900" :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
@@ -46,10 +49,11 @@
             return {
                 loading: false,
                 loading2: false,
+                tableHeight: 300,
                 pageData: {
                     totalCount: 0,
                     page: 1,
-                    pageSize: 12
+                    pageSize: 20
                 },
                 modelFlag: false,
                 monthData: '',
@@ -116,7 +120,6 @@
                         title: '打卡记录',
                         key: 'kq_re',
                         width: '240',
-                        align: 'center',
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = +params.row.c_count || +params.row.z_count || +params.row.l_count;
@@ -169,8 +172,13 @@
         },
         created() {
             this._getAttendanceList(1);
+            this._setTableHeight();
         },
         methods: {
+            _setTableHeight() {
+                let dm = document.body.clientHeight;
+                this.tableHeight = dm - 200;
+            },
             _returnInnerRowClass(row) {
                 let className = 'my-attendance-inner';
                 if (row.absent_off_day) {

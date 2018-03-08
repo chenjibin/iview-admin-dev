@@ -17,8 +17,7 @@
 <script>
     export default {
         props: {
-            loading: Boolean,
-            rowData: Array,
+            url: String,
             coinTitle: String,
             tagColor: {
                 type: String,
@@ -27,6 +26,8 @@
         },
         data () {
             return {
+                rowData: [],
+                loading: false,
                 columns: [
                     {
                         title: '排名',
@@ -37,7 +38,7 @@
                     },
                     {
                         title: '姓名',
-                        key: 'user_name'
+                        key: 'realname'
                     },
                     {
                         title: '金币数',
@@ -47,11 +48,26 @@
                                 props: {
                                     color: this.tagColor
                                 }
-                            }, params.row.opt_num);
+                            }, params.row.tm_coin);
                         }
                     }
                 ]
             };
+        },
+        created() {
+            this.getRowData();
+        },
+        methods: {
+            getRowData() {
+                this.loading = true;
+                this.$http.get(this.url).then((res) => {
+                    if (res.success) {
+                        this.rowData = res.data;
+                    }
+                }).finally(() => {
+                    this.loading = false;
+                });
+            }
         }
     };
 </script>

@@ -30,8 +30,9 @@
         </Row>
         <Modal v-model="modelFlag" width="900" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span></span>
+                <span>试卷详情</span>
             </p>
+            <test-result :paperInfo="paperInfo" :questionList="questionList"></test-result>
             <div slot="footer"></div>
         </Modal>
     </div>
@@ -42,13 +43,19 @@
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import fsDepTree from '@/baseComponents/fs-dep-tree';
+    import testResult from '../components/test-result';
     export default {
         name: 'depGrade',
         data () {
             return {
                 modelFlag: false,
                 tableHeight: 300,
-                paperDetail: null,
+                paperInfo: {
+                    name: '',
+                    getScore: '',
+                    costTime: ''
+                },
+                questionList: [],
                 defaultProps: {
                     children: 'children',
                     label: 'text'
@@ -78,31 +85,46 @@
                         title: '单选成绩',
                         align: 'center',
                         key: 'singlescore',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            return params.row.singlescore === null ? '-' : params.row.singlescore;
+                        }
                     },
                     {
                         title: '多选成绩',
                         align: 'center',
                         key: 'multiplescore',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            return params.row.multiplescore === null ? '-' : params.row.multiplescore;
+                        }
                     },
                     {
                         title: '判断成绩',
                         align: 'center',
                         key: 'torfscore',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            return params.row.torfscore === null ? '-' : params.row.torfscore;
+                        }
                     },
                     {
                         title: '填空成绩',
                         align: 'center',
                         key: 'fillscore',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            return params.row.fillscore === null ? '-' : params.row.fillscore;
+                        }
                     },
                     {
                         title: '问答成绩',
                         align: 'center',
                         key: 'qandascore',
-                        width: 120
+                        width: 120,
+                        render: (h, params) => {
+                            return params.row.qandascore === null ? '-' : params.row.qandascore;
+                        }
                     },
                     {
                         title: '用时(分钟)',
@@ -190,9 +212,13 @@
                 sendData.pid = 1;
                 this.$http.get('/examtest/queryLookTest', {params: sendData}).then((res) => {
                     if (res.success) {
-                        this.paperDetail = res.data;
+                        this.paperInfo.name = res.data.test.name;
+                        this.paperInfo.getScore = res.data.test.score;
+                        this.paperInfo.costTime = res.data.test.totletime;
+                        this.questionList = res.data.questionList;
                     }
                 });
+                this.modelFlag = true;
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -201,7 +227,8 @@
         },
         components: {
             fsTablePage,
-            fsDepTree
+            fsDepTree,
+            testResult
         }
     };
 </script>
