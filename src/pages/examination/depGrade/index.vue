@@ -30,10 +30,16 @@
         </Row>
         <Modal v-model="modelFlag" width="900" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>试卷详情</span>
+                <span>{{testPeople}}试卷详情</span>
             </p>
             <test-result :paperInfo="paperInfo" :questionList="questionList"></test-result>
-            <div slot="footer"></div>
+            <div slot="footer">
+                <Button type="primary" :loading="exportLoading" icon="ios-cloud-download-outline" @click="_exportGrade">
+                    <span v-if="!exportLoading">导出试卷</span>
+                    <span v-else>导出中...</span>
+                </Button>
+                <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
+            </div>
         </Modal>
     </div>
 </template>
@@ -50,6 +56,9 @@
             return {
                 modelFlag: false,
                 tableHeight: 300,
+                exportLoading: false,
+                testPeople: '',
+                testId: null,
                 paperInfo: {
                     name: '',
                     getScore: '',
@@ -202,6 +211,26 @@
             this._setTableHeight();
         },
         methods: {
+            downloadFile(url, name) {
+                let downloadDom = document.createElement('a');
+                downloadDom.href = url;
+                downloadDom.download = name;
+                downloadDom.click();
+            },
+            _exportGrade() {
+                this.exportLoading = true;
+                let data = {};
+                data.id = this.testId;
+                data.pid = 1;
+                this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
+                    console.log(res)
+                    if (res.success) {
+                        // this.downloadFile()
+                    }
+                }).finally(() => {
+                    this.exportLoading = false;
+                });
+            },
             _nodeChangeHandler(data) {
                 this.filterOpt.organizeId.value = data.id;
             },
@@ -210,6 +239,8 @@
                 let sendData = {};
                 sendData.id = data.id;
                 sendData.pid = 1;
+                this.testPeople = data.stuname;
+                this.testId = data.id;
                 this.$http.get('/examtest/queryLookTest', {params: sendData}).then((res) => {
                     if (res.success) {
                         this.paperInfo.name = res.data.test.name;

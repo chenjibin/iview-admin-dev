@@ -437,7 +437,7 @@
                 let editorSettingData = this.editorSettingData;
                 let data = {};
                 data.name = editorSettingData.name;
-                data.questionPic = editorSettingData.questionPic[0] ? editorSettingData.questionPic[0].name : '';
+                data.questionPic = editorSettingData.questionPic[0] ? '/upload/exam/' + editorSettingData.questionPic[0].name : '';
                 data.subject = editorSettingData.subject;
                 data.type = editorSettingData.type;
                 data.questionMark = editorSettingData.mark;
@@ -447,7 +447,7 @@
                         let obj = {};
                         obj.order = String.fromCharCode(index + 65);
                         obj.content = item.answerContent;
-                        obj.pic = item.pic[0] ? item.pic[0].name : '';
+                        obj.pic = item.pic[0] ? '/upload/exam/' + item.pic[0].name : '';
                         questionList.push(obj);
                     });
                     data.questionList = JSON.stringify(questionList);
@@ -469,13 +469,13 @@
                         data.answer = editorSettingData.questionType;
                 }
                 data.analysis = editorSettingData.desc;
-                // this.$http.post('/examquestion/addOptions', data).then((res) => {
-                //     if (res.success) {
-                //         this.$Message.success('试题添加成功!');
-                //         this.editorSettingFlag = false;
-                //         this.$refs.tablePage.getListData();
-                //     }
-                // });
+                this.$http.post('/examquestion/addOptions', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('试题添加成功!');
+                        this.editorSettingFlag = false;
+                        this.$refs.tablePage.getListData();
+                    }
+                });
                 console.log(data);
             },
             _addQuestionOpen() {

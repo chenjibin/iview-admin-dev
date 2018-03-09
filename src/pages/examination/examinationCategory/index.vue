@@ -149,7 +149,7 @@
                         this.$http.post('/examquestion/add', data).then((res) => {
                             if (res.success) {
                                 this.editorSettingFlag = false;
-                                let content = this.postFormType === 'add' ? '添加成功!' : '修改成功!'
+                                let content = this.postFormType === 'add' ? '添加成功!' : '修改成功!';
                                 this.$Message.success(content);
                                 this.$refs.tablePage.getListData();
                             }
@@ -159,7 +159,7 @@
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 260;
+                this.tableHeight = dm - 280;
             }
         },
         components: {

@@ -128,7 +128,8 @@
                         return h('div', {
                             class: ['flex-center'],
                             style: {
-                                padding: '16px 0'
+                                padding: '16px 0',
+                                whiteSpace: 'nowrap'
                             }
                         }, [
                             h('span', params.row['day' + i].day),

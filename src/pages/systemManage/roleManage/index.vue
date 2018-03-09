@@ -74,7 +74,7 @@
                 </div>
                 <div slot="footer">
                     <Button type="primary" @click="_confirmAccess">确认授权</Button>
-                    <Button type="ghost">取消</Button>
+                    <Button type="ghost" @click="roleAccessModalFlag = false">取消</Button>
                 </div>
             </Modal>
         </Card>

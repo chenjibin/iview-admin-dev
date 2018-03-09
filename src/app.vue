@@ -33,6 +33,9 @@
         background: #f0f0f0;
         overflow: hidden;
     }
+    .ivu-scroll-container {
+        overflow-y: auto;
+    }
     .ivu-btn-text:focus {
         box-shadow: none;
     }

@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        <textarea class='tinymce-textarea' id="tinymceEditer"></textarea>
+        <textarea class='tinymce-textarea' :id="textId"></textarea>
         <Spin fix v-if="spinShow">
             <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
             <div>加载组件中...</div>
@@ -40,16 +40,16 @@
                 type: String,
                 default: ' newnote print preview | undo redo | insert | styleselect | forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image emoticons media codesample'
             }
-
         },
         watch: {
             editorContent(val) {
-                tinymce.get('tinymceEditer').setContent(val);
+                tinymce.get(this.textId).setContent(val);
             }
         },
         data () {
             return {
-                spinShow: true
+                spinShow: true,
+                textId: 'vue-tinymce-' + Date.now()
             };
         },
         methods: {
@@ -57,8 +57,8 @@
                 this.$nextTick(() => {
                     let vm = this;
                     let height = 300;
-                    tinymce.init({
-                        selector: '#tinymceEditer',
+                    let aa = tinymce.init({
+                        selector: '#' + vm.textId,
                         branding: false,
                         elementpath: false,
                         height: height,
@@ -75,22 +75,25 @@
                         setup: function (editor) {
                             editor.on('init', function (e) {
                                 vm.spinShow = false;
-                                tinymce.get('tinymceEditer').setContent(vm.editorContent);
+                                tinymce.get(vm.textId).setContent(vm.editorContent);
                             });
                             editor.on('keyup', function (e) {
-                                let content = tinymce.get('tinymceEditer').getBody().innerHTML;
+                                let content = tinymce.get(vm.textId).getBody().innerHTML;
                                 vm.$emit('content-change', content);
                             });
                         }
                     });
+                    console.log(aa);
                 });
             }
         },
         mounted () {
             this.init();
+            console.log('mounted');
         },
-        destroyed () {
-            tinymce.get('tinymceEditer').destroy();
+        beforeDestroy () {
+            console.log('destroy');
+            tinymce.get(this.textId).destroy();
         }
     };
 </script>

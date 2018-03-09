@@ -2,19 +2,19 @@
     <div>
         <Menu mode="horizontal" active-name="3" @on-select="_orderStatusChange">
             <MenuItem name="3">
-                <Icon type="ios-paper"></Icon>
+                <Icon type="clipboard"></Icon>
                 全部订单
             </MenuItem>
             <MenuItem name="0">
-                <Icon type="ios-people"></Icon>
+                <Icon type="clock"></Icon>
                 待领取
             </MenuItem>
             <MenuItem name="1">
-                <Icon type="settings"></Icon>
+                <Icon type="checkmark-round"></Icon>
                 已领取
             </MenuItem>
             <MenuItem name="2">
-                <Icon type="settings"></Icon>
+                <Icon type="close-round"></Icon>
                 已取消
             </MenuItem>
         </Menu>
@@ -53,10 +53,10 @@
                 </div>
             </Card>
         </Scroll>
-
     </div>
 </template>
 <style lang="less" scoped>
+
     .list-item {
         &-divide {
             margin: 8px 0;
