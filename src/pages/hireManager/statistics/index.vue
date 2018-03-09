@@ -4,11 +4,17 @@
             <Col :span="24">
                 <Card>
                     <Form inline :label-width="60" style="height: 30px">
-                        <FormItem label="统计时间">
+                        <FormItem label="统计时间" style="margin-bottom: 0px">
                             <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                         @on-change="_monthDateChange('startdate',$event)"
                                         :value="startdate"
                                         placeholder="预约时间"></DatePicker>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0px;float: right;">
+                            <Button type="primary" @click="exportData">
+                                <Icon type="ios-download-outline" style="font-size: 18px"></Icon>
+                                <span>岗位</span>
+                            </Button>
                         </FormItem>
                     </Form>
                 </Card>
@@ -47,6 +53,12 @@
                 tableHeight: 500,
                 startdate: [],
                 filterOpt: {
+                    startTimes: {
+                        value : ''
+                    },
+                    endTimes: {
+                        value : ''
+                    }
                 },
                 postColumns: [
                     {
@@ -177,11 +189,14 @@
                 },
                 nameMapping: {
                     invite_num: '预约',
-                    notcome_num: '未到达',
+                    notcome_num: '预约未到达',
                     interview_num: '面试',
                     interview_pass_num: '面试通过',
+                    interview_no_passnum: '面试不通过',
+                    interview_wait_num: '面试待选',
                     test_num: '试岗',
-                    test_pass_num: '试岗通过'
+                    test_pass_num: '试岗通过',
+                    test_no_passnum: '试岗不通过'
                 }
             };
         },
@@ -198,10 +213,13 @@
                 this.$http.post('/talentLibrary/statisticsDate', this.filterOpt).then((res) => {
                     if (res.success) {
                         var d = res.data;
+                        vm.dataSourcePieData.selected['interview_wait_num'] = true;
+                        vm.dataSourcePieData.selected['interview_no_passnum'] = true;
+                        vm.dataSourcePieData.selected['interview_pass_num'] = true;
                         for (let key in d) {
                             var nameStr = vm.nameMapping[key];
                             vm.dataSourcePieData.legendData.push(nameStr);
-                            vm.dataSourcePieData.selected[nameStr] = key !== 'invite_num';
+                            vm.dataSourcePieData.selected[nameStr] = ['interview_wait_num', 'interview_no_passnum', 'interview_pass_num'].some((item) => item === key);
                             vm.dataSourcePieData.seriesData.push({
                                 name: nameStr,
                                 value: d[key]
@@ -234,9 +252,19 @@
             },
             _monthDateChange (key, value) {
                 this[key] = value;
-                this.filterOpt.startTimes = value[0];
-                this.filterOpt.endTimes = value[1];
+                this.filterOpt.startTimes.value = value[0];
+                this.filterOpt.endTimes.value = value[1];
                 this.getData();
+            },
+            exportData() {
+                this.$http.post('/talentLibrary/exportTalent', this.filterOpt).then((res) => {
+                    if (res.success) {
+                        let downloadDom = document.createElement('a');
+                        downloadDom.href = '/oa' + res.path;
+                        downloadDom.download = res.filename;
+                        downloadDom.click();
+                    }
+                });
             },
             _setTableHeight () {
                 let dm = document.body.clientHeight;
