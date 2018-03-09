@@ -56,7 +56,7 @@
         methods: {
             initWatch() {
                 for (let key in this.params) {
-                    this.$watch(`params.${key}.value`, function () {
+                    this.$watch(`params.${key}.value`, function (val) {
                         if (this.params[key].type === 'input') {
                             this._inputDebounce();
                         } else {
@@ -69,7 +69,7 @@
                 let params = {};
                 for (let key in this.params) {
                     if (this.params.hasOwnProperty(key)) {
-                        params[key] = this.params[key];
+                        params[key] = this.params[key].value;
                     }
                 }
                 return params;
