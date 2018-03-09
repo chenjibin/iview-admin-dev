@@ -4,13 +4,13 @@
         <Card>
             <Form inline :label-width="60">
                 <FormItem label="申请类型">
-                    <Select type="text" v-model="filterOpt.appType" style="width: 130px">
+                    <Select type="text" v-model="filterOpt.appType.value" style="width: 130px">
                         <Option :value="1">采购申请</Option>
                         <Option :value="3">报废申请</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="资产名称">
-                    <Input type="text" v-model="filterOpt.categoryName" style="width: 160px" readonly>
+                    <Input type="text" v-model="filterOpt.categoryName.value" style="width: 160px" readonly>
                         <Button slot="append" @click="items = true" icon="location" style="width: 30px"></Button>
                     </Input>
                 </FormItem>
@@ -109,7 +109,14 @@
         data() {
             return {
                 filterOpt: {
-                    name: ''
+                    categoryName: {
+                        value : '',
+                        type: 'input'
+                    },
+                    appType: {
+                        value : '',
+                        type: 'select'
+                    }
                 },
                 items: false,
                 newApplyModal: false,
