@@ -69,7 +69,7 @@
                 let params = {};
                 for (let key in this.params) {
                     if (this.params.hasOwnProperty(key)) {
-                        params[key] = this.params[key];
+                        params[key] = this.params[key].value;
                     }
                 }
                 return params;
