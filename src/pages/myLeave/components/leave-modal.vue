@@ -64,7 +64,7 @@
                             <FormItem label="工作开始日期" :label-width="100">
                                 <DatePicker :value="tiaoxiu.workStartDate"
                                             :clearable="false"
-                                            @on-change=""></DatePicker>
+                                            @on-change="tiaoxiu.workStartDate = $event"></DatePicker>
                             </FormItem>
                             </Col>
                             <Col :span="12">
@@ -80,7 +80,7 @@
                             <FormItem label="工作结束日期" :label-width="100">
                                 <DatePicker :value="tiaoxiu.workEndDate"
                                             :clearable="false"
-                                            @on-change=""></DatePicker>
+                                            @on-change="tiaoxiu.workEndDate = $event"></DatePicker>
                             </FormItem>
                             </Col>
                             <Col :span="12">

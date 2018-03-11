@@ -57,7 +57,7 @@
                 this.$nextTick(() => {
                     let vm = this;
                     let height = 300;
-                    let aa = tinymce.init({
+                    tinymce.init({
                         selector: '#' + vm.textId,
                         branding: false,
                         elementpath: false,
@@ -83,16 +83,13 @@
                             });
                         }
                     });
-                    console.log(aa);
                 });
             }
         },
         mounted () {
             this.init();
-            console.log('mounted');
         },
         beforeDestroy () {
-            console.log('destroy');
             tinymce.get(this.textId).destroy();
         }
     };

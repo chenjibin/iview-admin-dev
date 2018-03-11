@@ -35,7 +35,7 @@
         <Modal title="预览图片"
                width="800"
                v-model="visible">
-            <div style="max-height: 500px;overflow-y: auto;">
+            <div style="max-height: 500px;overflow-y: auto;" class="fs-img-preview-wrapper">
                 <img :src="'/oa/upload/' + imgName" v-if="visible" style="max-width: 100%">
             </div>
             <div slot="footer">
@@ -102,6 +102,11 @@
     };
 </script>
 <style lang="less">
+    .fs-img-preview-wrapper {
+        text-align: center;
+        max-height: 500px;
+        overflow-y: auto;
+    }
     #fs-upload-list {
         .demo-upload-list {
             display: inline-block;
