@@ -36,6 +36,9 @@
     .ivu-scroll-container {
         overflow-y: auto;
     }
+    .ivu-select-dropdown {
+        max-height: 300px;
+    }
     .ivu-btn-text:focus {
         box-shadow: none;
     }

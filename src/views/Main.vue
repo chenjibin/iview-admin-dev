@@ -6,7 +6,9 @@
 </style>
 <template>
     <div class="main" :class="{'main-hide-text': shrink}">
-        <div class="sidebar-menu-con" :style="{width: shrink?'60px':'200px', overflow: shrink ? 'visible' : 'auto'}">
+        <div class="sidebar-menu-con"
+             v-if="premissionMenu.length"
+             :style="{width: shrink?'60px':'200px', overflow: shrink ? 'visible' : 'auto'}">
             <shrinkable-menu
                 :shrink="shrink"
                 @on-change="handleSubmenuChange"
@@ -24,12 +26,18 @@
                 </div>
             </shrinkable-menu>
         </div>
-        <div class="main-header-con" :style="{paddingLeft: shrink?'60px':'200px'}">
+        <div class="main-header-con" :style="{paddingLeft: returnNeedPadding}">
             <div class="main-header">
-                <div class="navicon-con">
-                    <Button :style="{transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}" type="text" @click="toggleClick">
+                <div class="navicon-con"
+                     v-if="premissionMenu.length">
+                    <Button :style="{transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}"
+                            type="text"
+                            @click="toggleClick">
                         <Icon type="navicon" size="32"></Icon>
                     </Button>
+                </div>
+                <div v-else style="display: inline-block;font-size: 0;padding: 6px;">
+                    <img  src="../images/tianma_logo_small.jpg" key="max-logo" style="border-radius: 6px;width: 50px;"/>
                 </div>
                 <div class="header-middle-con">
                     <div class="main-breadcrumb">
@@ -40,7 +48,7 @@
                     <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     <lock-screen></lock-screen>
                     <!--<message-tip v-model="mesCount"></message-tip>-->
-                    <theme-switch></theme-switch>
+                    <theme-switch v-if="premissionMenu.length"></theme-switch>
                     <div class="coin-left">
                         <Tooltip content="金币余额" placement="bottom">
                             <fs-icon type="moneynew" :size="26" color="#FF5722"></fs-icon>
@@ -49,14 +57,19 @@
                     </div>
                     <div class="user-dropdown-menu-con">
                         <Row type="flex" justify="end" align="middle" class="user-dropdown-innercon">
-                            <Dropdown transfer trigger="click" @on-click="handleClickUserDropdown">
+                            <Dropdown transfer trigger="hover" @on-click="handleClickUserDropdown">
                                 <a href="javascript:void(0)">
                                     <span class="main-user-name">{{ userName }}</span>
                                     <Icon type="arrow-down-b"></Icon>
                                 </a>
                                 <DropdownMenu slot="list">
+                                    <DropdownItem name="myLog">我的日志</DropdownItem>
+                                    <DropdownItem name="myAttendance">我的考勤</DropdownItem>
+                                    <DropdownItem name="myLeave">我的请假</DropdownItem>
+                                    <DropdownItem name="myArrange">我的排班</DropdownItem>
+                                    <DropdownItem name="coinShop">金币商城</DropdownItem>
                                     <!--<DropdownItem name="ownSpace">个人中心</DropdownItem>-->
-                                    <DropdownItem name="loginout">安全退出</DropdownItem>
+                                    <DropdownItem name="loginout" divided>安全退出</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                             <Avatar :src="avatorPath" style="margin-left: 10px;"></Avatar>
@@ -68,7 +81,7 @@
                 <tags-page-opened :pageTagsList="pageTagsList"></tags-page-opened>
             </div>
         </div>
-        <div class="single-page-con" :style="{left: shrink?'60px':'200px'}">
+        <div class="single-page-con" :style="{left: returnNeedPadding}">
             <div class="single-page">
                 <keep-alive :include="cachePage">
                     <router-view></router-view>
@@ -105,6 +118,12 @@
             };
         },
         computed: {
+            returnNeedPadding() {
+                return this.premissionMenu.length ? this.shrink ? '60px' : '200px' : '0';
+            },
+            premissionMenu() {
+                return this.$store.state.app.premissionMenu;
+            },
             userName() {
                 return this.$store.state.user.userInfo.realname;
             },
@@ -160,6 +179,11 @@
                     // 退出登录
                     this.$store.commit('logout');
                     this.$store.commit('clearOpenedSubmenu');
+                } else {
+                    util.openNewPage(this, name);
+                    this.$router.push({
+                        name: name
+                    });
                 }
             },
             checkTag (name) {

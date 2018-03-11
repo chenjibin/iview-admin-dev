@@ -47,9 +47,15 @@
                             <Icon type="ios-cloud-download-outline"></Icon>
                             导出
                         </Button>
-                        <Button type="warning" @click="deleteModalFlag = true" >
+                        <Button type="warning" @click="deleteModalFlag = true">
                             <Icon type="ios-trash-outline"></Icon>
                             删除
+                        </Button>
+                        <Button type="error"
+                                :disabled="!chooseDataArr.length"
+                                @click="_delAttendanceInfo">
+                            <Icon type="ios-trash-outline"></Icon>
+                            删除个人
                         </Button>
                     </ButtonGroup>
                 </FormItem>
@@ -58,6 +64,7 @@
                    :loading="tableLoading"
                    :height="tableHeight"
                    ref="attendanceTable"
+                   @on-selection-change="chooseDataArr = $event"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
                   :current="pageData.page"
@@ -264,6 +271,7 @@
                     postName: ''
                 },
                 attendanceDelData: [],
+                chooseDataArr: [],
                 postColumns: [
                     {
                         type: 'selection',
@@ -393,7 +401,7 @@
                         width: '240',
                         render: (h, params) => {
                             if (params.row.kq_re) {
-                                let flag = params.row.exception === null || +params.row.exception === 0 || params.row.offdaytype === '正常';
+                                let flag = params.row.exception === null || +params.row.exception === 0;
                                 return h('Tag', {
                                     props: {
                                         color: flag ? 'green' : 'red'
@@ -508,7 +516,7 @@
                         width: 120,
                         render: (h, params) => {
                             let vm = this;
-                            let flag = params.row.exception === null || +params.row.exception === 0 || params.row.offdaytype === '正常';
+                            let flag = params.row.exception === null || +params.row.exception === 0;
                             return h('div', [
                                 h('Tooltip', {
                                     props: {
@@ -578,6 +586,24 @@
             this._setTableHeight();
         },
         methods: {
+            _delAttendanceInfo() {
+                this.$Modal.confirm({
+                    content: '确认删除所选的记录么？',
+                    okText: '确认删除',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let data = {};
+                        data.ids = this.chooseDataArr.map(x => x.id).join(',');
+                        this.$http.post('/kq/deleteUserStatistic', data).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('删除成功!');
+                                this._getPostData();
+                                this.chooseDataArr = [];
+                            }
+                        });
+                    }
+                });
+            },
             _confirmDelete() {
                 this.deleteLoading = true;
                 let data = {};
@@ -749,6 +775,7 @@
                 });
             },
             _getPostData() {
+                this.chooseDataArr = [];
                 let data = {};
                 data.userName = this.filterOpt.userName;
                 data.monthDate = this.filterOpt.monthDate;

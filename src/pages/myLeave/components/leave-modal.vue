@@ -55,7 +55,7 @@
                                 <FormItem label="休息结束时间" :label-width="100">
                                     <Select v-model="tiaoxiu.restEndTime">
                                         <Option :value="item"
-                                                v-for="(item, index) in startTimeOpt"
+                                                v-for="(item, index) in endTimeOpt"
                                                 :key="'start-time-' + index">{{item}}</Option>
                                     </Select>
                                 </FormItem>
@@ -87,7 +87,7 @@
                             <FormItem label="工作结束时间" :label-width="100">
                                 <Select v-model="tiaoxiu.workEndTime">
                                     <Option :value="item"
-                                            v-for="(item, index) in startTimeOpt"
+                                            v-for="(item, index) in endTimeOpt"
                                             :key="'start-time-' + index">{{item}}</Option>
                                 </Select>
                             </FormItem>
