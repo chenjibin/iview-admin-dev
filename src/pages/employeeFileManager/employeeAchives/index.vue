@@ -223,7 +223,7 @@
                         <Form ref="educationForm" inline>
                             <div v-for="(item,index) in educationForm">
                                 <FormItem label="时间" style="width:22%">
-                                    <Input type="text" v-model="item.workingtime" ></Input>
+                                    <Input type="text" placeholder="2012.09 - 2016.06" v-model="item.workingtime" ></Input>
                                 </FormItem>
                                 <FormItem label="毕业院校	" style="width:22%">
                                     <Input type="text" v-model="item.graduationschool" ></Input>
@@ -232,10 +232,18 @@
                                     <Input type="text" v-model="item.profession" ></Input>
                                 </FormItem>
                                 <FormItem label="学历" style="width:22%">
-                                    <Input type="text" v-model="item.education" ></Input>
+                                    <Select type="text" v-model="item.education">
+                                        <Option value="博士研究生">博士研究生</Option>
+                                        <Option value="硕士研究生">硕士研究生</Option>
+                                        <Option value="本科">本科</Option>
+                                        <Option value="专科">专科</Option>
+                                        <Option value="中专">中专</Option>
+                                        <Option value="高中">高中</Option>
+                                        <Option value="初中">初中</Option>
+                                    </Select>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
-                                    <Input type="text" v-model="item.userid" ></Input>
+                                    <Input type="text" v-model="baseForm.userid" ></Input>
                                 </FormItem>
                                 <FormItem label="主键" style="display: none">
                                     <Input type="text" v-model="item.id" ></Input>
@@ -255,7 +263,7 @@
                         <Form ref="workingForm" inline>
                             <div v-for="(item,index) in workingForm">
                                 <FormItem label="时间" style="width:12%">
-                                    <Input type="text" v-model="item.workingtime" ></Input>
+                                    <Input type="text" placeholder="2012.09 - 2014.09" v-model="item.workingtime" ></Input>
                                 </FormItem>
                                 <FormItem label="单位" style="width:12%">
                                     <Input type="text" v-model="item.employer" ></Input>
@@ -276,7 +284,7 @@
                                     <Input type="text" v-model="item.phone"></Input>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
-                                    <Input type="text" v-model="item.userid" ></Input>
+                                    <Input type="text" v-model="baseForm.userid" ></Input>
                                 </FormItem>
                                 <FormItem label="主键" style="display: none">
                                     <Input type="text" v-model="item.id" ></Input>
@@ -314,7 +322,7 @@
                                     <Input type="text" v-model="item.phone"></Input>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
-                                    <Input type="text" v-model="item.userid" ></Input>
+                                    <Input type="text" v-model="baseForm.userid" ></Input>
                                 </FormItem>
                                 <FormItem label="主键" style="display: none">
                                     <Input type="text" v-model="item.id" ></Input>
@@ -632,6 +640,11 @@
                 var d = {};
                 this.btnLoading = true;
                 d.typerelationship = typerelationship;
+                d.id = this.baseForm.userid;
+                if (!d.id && !this.baseForm) {
+                    this.$Message.error('失败，保存附加信息前请保存基本信息');
+                    return false;
+                }
                 for (let i = 0; i < data.length; i++) {
                     d['data' + i] = JSON.stringify(data[i]);
                 }
