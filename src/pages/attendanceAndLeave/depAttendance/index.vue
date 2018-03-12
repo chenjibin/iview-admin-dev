@@ -35,7 +35,7 @@
                 </Card>
             </Col>
         </Row>
-        <Modal v-model="modelFlag" width="900" :mask-closable="false">
+        <Modal v-model="modelFlag" width="1200" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>{{userName + ' ' + monthData}} 考勤</span>
             </p>
@@ -177,7 +177,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '240',
+                        width: '300',
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = +params.row.c_count || +params.row.z_count || +params.row.l_count;

@@ -421,7 +421,7 @@
     import moment from 'moment';
     import debounce from 'lodash/debounce';
     export default {
-        name: 'employeeManage',
+        name: 'userManage',
         watch: {
             filterText(val) {
                 this.$refs.treeDom.filter(val);
