@@ -319,6 +319,36 @@ export const appRouter = [
         ]
     },
     {
+        path: '/trainManage',
+        icon: 'university',
+        name: 'trainManage',
+        title: '培训管理',
+        component: Main,
+        children: [
+            {
+                path: 'trainPlanManage',
+                icon: 'university',
+                name: 'trainPlanManage',
+                title: '培训计划管理',
+                component: resolve => { require(['@/pages/trainManage/trainPlanManage/index.vue'], resolve); }
+            },
+            {
+                path: 'internalTrainerManage',
+                icon: 'university',
+                name: 'internalTrainerManage',
+                title: '内训师管理',
+                component: resolve => { require(['@/pages/trainManage/internalTrainerManage/index.vue'], resolve); }
+            },
+            {
+                path: 'curriculumManage',
+                icon: 'university',
+                name: 'curriculumManage',
+                title: '课程管理',
+                component: resolve => { require(['@/pages/trainManage/curriculumManage/index.vue'], resolve); }
+            }
+        ]
+    },
+    {
         path: '/coinManage',
         icon: 'ios-pricetags',
         name: 'coinManage',

@@ -41,8 +41,9 @@ router.beforeEach((to, from, next) => {
                 name: 'home_index'
             });
         } else if (to.name !== 'login') {
-            if (!store.state.app.premissionMenu.length) {
+            if (!store.state.app.premissionMenu.length && store.state.app.refresh) {
                 Util.getPermissionData().then((data) => {
+                    store.commit('setRefresh', false);
                     store.commit('updateUserInfo');
                     Util.initMenu(router, store, data);
                     Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to.name, router, next);

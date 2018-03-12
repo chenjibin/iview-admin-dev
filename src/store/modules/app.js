@@ -5,6 +5,7 @@ import Vue from 'vue';
 
 const app = {
     state: {
+        refresh: true,
         cachePage: [],
         isPermission: 0,
         premissionMenu: [],
@@ -33,6 +34,9 @@ const app = {
         dontCache: ['text-editor', 'artical-publish'] // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
     },
     mutations: {
+        setRefresh(state, refresh) {
+            state.refresh = refresh;
+        },
         setRouters(state, routers) {
             state.routers = [...state.routers, ...routers];
         },
