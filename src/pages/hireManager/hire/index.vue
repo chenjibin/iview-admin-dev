@@ -413,14 +413,23 @@
                 <FormItem label="密码" style="width: 45%" v-if="(statusTemp === 6 || statusTemp === 3) && showUser.createaccount!=2 && (statusForm.status ==6 || statusForm.status == 8)">
                     <Input type="password" v-model="statusForm.password" placeholder="123456"></Input>
                 </FormItem>
-                <FormItem label="面试时间" prop="interviewtime" style="width: 45%" v-if="statusTemp === 1">
-                    <DatePicker v-model="statusForm.interviewtime"  style="width: 100%" format="yyyy-MM-dd" type="date" ></DatePicker>
+                <FormItem label="面试时间" style="width: 45%" v-if="statusTemp === 1">
+                    <DatePicker :value="statusForm.interviewtime"
+                                style="width: 100%"
+                                :clearable="false"
+                                @on-change="statusForm.interviewtime = $event"
+                                type="date" ></DatePicker>
                 </FormItem>
                 <FormItem label="面试官" style="width: 45%" v-if="statusTemp === 1">
                     <Input type="text" v-model="statusForm.interviewer"></Input>
                 </FormItem>
-                <FormItem v-if="statusTemp === -1"  label="预约时间" prop="appointment" style="width: 45%">
-                    <DatePicker v-model="statusForm.appointment"  style="width: 100%" format="yyyy-MM-dd" type="date"></DatePicker>
+                <FormItem v-if="statusTemp === -1"  label="预约时间" style="width: 45%">
+                    <DatePicker :value="statusForm.appointment"
+                                style="width: 100%"
+                                @on-change="statusForm.appointment = $event"
+                                :clearable="false"
+                                format="yyyy-MM-dd" type="date">
+                    </DatePicker>
                 </FormItem>
                 <FormItem label="是否到达" prop="status"  style="width: 45%" v-if="statusTemp === 0|| statusTemp === 3">
                     <Select v-model="statusForm.status">
@@ -439,8 +448,12 @@
                         <Option v-for="(option, index) in optionlist" :value="option.id" :key="option.id">{{option.realname + '(' + option.organizename + ')'}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="试岗时间" prop="testtime"  style="width: 45%" v-if="statusTemp === 6">
-                    <DatePicker v-model="statusForm.testtime"  style="width: 100%" format="yyyy-MM-dd" type="date" ></DatePicker>
+                <FormItem label="试岗时间" style="width: 45%" v-if="statusTemp === 6">
+                    <DatePicker :value="statusForm.testtime"
+                                @on-change="statusForm.testtime = $event"
+                                :clearable="false"
+                                style="width: 100%"
+                                type="date" ></DatePicker>
                 </FormItem>
                 <FormItem label="考核成绩" prop="testresults" style="width: 45%" v-if="statusTemp === 6">
                     <Input type="text" v-model="statusForm.testresults"></Input>
@@ -455,8 +468,12 @@
                         <Option value="9" v-show="statusTemp === 6">试岗不通过</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="入职时间" prop="joindate" style="width: 45%" v-if="statusTemp === 6">
-                    <DatePicker style="width: 100%" format="yyyy-MM-dd"  type="date" v-model="statusForm.joindate"></DatePicker>
+                <FormItem label="入职时间" style="width: 45%" v-if="statusTemp === 6">
+                    <DatePicker style="width: 100%"
+                                type="date"
+                                @on-change="statusForm.joindate = $event"
+                                :clearable="false"
+                                :value="statusForm.joindate"></DatePicker>
                 </FormItem>
                 <FormItem label="综合评价" style="width: 60%;">
                     <Input type="textarea" :autosize="{minRows: 2,maxRows: 6}" v-model="statusForm.remarks"></Input>
@@ -573,7 +590,7 @@
                         descriptioncontent: ''
                     }
                 ], // 简历教育历史
-                optionlist:[],
+                optionlist: [],
                 workingForm: [
                     {
                         descriptioncontent: '',
@@ -642,18 +659,6 @@
                 statusTemp: -2,
                 usersList: [],
                 rules: {
-                    joindate: [
-                        { required: true, message: '入职时间必填', trigger: 'change', type: 'date' }
-                    ],
-                    appointment: [
-                        { required: true, message: '预约时间必填', trigger: 'change', type: 'date' }
-                    ],
-                    interviewtime: [
-                        { required: true, message: '面试时间必填', trigger: 'change', type: 'date' }
-                    ],
-                    testtime: [
-                        { required: true, message: '试岗时间必填', trigger: 'change', type: 'date' }
-                    ],
                     testresults: [
                         { required: true, message: '试岗成绩必填', trigger: 'blur' }
                     ],
@@ -1012,7 +1017,9 @@
                 this.statusForm.id = this.showUser.id;
                 this.statusForm.remarks = this.showUser.remarks;
                 this.statusForm.master = this.showUser.master;
-                this.statusForm.master = this.showUser.master;
+                this.statusForm.interviewtime = this.showUser.interviewtime;
+                this.statusForm.testtime = this.showUser.testtime;
+                this.statusForm.joindate = this.showUser.joindate;
                 if (this.showUser.createaccount === 2) {
                     this.$Modal.confirm({
                         title: '回退提醒',
@@ -1089,18 +1096,22 @@
                 var vm = this;
                 this.$refs['statusForm'].validate((valid) => {
                     if (!valid) {
+                        console.log(1);
                         return false;
                     }
+                    console.log(2);
                     var d = vm.statusForm;
-                    // debugger;
-                    for (var key in d) {
-                        if (Date === d[key].constructor) {
-                            d[key] = d[key].toLocaleDateString().replace(/\//g, '-');
-                        }
-                    }
+                    // for (let key in d) {
+                    //     if (Date === d[key].constructor) {
+                    //         d[key] = d[key].toLocaleDateString().replace(/\//g, '-');
+                    //     }
+                    //     console.log(d[key]);
+                    // }
+                    // console.log(3);
                     if (vm.showUser.status === -1) {
                         d.status = 0;
                     }
+                    console.log(4);
                     vm.$http.post('/talentLibrary/changeStatus', d).then((res) => {
                         if (res.success) {
                             vm.$Message.success('用户' + vm.showUser.name + ' 变更成功');

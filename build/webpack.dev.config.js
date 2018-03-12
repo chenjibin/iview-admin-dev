@@ -24,8 +24,9 @@ module.exports = merge(webpackBaseConfig, {
         host: '192.168.15.169',
         proxy: {
             "/oa": {
-                target: "http://192.168.15.22:8080",
+                target: "http://192.168.15.169:8080",
                 changeOrigin: true
+
             }
         }
     },

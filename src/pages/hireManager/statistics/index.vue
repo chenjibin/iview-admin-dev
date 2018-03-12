@@ -210,7 +210,10 @@
                 vm.dataSourcePie2Data.legendData = [];
                 vm.dataSourcePieData.seriesData = [];
                 vm.dataSourcePie2Data.seriesData = [];
-                this.$http.post('/talentLibrary/statisticsDate', this.filterOpt).then((res) => {
+                var d = {};
+                d.startTimes = this.filterOpt.startTimes.value;
+                d.endTimes = this.filterOpt.endTimes.value;
+                this.$http.post('/talentLibrary/statisticsDate', d).then((res) => {
                     if (res.success) {
                         var d = res.data;
                         vm.dataSourcePieData.selected['interview_wait_num'] = true;
@@ -231,7 +234,7 @@
                         vm.dataSourcePie.setOption(vm.option);
                     }
                 });
-                this.$http.post('/talentLibrary/sourceData', this.filterOpt).then((res) =>{
+                this.$http.post('/talentLibrary/sourceData', d).then((res) =>{
                     if (res.success) {
                         var d = res.data;
                         for (let key in d) {
@@ -248,7 +251,6 @@
                         vm.dataSourcePie2.setOption(vm.option2);
                     }
                 });
-                this.$refs.tpage._filterResultHandler();
             },
             _monthDateChange (key, value) {
                 this[key] = value;
@@ -257,7 +259,10 @@
                 this.getData();
             },
             exportData() {
-                this.$http.post('/talentLibrary/exportTalent', this.filterOpt).then((res) => {
+                var d = {};
+                d.startTimes = this.filterOpt.startTimes.value;
+                d.endTimes = this.filterOpt.endTimes.value;
+                this.$http.post('/talentLibrary/exportTalent', d).then((res) => {
                     if (res.success) {
                         let downloadDom = document.createElement('a');
                         downloadDom.href = '/oa' + res.path;
