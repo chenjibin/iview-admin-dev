@@ -12,7 +12,7 @@
                         <FormItem prop="name" label="姓名">
                             <Input type="text"
                                    @on-change="_inputDebounce"
-                                   v-model="searchData.name"
+                                   v-model="searchData.userName"
                                    placeholder="姓名"></Input>
                         </FormItem>
                     </Form>
