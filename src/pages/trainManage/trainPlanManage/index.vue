@@ -1,5 +1,5 @@
 <template>
-    <div class="#dep-grade">
+    <div>
         <Row :gutter="10">
             <Col :span="4">
                 <fs-dep-tree url="/organize/organizeTree?fatherId=-1"

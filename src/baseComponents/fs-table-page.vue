@@ -3,6 +3,7 @@
         <Table :height="height"
                :columns="columns"
                :data="pageData.list"
+               @on-selection-change="selectionChange"
                :loading="tableLoading"></Table>
         <Page :total="pageData.totalCount"
               :current.sync="pageData.page"
@@ -73,6 +74,9 @@
                     }
                 }
                 return params;
+            },
+            selectionChange(data) {
+                this.$emit('on-selection-change', data);
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
