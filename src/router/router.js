@@ -100,6 +100,12 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/coinManage/coinShop/index.vue'], resolve); }
         },
         {
+            path: 'myTrain',
+            title: '我的培训',
+            name: 'myTrain',
+            component: resolve => { require(['@/pages/myTrain/index.vue'], resolve); }
+        },
+        {
             path: 'ownspace',
             title: '个人中心',
             name: 'ownspace_index',
