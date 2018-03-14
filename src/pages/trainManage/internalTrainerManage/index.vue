@@ -23,7 +23,7 @@
             <fs-table-page :columns="mubanColumns"
                            :height="300"
                            ref="postAdd"
-                           @on-selection-change="chooseDataArray = $event"
+                           :choosearray.sync="chooseDataArray"
                            url="/train/postDataList"></fs-table-page>
             <div slot="footer">
                 <Poptip confirm
@@ -38,7 +38,6 @@
                         :disabled="!(chooseDataArray.length === 1)"
                         style="margin-left: 8px"
                         @click="">修改</Button>
-                <!--<Button type="primary" style="margin-left: 8px" @click="">添加岗位</Button>-->
                 <Poptip placement="left" width="400">
                     <Button type="primary"
                             style="margin-left: 8px">添加岗位</Button>

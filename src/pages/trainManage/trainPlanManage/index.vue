@@ -25,8 +25,18 @@
                         <FormItem :label-width="0.1">
                             <ButtonGroup>
                                 <Button type="primary" @click="mubanFlag = true">
-                                    <Icon type="plus-round"></Icon>
+                                    <Icon type="gear-b"></Icon>
                                     模板设置
+                                </Button>
+                                <Button type="primary" @click="_openTrainPlan">
+                                    <Icon type="plus-round"></Icon>
+                                    创建培训计划
+                                </Button>
+                                <Button type="error"
+                                        :disabled="!planChooseDataArray.length"
+                                        @click="_delPlan">
+                                    <Icon type="ios-trash-outline"></Icon>
+                                    删除计划
                                 </Button>
                             </ButtonGroup>
                         </FormItem>
@@ -35,6 +45,8 @@
                                    :size="null"
                                    :height="tableHeight"
                                    :params="filterOpt"
+                                   :choosearray.sync="planChooseDataArray"
+                                   ref="planList"
                                    url="/train/ever_plan_datalist"></fs-table-page>
                 </Card>
             </Col>
@@ -45,9 +57,53 @@
             </p>
             <fs-table-page :columns="mubanColumns"
                            :height="300"
-                           url="/train/datalist"></fs-table-page>
+                           ref="mubanAdd"
+                           :choosearray.sync="chooseDataArray"
+                           url="/train/ever_para_datalist"></fs-table-page>
             <div slot="footer">
-                <Button type="primary" style="margin-left: 8px" @click="">添加模板</Button>
+                <Poptip confirm
+                        title="您确认删除所选项目吗？"
+                        transfer
+                        @on-ok="_deleteMuban">
+                    <Button style="margin-left: 8px"
+                            type="error"
+                            :disabled="!chooseDataArray.length">删除</Button>
+                </Poptip>
+                <Button type="primary"
+                        :disabled="!(chooseDataArray.length === 1)"
+                        style="margin-left: 8px"
+                        @click="">修改</Button>
+                <Poptip placement="left" width="400">
+                    <Button type="primary"
+                            style="margin-left: 8px">添加模板</Button>
+                    <div class="banci-add-form" slot="content">
+                        <Form :rules="mubanRules"
+                              :model="mubanForm"
+                              ref="mubanForm"
+                              :label-width="100">
+                            <FormItem label="项目名称" prop="name">
+                                <Input v-model="mubanForm.name"></Input>
+                            </FormItem>
+                            <FormItem label="英文key_text" prop="keyText">
+                                <Input v-model="mubanForm.keyText"></Input>
+                            </FormItem>
+                            <FormItem label="字段类型" style="text-align: left;">
+                                <Select v-model="mubanForm.keyType"
+                                        style="width: 100px">
+                                    <Option value="textfield" >文本</Option>
+                                    <Option value="textarea" >文本域</Option>
+                                    <Option value="numberfield" >数字</Option>
+                                </Select>
+                            </FormItem>
+                            <FormItem label="备注" prop="remark">
+                                <Input v-model="mubanForm.remark"></Input>
+                            </FormItem>
+                            <FormItem>
+                                <Button type="primary" @click="_addMuban" :loading="mubanBtnLoading">添加模板</Button>
+                            </FormItem>
+                        </Form>
+                    </div>
+                </Poptip>
                 <Button type="ghost" style="margin-left: 8px" @click="mubanFlag = false">关闭</Button>
             </div>
         </Modal>
@@ -59,6 +115,37 @@
                 <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="createPlanFlag" width="900" :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>创建培训计划</span>
+            </p>
+            <Form :model="mubanForm"
+                  :label-width="100">
+                <FormItem label="计划月份:" :label-width="100">
+                    <DatePicker :value="planForm.planMonth"
+                                :clearable="false"
+                                type="month"
+                                @on-change="planForm.planMonth = $event"></DatePicker>
+                </FormItem>
+                <FormItem label="负责人:">
+                    <fs-search-user v-model="planForm.people"
+                                    :multiple="true"
+                                    :optionlist.sync="planForm.peopleList"
+                                    :clearable="true"></fs-search-user>
+                </FormItem>
+                <FormItem label="项目:">
+                    <CheckboxGroup v-model="planForm.project">
+                        <Checkbox :label="item.id"
+                                  :key="'project' + index"
+                                  v-for="item,index in allProjectOpt">{{item.name}}</Checkbox>
+                    </CheckboxGroup>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary" @click="_addPlan">创建计划</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="createPlanFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style>
@@ -67,20 +154,45 @@
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import fsDepTree from '@/baseComponents/fs-dep-tree';
+    import fsSearchUser from '@/baseComponents/fs-search-user';
     import moment from 'moment';
+    const NOW_MONTH = moment().format('YYYY-MM');
     export default {
         name: 'trainPlanManage',
         data () {
             return {
                 modelFlag: false,
                 mubanFlag: false,
+                mubanBtnLoading: false,
+                createPlanFlag: false,
                 tableHeight: 300,
+                chooseDataArray: [],
+                planChooseDataArray: [],
                 defaultProps: {
                     children: 'children',
                     label: 'name'
                 },
                 roleData: [],
+                mubanForm: {
+                    name: '',
+                    keyText: '',
+                    keyType: 'textfield',
+                    remark: ''
+                },
+                mubanRules: {
+                    name: [
+                        {required: true, message: '项目名称不能为空', trigger: 'blur'}
+                    ],
+                    keyText: [
+                        {required: true, message: '英文key_text不能为空', trigger: 'blur'}
+                    ]
+                },
                 mubanColumns: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
                     {
                         title: '项目名称',
                         align: 'center',
@@ -102,14 +214,25 @@
                         key: 'remark'
                     }
                 ],
+                planForm: {
+                    people: [],
+                    peopleList: [],
+                    project: [],
+                    planMonth: NOW_MONTH
+                },
                 postColumns: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
                     {
                         title: '时间',
                         key: 'period',
                         align: 'center',
                         width: 160,
                         render: (h, params) => {
-                            return moment(params.row.period).format('YYYY-MM-DD');
+                            return moment(params.row.period).format('YYYY-MM');
                         }
                     },
                     {
@@ -200,19 +323,104 @@
                         value: 1,
                         type: 'tree'
                     }
-                }
+                },
+                allProjectOpt: []
             };
+        },
+        watch: {
+            allProjectOpt(val) {
+                this.planForm.project = val.map(x => x.id);
+            }
         },
         created() {
             this._setTableHeight();
             this._getRoleData();
+            this._getAllProjectOpt();
         },
         methods: {
+            formReset (name) {
+                this.$refs[name].resetFields();
+            },
             downloadFile(url, name) {
                 let downloadDom = document.createElement('a');
                 downloadDom.href = url;
                 downloadDom.download = name;
                 downloadDom.click();
+            },
+            _openTrainPlan() {
+                this.createPlanFlag = true;
+                this.planForm.people = [];
+                this.planForm.peopleList = [];
+                this.planForm.planMonth = NOW_MONTH;
+            },
+            _addPlan() {
+                if (!this.planForm.people.length) {
+                    this.$Message.error('请添加负责人');
+                    return;
+                }
+                let data = {};
+                data.ids = this.planForm.people.join(',');
+                data.paraIds = this.planForm.project.join(',');
+                data.month = this.planForm.planMonth;
+                this.$http.post('/train/ever_plan_add', data).then((res) => {
+                    console.log(res);
+                    if (res.success) {
+                        this.createPlanFlag = false;
+                        this.$Message.success('创建计划成功!');
+                        this._updatePlanList();
+                    }
+                });
+            },
+            _delPlan() {
+                this.$Modal.confirm({
+                    content: '确认删除所选计划么？',
+                    okText: '确认删除',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.ids = this.planChooseDataArray.map(x => x.id).join(',');
+                        this.$http.post('/train/ever_plan_delete', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('删除成功!');
+                                this._updatePlanList();
+                            }
+                        });
+                    }
+                });
+            },
+            _deleteMuban() {
+                let data = {};
+                data.ids = this.chooseDataArray.map(x => x.id).join(',');
+                this.$http.post('/train/ever_para_delete', data).then((res) => {
+                    if (res.success) {
+                        this.$refs.mubanAdd.getListData();
+                        this._getAllProjectOpt();
+                        this.chooseDataArray = [];
+                        this.$Message.success('删除成功！');
+                    }
+                });
+            },
+            _addMuban() {
+                this.$refs.mubanForm.validate((valid) => {
+                    if (valid) {
+                        this.mubanBtnLoading = true;
+                        let data = {};
+                        data.name = this.mubanForm.name;
+                        data.key_text = this.mubanForm.keyText;
+                        data.key_type = this.mubanForm.keyType;
+                        data.remark = this.mubanForm.remark;
+                        this.$http.post('/train/ever_para_add', data).then((res) => {
+                            if (res.success) {
+                                this.formReset('mubanForm');
+                                this._getAllProjectOpt();
+                                this.$refs.mubanAdd.getListData();
+                                this.$Message.success('项目添加成功！');
+                            }
+                        }).finally(() => {
+                            this.mubanBtnLoading = false;
+                        });
+                    }
+                });
             },
             _nodeChangeHandler(data) {
                 this.filterOpt.organizeId.value = data.id;
@@ -224,17 +432,29 @@
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 280;
             },
+            _getAllProjectOpt() {
+                this.$http.get('/train/ever_para_datalist?page=1&pageSize=20').then((res) => {
+                    if (res.success) {
+                        this.allProjectOpt = res.data;
+                        console.log(this.allProjectOpt);
+                    }
+                });
+            },
             _getRoleData() {
                 this.$http.get('/role/getAllRole').then((res) => {
                     if (res.success) {
                         this.roleData = res.data;
                     }
                 });
+            },
+            _updatePlanList() {
+                this.$refs.planList.getListData();
             }
         },
         components: {
             fsTablePage,
-            fsDepTree
+            fsDepTree,
+            fsSearchUser
         }
     };
 </script>

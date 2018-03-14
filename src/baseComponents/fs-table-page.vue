@@ -43,6 +43,12 @@
             placement: {
                 type: String,
                 default: 'top'
+            },
+            choosearray: {
+                type: Array,
+                default() {
+                    return [];
+                }
             }
         },
         mixins: [pageMixin],
@@ -76,7 +82,7 @@
                 return params;
             },
             selectionChange(data) {
-                this.$emit('on-selection-change', data);
+                this.$emit('update:choosearray', data);
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -94,6 +100,7 @@
                 this.getListData();
             },
             getListData() {
+                this.$emit('update:choosearray', []);
                 let params = this.returnNeedParams();
                 this.getList(this.url, params);
             }
