@@ -2,7 +2,7 @@
     <div id="guest">
         <Card style="background: #fafafa;"  :class="device.mobile&&device.width<=490?'mobileTabHeight':'pcTabHeight'">
             <Tabs type="card" style="height: 100%;">
-                <TabPane label="基本信息" style="height: 100%">
+                <TabPane label="基本" style="height: 100%">
                     <Form ref="talentBean" :model="talentBean" :rules="rules" style="font-size: 0px;overflow-y: auto;overflow-x: hidden;height: 100%;" inline>
                         <Input type="text" style="display: none" v-model="talentBean.id"></Input>
                         <FormItem label="姓名" prop="name" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
@@ -55,17 +55,8 @@
                         <FormItem label="籍贯" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Input type="text" v-model="talentBean.account" placeholder="省市"></Input>
                         </FormItem>
-                        <!--<FormItem label="民族" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">-->
-                            <!--<Input type="text" v-model="talentBean.nation"></Input>-->
-                        <!--</FormItem>-->
-                        <FormItem label="紧急联系人" :class="device.mobile?'mobileFormRight':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.emperson" placeholder="姓名"></Input>
-                        </FormItem>
-                        <FormItem label="联系人关系" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.emrelate" placeholder="父/母/子女"></Input>
-                        </FormItem>
-                        <FormItem label="联系人号码" :class="device.mobile?'mobileFormRight':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.emphone"></Input>
+                        <FormItem label="民族" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                            <Input type="text" v-model="talentBean.nation"></Input>
                         </FormItem>
                         <FormItem label="政治面貌" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <Select type="text" v-model="talentBean.politicalstatus">
@@ -89,20 +80,20 @@
                             <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.expertiseskills"></Input>
                         </FormItem>
                         <FormItem label="项目经验" style="width:99%;margin-right: 0px;">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 15}" v-model="talentBean.projectexperience"></Input>
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 15}" v-model="talentBean.projectexperience"></Input>
                         </FormItem>
-                        <FormItem label="语言能力" style="width:99%;margin-right: 0px;">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.languageskills"></Input>
+                        <FormItem label="入司理由" style="width:99%;margin-right: 0px;">
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.languageskills"></Input>
                         </FormItem>
                         <FormItem label="自我评价" style="width:99%;margin-right: 0px;">
                             <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.selfevaluation"></Input>
                         </FormItem>
-                        <FormItem label="培训经历" style="width:99%;margin-right: 0px;">
+                        <FormItem label="职业规划" style="width:99%;margin-right: 0px;">
                             <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.trainingexperience"></Input>
                         </FormItem>
                     </Form>
                 </TabPane>
-                <TabPane id="education" label="教育状况" style="height: 100%">
+                <TabPane id="education" label="学历" style="height: 100%">
                     <Form :gutter="1" ref="educationForm" inline style="font-size: 0px;overflow-y: auto; overflow-x: hidden;height: 100%;">
                         <div v-for="(item,index) in educationForm" class="custom-div">
                             <FormItem label="开始时间" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
@@ -150,7 +141,7 @@
                         </div>
                     </Form>
                 </TabPane>
-                <TabPane id="working" label="工作经历">
+                <TabPane id="working" label="经历">
                     <Form ref="workingForm" inline style="font-size: 0px;overflow-y: auto; overflow-x: hidden;height: 100%;">
                         <div v-for="(item,index) in workingForm" class="custom-div">
                             <FormItem label="开始时间" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
@@ -199,6 +190,54 @@
                                     @click="workingForm.push({})">增加经历
                             </Button>
                         </FormItem>
+                    </Form>
+                </TabPane>
+                <TabPane label="亲属">
+                    <Form ref="socailShipForm"  inline style="padding: 1px;font-size: 0;overflow-y: auto; overflow-x: hidden;height: 100%;">
+                        <div v-for="(item,index) in socailShipForm" :key="item.name" class="custom-div">
+                            <FormItem label="姓名" :class="device.mobile?'mobileFormRight':'pcRelationFormItem'">
+                                <Input type="text" name="name" v-model="item.witness"></Input>
+                            </FormItem>
+                            <FormItem label="关系" :class="device.mobile?'mobileFormItemLeft':'pcRelationFormItem'">
+                                <Input type="text"  v-model="item.relationship" placeholder="父母/配偶/子女"></Input>
+                            </FormItem>
+                            <FormItem label="年龄" :class="device.mobile?'mobileFormItemLeft':'pcRelationFormItem'">
+                                <Input type="text" v-model="item.age"></Input>
+                            </FormItem>
+                            <FormItem label="工作单位	" :class="device.mobile?'mobileFormRight':'pcRelationFormItem'">
+                                <Input type="text" v-model="item.companyname" ></Input>
+                            </FormItem>
+                            <FormItem label="职务" :class="device.mobile?'mobileFormItemLeft':'pcRelationFormItem'">
+                                <Input type="text" v-model="item.post"></Input>
+                            </FormItem>
+                            <FormItem label="电话" :class="device.mobile?'mobileFormRight':'pcRelationFormItem'">
+                                <Input type="text" v-model="item.phone"></Input>
+                            </FormItem>
+                            <FormItem label="用户id" style="display: none">
+                                <Input type="text" v-model="item.talentid" ></Input>
+                            </FormItem>
+                            <FormItem label="主键" style="display: none">
+                                <Input type="text" v-model="item.id" ></Input>
+                            </FormItem>
+                            <FormItem label="类型" style="display: none">
+                                <Input type="text" v-model="item.type" value="3"></Input>
+                            </FormItem>
+                            <!--<FormItem label="操作">-->
+                                <!--<Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'socailShipForm')"></Button>-->
+                            <!--</FormItem>-->
+                        </div>
+                        <FormItem label="紧急联系人" style="width:32%;margin-right: 1%;">
+                            <Input type="text" v-model="talentBean.emperson" ></Input>
+                        </FormItem>
+                        <FormItem label="联系人关系" style="width:32%;margin-right: 1%;">
+                            <Input type="text" v-model="talentBean.emrelate" ></Input>
+                        </FormItem>
+                        <FormItem label="联系人电话" style="width:32%;margin-right: 1%;">
+                            <Input type="text" v-model="talentBean.emphone" ></Input>
+                        </FormItem>
+                        <!--<FormItem style="width:100%">-->
+                            <!--<Button type="primary" icon="android-add" style="margin-left: 8px"  @click="socailShipForm.push({})">增加关系</Button>-->
+                        <!--</FormItem>-->
                     </Form>
                 </TabPane>
                 <ButtonGroup v-show="!device.mobile&&device.width>490&&talentBean.id" slot="extra">
@@ -264,6 +303,7 @@
                     width: 0
                 },
                 positionData: [],
+                socailShipForm: [{}, {}], // 社会关系
                 educationForm: [
                     {
                         graduatedschool: '',
@@ -414,6 +454,7 @@
                         d.bean = JSON.stringify(this.talentBean);
                         d.workingForm = JSON.stringify(this.workingForm);
                         d.educationForm = JSON.stringify(this.educationForm);
+                        d.socailShipForm = JSON.stringify(this.socailShipForm);
                         g.$http.post('/talentLibrary/saveGuest', d).then((res) => {
                             g.saveBtn1Loading = false;
                             g.saveBtn2Loading = false;
@@ -446,6 +487,7 @@
                         if (res.success) {
                             vm.educationForm = res.educations;
                             vm.workingForm = res.workings;
+                            vm.socailShipForm = res.socails;
                             vm.talentBean = res.talentLibrary;
                             resolve();
                         } else {
@@ -501,13 +543,16 @@
             width:49%;margin-right: 1%;
         }
         .pcFormItem {
-            width:24%;margin-right: 1%;
+            width:32%;margin-right: 1%;
         }
         .pcEducationFormItem{
             width:17.5%;margin-right: 1%;
         }
         .pcWorkingFormItem{
             width:11.5%;margin-right: 1%;
+        }
+        .pcRelationFormItem{
+            width:13.2%;margin-right: 1%;
         }
         .ivu-card-body{
             height: 100%;
