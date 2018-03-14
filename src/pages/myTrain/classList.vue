@@ -112,9 +112,9 @@
                         let sendData = {};
                         sendData.ids = data.id;
                         this.$http.post('/train/trainee_add', sendData).then((res) => {
-                            console.log(res);
                             if (res.success) {
                                 this.$Message.success('报名成功!');
+                                this.$emit('trainee-success');
                                 this._getClassListData();
                             }
                         });

@@ -4,7 +4,7 @@
             <Col :span="14">
                 <Card :dis-hover="true">
                     <h3>培训课程列表</h3>
-                    <class-list></class-list>
+                    <class-list @trainee-success="traineeSuccessHandler"></class-list>
                 </Card>
             </Col>
             <Col :span="10">
@@ -12,7 +12,7 @@
                     <Col :span="24" style="margin-bottom: 8px;">
                         <Card :dis-hover="true">
                             <!--<h3>我的课程</h3>-->
-                            <my-class-list></my-class-list>
+                            <my-class-list ref="myClass"></my-class-list>
                         </Card>
                     </Col>
                     <Col :span="24">
@@ -37,6 +37,11 @@
         name: 'myTrain',
         data () {
             return {};
+        },
+        methods: {
+            traineeSuccessHandler() {
+                this.$refs.myClass._getMyClass();
+            }
         },
         components: {
             classList,

@@ -343,7 +343,7 @@
             _setLogList(arr) {
                 this.logLookList = arr.filter((item) => {
                     return !!item.content;
-                });
+                }).reverse();
             },
             _logRowClick(obj) {
                 if (obj.type === 4) {

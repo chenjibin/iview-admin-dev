@@ -3,30 +3,98 @@
         <Collapse>
             <Panel name="1">
                 我的课程
-                <p slot="content">史蒂夫·乔布斯（Steve Jobs），1955年2月24日生于美国加利福尼亚州旧金山，美国发明家、企业家、美国苹果公司联合创办人。</p>
+                <div slot="content">
+                    <ul class="my-class-wrapper">
+                        <li v-for="item,index in myClassList" :key="'my-class-' + index" class="item">
+                            <h4 class="title">{{item.title}}</h4>
+                            <p style="text-align: right" class="teacher">讲师: {{item.teacher_name}}</p>
+                            <div class="">
+                                <span class="item-title">时间:</span><span>{{item.class_date | returnDate}}  {{item.period}}</span>
+                            </div>
+                            <div class="">
+                                <span class="item-title">课程学分:</span><span>{{item.class_credit}}</span>
+                                <span class="item-title">已得学分:</span><span>{{item.credit}}</span>
+                            </div>
+                            <div class="btn-group">
+                                <Button type="primary"
+                                        :loading="item.loading"
+                                        @click="_downloadGrade(item)"
+                                        shape="circle">下载成绩</Button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </Panel>
         </Collapse>
     </div>
 </template>
-<style>
+<style lang="less">
+    .my-class-wrapper {
+        .item {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+            .item-title {
+                font-weight: 700;
+            }
+            .btn-group {
+                text-align: right;
+            }
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
 
+    }
 </style>
 <script>
+    import moment from 'moment';
     export default {
         name: 'myClassList',
         data () {
-            return {};
+            return {
+                myClassList: []
+            };
         },
         created() {
             this._getMyClass();
         },
+        filters: {
+            returnDate(val) {
+                return moment(val).format('YYYY-MM-DD');
+            }
+        },
         methods: {
+            downloadFile(url, name) {
+                let downloadDom = document.createElement('a');
+                downloadDom.href = url;
+                downloadDom.download = name;
+                downloadDom.click();
+            },
+            _downloadGrade(data) {
+                let sendData = {};
+                sendData.id = data.id;
+                sendData.title = data.title;
+                data.loading = true;
+                this.$http.post('/train/trainee_class_crdit_excel', sendData).then((res) => {
+                    if (res.success) {
+                        this.downloadFile('/oa/download/' + res.data, res.data);
+                    }
+                }).finally(() => {
+                    data.loading = false;
+                });
+            },
             _getMyClass() {
                 let data = {};
                 data.page = 1;
-                data.pageSize = 50;
+                data.pageSize = 100;
                 this.$http.get('/train/class_datalist_mine', {params: data}).then((res) => {
-                    console.log(res);
+                    if (res.success) {
+                        res.data.forEach(item => {
+                            item.loading = false;
+                        });
+                        this.myClassList = res.data;
+                    }
                 });
             }
         },

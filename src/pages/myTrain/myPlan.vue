@@ -3,7 +3,11 @@
         <Collapse>
             <Panel name="1">
                 我的计划
-                <p slot="content">史蒂夫·乔布斯（Steve Jobs），1955年2月24日生于美国加利福尼亚州旧金山，美国发明家、企业家、美国苹果公司联合创办人。</p>
+                <div slot="content">
+                    <fs-table-page :columns="postColumns"
+                                   :height="300"
+                                   url="/train/ever_plan_mine_datalist"></fs-table-page>
+                </div>
             </Panel>
         </Collapse>
     </div>
@@ -12,10 +16,74 @@
 
 </style>
 <script>
+    import fsTablePage from '@/baseComponents/fs-table-page';
     export default {
         name: 'myPlan',
         data () {
-            return {};
+            return {
+                postColumns: [
+                    {
+                        title: '时间',
+                        key: 'name',
+                        width: 120
+                    },
+                    {
+                        title: '部门',
+                        key: 'stuname',
+                        align: 'center'
+                    },
+                    {
+                        title: '岗位',
+                        align: 'center',
+                        key: 'score',
+                    },
+                    {
+                        title: '角色',
+                        align: 'center',
+                        key: 'totletime',
+                    },
+                    {
+                        title: '状态',
+                        align: 'center',
+                        key: 'ranking',
+                    },
+                    {
+                        title: '负责人',
+                        align: 'center',
+                        key: 'sumstu',
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        width: 80,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                h('Tooltip', {
+                                    props: {
+                                        content: '查看试卷',
+                                        placement: 'top',
+                                        transfer: true
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            icon: 'eye',
+                                            shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function() {
+                                                vm._checkTest(params.row);
+                                            }
+                                        }
+                                    })
+                                ])
+                            ]);
+                        }
+                    }
+                ]
+            };
         },
         created() {
             this._getMyPlan();
@@ -30,6 +98,8 @@
                 });
             }
         },
-        components: {}
+        components: {
+            fsTablePage
+        }
     };
 </script>
