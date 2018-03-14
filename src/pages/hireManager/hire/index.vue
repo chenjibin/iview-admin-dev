@@ -101,7 +101,7 @@
                 </FormItem>
                 <Button type="success" @click="showAddNew()" style="padding: 6px 5px;">新增</Button>
             </Form>
-            <div style="position: relative">
+            <div style="position: relative;width: 98.5%">
                 <Table :columns="postColumns"
                        ref="attendanceTable"
                        :loading="tableLoading"
@@ -148,7 +148,7 @@
                width="1000"
                :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>新建简历</span>
+                <span>简历</span>
             </p>
             <Tabs type="card">
                 <TabPane label="基本信息" style="overflow: hidden;">
@@ -390,6 +390,7 @@
                         </FormItem>
                     </Form>
                 </TabPane>
+                <Button type="ghost" @click="downloadFile" size="small" slot="extra">导出</Button>
             </Tabs>
             <div slot="footer">
                 <Button type="ghost" @click="settingModalFlag = false">
@@ -932,6 +933,12 @@
                     vm.positionData = res.data;
                 });
             },
+            downloadFile() {
+                let downloadDom = document.createElement('a');
+                downloadDom.href = '/oa/talentLibrary/expTalent?id=' + this.talentBean.id;
+                downloadDom.download = name;
+                downloadDom.click();
+            },
             editUser(row) {
                 this._findUser(row.id).then((res) => {
                     this.settingModalFlag = true;
@@ -1145,13 +1152,6 @@
                     }
                     console.log(2);
                     var d = vm.statusForm;
-                    // for (let key in d) {
-                    //     if (Date === d[key].constructor) {
-                    //         d[key] = d[key].toLocaleDateString().replace(/\//g, '-');
-                    //     }
-                    //     console.log(d[key]);
-                    // }
-                    // console.log(3);
                     if (vm.showUser.status === -1) {
                         d.status = 0;
                     }

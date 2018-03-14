@@ -73,6 +73,10 @@
                                 <Option :value=2>未婚</Option>
                             </Select>
                         </FormItem>
+                        <FormItem label="预期入职时间" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                            <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(0, 0, 'testtime',$event)" :value="talentBean.testtime"></DatePicker>
+                        </FormItem>
+                        <div></div>
                         <FormItem label="详细住址" style="width:48.5%;margin-right: 1%;">
                             <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.address"></Input>
                         </FormItem>
@@ -473,6 +477,9 @@
                 this._getPostData();
             },
             _monthDateChange (type, index, key, value) {
+                if (type === 0) {
+                    this.talentBean[key] = value;
+                }
                 if (type === 1) {
                     this.educationForm[index][key] = value;
                 }
