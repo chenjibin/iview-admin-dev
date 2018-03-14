@@ -212,15 +212,6 @@
                         <FormItem label="民族" style="width:430px">
                             <Input type="text" v-model="talentBean.nation"></Input>
                         </FormItem>
-                        <FormItem label="紧急联系人" style="width:430px">
-                            <Input type="text" v-model="talentBean.emperson"></Input>
-                        </FormItem>
-                        <FormItem label="联系人关系" style="width:430px">
-                            <Input type="text" v-model="talentBean.emrelate"></Input>
-                        </FormItem>
-                        <FormItem label="联系人号码" style="width:430px">
-                            <Input type="text" v-model="talentBean.emphone"></Input>
-                        </FormItem>
                         <FormItem label="政治面貌" style="width:430px">
                             <Select type="text" v-model="talentBean.politicalstatus">
                                 <Option value="党员">党员</Option>
@@ -231,30 +222,36 @@
                             </Select>
                         </FormItem>
                         <FormItem label="婚姻状况" style="width:430px">
-                            <Select type="text" v-model="talentBean.marriage">
+                            <Select type="text" v-model="talentBean.had_child">
                                 <Option :value="1">已婚</Option>
                                 <Option :value="2">未婚</Option>
                             </Select>
                         </FormItem>
+                        <FormItem label="有无子女" style="width:430px">
+                            <Select type="text" v-model="talentBean.marriage">
+                                <Option :value="0">无</Option>
+                                <Option :value="1">有</Option>
+                            </Select>
+                        </FormItem>
                         <FormItem label="详细住址" style="width:430px">
-                            <Input type="textarea" :rows="5" v-model="talentBean.address"></Input>
+                            <Input type="textarea" :rows="3" v-model="talentBean.address"></Input>
                         </FormItem>
                         <FormItem label="项目经验" style="width:430px">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.projectexperience"></Input>
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.projectexperience"></Input>
                         </FormItem>
                         <FormItem label="专长技能" style="width:430px">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.expertiseskills"></Input>
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.expertiseskills"></Input>
                         </FormItem>
-                        <FormItem label="语言能力" style="width:430px">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.languageskills"></Input>
+                        <FormItem label="入司理由" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.languageskills"></Input>
                         </FormItem>
                         <FormItem label="自我评价" style="width:430px">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.selfevaluation"></Input>
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.selfevaluation"></Input>
                         </FormItem>
-                        <FormItem label="培训经历" style="width:430px">
-                            <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.trainingexperience"></Input>
+                        <FormItem label="职业规划" style="width:430px">
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.trainingexperience"></Input>
                         </FormItem>
-                        <FormItem label="面试意见" style="width:430px">
+                        <FormItem label="面试意见" style="width:874px">
                             <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.remarks"></Input>
                         </FormItem>
                     </Form>
@@ -345,6 +342,51 @@
                             <Button type="primary" icon="android-add" style="margin-left: 8px"
                                     @click="workingForm.push({})">增加经历
                             </Button>
+                        </FormItem>
+                    </Form>
+                </TabPane>
+                <TabPane label="社会关系">
+                    <Form ref="socailShipForm"  inline style="padding: 1px;">
+                        <div v-for="(item,index) in socailShipForm" :key="item.name">
+                            <FormItem label="关系" style="width:13%">
+                                <Input type="text"  v-model="item.relationship" ></Input>
+                            </FormItem>
+                            <FormItem label="姓名" style="width:13%">
+                                <Input type="text" name="name" v-model="item.witness" ></Input>
+                            </FormItem>
+                            <FormItem label="年龄" style="width:13%">
+                                <Input type="text" v-model="item.age" ></Input>
+                            </FormItem>
+                            <FormItem label="工作单位	" style="width:13%">
+                                <Input type="text" v-model="item.companyname" ></Input>
+                            </FormItem>
+                            <FormItem label="职务" style="width:13%">
+                                <Input type="text" v-model="item.post"></Input>
+                            </FormItem>
+                            <FormItem label="电话" style="width:13%">
+                                <Input type="text" v-model="item.phone"></Input>
+                            </FormItem>
+                            <FormItem label="用户id" style="display: none">
+                                <Input type="text" v-model="item.talentid" ></Input>
+                            </FormItem>
+                            <FormItem label="主键" style="display: none">
+                                <Input type="text" v-model="item.id" ></Input>
+                            </FormItem>
+                            <FormItem label="操作" style="width:5%">
+                                <Button style="color:#f46e65;font-size: 16px;padding: 3px 15px;" icon="ios-trash"  @click="delForm(index,'socailShipForm')"></Button>
+                            </FormItem>
+                        </div>
+                        <FormItem label="紧急联系人" style="width:30%">
+                            <Input type="text" v-model="talentBean.emperson" ></Input>
+                        </FormItem>
+                        <FormItem label="联系人关系" style="width:30%">
+                            <Input type="text" v-model="talentBean.emrelate" ></Input>
+                        </FormItem>
+                        <FormItem label="联系人电话" style="width:30%">
+                            <Input type="text" v-model="talentBean.emphone" ></Input>
+                        </FormItem>
+                        <FormItem style="width:100%">
+                            <Button type="primary" icon="android-add" style="margin-left: 8px"  @click="socailShipForm.push({})">增加关系</Button>
                         </FormItem>
                     </Form>
                 </TabPane>
@@ -561,6 +603,7 @@
                 settingModalFlag: false, // 简历模块弹出
                 saveBtn2Loading: false, // 提交按钮加载
                 saveBtn1Loading: false, // 暂存按钮加载
+                socailShipForm: [], // 社会关系
                 filterOpt: {
                     name: '', // 员工姓名
                     startdate: [], // 预约日期左区间
@@ -646,7 +689,7 @@
                     id: '',
                     status: '',
                     remarks: '',
-                    master:'',
+                    master: '',
                     joindate: '', // 入职时间
                     appointment: '', // 预约时间
                     interviewtime: '', // 面试时间
@@ -988,6 +1031,7 @@
                 d.bean = JSON.stringify(this.talentBean);
                 d.workingForm = JSON.stringify(this.workingForm);
                 d.educationForm = JSON.stringify(this.educationForm);
+                d.socailShipForm = JSON.stringify(this.socailShipForm);
                 this.$http.post('/talentLibrary/save', d).then((res) => {
                     this.saveBtn1Loading = false;
                     this.saveBtn2Loading = false;
@@ -1243,7 +1287,7 @@
         }
         #btn-fix-container {
             position: absolute;
-            right: 50px;
+            right: 20px;
             top: 0px;
         }
         #btn-fix-container {
