@@ -86,19 +86,19 @@
                         <FormItem label="详细住址" style="width:48.5%;margin-right: 1%;">
                             <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.address"></Input>
                         </FormItem>
-                        <FormItem label="专长技能" style="width:49%;margin-right: 1%;">
+                        <FormItem label="应聘本岗位的技能" style="width:49%;margin-right: 1%;">
                             <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.expertiseskills"></Input>
                         </FormItem>
                         <FormItem label="项目经验" style="width:99%;margin-right: 0px;">
-                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 15}" v-model="talentBean.projectexperience"></Input>
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.projectexperience"></Input>
                         </FormItem>
-                        <FormItem label="入司理由" style="width:99%;margin-right: 0px;">
-                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 16}" v-model="talentBean.languageskills"></Input>
+                        <FormItem label="选择本公司/职业原因" style="width:99%;margin-right: 0px;">
+                            <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="talentBean.languageskills"></Input>
                         </FormItem>
-                        <FormItem label="自我评价" style="width:99%;margin-right: 0px;">
+                        <FormItem label="自我和他人的评价" style="width:99%;margin-right: 0px;">
                             <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.selfevaluation"></Input>
                         </FormItem>
-                        <FormItem label="职业规划" style="width:99%;margin-right: 0px;">
+                        <FormItem label="两年内的职业规划" style="width:99%;margin-right: 0px;">
                             <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="talentBean.trainingexperience"></Input>
                         </FormItem>
                     </Form>
