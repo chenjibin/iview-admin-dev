@@ -210,7 +210,6 @@
         },
         watch: {
             chooseDataArray(val) {
-                console.log(val);
             }
         },
         created() {

@@ -733,7 +733,6 @@
                 this.spinShow = false;
             },
             _uploadFail(error, file, fileList) {
-                console.log(error);
             },
             _uploadFormatErr() {
                 this.$Message.error('上传文件的后缀必须为.xls');

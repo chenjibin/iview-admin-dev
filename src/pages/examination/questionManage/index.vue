@@ -264,7 +264,6 @@
                                     },
                                     on: {
                                         'update'(val) {
-                                            console.log(val);
                                             currentNow.pic = val;
                                         }
                                     }
@@ -476,7 +475,6 @@
                         this.$refs.tablePage.getListData();
                     }
                 });
-                console.log(data);
             },
             _addQuestionOpen() {
                 this._initEditorSettingData();
@@ -526,7 +524,6 @@
                 this.editorSettingData.questionList.splice(data._index, 1);
             },
             _editorSetting(data) {
-                console.log(data);
                 this._initEditorSettingData();
                 this.editorSettingFlag = true;
             },

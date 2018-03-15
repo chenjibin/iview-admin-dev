@@ -140,7 +140,6 @@
         methods: {
             changeInfo(data) {
                 this.baseInfo = data;
-                console.log(data);
             },
             saveInfo() {
                 var vm = this;
@@ -185,7 +184,6 @@
             },
             _setTableHeight () {
                 let dm = document.body.clientHeight;
-                console.log(dm)
                 this.tableHeight = dm - 100 - 20 - 34 - 57 - 49;
             },
             _setPage (page) {

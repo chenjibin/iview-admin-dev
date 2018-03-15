@@ -172,7 +172,6 @@
             },
             _setTableHeight () {
                 let dm = document.body.clientHeight;
-                console.log(dm)
                 this.tableHeight = dm - 100 - 20 - 34 - 57 - 49;
             },
             _setPage (page) {

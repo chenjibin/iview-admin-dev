@@ -120,7 +120,6 @@
                 data.orgName = filterOpt.orgName.value;
                 data.name = filterOpt.name.value;
                 this.$http.post('/examtest/export', data).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.downloadFile('/oa/upload/' + res.data, res.data);
                     }

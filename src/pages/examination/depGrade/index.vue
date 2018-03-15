@@ -223,7 +223,6 @@
                 data.id = this.testId;
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
-                    console.log(res)
                     if (res.success) {
                         // this.downloadFile()
                     }
@@ -235,7 +234,6 @@
                 this.filterOpt.organizeId.value = data.id;
             },
             _checkTest(data) {
-                console.log(data);
                 let sendData = {};
                 sendData.id = data.id;
                 sendData.pid = 1;

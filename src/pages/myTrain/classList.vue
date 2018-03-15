@@ -127,7 +127,6 @@
             },
             _getTrainTypeOpt() {
                 this.$http.get('/train/class_type_comboxData').then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.trainTypeOpt = res.data;
                     }
@@ -148,7 +147,6 @@
                 data.pageSize = this.pageData.pageSize;
                 data.class_type = this.filterOpt.type;
                 this.$http.get('/train/class_datalist', {params: data}).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.classListData = res.data;
                         this.pageData.totalCount = res.totalCount
