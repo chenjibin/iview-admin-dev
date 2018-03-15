@@ -73,6 +73,12 @@
                                 <Option :value=2>未婚</Option>
                             </Select>
                         </FormItem>
+                        <FormItem label="有无子女" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                            <Select type="text" v-model="talentBean.had_child">
+                                <Option :value="0">无</Option>
+                                <Option :value="1">有</Option>
+                            </Select>
+                        </FormItem>
                         <FormItem label="预期入职时间" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
                             <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(0, 0, 'testtime',$event)" :value="talentBean.testtime"></DatePicker>
                         </FormItem>
@@ -494,8 +500,14 @@
                         if (res.success) {
                             vm.educationForm = res.educations;
                             vm.workingForm = res.workings;
-                            vm.socailShipForm = res.socails;
                             vm.talentBean = res.talentLibrary;
+                            vm.socailShipForm = res.socails || [{}, {}];
+                            if (vm.socailShipForm.length < 2) {
+                                var leng = 2 - vm.socailShipForm.length;
+                                for (var i = 0; i < leng; i++) {
+                                    vm.socailShipForm.push({});
+                                }
+                            }
                             resolve();
                         } else {
                             reject(new Error('数据不存在'));
@@ -550,7 +562,7 @@
             width:49%;margin-right: 1%;
         }
         .pcFormItem {
-            width:32%;margin-right: 1%;
+            width:24%;margin-right: 1%;
         }
         .pcEducationFormItem{
             width:17.5%;margin-right: 1%;
