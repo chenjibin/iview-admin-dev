@@ -1262,6 +1262,7 @@
                             vm.educationForm = res.educations;
                             vm.workingForm = res.workings;
                             vm.talentBean = res.talentLibrary;
+                            vm.socailShipForm = res.socails;
                         } else {
                             reject(new Error('数据不存在'));
                         }
