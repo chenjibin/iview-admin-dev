@@ -363,7 +363,6 @@
                 data.paraIds = this.planForm.project.join(',');
                 data.month = this.planForm.planMonth;
                 this.$http.post('/train/ever_plan_add', data).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         this.createPlanFlag = false;
                         this.$Message.success('创建计划成功!');
@@ -436,7 +435,6 @@
                 this.$http.get('/train/ever_para_datalist?page=1&pageSize=20').then((res) => {
                     if (res.success) {
                         this.allProjectOpt = res.data;
-                        console.log(this.allProjectOpt);
                     }
                 });
             },

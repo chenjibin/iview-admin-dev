@@ -94,7 +94,6 @@
                 data.page = 1;
                 data.pageSize = 50;
                 this.$http.get('/train/ever_plan_mine_datalist', {params: data}).then((res) => {
-                    console.log(res);
                 });
             }
         },

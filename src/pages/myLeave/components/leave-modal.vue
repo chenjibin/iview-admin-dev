@@ -396,7 +396,6 @@
                 data.numberDay = sendForm.tiaoxiuNumberDay;
                 data.content = sendForm.content;
                 data.tiaoxiuDate = JSON.stringify(sendForm.tiaoxiuTime);
-                console.log(data);
                 this.$http.post('/od/applyTx', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('请假申请成功!');

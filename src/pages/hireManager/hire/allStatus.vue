@@ -99,7 +99,6 @@
                     this.indeterminate = false;
                     this.checkAll = false;
                 }
-                console.log(this.status);
                 this.$emit('status', v);
             }
         }

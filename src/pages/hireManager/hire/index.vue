@@ -1147,15 +1147,12 @@
                 var vm = this;
                 this.$refs['statusForm'].validate((valid) => {
                     if (!valid) {
-                        console.log(1);
                         return false;
                     }
-                    console.log(2);
                     var d = vm.statusForm;
                     if (vm.showUser.status === -1) {
                         d.status = 0;
                     }
-                    console.log(4);
                     vm.$http.post('/talentLibrary/changeStatus', d).then((res) => {
                         if (res.success) {
                             vm.$Message.success('用户' + vm.showUser.name + ' 变更成功');
@@ -1210,7 +1207,6 @@
                                 'organizename': item.organizename
                             };
                         });
-                        console.log(this.optionlist);
                     }
                 }).finally(() => {
                     this.filterPeopleLoading = false;
