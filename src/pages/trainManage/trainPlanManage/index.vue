@@ -109,9 +109,13 @@
         </Modal>
         <Modal v-model="modelFlag" width="900" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>试卷详情</span>
+                <span>培训计划</span>
             </p>
+            <fs-form :label-width="80"
+                     :form-config="trainFormConfig"
+                     v-model="trainData"></fs-form>
             <div slot="footer">
+                <Button type="primary" style="margin-left: 8px" @click="_submitPlan">提交计划</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
             </div>
         </Modal>
@@ -155,6 +159,7 @@
     import fsTablePage from '@/baseComponents/fs-table-page';
     import fsDepTree from '@/baseComponents/fs-dep-tree';
     import fsSearchUser from '@/baseComponents/fs-search-user';
+    import fsForm from '@/baseComponents/fs-form/form';
     import moment from 'moment';
     const NOW_MONTH = moment().format('YYYY-MM');
     export default {
@@ -324,6 +329,17 @@
                         type: 'tree'
                     }
                 },
+                trainFormConfig: {
+                    formItemList: [
+                        {
+                            type: 'input',
+                            label: 'ceshi',
+                            value: '',
+                            key: 'cccc'
+                        }
+                    ]
+                },
+                trainData: {},
                 allProjectOpt: []
             };
         },
@@ -346,6 +362,9 @@
                 downloadDom.href = url;
                 downloadDom.download = name;
                 downloadDom.click();
+            },
+            _submitPlan() {
+                console.log(this.trainData);
             },
             _openTrainPlan() {
                 this.createPlanFlag = true;
@@ -426,6 +445,37 @@
                 this.filterOpt.organizeId.value = data.id;
             },
             _checkTest(data) {
+                console.log(data);
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.post('/train/plan_para_select', sendData).then((res) => {
+                    console.log(res);
+                    if (res.success) {
+                        let formItems = res.data.field;
+                        let formList = [];
+                        let trainData = {};
+                        formItems.forEach(item => {
+                            let obj = {};
+                            obj.type = 'input';
+                            trainData[item.key] = item.value;
+                            switch (item.xtype) {
+                                case 'numberfield':
+                                    obj.type = 'number';
+                                    break;
+                                case 'textarea':
+                                    obj.type = 'textarea';
+                                    break;
+                            }
+                            obj.label = item.fieldLabel;
+                            obj.key = item.name;
+                            obj.value = item.value || '';
+                            formList.push(obj);
+                        });
+                        this.trainFormConfig.formItemList = formList;
+                        this.trainData = trainData;
+                        console.log(this.trainFormConfig.formItemList);
+                    }
+                });
                 this.modelFlag = true;
             },
             _setTableHeight() {
@@ -436,7 +486,6 @@
                 this.$http.get('/train/ever_para_datalist?page=1&pageSize=20').then((res) => {
                     if (res.success) {
                         this.allProjectOpt = res.data;
-                        console.log(this.allProjectOpt);
                     }
                 });
             },
@@ -454,7 +503,8 @@
         components: {
             fsTablePage,
             fsDepTree,
-            fsSearchUser
+            fsSearchUser,
+            fsForm
         }
     };
 </script>
