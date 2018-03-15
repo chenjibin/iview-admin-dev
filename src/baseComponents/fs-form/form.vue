@@ -2,7 +2,7 @@
     <Form :model="value"
           ref="formInstance"
           :label-width="labelWidth">
-        <fs-form-item  v-for="item in formConfig.formItemList"
+        <fs-form-item  v-for="item in itemList"
                        :key="item.key"
                        v-if="value[item.key]!==undefined"
                        :item="item"
@@ -18,8 +18,8 @@
     export default {
         name: 'fsForm',
         props: {
-            formConfig: {
-                type: Object,
+            itemList: {
+                type: Array,
                 required: true
             },
             value: {
@@ -28,14 +28,6 @@
             },
             labelWidth: {
                 type: Number
-            }
-        },
-        watch: {
-            formConfig: {
-                deep: true,
-                handler(val) {
-                    console.log(val);
-                }
             }
         },
         data() {
@@ -52,7 +44,7 @@
             setDefaultValue() {
                 const formData = JSON.parse(JSON.stringify(this.value));
                 // 设置默认值
-                this.formConfig.formItemList.forEach(item => {
+                this.itemList.forEach(item => {
                     const { key, value } = item;
                     if (formData[key] === undefined || formData[key] === null) {
                         formData[key] = value;
