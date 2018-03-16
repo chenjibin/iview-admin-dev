@@ -208,10 +208,6 @@
                 }
             };
         },
-        watch: {
-            chooseDataArray(val) {
-            }
-        },
         created() {
             this._setTableHeight();
         },

@@ -71,7 +71,6 @@
                 </Poptip>
 
                 <Poptip placement="left"
-                        @on-popper-show=""
                         width="400">
                     <Button type="primary"
                             :disabled="!(chooseDataArray.length === 1)"
