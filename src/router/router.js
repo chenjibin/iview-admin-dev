@@ -351,6 +351,20 @@ export const appRouter = [
                 name: 'curriculumManage',
                 title: '课程管理',
                 component: resolve => { require(['@/pages/trainManage/curriculumManage/index.vue'], resolve); }
+            },
+            {
+                path: 'classRecheckManage',
+                icon: 'ribbon-a',
+                name: 'classRecheckManage',
+                title: '课程复盘管理',
+                component: resolve => { require(['@/pages/trainManage/classRecheckManage/index.vue'], resolve); }
+            },
+            {
+                path: 'tickRecheckManage',
+                icon: 'ribbon-a',
+                name: 'tickRecheckManage',
+                title: '周期复盘管理',
+                component: resolve => { require(['@/pages/trainManage/tickRecheckManage/index.vue'], resolve); }
             }
         ]
     },
