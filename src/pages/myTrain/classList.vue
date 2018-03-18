@@ -40,6 +40,7 @@
                     </Card>
                 </Col>
             </Row>
+            <Spin size="large" fix v-if="spinShow"></Spin>
         </div>
         <Page :total="pageData.totalCount"
               :current.sync="pageData.page"
@@ -82,6 +83,7 @@
             return {
                 classListData: [],
                 size: 'small',
+                spinShow: false,
                 trainTypeOpt: [],
                 filterOpt: {
                     type: ''
@@ -142,6 +144,7 @@
                 this._getClassListData();
             },
             _getClassListData() {
+                this.spinShow = true;
                 let data = {};
                 data.page = this.pageData.page;
                 data.pageSize = this.pageData.pageSize;
@@ -149,8 +152,10 @@
                 this.$http.get('/train/class_datalist', {params: data}).then((res) => {
                     if (res.success) {
                         this.classListData = res.data;
-                        this.pageData.totalCount = res.totalCount
+                        this.pageData.totalCount = res.totalCount;
                     }
+                }).finally(() => {
+                    this.spinShow = false;
                 });
             }
         }
