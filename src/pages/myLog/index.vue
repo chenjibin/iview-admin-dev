@@ -38,8 +38,8 @@
                         <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                             <span>{{logDetail.date}} 日志</span>
                         </p>
-                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.content" v-if="[5,6].indexOf(logDetail.type) > -1"></div>
-                        <template v-if="[0,1,2,3].indexOf(logDetail.type) > -1">
+                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.content" v-if="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
+                        <template v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
                             <span style="display: inline-block;margin-right: 10px;height: 30px;line-height: 30px;vertical-align: top;">日志类型</span>
                             <Select v-model="logDetail.logType"
                                     placeholder="日志类型"
@@ -54,14 +54,14 @@
                                     @content-change="_setContent"></text-editor>
                         </template>
                         <div slot="footer">
-                            <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1">
+                            <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
 
                                 <Button type="primary" :loading="submitLoading" @click="_submitLog">
                                     <span v-if="!submitLoading">提交日志</span>
                                     <span v-else>提交中...</span>
                                 </Button>
                             </div>
-                            <div class="" v-if="[5,6].indexOf(logDetail.type) > -1">
+                            <div class="" v-if="[5,6].indexOf(logDetail.type) > -1  && nowDate !== logDetail.date">
                                 <span>指导状态:</span>
                                 <Tag color="green">已指导</Tag>
                                 <span>类型:</span>
@@ -156,6 +156,7 @@
     import moment from 'moment';
     import textEditor from '@/baseComponents/text-editor';
     import dateMixin from '@/mixins/dateMixin';
+    const NOW_DATE = moment().format('YYYY-MM-DD');
     export default {
         name: 'myLog',
         mixins: [dateMixin],
@@ -168,6 +169,7 @@
                 open: true,
                 btnDisabled: false,
                 dateData: null,
+                nowDate: NOW_DATE,
                 logMaxHeight: '300px',
                 editorOpt: {
                     menubar: '',
@@ -182,7 +184,7 @@
                 logLookList: [],
                 logDetail: {
                     logType: '0',
-                    date: '2018-01-01',
+                    date: '',
                     type: 0,
                     logType1: '',
                     editorContent: '',
@@ -317,12 +319,14 @@
             _setContent(content) {
                 this.logDetail.editorContent = content;
             },
-            _setSelectOpt(type) {
-                if (type === 0) {
-                    this.logTypeList = [ {
-                        value: '1',
-                        label: '休息'
-                    }];
+            _setSelectOpt(type, date) {
+                if (type === 0 && date !== NOW_DATE) {
+                    this.logTypeList = [
+                        {
+                            value: '1',
+                            label: '休息'
+                        }
+                    ];
                     this.logDetail.logType = '1';
                     this.logDetail.content = '休息';
                     this.logDetail.editorContent = '休息';
@@ -350,13 +354,14 @@
                     this.$Message.error('超过48小时不可再补写日志！');
                     return;
                 }
+                this._setSelectOpt(obj.type, obj.date);
                 this.logDetail.date = obj.date;
                 this.logDetail.type = obj.type;
                 this.logDetail.commentResult = obj.commentResult;
                 this.logDetail.content = obj.content || '';
                 this.logDetail.editorContent = obj.content || '';
+                this.logDetail.logType = obj.logType ? obj.logType + '' : '0';
                 this.logDetail.logType1 = obj.logType || '';
-                this._setSelectOpt(obj.type);
                 this.modelFlag = true;
             },
             _submitLog() {

@@ -365,6 +365,13 @@ export const appRouter = [
                 name: 'tickRecheckManage',
                 title: '周期复盘管理',
                 component: resolve => { require(['@/pages/trainManage/tickRecheckManage/index.vue'], resolve); }
+            },
+            {
+                path: 'creditManage',
+                icon: 'ribbon-a',
+                name: 'creditManage',
+                title: '学分管理',
+                component: resolve => { require(['@/pages/trainManage/creditManage/index.vue'], resolve); }
             }
         ]
     },

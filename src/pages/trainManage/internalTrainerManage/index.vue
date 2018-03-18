@@ -46,12 +46,13 @@
                             type="error"
                             :disabled="!chooseDataArray.length">删除</Button>
                 </Poptip>
-                <Button type="primary"
-                        :disabled="!(chooseDataArray.length === 1)"
-                        style="margin-left: 8px"
-                        @click="">修改</Button>
                 <Poptip placement="left" width="400">
                     <Button type="primary"
+                            :disabled="!(chooseDataArray.length === 1)"
+                            style="margin-left: 8px"
+                            @click="_updateMubanHandler">修改</Button>
+                    <Button type="primary"
+                            @click="_addMubanHandler"
                             style="margin-left: 8px">添加岗位</Button>
                     <div class="banci-add-form" slot="content">
                         <Form :rules="banciRules"
@@ -65,7 +66,7 @@
                                 <Input v-model="banciForm.remark"></Input>
                             </FormItem>
                             <FormItem>
-                                <Button type="primary" @click="_addPost" :loading="banciBtnLoading">添加岗位</Button>
+                                <Button type="primary" @click="_addPost" :loading="banciBtnLoading">{{mubanAddType === 'add' ? '添加': '修改'}}岗位</Button>
                             </FormItem>
                         </Form>
                     </div>
@@ -153,7 +154,9 @@
                 mubanFlag: false,
                 banciBtnLoading: false,
                 classFormType: 'add',
+                mubanAddType: 'add',
                 tableHeight: 300,
+                mubanId: 0,
                 chooseDataArray: [],
                 classChooseDataArray: [],
                 allPostData: [],
@@ -315,6 +318,18 @@
                 this.nameForm.nameLabel = '';
                 this.nameForm.nameOpt = [];
             },
+            _updateMubanHandler() {
+                this.mubanAddType = 'update';
+                this.formReset('banciForm');
+                let fillForm = this.chooseDataArray[0];
+                this.banciForm.postName = fillForm.name;
+                this.banciForm.remark = fillForm.remark;
+                this.mubanId = fillForm.id;
+            },
+            _addMubanHandler() {
+                this.mubanAddType = 'add';
+                this.formReset('banciForm');
+            },
             _deletePost() {
                 let data = {};
                 data.ids = this.chooseDataArray.map(x => x.id).join(',');
@@ -333,11 +348,12 @@
                         let data = {};
                         data.name = this.banciForm.postName;
                         data.remark = this.banciForm.remark;
+                        if (!(this.mubanAddType === 'add')) data.id = this.mubanId;
                         this.$http.post('/train/addPost', data).then((res) => {
                             if (res.success) {
                                 this.formReset('banciForm');
                                 this.$refs.postAdd.getListData();
-                                this.$Message.success('岗位添加成功！');
+                                this.$Message.success('操作成功！');
                             }
                         }).finally(() => {
                             this.banciBtnLoading = false;
