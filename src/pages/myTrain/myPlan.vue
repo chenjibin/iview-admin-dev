@@ -17,6 +17,7 @@
             </p>
             <fs-form :label-width="80"
                      :item-list="itemList"
+                     ref="formPlan"
                      v-model="trainData"></fs-form>
             <div slot="footer">
                 <Button type="primary" style="margin-left: 8px" @click="_submitPlan">提交计划</Button>
@@ -106,22 +107,24 @@
                 this.$refs.planList.getListData();
             },
             _submitPlan() {
-                let sendData = JSON.parse(JSON.stringify(this.trainData));
-                sendData.id = this.planId;
-                this.$http.post('/train/ever_plan_para_add', sendData).then((res) => {
-                    if (res.success) {
-                        this.modelFlag = false;
-                        this.$Message.success('计划提交成功!');
-                        this._updatePlanList();
-                    }
+                this.$refs.formPlan.validForm(() => {
+                    let sendData = JSON.parse(JSON.stringify(this.trainData));
+                    sendData.id = this.planId;
+                    this.$http.post('/train/ever_plan_para_add', sendData).then((res) => {
+                        if (res.success) {
+                            this.modelFlag = false;
+                            this.$Message.success('计划提交成功!');
+                            this._updatePlanList();
+                        }
+                    });
                 });
             },
             _checkTest(data) {
+                this.$refs.formPlan.resetForm();
                 let sendData = {};
                 sendData.id = data.id;
                 this.planId = data.id;
                 this.$http.post('/train/plan_para_select', sendData).then((res) => {
-                    console.log(res);
                     if (res.success) {
                         let formItems = res.data.field;
                         let formList = [];
@@ -141,6 +144,7 @@
                             obj.label = item.fieldLabel;
                             obj.key = item.name;
                             obj.value = item.value || '';
+                            obj.required = true;
                             formList.push(obj);
                         });
                         this.itemList = formList;

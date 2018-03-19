@@ -1,5 +1,5 @@
 <template>
-    <FormItem :label="item.label" :prop="item.key">
+    <FormItem :label="item.label" :prop="item.key" :rules="itemRule">
         <Input v-if="item.type==='input'"
                v-bind="$attrs"
                v-on="$listeners"></Input>
@@ -23,6 +23,11 @@
             item: {
                 type: Object,
                 required: true
+            }
+        },
+        computed: {
+            itemRule() {
+                return this.item.required ? {required: true, message: `${this.item.label}不能为空!`, trigger: 'blur'} : {};
             }
         },
         data () {

@@ -4,6 +4,10 @@
             <Form inline :label-width="60">
                 <FormItem :label-width="0.1">
                     <ButtonGroup>
+                        <Button type="primary" @click="checkOrgFlag = true">
+                            <Icon type="eye"></Icon>
+                            查看部门及其成员
+                        </Button>
                         <Button type="primary" @click="mubanFlag = true">
                             <Icon type="gear-b"></Icon>
                             岗位架构
@@ -84,7 +88,7 @@
                   :label-width="100">
                 <Row :gutter="8">
                     <Col :span="12">
-                    <FormItem label="姓名">
+                    <FormItem label="姓名" required>
                         <fs-search-user v-model="classForm.user_id"
                                         :optionlist.sync="nameForm.nameOpt"
                                         :clearable="true"
@@ -92,7 +96,7 @@
                     </FormItem>
                     </Col>
                     <Col :span="12">
-                    <FormItem label="岗位">
+                    <FormItem label="岗位" required>
                         <Select v-model="classForm.post_id">
                             <Option :value="item.id"
                                     v-for="item,index in allPostData"
@@ -101,17 +105,17 @@
                     </FormItem>
                     </Col>
                     <Col :span="12">
-                    <FormItem label="编制等级">
+                    <FormItem label="编制等级" prop="level">
                         <Input v-model="classForm.level"></Input>
                     </FormItem>
                     </Col>
                     <Col :span="12">
-                    <FormItem label="授课类型">
+                    <FormItem label="授课类型" prop="class_type">
                         <Input v-model="classForm.class_type"></Input>
                     </FormItem>
                     </Col>
                     <Col :span="24">
-                    <FormItem label="授课课题">
+                    <FormItem label="授课课题" prop="class_name">
                         <Input v-model="classForm.class_name"></Input>
                     </FormItem>
                     </Col>
@@ -130,11 +134,43 @@
                         <Input v-model="classForm.comment" type="textarea"  :autosize="{minRows: 4,maxRows: 5}"></Input>
                     </FormItem>
                     </Col>
+                    <Col :span="24">
+                    <FormItem label="创建计划时是否默认选中" :label-width="160">
+                        <i-switch v-model="classForm.isDefault" size="large" :true-value="1" :false-value="0">
+                            <span slot="open">选中</span>
+                            <span slot="close">不选</span>
+                        </i-switch>
+                    </FormItem>
+                    </Col>
                 </Row>
             </Form>
             <div slot="footer">
                 <Button type="primary" style="margin-left: 8px" @click="_addClassHandler">{{classFormType === 'add'? '新建' : '修改'}}讲师</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
+            </div>
+        </Modal>
+        <Modal v-model="checkOrgFlag" width="1200" :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>部门及其成员查看</span>
+            </p>
+            <div class="">
+                <Row :gutter="16">
+                    <Col :span="8" style="max-height: 540px;overflow: auto;">
+                        <fs-dep-tree url="/organize/organizeTree?fatherId=-1"
+                                     @node-change="_nodeChangeHandler($event)"
+                                     :defaultProps="defaultProps"></fs-dep-tree>
+                    </Col>
+                    <Col :span="16">
+                        <fs-table-page :columns="userColum"
+                                       :height="500"
+                                       :params="filterOpt"
+                                       url="/user/dataList"></fs-table-page>
+                    </Col>
+                </Row>
+            </div>
+
+            <div slot="footer">
+                <Button type="ghost" style="margin-left: 8px" @click="checkOrgFlag = false">关闭</Button>
             </div>
         </Modal>
     </div>
@@ -144,6 +180,7 @@
 </style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import fsDepTree from '@/baseComponents/fs-dep-tree';
     import fsSearchUser from '@/baseComponents/fs-search-user';
     import moment from 'moment';
     export default {
@@ -153,6 +190,7 @@
                 modelFlag: false,
                 mubanFlag: false,
                 banciBtnLoading: false,
+                checkOrgFlag: false,
                 classFormType: 'add',
                 mubanAddType: 'add',
                 tableHeight: 300,
@@ -165,7 +203,17 @@
                     nameLabel: ''
                 },
                 classId: 0,
-                classRules: {},
+                classRules: {
+                    level: [
+                        {required: true, message: '编制等级不能为空！'}
+                    ],
+                    class_type: [
+                        {required: true, message: '授课类型不能为空！'}
+                    ],
+                    class_name: [
+                        {required: true, message: '授课课题不能为空！'}
+                    ]
+                },
                 classForm: {
                     user_id: '',
                     post_id: '',
@@ -174,7 +222,8 @@
                     class_name: '',
                     class_years: 0,
                     class_times: 0,
-                    comment: ''
+                    comment: '',
+                    isDefault: 0
                 },
                 banciRules: {
                     postName: [
@@ -190,6 +239,24 @@
                     label: 'name'
                 },
                 roleData: [],
+                userColum: [
+                    {
+                        title: '姓名',
+                        key: 'realname',
+                        align: 'center',
+                        width: 100
+                    },
+                    {
+                        title: '部门',
+                        key: 'organizename',
+                        align: 'center'
+                    },
+                    {
+                        title: '岗位',
+                        key: 'postname',
+                        align: 'center'
+                    }
+                ],
                 mubanColumns: [
                     {
                         type: 'selection',
@@ -293,7 +360,17 @@
                             ]);
                         }
                     }
-                ]
+                ],
+                filterOpt: {
+                    nodeId: {
+                        type: 'date',
+                        value: ''
+                    },
+                    states: {
+                        type: 'select',
+                        value: 1
+                    }
+                }
             };
         },
         created() {
@@ -304,6 +381,9 @@
             formReset (name) {
                 this.$refs[name].resetFields();
             },
+            _nodeChangeHandler(node) {
+                this.filterOpt.nodeId.value = node.id;
+            },
             _initClassForm() {
                 this.classForm = {
                     user_id: '',
@@ -313,10 +393,12 @@
                     class_name: '',
                     class_years: 0,
                     class_times: 0,
-                    comment: ''
+                    comment: '',
+                    isDefault: 0
                 };
                 this.nameForm.nameLabel = '';
                 this.nameForm.nameOpt = [];
+                this.formReset('classForm');
             },
             _updateMubanHandler() {
                 this.mubanAddType = 'update';
@@ -353,6 +435,7 @@
                             if (res.success) {
                                 this.formReset('banciForm');
                                 this.$refs.postAdd.getListData();
+                                this._getAllpost();
                                 this.$Message.success('操作成功！');
                             }
                         }).finally(() => {
@@ -362,13 +445,25 @@
                 });
             },
             _addClassHandler() {
-                let data = JSON.parse(JSON.stringify(this.classForm));
-                if (this.classFormType === 'update') data.id = this.classId;
-                this.$http.post('/train/teacher_add', data).then((res) => {
-                    if (res.success) {
-                        this.modelFlag = false;
-                        this._updateClassTable();
-                        this.$Message.success('操作成功!');
+                if (!this.classForm.user_id) {
+                    this.$Message.error('姓名不能为空!');
+                    return;
+                }
+                if (!this.classForm.post_id) {
+                    this.$Message.error('岗位不能为空!');
+                    return;
+                }
+                this.$refs.classForm.validate((valid) => {
+                    if (valid) {
+                        let data = JSON.parse(JSON.stringify(this.classForm));
+                        if (this.classFormType === 'update') data.id = this.classId;
+                        this.$http.post('/train/teacher_add', data).then((res) => {
+                            if (res.success) {
+                                this.modelFlag = false;
+                                this._updateClassTable();
+                                this.$Message.success('操作成功!');
+                            }
+                        });
                     }
                 });
             },
@@ -394,9 +489,6 @@
                 this._initClassForm();
                 this.modelFlag = true;
             },
-            _nodeChangeHandler(data) {
-                this.filterOpt.organizeId.value = data.id;
-            },
             _checkTest(data) {
                 this.classFormType = 'update';
                 this._initClassForm();
@@ -410,6 +502,7 @@
                 classForm.class_years = data.class_years;
                 classForm.class_times = data.class_times;
                 classForm.comment = data.comment;
+                classForm.isDefault = data.isdefault;
                 this.nameForm.nameLabel = data.user_name;
                 this.nameForm.nameOpt = [
                     {
@@ -437,7 +530,8 @@
         },
         components: {
             fsTablePage,
-            fsSearchUser
+            fsSearchUser,
+            fsDepTree
         }
     };
 </script>

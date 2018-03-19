@@ -37,6 +37,16 @@
             this.setDefaultValue();
         },
         methods: {
+            validForm(foo) {
+                this.$refs.formInstance.validate((valid) => {
+                    if (valid) {
+                        foo();
+                    }
+                });
+            },
+            resetForm() {
+                this.$refs.formInstance.resetFields();
+            },
             handleInput(val, key) {
                 let obj = Object.assign(JSON.parse(JSON.stringify(this.value)), {[key]: val});
                 this.$emit('input', obj);
