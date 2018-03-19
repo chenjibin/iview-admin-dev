@@ -18,7 +18,7 @@
                     </Form>
                     <fs-table-page :columns="postColumns"
                                    :size="null"
-                                   :height="tableHeight"
+                                   :height="tableHeight2"
                                    :params="filterOpt1"
                                    ref="postTable"
                                    url="/post/datalist"></fs-table-page>
@@ -60,6 +60,40 @@
                 </Card>
             </Col>
         </Row>
+        <Modal v-model="editorSettingFlag"
+               width="400"
+               :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>设置应得学分</span>
+            </p>
+            <Form :label-width="90"
+                  :model="editorSettingData"
+                  ref="editorForm">
+                <FormItem label="岗位" prop="name">
+                    <Input type="text"
+                           readonly
+                           v-model="editorSettingData.name"></Input>
+                </FormItem>
+                <FormItem label="岗位部门" prop="name">
+                    <Input type="text"
+                           readonly
+                           v-model="editorSettingData.organizeName"></Input>
+                </FormItem>
+                <FormItem label="应得学分" prop="name">
+                    <InputNumber type="text"
+                                 :min="0"
+                                 v-model="editorSettingData.post_credit"></InputNumber>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary"
+                        :loading="btnLoading"
+                        @click="_confirmChange">
+                    应用设置
+                </Button>
+                <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style>
@@ -73,7 +107,16 @@
         data () {
             return {
                 tableHeight: 300,
+                tableHeight2: 300,
                 exportLoading: false,
+                editorSettingFlag: false,
+                btnLoading: false,
+                editorSettingData: {
+                    name: '',
+                    organizeName: '',
+                    post_credit: 0,
+                    id: ''
+                },
                 filterOpt1: {
                     name: {
                         type: 'input',
@@ -108,6 +151,37 @@
                         title: '应得学分',
                         align: 'center',
                         key: 'post_credit'
+                    },
+                    {
+                        title: '操作',
+                        width: 60,
+                        fixed: 'right',
+                        align: 'center',
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                h('Tooltip', {
+                                    props: {
+                                        content: '设置学分',
+                                        placement: 'top',
+                                        transfer: true
+                                    }
+                                }, [
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            icon: 'edit',
+                                            shape: 'circle'
+                                        },
+                                        on: {
+                                            click: function() {
+                                                vm._changeCredit(params.row);
+                                            }
+                                        }
+                                    })
+                                ])
+                            ]);
+                        }
                     }
                 ],
                 creditColumns: [
@@ -140,6 +214,14 @@
             this._setTableHeight();
         },
         methods: {
+            initFormData() {
+                this.editorSettingData = {
+                    name: '',
+                    organizeName: '',
+                    post_credit: 0,
+                    id: ''
+                };
+            },
             downloadFile(url, name) {
                 let downloadDom = document.createElement('a');
                 downloadDom.href = url;
@@ -163,9 +245,42 @@
                     this.exportLoading = false;
                 });
             },
+            _changeCredit(data) {
+                this.initFormData();
+                this.editorSettingFlag = true;
+                let formData = this.editorSettingData;
+                formData.id = data.id;
+                formData.name = data.name;
+                formData.organizeName = data.organizename;
+                formData.post_credit = data.post_credit;
+            },
+            _confirmChange() {
+                this.btnLoading = true;
+                let formData = this.editorSettingData;
+                let data = {};
+                data.id = formData.id;
+                data.name = formData.name;
+                data.organizeName = formData.organizeName;
+                data.post_credit = formData.post_credit;
+                let storeArr = [];
+                storeArr.push(data);
+                let sendData = {};
+                sendData.jsonArray = JSON.stringify(storeArr);
+                this.$http.post('/train/credit_post_update', sendData).then((res) => {
+                    if (res.success) {
+                        this.editorSettingFlag = false;
+                        this.$refs.postTable.getListData();
+                        this.$refs.creditTable.getListData();
+                        this.$Message.success('学分修改成功!');
+                    }
+                }).finally(() => {
+                    this.btnLoading = false;
+                });
+            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 300;
+                this.tableHeight2 = dm - 316;
             }
         },
         components: {
