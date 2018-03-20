@@ -398,7 +398,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '240',
+                        width: '260',
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = params.row.exception === null || +params.row.exception === 0;

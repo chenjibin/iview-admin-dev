@@ -12,7 +12,7 @@
                         <FormItem label="岗位">
                             <Input type="text"
                                    v-model="filterOpt.post_name.value"
-                                   placeholder="姓名"></Input>
+                                   placeholder="筛选岗位"></Input>
                         </FormItem>
                         <FormItem label="角色">
                             <Select v-model="filterOpt.role_id.value"
@@ -69,12 +69,15 @@
                             type="error"
                             :disabled="!chooseDataArray.length">删除</Button>
                 </Poptip>
-                <Button type="primary"
-                        :disabled="!(chooseDataArray.length === 1)"
-                        style="margin-left: 8px"
-                        @click="">修改</Button>
-                <Poptip placement="left" width="400">
+
+                <Poptip placement="left"
+                        width="400">
                     <Button type="primary"
+                            :disabled="!(chooseDataArray.length === 1)"
+                            style="margin-left: 8px"
+                            @click="_updateMubanHandler">修改模板</Button>
+                    <Button type="primary"
+                            @click="_addMubanHandler"
                             style="margin-left: 8px">添加模板</Button>
                     <div class="banci-add-form" slot="content">
                         <Form :rules="mubanRules"
@@ -99,7 +102,7 @@
                                 <Input v-model="mubanForm.remark"></Input>
                             </FormItem>
                             <FormItem>
-                                <Button type="primary" @click="_addMuban" :loading="mubanBtnLoading">添加模板</Button>
+                                <Button type="primary" @click="_addMuban" :loading="mubanBtnLoading">{{mubanAddType === 'add' ? '添加' : '修改'}}模板</Button>
                             </FormItem>
                         </Form>
                     </div>
@@ -107,11 +110,16 @@
                 <Button type="ghost" style="margin-left: 8px" @click="mubanFlag = false">关闭</Button>
             </div>
         </Modal>
-        <Modal v-model="modelFlag" width="900" :mask-closable="false">
+        <Modal v-model="modelFlag" width="600" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>试卷详情</span>
+                <span>培训计划</span>
             </p>
+            <fs-form :label-width="120"
+                     :item-list="itemList"
+                     ref="formPlan"
+                     v-model="trainData"></fs-form>
             <div slot="footer">
+                <Button type="primary" style="margin-left: 8px" @click="_submitPlan">提交计划</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
             </div>
         </Modal>
@@ -128,10 +136,11 @@
                                 @on-change="planForm.planMonth = $event"></DatePicker>
                 </FormItem>
                 <FormItem label="负责人:">
-                    <fs-search-user v-model="planForm.people"
-                                    :multiple="true"
-                                    :optionlist.sync="planForm.peopleList"
-                                    :clearable="true"></fs-search-user>
+                    <Select v-model="planForm.people" multiple>
+                        <Option v-for="item, index in allTeacherOpt"
+                                :value="item.user_id"
+                                :key="'charge-' + index">{{ item.user_name + '(' + item.organize_name + '·'  + item.postname + '·' + item.post_name + ')'}}</Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="项目:">
                     <CheckboxGroup v-model="planForm.project">
@@ -155,6 +164,7 @@
     import fsTablePage from '@/baseComponents/fs-table-page';
     import fsDepTree from '@/baseComponents/fs-dep-tree';
     import fsSearchUser from '@/baseComponents/fs-search-user';
+    import fsForm from '@/baseComponents/fs-form/form';
     import moment from 'moment';
     const NOW_MONTH = moment().format('YYYY-MM');
     export default {
@@ -166,6 +176,8 @@
                 mubanBtnLoading: false,
                 createPlanFlag: false,
                 tableHeight: 300,
+                planId: 0,
+                mubanAddType: 'add',
                 chooseDataArray: [],
                 planChooseDataArray: [],
                 defaultProps: {
@@ -173,6 +185,7 @@
                     label: 'name'
                 },
                 roleData: [],
+                mubanId: 0,
                 mubanForm: {
                     name: '',
                     keyText: '',
@@ -216,7 +229,6 @@
                 ],
                 planForm: {
                     people: [],
-                    peopleList: [],
                     project: [],
                     planMonth: NOW_MONTH
                 },
@@ -324,10 +336,17 @@
                         type: 'tree'
                     }
                 },
-                allProjectOpt: []
+                itemList: [],
+                trainData: {},
+                allProjectOpt: [],
+                allTeacherOpt: [],
+                defaultPeople: []
             };
         },
         watch: {
+            'planForm.people'(val) {
+                console.log(val);
+            },
             allProjectOpt(val) {
                 this.planForm.project = val.map(x => x.id);
             }
@@ -336,6 +355,7 @@
             this._setTableHeight();
             this._getRoleData();
             this._getAllProjectOpt();
+            this._getAllTeacherOpt();
         },
         methods: {
             formReset (name) {
@@ -347,10 +367,36 @@
                 downloadDom.download = name;
                 downloadDom.click();
             },
+            _updateMubanHandler() {
+                this.mubanAddType = 'update';
+                this.formReset('mubanForm');
+                let fillForm = this.chooseDataArray[0];
+                this.mubanForm.name = fillForm.name;
+                this.mubanForm.keyText = fillForm.key_text;
+                this.mubanForm.keyType = fillForm.key_type;
+                this.mubanForm.remark = fillForm.remark;
+                this.mubanId = fillForm.id;
+            },
+            _addMubanHandler() {
+                this.mubanAddType = 'add';
+                this.formReset('mubanForm');
+            },
+            _submitPlan() {
+                this.$refs.formPlan.validForm(() => {
+                    let sendData = JSON.parse(JSON.stringify(this.trainData));
+                    sendData.id = this.planId;
+                    this.$http.post('/train/ever_plan_para_add', sendData).then((res) => {
+                        if (res.success) {
+                            this.modelFlag = false;
+                            this.$Message.success('计划提交成功!');
+                            this._updatePlanList();
+                        }
+                    });
+                });
+            },
             _openTrainPlan() {
                 this.createPlanFlag = true;
-                this.planForm.people = [];
-                this.planForm.peopleList = [];
+                this.planForm.people = this.defaultPeople;
                 this.planForm.planMonth = NOW_MONTH;
             },
             _addPlan() {
@@ -404,6 +450,7 @@
                     if (valid) {
                         this.mubanBtnLoading = true;
                         let data = {};
+                        if (!(this.mubanAddType === 'add')) data.id = this.mubanId;
                         data.name = this.mubanForm.name;
                         data.key_text = this.mubanForm.keyText;
                         data.key_type = this.mubanForm.keyType;
@@ -413,7 +460,7 @@
                                 this.formReset('mubanForm');
                                 this._getAllProjectOpt();
                                 this.$refs.mubanAdd.getListData();
-                                this.$Message.success('项目添加成功！');
+                                this.$Message.success('操作成功！');
                             }
                         }).finally(() => {
                             this.mubanBtnLoading = false;
@@ -425,6 +472,37 @@
                 this.filterOpt.organizeId.value = data.id;
             },
             _checkTest(data) {
+                this.$refs.formPlan.resetForm();
+                let sendData = {};
+                sendData.id = data.id;
+                this.planId = data.id;
+                this.$http.post('/train/plan_para_select', sendData).then((res) => {
+                    if (res.success) {
+                        let formItems = res.data.field;
+                        let formList = [];
+                        let trainData = {};
+                        formItems.forEach(item => {
+                            let obj = {};
+                            obj.type = 'input';
+                            trainData[item.name] = item.value;
+                            switch (item.xtype) {
+                                case 'numberfield':
+                                    obj.type = 'number';
+                                    break;
+                                case 'textarea':
+                                    obj.type = 'textarea';
+                                    break;
+                            }
+                            obj.label = item.fieldLabel;
+                            obj.key = item.name;
+                            obj.value = item.value || '';
+                            obj.required = true;
+                            formList.push(obj);
+                        });
+                        this.itemList = formList;
+                        this.trainData = trainData;
+                    }
+                });
                 this.modelFlag = true;
             },
             _setTableHeight() {
@@ -447,12 +525,25 @@
             },
             _updatePlanList() {
                 this.$refs.planList.getListData();
+            },
+            _getAllTeacherOpt() {
+                let data = {};
+                data.page = 1;
+                data.pageSize = 10000;
+                this.$http.get('/train/teacher_datalist', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.allTeacherOpt = res.data;
+                        this.defaultPeople = this.allTeacherOpt.filter(x => x.isdefault === 1).map(x => x.user_id);
+                        console.log(this.planForm.people);
+                    }
+                });
             }
         },
         components: {
             fsTablePage,
             fsDepTree,
-            fsSearchUser
+            fsSearchUser,
+            fsForm
         }
     };
 </script>

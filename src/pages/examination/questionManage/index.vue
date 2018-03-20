@@ -11,7 +11,7 @@
                     <Select v-model="filterOpt.subject.value"
                             clearable
                             placeholder="筛选分类"
-                            style="width: 100px">
+                            style="width: 160px">
                         <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
                     </Select>
                 </FormItem>
@@ -19,7 +19,7 @@
                     <Select v-model="filterOpt.type.value"
                             clearable
                             placeholder="筛选类型"
-                            style="width: 100px">
+                            style="width: 160px">
                         <Option :value="item.value" v-for="item, index in typeOptMap" :key="index">{{item.label}}</Option>
                     </Select>
                 </FormItem>
@@ -57,21 +57,17 @@
                                        ref="imgUploadFo"
                                        :upload.sync="editorSettingData.questionPic"></fs-img-upload>
                     </FormItem>
-                    <Row>
+                    <Row :gutter="16">
                         <Col :span="8">
                             <FormItem label="试题分类">
-                                <Select v-model="editorSettingData.subject"
-                                        placeholder=""
-                                        style="width: 100px">
+                                <Select v-model="editorSettingData.subject">
                                     <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
                                 </Select>
                             </FormItem>
                         </Col>
                         <Col :span="8">
                             <FormItem label="试题类型">
-                                <Select v-model="editorSettingData.type"
-                                        placeholder=""
-                                        style="width: 100px">
+                                <Select v-model="editorSettingData.type">
                                     <Option :value="item.value" v-for="item, index in typeOptMap" :key="index">{{item.label}}</Option>
                                 </Select>
                             </FormItem>
@@ -524,6 +520,7 @@
                 this.editorSettingData.questionList.splice(data._index, 1);
             },
             _editorSetting(data) {
+                console.log(data);
                 this._initEditorSettingData();
                 this.editorSettingFlag = true;
             },

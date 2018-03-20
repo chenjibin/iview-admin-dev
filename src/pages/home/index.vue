@@ -1,21 +1,21 @@
 <template>
     <div class="home-main">
-        <Row :gutter="10">
+        <Row :gutter="6">
             <Col :md="24" :lg="10">
-                <Row class-name="home-page-row1" :gutter="10">
-                    <Col :md="24" :lg="24" :style="{marginBottom: '10px'}">
+                <Row class-name="home-page-row1" :gutter="6">
+                    <Col :md="24" :lg="24" :style="{marginBottom: '6px'}">
                         <user-info></user-info>
                     </Col>
                     <Col :md="24" :lg="24">
                         <Row :gutter="5">
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="edit"
                                         color="#2d8cf0"
                                         btn-text="日志"
                                         @card-click="$router.push('myLog')"></info-btn>
                             </Col>
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="clipboard"
                                         color="#19be6b"
@@ -29,28 +29,28 @@
                                         <!--btn-text="抽奖"-->
                                         <!--@card-click=""></info-btn>-->
                             <!--</Col>-->
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="compose"
                                         color="#2d8cf0"
                                         btn-text="请假"
                                         @card-click="$router.push('myLeave')"></info-btn>
                             </Col>
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="navicon"
                                         color="#19be6b"
                                         btn-text="排班"
                                         @card-click="$router.push('myArrange')"></info-btn>
                             </Col>
-                            <!--<Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">-->
-                            <!--<info-btn-->
-                                    <!--iconType="ribbon-a"-->
-                                    <!--color="#ff9900"-->
-                                    <!--btn-text="培训"-->
-                                    <!--@card-click="$router.push('myTrain')"></info-btn>-->
-                            <!--</Col>-->
-                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '10px'}">
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
+                                <info-btn
+                                        iconType="ribbon-a"
+                                        color="#ff9900"
+                                        btn-text="培训"
+                                        @card-click="$router.push('myTrain')"></info-btn>
+                            </Col>
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="cash"
                                         color="#f25e43"
