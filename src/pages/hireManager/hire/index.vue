@@ -390,7 +390,8 @@
                         </FormItem>
                     </Form>
                 </TabPane>
-                <Button type="ghost" @click="downloadFile" size="small" slot="extra">导出</Button>
+                <Button type="ghost" @click="downloadFile" size="small" slot="extra">导出为word</Button>
+                <Button type="warning" @click="deleteMe" size="small" slot="extra">删除简历</Button>
             </Tabs>
             <div slot="footer">
                 <Button type="ghost" @click="settingModalFlag = false">
@@ -1138,6 +1139,28 @@
                         this.calcStatus = 'finish';
                     }
                 }
+            },
+            deleteMe() {
+                var id = this.talentBean.id;
+                var that = this;
+                this.$Modal.confirm({
+                    title: '删除提醒',
+                    content: '是否确认删除？',
+                    okText: '删除',
+                    cancelText: '取消',
+                    loading: true,
+                    onOk () {
+                        this.$http.get('/talentLibrary/del?id='+id).then((res) => {
+                            that.$Modal.remove();
+                            if (res.success) {
+                                that.settingModalFlag = false;
+                                that.$Message.success('删除成功');
+                                that._filterResultHandler();
+                            }
+                        });
+                    }
+                });
+
             },
             getStatusText (num) {
                 var text = ['未预约', '已预约', '已到达', '未到达', '面试合格', '待定', '面试不合格', '合格到达', '合格未到达', '试岗通过', '试岗未通过'];
