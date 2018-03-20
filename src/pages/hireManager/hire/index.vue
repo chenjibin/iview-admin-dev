@@ -11,7 +11,7 @@
                 <FormItem label="岗位">
                     <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
-                           v-model="filterOpt.postids"
+                           v-model="filterOpt.postname"
                            placeholder="筛选岗位"></Input>
                 </FormItem>
                 <FormItem label="学历">
@@ -19,10 +19,13 @@
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.education"
                             placeholder="筛选学历" clearable>
-                        <Option value="本科">本科</Option>
-                        <Option value="大专">大专</Option>
-                        <Option value="高中">高中</Option>
-                        <Option value="初中">初中</Option>
+                        <Option :value="1">博士研究生</Option>
+                        <Option :value="2">硕士研究生</Option>
+                        <Option :value="3">本科</Option>
+                        <Option :value="4">专科</Option>
+                        <Option :value="5">中专</Option>
+                        <Option :value="6">高中</Option>
+                        <Option :value="7">初中</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="性别">
@@ -75,13 +78,14 @@
                     <Select type="text" style="width: 173px"
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.marriage" clearable>
-                        <Option value="已婚">已婚</Option>
-                        <Option value="未婚">未婚</Option>
+                        <Option :value="1">已婚</Option>
+                        <Option :value="2">未婚</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="预约时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
+                    <DatePicker :clearable = "true" format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('startdate',$event)"
+                                @on-clear="clearDate('startdate')"
                                 :value="filterOpt.startdate"></DatePicker>
                 </FormItem>
                 <FormItem label="面试时间">
@@ -94,7 +98,7 @@
                                 @on-change="_monthDateChange('testtime',$event)"
                                 :value="filterOpt.testtime"></DatePicker>
                 </FormItem>
-                <FormItem label="移入时间" style="margin-right: 0;">
+                <FormItem label="备用时间" style="margin-right: 0;">
                     <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px;"
                                 @on-change="_monthDateChange('sparetime',$event)"
                                 :value="filterOpt.sparetime"></DatePicker>
@@ -615,7 +619,7 @@
                     sex: '',
                     marriage: '', //  婚否
                     companyname: '', // 工作单位
-                    postids: '', // 工作岗位
+                    postname: '', // 工作岗位
                     graduatedschool: '', // 毕业院校
                     profession: '', // 专业
                     account: '', // 户籍
@@ -1252,6 +1256,13 @@
                 this._getPostData();
             },
             _monthDateChange (key, value) {
+                for (let i = 0; i < value.length; i++) {
+                    if (!value[i]) {
+                        this.filterOpt[key] = [];
+                        this._filterResultHandler();
+                        return false;
+                    }
+                }
                 this.filterOpt[key] = value;
                 this._filterResultHandler();
             },
