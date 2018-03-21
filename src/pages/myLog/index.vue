@@ -337,7 +337,7 @@
             _setContent(content) {
                 this.logDetail.editorContent = content;
             },
-            _setSelectOpt(type, date) {
+            _setSelectOpt(type, date, logType) {
                 if (type === 0 && date !== NOW_DATE) {
                     this.logTypeList = [
                         {
@@ -359,7 +359,8 @@
                             label: '休息'
                         }
                     ];
-                    this.logDetail.logType = '0';
+                    this.logDetail.logType = logType ? logType + '' : '0';
+                    console.log(logType);
                 }
             },
             _setLogList(arr) {
@@ -372,7 +373,6 @@
                     this.$Message.error('超过48小时不可再补写日志！');
                     return;
                 }
-                this._setSelectOpt(obj.type, obj.date);
                 this.logDetail.date = obj.date;
                 this.logDetail.type = obj.type;
                 this.logDetail.commentResult = obj.commentResult;
@@ -380,6 +380,7 @@
                 this.logDetail.editorContent = obj.content || '';
                 this.logDetail.logType = obj.logType ? obj.logType + '' : '0';
                 this.logDetail.logType1 = obj.logType || '';
+                this._setSelectOpt(obj.type, obj.date, obj.logType);
                 this.modelFlag = true;
             },
             _submitLog() {
