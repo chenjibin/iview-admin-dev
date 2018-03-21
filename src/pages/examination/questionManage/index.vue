@@ -42,7 +42,7 @@
                    width="800"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>添加试题</span>
+                    <span>{{postFormType === 'add' ? '添加' : '修改'}}试题</span>
                 </p>
                 <Form :label-width="60">
                     <FormItem label="试题名称">
@@ -114,7 +114,7 @@
                                      style="margin-bottom: 8px;"
                                      v-for="item, index in editorSettingData.fillType"
                                      :key="index">
-                                    <Input type="text" v-model="item.content"></Input>
+                                    <Input type="text" v-model.trim="item.content"></Input>
                                 </Col>
                             </Row>
                         </div>
@@ -135,7 +135,7 @@
                     <Button type="primary"
                             :loading="btnLoading"
                             @click="_addQuestionConfirm">
-                        添加试题
+                        {{postFormType === 'add' ? '添加' : '修改'}}试题
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
                 </div>
@@ -152,7 +152,7 @@
             return {
                 editorSettingFlag: false,
                 btnLoading: false,
-                postFormType: 'update',
+                postFormType: 'add',
                 filterOpt: {
                     name: {
                         value: '',
@@ -298,6 +298,7 @@
                         }
                     }
                 ],
+                questionId: 0,
                 editorSettingData: {
                     name: '',
                     questionPic: [],
@@ -428,11 +429,26 @@
             }
         },
         methods: {
+            _retuenSendPicUrl(url) {
+                let reg = /^\/upload\/exam/;
+                console.log(reg.test(url));
+                if (reg.test(url)) {
+                    return url;
+                } else {
+                    return '/upload/exam/' + url;
+                }
+            },
             _addQuestionConfirm() {
                 let editorSettingData = this.editorSettingData;
                 let data = {};
+                if (this.postFormType === 'update') {
+                    data.id = this.questionId;
+                }
                 data.name = editorSettingData.name;
-                data.questionPic = editorSettingData.questionPic[0] ? '/upload/exam/' + editorSettingData.questionPic[0].name : '';
+                data.questionPic = '';
+                if (editorSettingData.questionPic[0]) {
+                    data.questionPic = this._retuenSendPicUrl(editorSettingData.questionPic[0].name);
+                }
                 data.subject = editorSettingData.subject;
                 data.type = editorSettingData.type;
                 data.questionMark = editorSettingData.mark;
@@ -442,7 +458,10 @@
                         let obj = {};
                         obj.order = String.fromCharCode(index + 65);
                         obj.content = item.answerContent;
-                        obj.pic = item.pic[0] ? '/upload/exam/' + item.pic[0].name : '';
+                        obj.pic = '';
+                        if (item.pic[0]) {
+                            obj.pic = this._retuenSendPicUrl(item.pic[0].name);
+                        }
                         questionList.push(obj);
                     });
                     data.questionList = JSON.stringify(questionList);
@@ -466,13 +485,14 @@
                 data.analysis = editorSettingData.desc;
                 this.$http.post('/examquestion/addOptions', data).then((res) => {
                     if (res.success) {
-                        this.$Message.success('试题添加成功!');
+                        this.$Message.success('操作成功!');
                         this.editorSettingFlag = false;
                         this.$refs.tablePage.getListData();
                     }
                 });
             },
             _addQuestionOpen() {
+                this.postFormType = 'add';
                 this._initEditorSettingData();
                 this.editorSettingFlag = true;
             },
@@ -521,7 +541,59 @@
             },
             _editorSetting(data) {
                 console.log(data);
+                this.questionId = data.id;
+                this.postFormType = 'update';
                 this._initEditorSettingData();
+                let editorSettingData = this.editorSettingData;
+                editorSettingData.name = data.name;
+                editorSettingData.subject = data.subject;
+                editorSettingData.type = data.type + '';
+                editorSettingData.mark = data.questionmark;
+                editorSettingData.desc = data.analysis;
+                if (data.questionpic) {
+                    editorSettingData.questionPic = [{url: '/oa' + data.questionpic, name: data.questionpic, status: 'finished'}];
+                }
+                if (['1', '2'].indexOf(editorSettingData.type) > -1) {
+                    if (data.options.length) {
+                        let questionList = [];
+                        data.options.forEach(item => {
+                            let obj = {};
+                            obj.answerContent = item.content;
+                            obj.editorNow = false;
+                            obj.pic = [];
+                            if (item.optionpic) {
+                                obj.pic = [{url: '/oa' + item.optionpic, name: item.optionpic, status: 'finished'}];
+                            }
+                            questionList.push(obj);
+                        });
+                        editorSettingData.questionList = questionList;
+                    }
+                }
+                switch (editorSettingData.type) {
+                    case '1':
+                        editorSettingData.singleType = data.answer;
+                        break;
+                    case '2':
+                        editorSettingData.multiType = data.answer.split(',');
+                        break;
+                    case '3':
+                        editorSettingData.trueOrFalseType = data.answer;
+                        break;
+                    case '4':
+                        let fillArr = data.answer.split(',');
+                        editorSettingData.fillNumber = fillArr.length;
+                        let cc = setInterval(function() {
+                            if (editorSettingData.fillNumber === editorSettingData.fillType.length) {
+                                editorSettingData.fillType.forEach((item, index) => {
+                                    item.content = fillArr[index];
+                                });
+                                clearInterval(cc);
+                            }
+                        }, 10);
+                        break;
+                    case '5':
+                        editorSettingData.questionType = data.answer;
+                }
                 this.editorSettingFlag = true;
             },
             _getSubjectList() {

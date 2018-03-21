@@ -360,7 +360,6 @@
                         }
                     ];
                     this.logDetail.logType = logType ? logType + '' : '0';
-                    console.log(logType);
                 }
             },
             _setLogList(arr) {
