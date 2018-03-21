@@ -11,7 +11,7 @@
                 <FormItem label="岗位">
                     <Input type="text" style="width: 173px"
                            @on-change="_inputDebounce"
-                           v-model="filterOpt.postids"
+                           v-model="filterOpt.postname"
                            placeholder="筛选岗位"></Input>
                 </FormItem>
                 <FormItem label="学历">
@@ -19,10 +19,13 @@
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.education"
                             placeholder="筛选学历" clearable>
-                        <Option value="本科">本科</Option>
-                        <Option value="大专">大专</Option>
-                        <Option value="高中">高中</Option>
-                        <Option value="初中">初中</Option>
+                        <Option :value="1">博士研究生</Option>
+                        <Option :value="2">硕士研究生</Option>
+                        <Option :value="3">本科</Option>
+                        <Option :value="4">专科</Option>
+                        <Option :value="5">中专</Option>
+                        <Option :value="6">高中</Option>
+                        <Option :value="7">初中</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="性别">
@@ -75,13 +78,14 @@
                     <Select type="text" style="width: 173px"
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.marriage" clearable>
-                        <Option value="已婚">已婚</Option>
-                        <Option value="未婚">未婚</Option>
+                        <Option :value="1">已婚</Option>
+                        <Option :value="2">未婚</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="预约时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
+                    <DatePicker :clearable = "true" format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('startdate',$event)"
+                                @on-clear="clearDate('startdate')"
                                 :value="filterOpt.startdate"></DatePicker>
                 </FormItem>
                 <FormItem label="面试时间">
@@ -94,7 +98,7 @@
                                 @on-change="_monthDateChange('testtime',$event)"
                                 :value="filterOpt.testtime"></DatePicker>
                 </FormItem>
-                <FormItem label="移入时间" style="margin-right: 0;">
+                <FormItem label="备用时间" style="margin-right: 0;">
                     <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px;"
                                 @on-change="_monthDateChange('sparetime',$event)"
                                 :value="filterOpt.sparetime"></DatePicker>
@@ -152,7 +156,7 @@
             </p>
             <Tabs type="card">
                 <TabPane label="基本信息" style="overflow: hidden;">
-                    <Form ref="talentBean" :label-width="130" style="overflow-y: auto;height: 600px;width: 981px;" inline>
+                    <Form ref="talentBean" :label-width="130" style="overflow-y: auto;height: 600px;" inline>
                         <Input type="text" style="display: none" v-model="talentBean.id"></Input>
                         <FormItem label="姓名" style="width:460px">
                             <Input type="text" v-model="talentBean.name"></Input>
@@ -257,7 +261,7 @@
                     </Form>
                 </TabPane>
                 <TabPane label="教育状况" style="overflow: hidden;width: 967px;">
-                    <Form :gutter="1" ref="educationForm" style="overflow-y: auto;height: 600px;width: 981px;" inline>
+                    <Form :gutter="1" ref="educationForm" style="overflow-y: auto;height: 600px;" inline>
                         <div v-for="(item,index) in educationForm">
                             <FormItem label="开始时间" style="width:17%">
                                 <DatePicker type="date" @on-change="_infoDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
@@ -304,7 +308,7 @@
                     </Form>
                 </TabPane>
                 <TabPane label="工作经历" style="padding-left: 1px;">
-                    <Form ref="workingForm" inline style="overflow-y: auto;height: 600px;width: 981px;">
+                    <Form ref="workingForm" inline style="overflow-y: auto;height: 600px;">
                         <div v-for="(item,index) in workingForm" style="margin: 10px auto;border-bottom: 1px solid #f3f3f3;">
                             <FormItem label="开始时间" style="width:18%">
                                 <DatePicker type="date" @on-change="_infoDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
@@ -615,7 +619,7 @@
                     sex: '',
                     marriage: '', //  婚否
                     companyname: '', // 工作单位
-                    postids: '', // 工作岗位
+                    postname: '', // 工作岗位
                     graduatedschool: '', // 毕业院校
                     profession: '', // 专业
                     account: '', // 户籍
@@ -1252,6 +1256,13 @@
                 this._getPostData();
             },
             _monthDateChange (key, value) {
+                for (let i = 0; i < value.length; i++) {
+                    if (!value[i]) {
+                        this.filterOpt[key] = [];
+                        this._filterResultHandler();
+                        return false;
+                    }
+                }
                 this.filterOpt[key] = value;
                 this._filterResultHandler();
             },
@@ -1301,10 +1312,6 @@
 
 <style lang="less">
     #hire {
-        .ivu-table-body {
-            /*overflow: auto;*/
-            /*margin-right: -10px;*/
-        }
         #btn-fix-container {
             position: absolute;
             right: 20px;
