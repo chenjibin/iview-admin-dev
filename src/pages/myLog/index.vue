@@ -80,6 +80,14 @@
                         <div class="each-log-look" v-for="item in logLookList">
                             <p class="time-title">{{item.date}}</p>
                             <div class="" v-html="item.content"></div>
+                            <div class="guider-block" v-if="item.guide">
+                                <h4>上级指导:</h4>
+                                <ul class="guider-list">
+                                    <li  class="guider-item" v-for="guideItem,index in item.guide" :key="'guide' + index">
+                                        <span class="guider-name">{{guideItem.guider}}:</span><span>{{guideItem.content}}</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </Card>
@@ -102,6 +110,16 @@
         .each-log-look {
             margin-top: 10px;
             padding: 8px 0;
+            .guider-block{
+                margin-top: 8px;
+                .guider-item {
+                    display: flex;
+                    margin-bottom: 4px;
+                    .guider-name {
+                        flex: 0 0 60px;
+                    }
+                }
+            }
             &:not(:last-child) {
                 border-bottom: 1px solid @fs-divider-color;
             }
