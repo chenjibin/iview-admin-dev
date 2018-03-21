@@ -80,7 +80,7 @@
                         <div class="each-log-look" v-for="item in logLookList">
                             <p class="time-title">{{item.date}}</p>
                             <div class="" v-html="item.content"></div>
-                            <div class="guider-block" v-if="item.guide">
+                            <div class="guider-block" v-if="item.guide && item.guide.length">
                                 <h4>上级指导:</h4>
                                 <ul class="guider-list">
                                     <li  class="guider-item" v-for="guideItem,index in item.guide" :key="'guide' + index">

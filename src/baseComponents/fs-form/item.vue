@@ -27,7 +27,16 @@
         },
         computed: {
             itemRule() {
-                return this.item.required ? {required: true, message: `${this.item.label}不能为空!`, trigger: 'blur'} : {};
+                let returnObj = {};
+                if (this.item.required) {
+                    returnObj.required = true;
+                    returnObj.message = `${this.item.label}不能为空!`;
+                    returnObj.trigger = 'blur';
+                }
+                if (this.item.type === 'number') {
+                    returnObj.type = 'number';
+                }
+                return returnObj;
             }
         },
         data () {
