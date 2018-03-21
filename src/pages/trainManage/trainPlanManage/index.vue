@@ -141,6 +141,15 @@
                                 :value="item.user_id"
                                 :key="'charge-' + index">{{ item.user_name + '(' + item.organize_name + '·'  + item.postname + '·' + item.post_name + ')'}}</Option>
                     </Select>
+                    <Poptip
+                            confirm
+                            title="您确清空当前选中的负责人么？"
+                            @on-ok="planForm.people = []">
+                        <Button type="ghost"
+                                icon="trash-a"
+                                style="margin-top: 8px;">一键清空负责人</Button>
+                    </Poptip>
+
                 </FormItem>
                 <FormItem label="项目:">
                     <CheckboxGroup v-model="planForm.project">
