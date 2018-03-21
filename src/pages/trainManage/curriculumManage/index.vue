@@ -117,12 +117,12 @@
                   :label-width="100">
                 <Row :gutter="8">
                     <Col :span="24">
-                        <FormItem label="培训名称">
+                        <FormItem label="培训名称" prop="title">
                             <Input v-model="classForm.title"></Input>
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="讲师">
+                        <FormItem label="讲师" prop="teacher_id">
                             <Select v-model="classForm.teacher_id">
                                 <Option :value="item.user_id"
                                         v-for="item,index in teacherOpt"
@@ -131,7 +131,7 @@
                         </FormItem>
                     </Col>
                     <Col :span="12">
-                        <FormItem label="培训类型">
+                        <FormItem label="培训类型" prop="type">
                             <Select v-model="classForm.type"
                                     clearable>
                                 <Option :value="item.id"
@@ -148,12 +148,12 @@
                         </FormItem>
                     </Col>
                     <Col :span="24">
-                        <FormItem label="上课时间">
+                        <FormItem label="上课时间" prop="period">
                             <Input v-model="classForm.period"></Input>
                         </FormItem>
                     </Col>
                     <Col :span="24">
-                        <FormItem label="培训地点">
+                        <FormItem label="培训地点" prop="position">
                             <Input v-model="classForm.position"></Input>
                         </FormItem>
                     </Col>
@@ -254,7 +254,23 @@
                     name: ''
                 },
                 classId: 0,
-                classRules: {},
+                classRules: {
+                    title: [
+                        { required: true, message: '培训名名称不能为空', trigger: 'blur' }
+                    ],
+                    teacher_id: [
+                        { required: true, message: '讲师不能为空', type: 'number', trigger: 'change' }
+                    ],
+                    type: [
+                        { required: true, message: '培训类型不能为空', type: 'number', trigger: 'change' }
+                    ],
+                    period: [
+                        { required: true, message: '上课时间不能为空', trigger: 'change' }
+                    ],
+                    position: [
+                        { required: true, message: '培训地点不能为空', trigger: 'change' }
+                    ]
+                },
                 classForm: {
                     type: '',
                     title: '',
@@ -457,6 +473,7 @@
                 this.formReset('banciForm');
             },
             _initClassForm() {
+                this.formReset('classForm');
                 this.classForm = {
                     type: '',
                     title: '',
@@ -488,13 +505,17 @@
                 });
             },
             _addClassHandler() {
-                let data = JSON.parse(JSON.stringify(this.classForm));
-                if (this.classFormType === 'update') data.id = this.classId;
-                this.$http.post('/train/class_add', data).then((res) => {
-                    if (res.success) {
-                        this.modelFlag = false;
-                        this._updateClassTable();
-                        this.$Message.success('操作成功!');
+                this.$refs.classForm.validate((valid) => {
+                    if (valid) {
+                        let data = JSON.parse(JSON.stringify(this.classForm));
+                        if (this.classFormType === 'update') data.id = this.classId;
+                        this.$http.post('/train/class_add', data).then((res) => {
+                            if (res.success) {
+                                this.modelFlag = false;
+                                this._updateClassTable();
+                                this.$Message.success('操作成功!');
+                            }
+                        });
                     }
                 });
             },
@@ -553,6 +574,7 @@
                 this.modelFlag = true;
             },
             _checkTest(data) {
+                console.log(data);
                 this.classFormType = 'update';
                 this._initClassForm();
                 this.classId = data.id;

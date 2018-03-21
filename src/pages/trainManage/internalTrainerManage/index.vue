@@ -322,12 +322,25 @@
                         title: '已授课时',
                         align: 'center',
                         key: 'class_times',
-                        width: 200
+                        width: 100
                     },
                     {
                         title: '授课评价',
                         key: 'comment',
                         width: 200
+                    },
+                    {
+                        title: '是否默认',
+                        align: 'center',
+                        width: 100,
+                        render: (h, params) => {
+                            return h('Tag', {
+                                props: {
+                                    type: 'border',
+                                    color: +params.row.isdefault === 0 ? 'red' : 'green'
+                                }
+                            }, +params.row.isdefault === 0 ? '不选中' : '选中');
+                        }
                     },
                     {
                         title: '操作',
