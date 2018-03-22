@@ -53,6 +53,9 @@
             };
         },
         methods: {
+            setEditorValue(val) {
+                tinymce.get(this.textId).setContent(val);
+            },
             init () {
                 this.$nextTick(() => {
                     let vm = this;

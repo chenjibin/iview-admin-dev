@@ -38,8 +38,8 @@
                         <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                             <span>{{logDetail.date}} 日志</span>
                         </p>
-                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.content" v-if="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
-                        <template v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
+                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.editorContent" v-show="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
+                        <div v-show="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
                             <span style="display: inline-block;margin-right: 10px;height: 30px;line-height: 30px;vertical-align: top;">日志类型</span>
                             <Select v-model="logDetail.logType"
                                     placeholder="日志类型"
@@ -51,8 +51,9 @@
                                     :plugins="editorOpt.plugins"
                                     :editor-content="logDetail.content"
                                     :toolbar1="editorOpt.toolbar1"
+                                    ref="textEditor"
                                     @content-change="_setContent"></text-editor>
-                        </template>
+                        </div>
                         <div slot="footer">
                             <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
 
@@ -301,6 +302,9 @@
             }
         },
         methods: {
+            _returnRealContent(str) {
+                return str.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '').replace(/\s+/g, '');
+            },
             _setHeight() {
                 let dm = document.body.clientHeight;
                 this.logMaxHeight = dm - 190 + 'px';
@@ -346,7 +350,8 @@
                         }
                     ];
                     this.logDetail.logType = '1';
-                    this.logDetail.content = '休息';
+                    // this.logDetail.content = '休息';
+                    this.$refs.textEditor.setEditorValue('休息');
                     this.logDetail.editorContent = '休息';
                 } else {
                     this.logTypeList = [
@@ -375,7 +380,8 @@
                 this.logDetail.date = obj.date;
                 this.logDetail.type = obj.type;
                 this.logDetail.commentResult = obj.commentResult;
-                this.logDetail.content = obj.content || '';
+                // this.logDetail.content = obj.content || '';
+                this.$refs.textEditor.setEditorValue(obj.content || '');
                 this.logDetail.editorContent = obj.content || '';
                 this.logDetail.logType = obj.logType ? obj.logType + '' : '0';
                 this.logDetail.logType1 = obj.logType || '';
@@ -383,6 +389,13 @@
                 this.modelFlag = true;
             },
             _submitLog() {
+                if (this.logDetail.logType === '0') {
+                    let realContent = this._returnRealContent(this.logDetail.editorContent);
+                    if (realContent.length < 10) {
+                        this.$Message.error('出勤日志不能少于10个字!');
+                        return;
+                    }
+                }
                 this.submitLoading = true;
                 let data = {
                     type: this.logDetail.logType,
