@@ -26,6 +26,7 @@
             </Form>
             <fs-table-page :columns="postColumns"
                            :size="null"
+                           ref="paperList"
                            :height="tableHeight"
                            :params="filterOpt"
                            url="/exampaper/getPaperList"></fs-table-page>
@@ -46,11 +47,11 @@
                     </FormItem>
                     <FormItem label="是否随机">
                         <RadioGroup v-model="editorSettingData.isRandom">
-                            <Radio label="1">正常</Radio>
-                            <Radio label="2">随机</Radio>
+                            <Radio :label="1">正常</Radio>
+                            <Radio :label="2">随机</Radio>
                         </RadioGroup>
                     </FormItem>
-                    <div class="" v-show="editorSettingData.isRandom === '2'">
+                    <div class="" v-show="editorSettingData.isRandom === 2">
                         <FormItem label="试题分类">
                             <Select v-model="editorSettingData.subject">
                                 <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
@@ -82,6 +83,26 @@
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
                 </div>
             </Modal>
+            <Modal v-model="paperSettingFlag"
+                   width="1200"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>为试卷挑选试题</span>
+                </p>
+                <div class="">
+                    <Row type="flex" :gutter="16">
+                        <Col>
+                            aaa
+                        </Col>
+                        <Col>
+                            bbb
+                        </Col>
+                    </Row>
+                </div>
+                <div slot="footer">
+                    <Button type="ghost" style="margin-left: 8px" @click="paperSettingFlag = false">取消</Button>
+                </div>
+            </Modal>
         </Card>
     </div>
 </template>
@@ -90,9 +111,35 @@
     export default {
         name: 'paperManage',
         data () {
+            const colBtn = (vm, h, params, {content, icon, foo}) => {
+                return h('Tooltip', {
+                    props: {
+                        content: content,
+                        placement: 'top',
+                        transfer: true
+                    }
+                }, [
+                    h('Button', {
+                        props: {
+                            type: 'primary',
+                            icon: icon,
+                            shape: 'circle'
+                        },
+                        style: {
+                            margin: '0 2px'
+                        },
+                        on: {
+                            click: function () {
+                                foo(params.row);
+                            }
+                        }
+                    })
+                ]);
+            };
             return {
                 editorSettingFlag: false,
                 btnLoading: false,
+                paperSettingFlag: false,
                 postFormType: 'update',
                 paperRules: {
                     name: [
@@ -125,8 +172,8 @@
                 },
                 editorSettingData: {
                     name: '',
-                    isRandom: '1',
-                    subject: '',
+                    isRandom: 2,
+                    subject: 1,
                     singleTypeNum: 0,
                     multiTypeNum: 0,
                     trueOrFalseTypeNum: 0,
@@ -168,8 +215,30 @@
                     {
                         title: '操作',
                         key: 'user_name',
+                        fixed: 'right',
                         align: 'center',
-                        width: 400
+                        width: 300,
+                        render: (h, params) => {
+                            let vm = this;
+                            let status = params.row.status;
+                            if (status === 1) {
+                                return h('div', [
+                                    colBtn(vm, h, params, {content: '添加试题', icon: 'plus-round', foo: vm._addQuestion}),
+                                    colBtn(vm, h, params, {content: '修改试卷', icon: 'compose', foo: vm._changePaperName}),
+                                    colBtn(vm, h, params, {content: '发布试卷', icon: 'play', foo: vm._publishPaper})
+                                ]);
+                            } else if (status === 2) {
+                                return h('div', [
+                                    colBtn(vm, h, params, {content: '查看试卷', icon: 'eye', foo: vm._checkPaper}),
+                                    colBtn(vm, h, params, {content: '关闭试卷', icon: 'close-round', foo: vm._closePaper}),
+                                    colBtn(vm, h, params, {content: '复制试卷', icon: 'ios-copy-outline', foo: vm._copyPaper})
+                                ]);
+                            } else if (status === 3) {
+                                return h('div', [
+                                    colBtn(vm, h, params, {content: '重新发布', icon: 'checkmark-round', foo: vm._republishPaper})
+                                ]);
+                            }
+                        }
                     }
                 ],
                 tableHeight: 500,
@@ -180,13 +249,105 @@
             this._setTableHeight();
             this._getSubjectList();
         },
+        watch: {
+            subjectList(val) {
+                if (val.length) {
+                    this.editorSettingData.subject = val[0].id;
+                }
+            }
+        },
         methods: {
+            _addQuestion(data) {
+                console.log(data);
+                this.paperSettingFlag = true;
+            },
+            _changePaperName(data) {
+            },
+            _publishPaper(data) {
+                this.$Modal.confirm({
+                    content: `确认发布【${data.name}】试卷么？`,
+                    okText: '确认发布',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        sendData.status = 2;
+                        this.$http.post('/exampaper/editPaperStatus', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('试卷发布成功!');
+                                this._updatePaperList();
+                            }
+                        });
+                    }
+                });
+            },
+            _checkPaper(data) {
+                let sendData = {};
+                sendData.id = data.id;
+            },
+            _closePaper(data) {
+                this.$Modal.confirm({
+                    content: `确认关闭【${data.name}】试卷么？`,
+                    okText: '确认关闭',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        sendData.status = 3;
+                        this.$http.post('/exampaper/editPaperStatus', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('关闭试卷成功!');
+                                this._updatePaperList();
+                            }
+                        });
+                    }
+                });
+            },
+            _copyPaper(data) {
+                this.$Modal.confirm({
+                    content: `确认复制【${data.name}】试卷么？复制试卷进入待发布状态！！！`,
+                    okText: '确认复制',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        sendData.status = 2;
+                        this.$http.post('/exampaper/copyPaper', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('试卷复制成功!');
+                                this._updatePaperList();
+                            }
+                        });
+                    }
+                });
+            },
+            _republishPaper(data) {
+                this.$Modal.confirm({
+                    content: `确认重新发布【${data.name}】试卷么？`,
+                    okText: '确认发布',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        sendData.status = 2;
+                        this.$http.post('/exampaper/editPaperStatus', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('重新发布试卷成功!');
+                                this._updatePaperList();
+                            }
+                        });
+                    }
+                });
+            },
+            _updatePaperList() {
+                this.$refs.paperList.getListData();
+            },
             _initEditorSettingData() {
                 this.$refs.paperForm.resetFields();
                 let editorSetting = this.editorSettingData;
                 editorSetting.name = '';
-                editorSetting.isRandom = '1';
-                editorSetting.subject = '';
+                editorSetting.isRandom = 2;
+                editorSetting.subject = this.subjectList[0].id;
                 editorSetting.singleTypeNum = 0;
                 editorSetting.multiTypeNum = 0;
                 editorSetting.trueOrFalseTypeNum = 0;
@@ -201,21 +362,40 @@
                 this.$refs.paperForm.validate((valid) => {
                     if (valid) {
                         let editorSetting = this.editorSettingData;
-                        if (editorSetting.isRandom === '1') {
+                        if (editorSetting.isRandom === 1) {
                             let sendData = {};
+                            sendData.id = 0;
                             sendData.name = editorSetting.name;
-                            this.$http.post('/examtestpaper/add', sendData).then((res) => {
+                            this.$http.post('/exampaper/add', sendData).then((res) => {
                                 if (res.success) {
+                                    this.editorSettingFlag = false;
+                                    this.$Message.success('试卷添加成功!');
+                                    this._updatePaperList();
                                 }
                             });
                         } else {
+                            let sendData = {};
+                            sendData.name = editorSetting.name;
+                            sendData.subject = editorSetting.subject;
+                            sendData.count1 = editorSetting.singleTypeNum;
+                            sendData.count2 = editorSetting.multiTypeNum;
+                            sendData.count3 = editorSetting.trueOrFalseTypeNum;
+                            sendData.count4 = editorSetting.fillTypeNum;
+                            sendData.count5 = editorSetting.questionTypeNum;
+                            this.$http.post('/exampaper/addRandomPaper', sendData).then((res) => {
+                                if (res.success) {
+                                    this.editorSettingFlag = false;
+                                    this.$Message.success('试卷添加成功!');
+                                    this._updatePaperList();
+                                }
+                            });
                         }
                     }
                 });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 260;
+                this.tableHeight = dm - 280;
             },
             _getSubjectList() {
                 this.$http.get('/examquestion/getSubjectList').then((res) => {

@@ -119,7 +119,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '300',
+                        width: '250',
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = +params.row.c_count || +params.row.z_count || +params.row.l_count;
@@ -128,7 +128,8 @@
                                         color: flag ? 'red' : 'green'
                                     },
                                     style: {
-                                        fontSize: '14px'
+                                        fontSize: '14px',
+                                        height: 'auto'
                                     }
                                 }, params.row.kq_re);
                             }

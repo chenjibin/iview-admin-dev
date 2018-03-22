@@ -398,7 +398,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '260',
+                        width: '250',
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = params.row.exception === null || +params.row.exception === 0;
@@ -407,7 +407,8 @@
                                         color: flag ? 'green' : 'red'
                                     },
                                     style: {
-                                        fontSize: '14px'
+                                        fontSize: '14px',
+                                        height: 'auto'
                                     }
                                 }, params.row.kq_re);
                             }
