@@ -17,15 +17,9 @@
                 </FormItem>
                 <FormItem :label-width="0.1">
                     <ButtonGroup>
-                        <Button type="primary" @click="editorSettingFlag = true">
+                        <Button type="primary" @click="_addPaperOpen">
                             <Icon type="plus-round"></Icon>
                             添加试卷
-                        </Button>
-                    </ButtonGroup>
-                    <ButtonGroup>
-                        <Button type="primary">
-                            <Icon type="plus-round"></Icon>
-                            添加试卷(随机)
                         </Button>
                     </ButtonGroup>
                 </FormItem>
@@ -36,51 +30,54 @@
                            :params="filterOpt"
                            url="/exampaper/getPaperList"></fs-table-page>
             <Modal v-model="editorSettingFlag"
-                   width="300"
+                   width="500"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
+                    <span>添加试卷</span>
                 </p>
-                <Form>
-                    <FormItem label="是否下架">
-                        <i-switch v-model="editorSettingData.isDown" size="large">
-                            <span slot="open">上架</span>
-                            <span slot="close">下架</span>
-                        </i-switch>
-                    </FormItem>
-                    <FormItem label="商品名称">
+                <Form :label-width="80"
+                      :model="editorSettingData"
+                      ref="paperForm"
+                      :rules="paperRules">
+                    <FormItem label="试卷名称" prop="name">
                         <Input type="text"
                                v-model="editorSettingData.name"
                                placeholder=""></Input>
                     </FormItem>
-                    <FormItem label="所属分类">
-                        <Select v-model="editorSettingData.type"
-                                placeholder=""
-                                style="width: 100px">
-                            <Option value="纸品类">纸品类</Option>
-                            <Option value="饮品类">饮品类</Option>
-                            <Option value="纸品类">食品类</Option>
-                            <Option value="饮品类">卡券类</Option>
-                            <Option value="饮品类">服饰类</Option>
-                        </Select>
+                    <FormItem label="是否随机">
+                        <RadioGroup v-model="editorSettingData.isRandom">
+                            <Radio label="1">正常</Radio>
+                            <Radio label="2">随机</Radio>
+                        </RadioGroup>
                     </FormItem>
-                    <FormItem label="价格">
-                        <Input type="text"
-                               v-model="editorSettingData.price"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
-                                    placeholder="筛选考勤月份"
-                                    @on-change=""
-                                    :value="editorSettingData.month"></DatePicker>
-                    </FormItem>
+                    <div class="" v-show="editorSettingData.isRandom === '2'">
+                        <FormItem label="试题分类">
+                            <Select v-model="editorSettingData.subject">
+                                <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem label="单选题">
+                            <InputNumber :min="0" v-model="editorSettingData.singleTypeNum"></InputNumber>
+                        </FormItem>
+                        <FormItem label="多选题">
+                            <InputNumber :min="0" v-model="editorSettingData.multiTypeNum"></InputNumber>
+                        </FormItem>
+                        <FormItem label="判断题">
+                            <InputNumber :min="0" v-model="editorSettingData.trueOrFalseTypeNum"></InputNumber>
+                        </FormItem>
+                        <FormItem label="填空题">
+                            <InputNumber :min="0" v-model="editorSettingData.fillTypeNum"></InputNumber>
+                        </FormItem>
+                        <FormItem label="问答题">
+                            <InputNumber :min="0" v-model="editorSettingData.questionTypeNum"></InputNumber>
+                        </FormItem>
+                    </div>
                 </Form>
                 <div slot="footer">
                     <Button type="primary"
                             :loading="btnLoading"
-                            @click="">
-                        添加商品
+                            @click="_submitPaper">
+                        添加试卷
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
                 </div>
@@ -97,6 +94,11 @@
                 editorSettingFlag: false,
                 btnLoading: false,
                 postFormType: 'update',
+                paperRules: {
+                    name: [
+                        {required: true, message: '试卷名称不能为空!', trigger: 'blur'}
+                    ]
+                },
                 statusList: [
                     {
                         status: 1,
@@ -123,10 +125,13 @@
                 },
                 editorSettingData: {
                     name: '',
-                    type: '',
-                    price: '',
-                    isDown: '',
-                    month: ''
+                    isRandom: '1',
+                    subject: '',
+                    singleTypeNum: 0,
+                    multiTypeNum: 0,
+                    trueOrFalseTypeNum: 0,
+                    fillTypeNum: 0,
+                    questionTypeNum: 0
                 },
                 postColumns: [
                     {
@@ -167,18 +172,57 @@
                         width: 400
                     }
                 ],
-                tableHeight: 500
+                tableHeight: 500,
+                subjectList: []
             };
         },
         created() {
             this._setTableHeight();
+            this._getSubjectList();
         },
         methods: {
             _initEditorSettingData() {
+                this.$refs.paperForm.resetFields();
+                let editorSetting = this.editorSettingData;
+                editorSetting.name = '';
+                editorSetting.isRandom = '1';
+                editorSetting.subject = '';
+                editorSetting.singleTypeNum = 0;
+                editorSetting.multiTypeNum = 0;
+                editorSetting.trueOrFalseTypeNum = 0;
+                editorSetting.fillTypeNum = 0;
+                editorSetting.questionTypeNum = 0;
+            },
+            _addPaperOpen() {
+                this._initEditorSettingData();
+                this.editorSettingFlag = true;
+            },
+            _submitPaper() {
+                this.$refs.paperForm.validate((valid) => {
+                    if (valid) {
+                        let editorSetting = this.editorSettingData;
+                        if (editorSetting.isRandom === '1') {
+                            let sendData = {};
+                            sendData.name = editorSetting.name;
+                            this.$http.post('/examtestpaper/add', sendData).then((res) => {
+                                if (res.success) {
+                                }
+                            });
+                        } else {
+                        }
+                    }
+                });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
+            },
+            _getSubjectList() {
+                this.$http.get('/examquestion/getSubjectList').then((res) => {
+                    if (res.success) {
+                        this.subjectList = res.data;
+                    }
+                });
             }
         },
         components: {
