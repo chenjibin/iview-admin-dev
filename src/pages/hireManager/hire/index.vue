@@ -459,7 +459,7 @@
                     <Input type="text" v-model="statusForm.username"></Input>
                 </FormItem>
                 <FormItem label="密码" style="width: 45%" v-if="(statusTemp === 6 || statusTemp === 3) && showUser.createaccount!=2 && (statusForm.status ==6 || statusForm.status == 8)">
-                    <Input type="password" v-model="statusForm.password" placeholder="123456"></Input>
+                    <Input type="password" disabled placeholder="123456"></Input>
                 </FormItem>
                 <FormItem label="面试时间" style="width: 45%" v-if="statusTemp === 1">
                     <DatePicker :value="statusForm.interviewtime"
