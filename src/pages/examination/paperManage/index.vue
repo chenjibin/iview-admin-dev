@@ -92,15 +92,28 @@
                 <div class="">
                     <Row :gutter="16">
                         <Col :span="12">
-                            <paper-question-list :id="paperId"></paper-question-list>
+                            <paper-question-list :id="paperId" @add-success="_getPaperDetail"></paper-question-list>
                         </Col>
                         <Col :span="12">
-                            bbb
+                            <editor-paper :id="paperId" :editorabled="true" ref="paperDetail"></editor-paper>
                         </Col>
                     </Row>
                 </div>
                 <div slot="footer">
                     <Button type="ghost" style="margin-left: 8px" @click="paperSettingFlag = false">取消</Button>
+                </div>
+            </Modal>
+            <Modal v-model="paperCheckFlag"
+                   width="800"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>查看试卷</span>
+                </p>
+                <div class="">
+                    <editor-paper :id="paperIdCheck"></editor-paper>
+                </div>
+                <div slot="footer">
+                    <Button type="ghost" style="margin-left: 8px" @click="paperCheckFlag = false">关闭</Button>
                 </div>
             </Modal>
         </Card>
@@ -109,6 +122,7 @@
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import paperQuestionList from '../components/paper-question-list';
+    import editorPaper from '../components/editor-paper';
     export default {
         name: 'paperManage',
         data () {
@@ -141,10 +155,10 @@
                 editorSettingFlag: false,
                 btnLoading: false,
                 paperSettingFlag: false,
+                paperCheckFlag: false,
                 paperId: 0,
+                paperIdCheck: 0,
                 postFormType: 'update',
-                editorPaperInfo: [],
-                editorPaperList: [],
                 paperRules: {
                     name: [
                         {required: true, message: '试卷名称不能为空!', trigger: 'blur'}
@@ -281,17 +295,12 @@
             }
         },
         methods: {
+            _getPaperDetail() {
+                this.$refs.paperDetail._getPaperDetail();
+            },
             _addQuestion(data) {
                 console.log(data);
                 this.paperId = data.id;
-                let sendData = {};
-                sendData.id = this.paperId;
-                this.$http.post('/exampaper/editPaper', sendData).then((res) => {
-                    if (res.success) {
-                        this.editorPaperInfo = res.paper;
-                        this.editorPaperList = res.questionList;
-                    }
-                });
                 this.paperSettingFlag = true;
             },
             _changePaperName(data) {
@@ -315,8 +324,8 @@
                 });
             },
             _checkPaper(data) {
-                let sendData = {};
-                sendData.id = data.id;
+                this.paperIdCheck = data.id;
+                this.paperCheckFlag = true;
             },
             _closePaper(data) {
                 this.$Modal.confirm({
@@ -440,7 +449,8 @@
         },
         components: {
             fsTablePage,
-            paperQuestionList
+            paperQuestionList,
+            editorPaper
         }
     };
 </script>

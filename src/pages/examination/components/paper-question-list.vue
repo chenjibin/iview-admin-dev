@@ -49,6 +49,31 @@
             }
         },
         data () {
+            const colBtn = (vm, h, params, {content, icon, foo}) => {
+                return h('Tooltip', {
+                    props: {
+                        content: content,
+                        placement: 'top',
+                        transfer: true
+                    }
+                }, [
+                    h('Button', {
+                        props: {
+                            type: 'primary',
+                            icon: icon,
+                            shape: 'circle'
+                        },
+                        style: {
+                            margin: '0 2px'
+                        },
+                        on: {
+                            click: function () {
+                                foo(params.row);
+                            }
+                        }
+                    })
+                ]);
+            };
             return {
                 subjectList: [],
                 filterOpt: {
@@ -70,11 +95,6 @@
                     }
                 },
                 postColumns: [
-                    {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
-                    },
                     {
                         title: '试题名称',
                         key: 'name'
@@ -101,6 +121,19 @@
                         key: 'questionmark',
                         align: 'center',
                         width: 100
+                    },
+                    {
+                        title: '操作',
+                        key: 'user_name',
+                        fixed: 'right',
+                        align: 'center',
+                        width: 60,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                colBtn(vm, h, params, {content: '加入试卷', icon: 'arrow-right-c', foo: vm._addToPaper})
+                            ]);
+                        }
                     }
                 ],
                 typeOptMap: [
@@ -131,6 +164,17 @@
             this._getSubjectList();
         },
         methods: {
+            _addToPaper(row) {
+                let data = {};
+                data.id = this.id;
+                data.questionIds = row.id;
+                this.$http.post('/exampaper/paperAddQuestion', data).then((res) => {
+                    if (res.success) {
+                        this.$refs.tablePage.getListData();
+                        this.$emit('add-success');
+                    }
+                });
+            },
             _getSubjectList() {
                 this.$http.get('/examquestion/getSubjectList').then((res) => {
                     if (res.success) {
