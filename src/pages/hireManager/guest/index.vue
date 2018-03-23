@@ -73,14 +73,14 @@
                                 <Option :value=2>未婚</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="有无子女" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                        <FormItem label="预期入职时间" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
+                            <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(0, 0, 'testtime',$event)" :value="talentBean.testtime"></DatePicker>
+                        </FormItem>
+                        <FormItem label="有无子女" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.had_child">
                                 <Option :value="0">无</Option>
                                 <Option :value="1">有</Option>
                             </Select>
-                        </FormItem>
-                        <FormItem label="预期入职时间" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(0, 0, 'testtime',$event)" :value="talentBean.testtime"></DatePicker>
                         </FormItem>
                         <div></div>
                         <FormItem label="详细住址" style="width:48.5%;margin-right: 1%;">
@@ -110,7 +110,7 @@
                                 <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" :class="device.mobile?'mobileFormRight':'pcEducationFormItem'">
-                                <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
+                                <DatePicker style="width: 100%" placement="bottom-end"  type="date" @on-change="_monthDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="毕业院校	" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
                                 <Input type="text" v-model="item.graduatedschool"></Input>
@@ -158,7 +158,7 @@
                                 <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" :class="device.mobile?'mobileFormRight':'pcWorkingFormItem'">
-                                <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
+                                <DatePicker style="width: 100%" placement="bottom-end"  type="date" @on-change="_monthDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="公司名称" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.companyname"></Input>
