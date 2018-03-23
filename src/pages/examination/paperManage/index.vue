@@ -84,17 +84,17 @@
                 </div>
             </Modal>
             <Modal v-model="paperSettingFlag"
-                   width="1200"
+                   width="1500"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>为试卷挑选试题</span>
                 </p>
                 <div class="">
-                    <Row type="flex" :gutter="16">
-                        <Col>
-                            aaa
+                    <Row :gutter="16">
+                        <Col :span="12">
+                            <paper-question-list :id="paperId"></paper-question-list>
                         </Col>
-                        <Col>
+                        <Col :span="12">
                             bbb
                         </Col>
                     </Row>
@@ -108,6 +108,7 @@
 </template>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import paperQuestionList from '../components/paper-question-list';
     export default {
         name: 'paperManage',
         data () {
@@ -140,7 +141,10 @@
                 editorSettingFlag: false,
                 btnLoading: false,
                 paperSettingFlag: false,
+                paperId: 0,
                 postFormType: 'update',
+                editorPaperInfo: [],
+                editorPaperList: [],
                 paperRules: {
                     name: [
                         {required: true, message: '试卷名称不能为空!', trigger: 'blur'}
@@ -187,30 +191,50 @@
                     },
                     {
                         title: '总分',
-                        key: 'totlemark',
                         align: 'center',
-                        width: 100
+                        width: 160,
+                        render: (h, params) => {
+                            return params.row.totlemark || 0;
+                        }
                     },
                     {
                         title: '状态',
                         key: 'user_name',
                         align: 'center',
-                        width: 100,
+                        width: 120,
                         render: (h, params) => {
-                            return this.statusList[params.row.status - 1].name;
+                            let status = params.row.status;
+                            let color = '';
+                            let content = '';
+                            if (status === 1) {
+                                color = 'red';
+                                content = '待发布';
+                            } else if (status === 2) {
+                                color = 'green';
+                                content = '已发布';
+                            } else {
+                                color = 'default';
+                                content = '已关闭';
+                            }
+                            return h('Tag', {
+                                props: {
+                                    type: 'border',
+                                    color: color
+                                }
+                            }, content);
                         }
                     },
                     {
                         title: '创建人',
                         key: 'createbyname',
                         align: 'center',
-                        width: 100
+                        width: 160
                     },
                     {
                         title: '创建时间',
                         key: 'createbydate',
                         align: 'center',
-                        width: 200
+                        width: 240
                     },
                     {
                         title: '操作',
@@ -259,6 +283,15 @@
         methods: {
             _addQuestion(data) {
                 console.log(data);
+                this.paperId = data.id;
+                let sendData = {};
+                sendData.id = this.paperId;
+                this.$http.post('/exampaper/editPaper', sendData).then((res) => {
+                    if (res.success) {
+                        this.editorPaperInfo = res.paper;
+                        this.editorPaperList = res.questionList;
+                    }
+                });
                 this.paperSettingFlag = true;
             },
             _changePaperName(data) {
@@ -406,7 +439,8 @@
             }
         },
         components: {
-            fsTablePage
+            fsTablePage,
+            paperQuestionList
         }
     };
 </script>
