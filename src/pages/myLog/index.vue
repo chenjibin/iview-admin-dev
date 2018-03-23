@@ -38,8 +38,8 @@
                         <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                             <span>{{logDetail.date}} 日志</span>
                         </p>
-                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.content" v-if="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
-                        <template v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
+                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.editorContent" v-show="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
+                        <div v-show="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
                             <span style="display: inline-block;margin-right: 10px;height: 30px;line-height: 30px;vertical-align: top;">日志类型</span>
                             <Select v-model="logDetail.logType"
                                     placeholder="日志类型"
@@ -51,8 +51,9 @@
                                     :plugins="editorOpt.plugins"
                                     :editor-content="logDetail.content"
                                     :toolbar1="editorOpt.toolbar1"
+                                    ref="textEditor"
                                     @content-change="_setContent"></text-editor>
-                        </template>
+                        </div>
                         <div slot="footer">
                             <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
 
@@ -80,6 +81,14 @@
                         <div class="each-log-look" v-for="item in logLookList">
                             <p class="time-title">{{item.date}}</p>
                             <div class="" v-html="item.content"></div>
+                            <div class="guider-block" v-if="item.guide && item.guide.length">
+                                <h4>上级指导:</h4>
+                                <ul class="guider-list">
+                                    <li  class="guider-item" v-for="guideItem,index in item.guide" :key="'guide' + index">
+                                        <span class="guider-name">{{guideItem.guider}}:</span><span>{{guideItem.content}}</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </Card>
@@ -102,6 +111,16 @@
         .each-log-look {
             margin-top: 10px;
             padding: 8px 0;
+            .guider-block{
+                margin-top: 8px;
+                .guider-item {
+                    display: flex;
+                    margin-bottom: 4px;
+                    .guider-name {
+                        flex: 0 0 60px;
+                    }
+                }
+            }
             &:not(:last-child) {
                 border-bottom: 1px solid @fs-divider-color;
             }
@@ -283,6 +302,9 @@
             }
         },
         methods: {
+            _returnRealContent(str) {
+                return str.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '').replace(/\s+/g, '');
+            },
             _setHeight() {
                 let dm = document.body.clientHeight;
                 this.logMaxHeight = dm - 190 + 'px';
@@ -319,7 +341,7 @@
             _setContent(content) {
                 this.logDetail.editorContent = content;
             },
-            _setSelectOpt(type, date) {
+            _setSelectOpt(type, date, logType) {
                 if (type === 0 && date !== NOW_DATE) {
                     this.logTypeList = [
                         {
@@ -328,7 +350,8 @@
                         }
                     ];
                     this.logDetail.logType = '1';
-                    this.logDetail.content = '休息';
+                    // this.logDetail.content = '休息';
+                    this.$refs.textEditor.setEditorValue('休息');
                     this.logDetail.editorContent = '休息';
                 } else {
                     this.logTypeList = [
@@ -341,7 +364,7 @@
                             label: '休息'
                         }
                     ];
-                    this.logDetail.logType = '0';
+                    this.logDetail.logType = logType ? logType + '' : '0';
                 }
             },
             _setLogList(arr) {
@@ -354,17 +377,25 @@
                     this.$Message.error('超过48小时不可再补写日志！');
                     return;
                 }
-                this._setSelectOpt(obj.type, obj.date);
                 this.logDetail.date = obj.date;
                 this.logDetail.type = obj.type;
                 this.logDetail.commentResult = obj.commentResult;
-                this.logDetail.content = obj.content || '';
+                // this.logDetail.content = obj.content || '';
+                this.$refs.textEditor.setEditorValue(obj.content || '');
                 this.logDetail.editorContent = obj.content || '';
                 this.logDetail.logType = obj.logType ? obj.logType + '' : '0';
                 this.logDetail.logType1 = obj.logType || '';
+                this._setSelectOpt(obj.type, obj.date, obj.logType);
                 this.modelFlag = true;
             },
             _submitLog() {
+                if (this.logDetail.logType === '0') {
+                    let realContent = this._returnRealContent(this.logDetail.editorContent);
+                    if (realContent.length < 10) {
+                        this.$Message.error('出勤日志不能少于10个字!');
+                        return;
+                    }
+                }
                 this.submitLoading = true;
                 let data = {
                     type: this.logDetail.logType,
