@@ -16,11 +16,11 @@
     <link rel="stylesheet" name="theme" href="">
     <link rel="icon" href="./favicon.ico" type="image/x-icon" />
     <!--[if lte IE 9]><script>location.href = '/unsupport-browser.html'</script><![endif]-->
-    <!--<script>-->
-    <!--if (navigator.userAgent.match(/AppleWebKit.*Mobile.*/)) { // mobile环境-->
-    <!--window.location.href = 'http://tm.xyyzi.com:9090/oa/dist_mobile/index.html';-->
-    <!--}-->
-    <!--</script>-->
+    <script>
+        if (navigator.userAgent.match(/AppleWebKit.*Mobile.*/) && !navigator.userAgent.toLowerCase().match(/iPad/i)) { //  mobile环境
+            window.location.href = 'http://tm.xyyzi.com:9099/oa/dist_mobile/index.html';
+        }
+    </script>
 </head>
 
 <body>
