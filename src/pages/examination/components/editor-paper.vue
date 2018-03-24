@@ -126,8 +126,10 @@
                 let sendData = {};
                 sendData.paperId = this.id;
                 sendData.id = data.id;
-                this.$http.post('/examPaper/delQuestion', sendData).then((res) => {
+                this.$http.post('/exampaper/delQuestion', sendData).then((res) => {
                     if (res.success) {
+                        this._getPaperDetail();
+                        this.$emit('del-question-success');
                     }
                 });
             },

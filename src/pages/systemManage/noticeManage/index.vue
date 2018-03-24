@@ -160,7 +160,7 @@
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>{{noticeData.title}}</span>
                 </p>
-                <div style="max-height: 500px;overflow: auto;" v-html="noticeData.content"></div>
+                <div style="max-height: 500px;overflow: auto;font-size: 16px;" v-html="noticeData.content"></div>
                 <div slot="footer">
                 </div>
             </Modal>

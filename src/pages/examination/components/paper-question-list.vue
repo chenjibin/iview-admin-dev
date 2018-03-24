@@ -164,6 +164,9 @@
             this._getSubjectList();
         },
         methods: {
+            _updateList() {
+                this.$refs.tablePage.getListData();
+            },
             _addToPaper(row) {
                 let data = {};
                 data.id = this.id;

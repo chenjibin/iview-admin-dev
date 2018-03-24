@@ -18,7 +18,7 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>{{noticeData.title}}</span>
             </p>
-            <div class="" v-html="noticeData.content"></div>
+            <div class="" v-html="noticeData.content" style="font-size: 16px"></div>
             <div slot="footer">
             </div>
         </Modal>

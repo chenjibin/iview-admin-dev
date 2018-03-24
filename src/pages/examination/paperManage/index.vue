@@ -92,10 +92,15 @@
                 <div class="">
                     <Row :gutter="16">
                         <Col :span="12">
-                            <paper-question-list :id="paperId" @add-success="_getPaperDetail"></paper-question-list>
+                            <paper-question-list :id="paperId"
+                                                 ref="questionList"
+                                                 @add-success="_getPaperDetail"></paper-question-list>
                         </Col>
                         <Col :span="12">
-                            <editor-paper :id="paperId" :editorabled="true" ref="paperDetail"></editor-paper>
+                            <editor-paper :id="paperId"
+                                          :editorabled="true"
+                                          @del-question-success="_updateQuestionList"
+                                          ref="paperDetail"></editor-paper>
                         </Col>
                     </Row>
                 </div>
@@ -295,6 +300,9 @@
             }
         },
         methods: {
+            _updateQuestionList() {
+                this.$refs.questionList._updateList()
+            },
             _getPaperDetail() {
                 this.$refs.paperDetail._getPaperDetail();
             },
