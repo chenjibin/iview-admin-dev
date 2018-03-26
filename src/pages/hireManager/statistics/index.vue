@@ -23,7 +23,7 @@
         <Row :gutter="16" style="margin-top: 5px">
             <Col :span="12">
                 <Card>
-                    <div style="width:100%;height:300px;" id="data_source1"></div>
+                    <div style="npmwidth:100%;height:300px;" id="data_source1"></div>
                 </Card>
             </Col>
             <Col :span="12">
@@ -43,7 +43,12 @@
 </template>
 
 <script>
-    import echarts from 'echarts';
+    import echarts from 'echarts/lib/echarts';
+    import funnel from 'echarts/lib/chart/funnel';
+    import tooltip from 'echarts/lib/component/tooltip';
+    import legendScroll from 'echarts/lib/component/legendScroll';
+    import title from 'echarts/lib/component/title';
+    import pie from 'echarts/lib/chart/pie';
     import fsTablePage from '@/baseComponents/fs-table-page';
     export default {
         name: 'statistics',
