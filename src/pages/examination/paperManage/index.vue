@@ -121,6 +121,28 @@
                     <Button type="ghost" style="margin-left: 8px" @click="paperCheckFlag = false">关闭</Button>
                 </div>
             </Modal>
+            <Modal v-model="paperNameflag"
+                   width="800"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>修改试卷</span>
+                </p>
+                <div class="">
+                    <Form :label-width="80"
+                          :model="paperNameForm"
+                          ref="paperNameForm"
+                          :rules="paperNameRules">
+                        <FormItem label="试卷名称" prop="name">
+                            <Input type="text"
+                                   v-model="paperNameForm.name"></Input>
+                        </FormItem>
+                    </Form>
+                </div>
+                <div slot="footer">
+                    <Button type="primary" style="margin-left: 8px" @click="_confirmSubmitPaperName">提交修改</Button>
+                    <Button type="ghost" style="margin-left: 8px" @click="paperNameflag = false">关闭</Button>
+                </div>
+            </Modal>
         </Card>
     </div>
 </template>
@@ -161,6 +183,7 @@
                 btnLoading: false,
                 paperSettingFlag: false,
                 paperCheckFlag: false,
+                paperNameflag: false,
                 paperId: 0,
                 paperIdCheck: 0,
                 postFormType: 'update',
@@ -202,6 +225,15 @@
                     trueOrFalseTypeNum: 0,
                     fillTypeNum: 0,
                     questionTypeNum: 0
+                },
+                paperNameForm: {
+                    name: '',
+                    id: 0
+                },
+                paperNameRules: {
+                    name: [
+                        {required: true, message: '试卷名称不能为空!', trigger: 'blur'}
+                    ]
                 },
                 postColumns: [
                     {
@@ -307,11 +339,25 @@
                 this.$refs.paperDetail._getPaperDetail();
             },
             _addQuestion(data) {
-                console.log(data);
                 this.paperId = data.id;
                 this.paperSettingFlag = true;
             },
             _changePaperName(data) {
+                this.paperNameForm.name = data.name;
+                this.paperNameForm.id = data.id;
+                this.paperNameflag = true;
+            },
+            _confirmSubmitPaperName() {
+                let data = {};
+                data.name = this.paperNameForm.name;
+                data.id = this.paperNameForm.id;
+                this.$http.post('/exampaper/add', data).then((res) => {
+                    if (res.success) {
+                        this.paperNameflag = false;
+                        this.$Message.success('试卷名称修改成功!');
+                        this._updatePaperList();
+                    }
+                })
             },
             _publishPaper(data) {
                 this.$Modal.confirm({

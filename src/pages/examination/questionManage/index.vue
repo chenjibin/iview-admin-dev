@@ -431,7 +431,6 @@
         methods: {
             _retuenSendPicUrl(url) {
                 let reg = /^\/upload\/exam/;
-                console.log(reg.test(url));
                 if (reg.test(url)) {
                     return url;
                 } else {

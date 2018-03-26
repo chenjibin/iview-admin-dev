@@ -123,6 +123,7 @@
         },
         methods: {
             _delQuestion(data) {
+                console.log(data);
                 let sendData = {};
                 sendData.paperId = this.id;
                 sendData.id = data.id;
