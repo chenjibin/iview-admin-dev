@@ -118,7 +118,7 @@
                 return name;
             },
             _returnPicUrl(val) {
-                return val;
+                return '/oa' + val;
             }
         },
         methods: {

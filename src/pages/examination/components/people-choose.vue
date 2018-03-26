@@ -1,0 +1,147 @@
+<template>
+    <div>
+        <Form inline :label-width="60"  @submit.native.prevent>
+            <FormItem label="部门">
+                <Input type="text"
+                       v-model="filterOpt.organizeName.value"
+                       placeholder="筛选部门"></Input>
+            </FormItem>
+            <FormItem label="岗位">
+                <Input type="text"
+                       v-model="filterOpt.postName.value"
+                       placeholder="筛选岗位"></Input>
+            </FormItem>
+            <FormItem label="姓名">
+                <Input type="text"
+                       v-model="filterOpt.realName.value"
+                       placeholder="筛选姓名"></Input>
+            </FormItem>
+        </Form>
+        <fs-table-page :columns="postColumns"
+                       :size="null"
+                       :height="500"
+                       :params="filterOpt"
+                       ref="tablePage"
+                       url="/user/getAddStuTest"></fs-table-page>
+    </div>
+</template>
+<style>
+
+</style>
+<script>
+    import fsTablePage from '@/baseComponents/fs-table-page';
+    export default {
+        name: 'peopleChoose',
+        props: {
+            id: {
+                type: [Number, String]
+            }
+        },
+        watch: {
+            id(val) {
+                this.filterOpt.id.value = val;
+            }
+        },
+        data () {
+            const colBtn = (vm, h, params, {content, icon, foo}) => {
+                return h('Tooltip', {
+                    props: {
+                        content: content,
+                        placement: 'top',
+                        transfer: true
+                    }
+                }, [
+                    h('Button', {
+                        props: {
+                            type: 'primary',
+                            icon: icon,
+                            shape: 'circle'
+                        },
+                        style: {
+                            margin: '0 2px'
+                        },
+                        on: {
+                            click: function () {
+                                foo(params.row);
+                            }
+                        }
+                    })
+                ]);
+            };
+            return {
+                filterOpt: {
+                    organizeName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    postName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    realName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    id: {
+                        value: this.id,
+                        type: 'select'
+                    }
+                },
+                postColumns: [
+                    {
+                        type: 'selection',
+                        width: 60,
+                        align: 'center'
+                    },
+                    {
+                        title: '姓名',
+                        key: 'realname',
+                        width: 100
+                    },
+                    {
+                        title: '部门',
+                        align: 'center',
+                        key: 'organizename'
+                    },
+                    {
+                        title: '岗位',
+                        key: 'postname',
+                        align: 'center'
+                    },
+                    {
+                        title: '操作',
+                        key: 'user_name',
+                        fixed: 'right',
+                        align: 'center',
+                        width: 60,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                colBtn(vm, h, params, {content: '加入考试', icon: 'arrow-right-c', foo: vm._addToPaper})
+                            ]);
+                        }
+                    }
+                ]
+            };
+        },
+        methods: {
+            _updateList() {
+                this.$refs.tablePage.getListData();
+            },
+            _addToPaper(row) {
+                let data = {};
+                data.id = this.id;
+                data.stuIds = row.id;
+                this.$http.post('/examtestpaper/testAddUser', data).then((res) => {
+                    if (res.success) {
+                        this.$refs.tablePage.getListData();
+                        this.$emit('add-success');
+                    }
+                });
+            }
+        },
+        components: {
+            fsTablePage
+        }
+    };
+</script>

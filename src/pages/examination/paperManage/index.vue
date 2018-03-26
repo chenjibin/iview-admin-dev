@@ -357,7 +357,7 @@
                         this.$Message.success('试卷名称修改成功!');
                         this._updatePaperList();
                     }
-                })
+                });
             },
             _publishPaper(data) {
                 this.$Modal.confirm({

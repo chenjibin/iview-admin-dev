@@ -75,6 +75,7 @@
                 <div class="">
                     <Row :gutter="16">
                         <Col :span="12">
+                            <people-choose :id="examId"></people-choose>
                         </Col>
                         <Col :span="12">
                         </Col>
@@ -119,6 +120,7 @@
 </template>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import peopleChoose from '../components/people-choose';
     import moment from 'moment';
     const NOW_TIME = moment().format('YYYY-MM-DD HH:mm');
     export default {
@@ -321,14 +323,29 @@
                         this.$http.post('/examtestpaper/editTestPaperStatus', sendData).then((res) => {
                             if (res.success) {
                                 this.$Message.success('考试发布成功!');
-                                this._updatePaperList();
+                                this._updateExamList();
                             }
                         });
                     }
                 });
             },
-            _closePaper() {
-
+            _closePaper(data) {
+                this.$Modal.confirm({
+                    content: `确认结束【${data.name}】考试么？`,
+                    okText: '确认结束',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        sendData.status = 3;
+                        this.$http.post('/examtestpaper/editTestPaperStatus', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('结束考试成功!');
+                                this._updateExamList();
+                            }
+                        });
+                    }
+                });
             },
             _checkTestPeople() {
 
@@ -375,7 +392,8 @@
             }
         },
         components: {
-            fsTablePage
+            fsTablePage,
+            peopleChoose
         }
     };
 </script>
