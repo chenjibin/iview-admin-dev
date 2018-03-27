@@ -21,6 +21,7 @@
                        :size="null"
                        :height="500"
                        :params="filterOpt"
+                       :pageSizeOpt="[20, 60, 100, 1000]"
                        ref="tablePage"
                        url="/user/getAddStuTest"></fs-table-page>
     </div>
@@ -111,7 +112,6 @@
                     {
                         title: '操作',
                         key: 'user_name',
-                        fixed: 'right',
                         align: 'center',
                         width: 60,
                         render: (h, params) => {

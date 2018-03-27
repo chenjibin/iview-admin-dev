@@ -75,9 +75,12 @@
                 <div class="">
                     <Row :gutter="16">
                         <Col :span="12">
-                            <people-choose :id="examId"></people-choose>
+                            <people-choose :id="examId"
+                                           @add-success="_updatePeopleList"></people-choose>
                         </Col>
                         <Col :span="12">
+                            <people-show :id="examId"
+                                         ref="peopleShow"></people-show>
                         </Col>
                     </Row>
                 </div>
@@ -121,6 +124,7 @@
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import peopleChoose from '../components/people-choose';
+    import peopleShow from '../components/people-show';
     import moment from 'moment';
     const NOW_TIME = moment().format('YYYY-MM-DD HH:mm');
     export default {
@@ -383,6 +387,9 @@
                     }
                 });
             },
+            _updatePeopleList() {
+                this.$refs.peopleShow._getPeopleList();
+            },
             _updateExamList() {
                 this.$refs.examList.getListData();
             },
@@ -393,7 +400,8 @@
         },
         components: {
             fsTablePage,
-            peopleChoose
+            peopleChoose,
+            peopleShow
         }
     };
 </script>

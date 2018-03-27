@@ -10,6 +10,7 @@
               :page-size="pageData.pageSize"
               :size="size"
               :placement="placement"
+              :page-size-opts="pageSizeOpt"
               @on-change="pageChangeHandler"
               @on-page-size-change="pageSizeChangeHandler"
               show-elevator
@@ -28,6 +29,12 @@
             height: {
                 type: Number,
                 default: 400
+            },
+            pageSizeOpt: {
+                type: Array,
+                default() {
+                    return [10, 20, 30, 40];
+                }
             },
             url: String,
             params: {
