@@ -9,30 +9,35 @@
                         <span>{{paperInfo.totlemark}}分</span>
                     </p>
                 </div>
-                <div class="fs-list-item" v-for="item,index in questionList" :key="index">
-                    <div class="">
-                        <Badge  :count="index + 1 + ''" class-name="test-badge"></Badge>
-                        <span class="exam-type">{{item.type | _returnTypeName}}</span>
-                        <span>({{item.questionmark}}分)</span>
-                        <Button type="ghost"
-                                icon="ios-trash-outline"
-                                @click="_delQuestion(item)"
-                                v-if="editorabled" size="small"></Button>
-                    </div>
-                    <p class="exam-name">{{item.name}}</p>
-                    <img :src="item.questionpic | _returnPicUrl" v-if="item.questionpic" class="exam-pic"/>
-                    <ul class="" v-if="[1, 2].indexOf(item.type) > -1">
-                        <li v-for="option in item.optionlist" :key="'option' + option.id">
-                            <div>
-                                <span>{{option.optionnum}}.</span>
-                                <span>{{option.content}}</span>
-                            </div>
-                            <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic"/>
-                        </li>
-                    </ul>
-                    <div class="answer-block">
-                        <span>正确答案:</span>
-                        <span>{{_returnAnswer(item.answer,item.type)}}</span>
+                <div class="" v-for="item,index in questionList" :key="index">
+                    <h3>
+                        <span>{{numMap[index]}}、</span>
+                        <span>{{typeMap[item.type - 1]}}:</span>
+                    </h3>
+                    <div class="fs-list-item" v-for="question,qindex in item.questionList" :key="'question-' + index + '-' + qindex">
+                        <p class="exam-name">
+                            <Badge  :count="qindex + 1 + ''" class-name="test-badge"></Badge>
+                            <span>{{question.name}}</span>
+                            <span>({{question.questionmark}}分)</span>
+                            <Button type="ghost"
+                                    icon="ios-trash-outline"
+                                    @click="_delQuestion(question)"
+                                    v-if="editorabled" size="small"></Button>
+                        </p>
+                        <img :src="question.questionpic | _returnPicUrl" v-if="question.questionpic" class="exam-pic"/>
+                        <ul class="" v-if="[1, 2].indexOf(question.type) > -1">
+                            <li v-for="option in question.optionlist" :key="'option' + option.id">
+                                <div>
+                                    <span>{{option.optionnum}}.</span>
+                                    <span>{{option.content}}</span>
+                                </div>
+                                <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic"/>
+                            </li>
+                        </ul>
+                        <div class="answer-block">
+                            <span>正确答案:</span>
+                            <span>{{_returnAnswer(question.answer,question.type)}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,7 +97,9 @@
         data () {
             return {
                 paperInfo: {},
-                questionList: []
+                questionList: [],
+                numMap: ['一', '二', '三', '四', '五'],
+                typeMap: ['单选题', '多选题', '判断题', '填空题', '问答题']
             };
         },
         watch: {
@@ -122,8 +129,20 @@
             }
         },
         methods: {
+            returnNeedList(data) {
+                let allType = [...(new Set(data.map(x => x.type)))].sort((x, y) => { return x - y > 0; });
+                let storeArray = [];
+                allType.forEach((item) => {
+                    let obj = {};
+                    let questionList = data.filter(x => x.type === item);
+                    obj.type = questionList[0].type;
+                    obj.questionList = questionList;
+                    storeArray.push(obj);
+                });
+                console.log(storeArray);
+                return storeArray;
+            },
             _delQuestion(data) {
-                console.log(data);
                 let sendData = {};
                 sendData.paperId = this.id;
                 sendData.id = data.id;
@@ -141,7 +160,7 @@
                 this.$http.post('/exampaper/editPaper', sendData).then((res) => {
                     if (res.success) {
                         this.paperInfo = res.paper;
-                        this.questionList = res.questionList;
+                        this.questionList = this.returnNeedList(res.questionList);
                     }
                 });
             },

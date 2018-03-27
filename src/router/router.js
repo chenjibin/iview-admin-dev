@@ -94,6 +94,12 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/myArrange/index.vue'], resolve); }
         },
         {
+            path: 'myExam',
+            title: '我的考试',
+            name: 'myExam',
+            component: resolve => { require(['@/pages/myExam/index.vue'], resolve); }
+        },
+        {
             path: 'coinShop',
             title: '金币商城',
             name: 'coinShop',

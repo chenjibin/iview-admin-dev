@@ -70,22 +70,25 @@
                    width="1500"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>添加考试人员</span>
+                    <span>添加考试【{{examName}}】人员</span>
                 </p>
                 <div class="">
                     <Row :gutter="16">
                         <Col :span="12">
                             <people-choose :id="examId"
+                                           ref="peopleChoose"
                                            @add-success="_updatePeopleList"></people-choose>
                         </Col>
                         <Col :span="12">
                             <people-show :id="examId"
+                                         @del-people-success="_updateUserList"
+                                         :editorabled="true"
                                          ref="peopleShow"></people-show>
                         </Col>
                     </Row>
                 </div>
                 <div slot="footer">
-                    <Button type="ghost" style="margin-left: 8px" @click="examSettingFlag = false">取消</Button>
+                    <Button type="ghost" style="margin-left: 8px" @click="examSettingFlag = false">关闭</Button>
                 </div>
             </Modal>
             <Modal v-model="bindPaperFlag"
@@ -116,6 +119,19 @@
                         绑定试卷
                     </Button>
                     <Button type="ghost" style="margin-left: 8px" @click="bindPaperFlag = false">取消</Button>
+                </div>
+            </Modal>
+            <Modal v-model="checkPeopleFlag"
+                   width="700"
+                   :mask-closable="false">
+                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                    <span>查看考试【{{examCheckName}}】人员</span>
+                </p>
+                <div class="">
+                    <people-show :id="examCheckId"></people-show>
+                </div>
+                <div slot="footer">
+                    <Button type="ghost" style="margin-left: 8px" @click="checkPeopleFlag = false">关闭</Button>
                 </div>
             </Modal>
         </Card>
@@ -159,9 +175,13 @@
                 editorSettingFlag: false,
                 bindPaperFlag: false,
                 examSettingFlag: false,
+                checkPeopleFlag: false,
                 btnLoading: false,
                 postFormType: 'update',
                 examId: 0,
+                examName: '',
+                examCheckId: 0,
+                examCheckName: '',
                 bindForm: {
                     paperName: '',
                     examId: 0
@@ -248,18 +268,18 @@
                             if (status === 1) {
                                 return h('div', [
                                     colBtn(vm, h, params, {content: '绑定试卷', icon: 'plus-round', foo: vm._bindPaper}),
-                                    colBtn(vm, h, params, {content: '添加考试人', icon: 'person-add', foo: vm._addQuestion}),
+                                    colBtn(vm, h, params, {content: '添加考生', icon: 'person-add', foo: vm._addQuestion}),
                                     colBtn(vm, h, params, {content: '修改考试', icon: 'compose', foo: vm._changePaperName}),
                                     colBtn(vm, h, params, {content: '发布考试', icon: 'play', foo: vm._publishPaper})
                                 ]);
                             } else if (status === 2) {
                                 return h('div', [
-                                    colBtn(vm, h, params, {content: '添加考试人', icon: 'person-add', foo: vm._addQuestion}),
+                                    colBtn(vm, h, params, {content: '添加考生', icon: 'person-add', foo: vm._addQuestion}),
                                     colBtn(vm, h, params, {content: '结束考试', icon: 'close-round', foo: vm._closePaper})
                                 ]);
                             } else if (status === 3) {
                                 return h('div', [
-                                    colBtn(vm, h, params, {content: '查看考试人', icon: 'eye', foo: vm._checkTestPeople})
+                                    colBtn(vm, h, params, {content: '查看考生', icon: 'eye', foo: vm._checkTestPeople})
                                 ]);
                             }
                         }
@@ -285,6 +305,7 @@
             },
             _addQuestion(data) {
                 this.examId = data.id;
+                this.examName = data.name;
                 this.examSettingFlag = true;
             },
             _bindPaper(data) {
@@ -351,8 +372,10 @@
                     }
                 });
             },
-            _checkTestPeople() {
-
+            _checkTestPeople(data) {
+                this.examCheckId = data.id;
+                this.examCheckName = data.name;
+                this.checkPeopleFlag = true;
             },
             _addExamOpen() {
                 this._initEditorSettingData();
@@ -389,6 +412,9 @@
             },
             _updatePeopleList() {
                 this.$refs.peopleShow._getPeopleList();
+            },
+            _updateUserList() {
+                this.$refs.peopleChoose._updateList();
             },
             _updateExamList() {
                 this.$refs.examList.getListData();

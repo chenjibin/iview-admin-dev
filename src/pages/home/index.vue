@@ -45,6 +45,13 @@
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
+                                        iconType="university"
+                                        color="#f25e43"
+                                        btn-text="考试"
+                                        @card-click="$router.push('myExam')"></info-btn>
+                            </Col>
+                            <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
+                                <info-btn
                                         iconType="ribbon-a"
                                         color="#ff9900"
                                         btn-text="培训"
