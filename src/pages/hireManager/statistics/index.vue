@@ -23,7 +23,7 @@
         <Row :gutter="16" style="margin-top: 5px">
             <Col :span="12">
                 <Card>
-                    <div style="npmwidth:100%;height:300px;" id="data_source1"></div>
+                    <div style="width:100%;height:300px;" id="data_source1"></div>
                 </Card>
             </Col>
             <Col :span="12">

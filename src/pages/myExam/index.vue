@@ -1,36 +1,36 @@
 <template>
-    <div class="#dep-grade">
-        <Row :gutter="10">
-            <Col :span="4">
-                <fs-dep-tree url="/organize/organizeTreeByUserForRiZhi"
-                             @node-change="_nodeChangeHandler($event)"
-                             :defaultProps="defaultProps"></fs-dep-tree>
-            </Col>
-            <Col :span="20">
-                <Card>
-                    <Form inline :label-width="60">
-                        <FormItem label="试卷名称">
-                            <Input type="text"
-                                   v-model="filterOpt.name.value"
-                                   placeholder="姓名"></Input>
-                        </FormItem>
-                        <FormItem label="考生名称">
-                            <Input type="text"
-                                   v-model="filterOpt.userName.value"
-                                   placeholder="姓名"></Input>
-                        </FormItem>
-                    </Form>
+    <div>
+        <Row :gutter="16">
+            <Col :xs="24" :sm="24" :md="14" :lg="16">
+                <Card :dis-hover="true">
+                    <h3 style="margin-bottom: 16px">我的成绩</h3>
                     <fs-table-page :columns="postColumns"
-                                   :size="null"
                                    :height="tableHeight"
-                                   :params="filterOpt"
-                                   url="/examtest/depDataScore"></fs-table-page>
+                                   url="/examtest/queryScoreList"></fs-table-page>
+                </Card>
+            </Col>
+            <Col :xs="24" :sm="24" :md="10" :lg="8">
+                <Card :dis-hover="true">
+                    <h3 style="margin-bottom: 16px;">我的考试</h3>
+                    <div class="" style="">
+                        <Card v-for="item, index in myTestList" :key="'my-test-' + index">
+                            <div class="">
+                                <strong style="font-size: 16px;">{{item.name}}</strong>
+                                <div class="">
+                                    <span>考试时间：</span><span>{{item.starttime}}</span>
+                                    <span style="margin-left: 8px;">考试时长：</span><span>{{item.totletime}}分钟</span>
+                                </div>
+                                <Button type="primary" style="margin-top: 8px;" @click="_startTest(item)">开始考试</Button>
+                            </div>
+                        </Card>
+                    </div>
+
                 </Card>
             </Col>
         </Row>
         <Modal v-model="modelFlag" width="900" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>{{testPeople}}试卷详情</span>
+                <span>试卷详情</span>
             </p>
             <test-result :id="testCheckId"></test-result>
             <div slot="footer">
@@ -41,6 +41,14 @@
                 <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="inExamFlag" width="900" :mask-closable="false" :closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>考试中</span>
+            </p>
+            <in-exam :id="testId" :paper-id="testPaperId"></in-exam>
+            <div slot="footer">
+            </div>
+        </Modal>
     </div>
 </template>
 <style>
@@ -48,116 +56,95 @@
 </style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
-    import fsDepTree from '@/baseComponents/fs-dep-tree';
-    import testResult from '../components/test-result';
+    import testResult from '../examination/components/test-result';
+    import inExam from './in-exam';
     export default {
-        name: 'depGrade',
+        name: 'myExam',
         data () {
             return {
                 modelFlag: false,
-                tableHeight: 300,
                 exportLoading: false,
-                testPeople: '',
-                testId: null,
+                inExamFlag: false,
+                tableHeight: 300,
                 testCheckId: 0,
-                defaultProps: {
-                    children: 'children',
-                    label: 'text'
-                },
+                testId: 0,
+                testPaperId: 0,
                 postColumns: [
                     {
-                        title: '试卷名称',
-                        fixed: 'left',
-                        key: 'name',
-                        width: 200
-                    },
-                    {
-                        title: '考生名称',
-                        key: 'stuname',
-                        fixed: 'left',
-                        align: 'center',
-                        width: 100
+                        title: '考试名称',
+                        key: 'name'
                     },
                     {
                         title: '总成绩',
                         align: 'center',
-                        fixed: 'left',
                         key: 'score',
                         width: 80
                     },
                     {
-                        title: '单选成绩',
+                        title: '单选',
                         align: 'center',
                         key: 'singlescore',
-                        width: 120,
+                        width: 80,
                         render: (h, params) => {
-                            return params.row.singlescore === null ? 0 : params.row.singlescore;
+                            return params.row.singlescore || 0;
                         }
                     },
                     {
-                        title: '多选成绩',
+                        title: '多选',
                         align: 'center',
                         key: 'multiplescore',
-                        width: 120,
+                        width: 80,
                         render: (h, params) => {
-                            return params.row.multiplescore === null ? 0 : params.row.multiplescore;
+                            return params.row.multiplescore || 0;
                         }
                     },
                     {
-                        title: '判断成绩',
+                        title: '判断',
                         align: 'center',
                         key: 'torfscore',
-                        width: 120,
+                        width: 80,
                         render: (h, params) => {
-                            return params.row.torfscore === null ? 0 : params.row.torfscore;
+                            return params.row.torfscore || 0;
                         }
                     },
                     {
-                        title: '填空成绩',
+                        title: '填空',
                         align: 'center',
                         key: 'fillscore',
-                        width: 120,
+                        width: 80,
                         render: (h, params) => {
-                            return params.row.fillscore === null ? 0 : params.row.fillscore;
+                            return params.row.fillscore || 0;
                         }
                     },
                     {
-                        title: '问答成绩',
+                        title: '问答',
                         align: 'center',
                         key: 'qandascore',
-                        width: 120,
+                        width: 80,
                         render: (h, params) => {
-                            return params.row.qandascore === null ? 0 : params.row.qandascore;
+                            return params.row.qandascore || 0;
                         }
                     },
                     {
-                        title: '用时(分钟)',
+                        title: '用时',
                         align: 'center',
-                        key: 'totletime',
-                        width: 120
+                        width: 80,
+                        key: 'totletime'
                     },
                     {
                         title: '排名',
                         align: 'center',
-                        key: 'ranking',
-                        width: 120
+                        width: 80,
+                        key: 'ranking'
                     },
                     {
                         title: '总人数',
                         align: 'center',
-                        key: 'sumstu',
-                        width: 120
-                    },
-                    {
-                        title: '考试日期',
-                        align: 'center',
-                        key: 'createbydate',
-                        width: 200
+                        width: 80,
+                        key: 'sumstu'
                     },
                     {
                         title: '操作',
-                        fixed: 'right',
-                        align: 'center',
                         width: 80,
                         render: (h, params) => {
                             let vm = this;
@@ -186,24 +173,12 @@
                         }
                     }
                 ],
-                filterOpt: {
-                    userName: {
-                        value: '',
-                        type: 'input'
-                    },
-                    name: {
-                        value: '',
-                        type: 'input'
-                    },
-                    organizeId: {
-                        value: '',
-                        type: 'tree'
-                    }
-                }
+                myTestList: []
             };
         },
         created() {
             this._setTableHeight();
+            this._getMyTestList();
         },
         methods: {
             downloadFile(url, name) {
@@ -212,10 +187,24 @@
                 downloadDom.download = name;
                 downloadDom.click();
             },
+            _startTest(data) {
+                console.log(data);
+                this.paperId = data.paperid;
+                this.testId = data.id;
+                this.inExamFlag = true;
+            },
+            _setTableHeight() {
+                let dm = document.body.clientHeight;
+                this.tableHeight = dm - 250;
+            },
+            _checkTest(data) {
+                this.testCheckId = data.id;
+                this.modelFlag = true;
+            },
             _exportGrade() {
                 this.exportLoading = true;
                 let data = {};
-                data.id = this.testId;
+                data.id = this.testCheckId;
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
                     if (res.success) {
@@ -225,22 +214,21 @@
                     this.exportLoading = false;
                 });
             },
-            _nodeChangeHandler(data) {
-                this.filterOpt.organizeId.value = data.id;
-            },
-            _checkTest(data) {
-                this.testCheckId = data.id;
-                this.modelFlag = true;
-            },
-            _setTableHeight() {
-                let dm = document.body.clientHeight;
-                this.tableHeight = dm - 280;
+            _getMyTestList() {
+                let data = {};
+                data.page = 1;
+                data.pageSize = 1000;
+                this.$http.get('/examtest/getTestList', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.myTestList = res.data;
+                    }
+                });
             }
         },
         components: {
             fsTablePage,
-            fsDepTree,
-            testResult
+            testResult,
+            inExam
         }
     };
 </script>
