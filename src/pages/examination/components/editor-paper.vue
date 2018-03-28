@@ -139,7 +139,6 @@
                     obj.questionList = questionList;
                     storeArray.push(obj);
                 });
-                console.log(storeArray);
                 return storeArray;
             },
             _delQuestion(data) {

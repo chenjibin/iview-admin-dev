@@ -32,7 +32,7 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>{{testPeople}}试卷详情</span>
             </p>
-            <test-result :paperInfo="paperInfo" :questionList="questionList"></test-result>
+            <test-result :id="testCheckId"></test-result>
             <div slot="footer">
                 <Button type="primary" :loading="exportLoading" icon="ios-cloud-download-outline" @click="_exportGrade">
                     <span v-if="!exportLoading">导出试卷</span>
@@ -59,12 +59,7 @@
                 exportLoading: false,
                 testPeople: '',
                 testId: null,
-                paperInfo: {
-                    name: '',
-                    getScore: '',
-                    costTime: ''
-                },
-                questionList: [],
+                testCheckId: 0,
                 defaultProps: {
                     children: 'children',
                     label: 'text'
@@ -96,7 +91,7 @@
                         key: 'singlescore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.singlescore === null ? '-' : params.row.singlescore;
+                            return params.row.singlescore === null ? 0 : params.row.singlescore;
                         }
                     },
                     {
@@ -105,7 +100,7 @@
                         key: 'multiplescore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.multiplescore === null ? '-' : params.row.multiplescore;
+                            return params.row.multiplescore === null ? 0 : params.row.multiplescore;
                         }
                     },
                     {
@@ -114,7 +109,7 @@
                         key: 'torfscore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.torfscore === null ? '-' : params.row.torfscore;
+                            return params.row.torfscore === null ? 0 : params.row.torfscore;
                         }
                     },
                     {
@@ -123,7 +118,7 @@
                         key: 'fillscore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.fillscore === null ? '-' : params.row.fillscore;
+                            return params.row.fillscore === null ? 0 : params.row.fillscore;
                         }
                     },
                     {
@@ -132,7 +127,7 @@
                         key: 'qandascore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.qandascore === null ? '-' : params.row.qandascore;
+                            return params.row.qandascore === null ? 0 : params.row.qandascore;
                         }
                     },
                     {
@@ -234,19 +229,7 @@
                 this.filterOpt.organizeId.value = data.id;
             },
             _checkTest(data) {
-                let sendData = {};
-                sendData.id = data.id;
-                sendData.pid = 1;
-                this.testPeople = data.stuname;
-                this.testId = data.id;
-                this.$http.get('/examtest/queryLookTest', {params: sendData}).then((res) => {
-                    if (res.success) {
-                        this.paperInfo.name = res.data.test.name;
-                        this.paperInfo.getScore = res.data.test.score;
-                        this.paperInfo.costTime = res.data.test.totletime;
-                        this.questionList = res.data.questionList;
-                    }
-                });
+                this.testCheckId = data.id;
                 this.modelFlag = true;
             },
             _setTableHeight() {

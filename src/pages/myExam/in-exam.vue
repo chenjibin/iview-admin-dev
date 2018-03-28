@@ -5,10 +5,8 @@
                 <div class="test-paper-info">
                     <h2 class="paper-name">{{paperInfo.name}}</h2>
                     <p>
-                        <span>用时:</span>
-                        <span>{{paperInfo.totletime}}分钟</span>
-                        <span style="margin-left: 20px;">得分:</span>
-                        <span>{{paperInfo.score}}</span>
+                        <span>总分:</span>
+                        <span>{{paperInfo.totlemark}}分</span>
                     </p>
                 </div>
                 <div class="" v-for="item,index in questionList" :key="index">
@@ -23,28 +21,38 @@
                             <span>({{question.questionmark}}分)</span>
                         </p>
                         <img :src="question.questionpic | _returnPicUrl" v-if="question.questionpic" class="exam-pic"/>
-                        <ul class="" v-if="[1, 2].indexOf(question.type) > -1">
-                            <li v-for="option in question.optionlist" :key="'option' + option.id">
-                                <div>
-                                    <span>{{option.optionnum}}.</span>
-                                    <span>{{option.content}}</span>
-                                </div>
+                        <RadioGroup v-model="question.answerNew"
+                                    vertical
+                                    v-if="question.type === 1" >
+                            <Radio :label="option.optionnum"
+                                   v-for="option in question.optionlist"
+                                   :key="'option' + option.id">
+                                <span>{{option.optionnum}}.</span>
                                 <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic"/>
-                            </li>
-                        </ul>
-                        <div class="answer-block my">
-                            <span>本题得分:</span>
-                            <span>{{question.scorenew || 0}}</span>
-                        </div>
-                        <div class="answer-block">
-                            <span>我的答案:</span>
-                            <span>{{ _returnAnswer(question.answernew,question.type)}}</span>
-                        </div>
-                        <div class="answer-block">
-                            <span>正确答案:</span>
-                            <span>{{_returnAnswer(question.answer,question.type)}}</span>
-                        </div>
+                                <span>{{option.content}}</span>
+                            </Radio>
+                        </RadioGroup>
+                        <CheckboxGroup v-model="question.answerNew"
+                                       vertical
+                                       v-if="question.type === 2">
+                            <Checkbox label="Eat"></Checkbox>
+                            <Checkbox label="Sleep"></Checkbox>
+                            <Checkbox label="Run"></Checkbox>
+                            <Checkbox label="Movie"></Checkbox>
+                        </CheckboxGroup>
+                        <RadioGroup v-model="question.answerNew" v-if="question.type === 3">
+                            <Radio label="male">Male</Radio>
+                            <Radio label="female">Female</Radio>
+                        </RadioGroup>
+                        <Input v-model="question.answerNew"
+                               type="textarea"
+                               :autosize="{minRows: 2,maxRows: 5}"
+                               v-if="question.type === 4 || question.type === 5"
+                               placeholder="Enter something..."></Input>
                     </div>
+                </div>
+                <div class="">
+                    <Button @click="_submitExam">答题完成！交卷</Button>
                 </div>
             </div>
         </Card>
@@ -89,9 +97,13 @@
 
 <script>
     export default {
-        name: 'testResult',
+        name: 'inExam',
         props: {
             id: {
+                type: Number,
+                default: 0
+            },
+            paperId: {
                 type: Number,
                 default: 0
             }
@@ -127,16 +139,25 @@
                 return name;
             },
             _returnPicUrl(val) {
-                return val;
+                return '/oa' + val;
             }
         },
         methods: {
+            _submitExam() {
+            },
             returnNeedList(data) {
                 let allType = [...(new Set(data.map(x => x.type)))].sort((x, y) => { return x - y > 0; });
                 let storeArray = [];
                 allType.forEach((item) => {
                     let obj = {};
                     let questionList = data.filter(x => x.type === item);
+                    questionList.forEach((item, index, array) => {
+                        if (item.type === 2) {
+                            array[index].answerNew = [];
+                        } else {
+                            array[index].answerNew = '';
+                        }
+                    });
                     obj.type = questionList[0].type;
                     obj.questionList = questionList;
                     storeArray.push(obj);
@@ -148,11 +169,11 @@
                 if (!this.id) return;
                 let sendData = {};
                 sendData.id = this.id;
-                sendData.pid = 1;
-                this.$http.post('/examtest/queryLookTest', sendData).then((res) => {
+                sendData.paperId = this.paperId;
+                this.$http.post('/exampaper/editPaper', sendData).then((res) => {
                     if (res.success) {
-                        this.paperInfo = res.data.test;
-                        this.questionList = this.returnNeedList(res.data.questionList);
+                        this.paperInfo = res.paper;
+                        this.questionList = this.returnNeedList(res.questionList);
                     }
                 });
             },

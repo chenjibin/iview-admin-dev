@@ -79,6 +79,10 @@
                     name: {
                         value: '',
                         type: 'input'
+                    },
+                    status: {
+                        value: 3,
+                        type: 'select'
                     }
                 },
                 editorSettingData: {
