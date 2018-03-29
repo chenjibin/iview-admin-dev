@@ -13,6 +13,7 @@
                                :size="null"
                                :height="tableHeight"
                                :params="filterOpt"
+                               ref="peopleCheck"
                                url="/examtestpaper/getTestPaperList"></fs-table-page>
             </div>
             <div class="" v-show="!isTestList">
@@ -205,10 +206,19 @@
                 this.isTestList = false;
             },
             _completePaper(data) {
-                let sendData = {};
-                sendData.id = data.id;
-                this.$http.post('/examtestpaper/closeTestPaper', sendData).then((res) => {
-                    if (res.success) {
+                this.$Modal.confirm({
+                    content: `确认完成【${data.name}】考试的手工阅卷么？`,
+                    okText: '确认完成',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        this.$http.post('/examtestpaper/closeTestPaper', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('操作成功!');
+                                this._updatePelpleCheck();
+                            }
+                        });
                     }
                 });
             },
@@ -219,6 +229,9 @@
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
+            },
+            _updatePelpleCheck() {
+                this.$refs.peopleCheck.getListData();
             }
         },
         components: {
