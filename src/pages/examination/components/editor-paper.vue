@@ -14,7 +14,10 @@
                         <span>{{numMap[index]}}、</span>
                         <span>{{typeMap[item.type - 1]}}:</span>
                     </h3>
-                    <div class="fs-list-item" v-for="question,qindex in item.questionList" :key="'question-' + index + '-' + qindex">
+                    <div class="fs-list-item"
+                         v-for="question,qindex in item.questionList"
+                         style="font-weight: 700"
+                         :key="'question-' + index + '-' + qindex">
                         <p class="exam-name">
                             <Badge  :count="qindex + 1 + ''" class-name="test-badge"></Badge>
                             <span>{{question.name}}</span>
@@ -24,9 +27,9 @@
                                     @click="_delQuestion(question)"
                                     v-if="editorabled" size="small"></Button>
                         </p>
-                        <img :src="question.questionpic | _returnPicUrl" v-if="question.questionpic" class="exam-pic"/>
+                        <img :src="question.questionpic | _returnPicUrl" v-if="question.questionpic" class="exam-pic" style="margin: 8px 0 16px 0;"/>
                         <ul class="" v-if="[1, 2].indexOf(question.type) > -1">
-                            <li v-for="option in question.optionlist" :key="'option' + option.id">
+                            <li v-for="option in question.optionlist" :key="'option' + option.id" style="margin-bottom: 8px;">
                                 <div>
                                     <span>{{option.optionnum}}.</span>
                                     <span>{{option.content}}</span>

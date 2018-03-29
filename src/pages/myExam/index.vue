@@ -12,7 +12,7 @@
             <Col :xs="24" :sm="24" :md="10" :lg="8">
                 <Card :dis-hover="true">
                     <h3 style="margin-bottom: 16px;">我的考试</h3>
-                    <div class="" style="">
+                    <div>
                         <Card v-for="item, index in myTestList" :key="'my-test-' + index">
                             <div class="">
                                 <strong style="font-size: 16px;">{{item.name}}</strong>

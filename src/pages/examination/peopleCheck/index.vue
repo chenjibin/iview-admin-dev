@@ -1,49 +1,47 @@
 <template>
     <div>
         <Card style="overflow: hidden;">
-            <transition name="fade">
-                <div class="" v-show="isTestList">
-                    <Form inline :label-width="60">
-                        <FormItem label="考试名称">
-                            <Input type="text"
-                                   v-model="filterOpt.name.value"
-                                   placeholder="筛选考试名称"></Input>
-                        </FormItem>
-                    </Form>
-                    <fs-table-page :columns="postColumns"
-                                   :size="null"
-                                   :height="tableHeight"
-                                   :params="filterOpt"
-                                   url="/examtestpaper/getTestPaperList"></fs-table-page>
-                </div>
-            </transition>
-            <transition name="fade">
-                <div class="" v-show="!isTestList">
-                    <Form inline :label-width="0.1">
-                        <FormItem>
-                            <Button @click="isTestList = true" icon="arrow-left-a" type="primary">返回考试列表</Button>
-                        </FormItem>
-                    </Form>
-                    <fs-table-page :columns="paperColumns"
-                                   :size="null"
-                                   :height="tableHeight"
-                                   :params="paperFilter"
-                                   url="/examtest/getScoreManageList"></fs-table-page>
-                </div>
-            </transition>
+            <div class="" v-show="isTestList">
+                <Form inline :label-width="60">
+                    <FormItem label="考试名称">
+                        <Input type="text"
+                               v-model="filterOpt.name.value"
+                               placeholder="筛选考试名称"></Input>
+                    </FormItem>
+                </Form>
+                <fs-table-page :columns="postColumns"
+                               :size="null"
+                               :height="tableHeight"
+                               :params="filterOpt"
+                               url="/examtestpaper/getTestPaperList"></fs-table-page>
+            </div>
+            <div class="" v-show="!isTestList">
+                <Form inline :label-width="0.1">
+                    <FormItem>
+                        <Button @click="isTestList = true" icon="arrow-left-a" type="primary">返回考试列表</Button>
+                    </FormItem>
+                </Form>
+                <fs-table-page :columns="paperColumns"
+                               :size="null"
+                               :height="tableHeight"
+                               :params="paperFilter"
+                               url="/examtest/getScoreManageList"></fs-table-page>
+            </div>
         </Card>
+        <Modal v-model="inExamFlag" width="1200" :mask-closable="false" :closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>手工阅卷</span>
+            </p>
+            <exam-check :id="testId"></exam-check>
+            <div slot="footer">
+                <Button type="ghost" style="margin-left: 8px" @click="inExamFlag = false">完成阅卷</Button>
+            </div>
+        </Modal>
     </div>
 </template>
-<style scoped>
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity .5s;
-    }
-    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-        opacity: 0;
-    }
-</style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import examCheck from './exam-check';
     export default {
         name: 'peopleCheck',
         data () {
@@ -73,7 +71,9 @@
                 ]);
             };
             return {
+                inExamFlag: false,
                 isTestList: true,
+                testId: 0,
                 filterOpt: {
                     name: {
                         value: '',
@@ -204,10 +204,17 @@
                 this.paperFilter.pid.value = data.id;
                 this.isTestList = false;
             },
-            _completePaper() {
-
+            _completePaper(data) {
+                let sendData = {};
+                sendData.id = data.id;
+                this.$http.post('/examtestpaper/closeTestPaper', sendData).then((res) => {
+                    if (res.success) {
+                    }
+                });
             },
-            _checkPeoplePaper() {
+            _checkPeoplePaper(data) {
+                this.testId = data.id;
+                this.inExamFlag = true;
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -215,7 +222,8 @@
             }
         },
         components: {
-            fsTablePage
+            fsTablePage,
+            examCheck
         }
     };
 </script>
