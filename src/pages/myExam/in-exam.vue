@@ -35,10 +35,13 @@
                         <CheckboxGroup v-model="question.answerNew"
                                        vertical
                                        v-if="question.type === 2">
-                            <Checkbox label="Eat"></Checkbox>
-                            <Checkbox label="Sleep"></Checkbox>
-                            <Checkbox label="Run"></Checkbox>
-                            <Checkbox label="Movie"></Checkbox>
+                            <Checkbox :label="option.optionnum"
+                                      v-for="option in question.optionlist"
+                                      :key="'option' + option.id">
+                                <span>{{option.optionnum}}.</span>
+                                <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic"/>
+                                <span>{{option.content}}</span>
+                            </Checkbox>
                         </CheckboxGroup>
                         <RadioGroup v-model="question.answerNew" v-if="question.type === 3">
                             <Radio label="male">Male</Radio>
