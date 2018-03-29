@@ -40,7 +40,8 @@
                 default() {
                     return {
                         children: 'children',
-                        label: 'name'
+                        label: 'name',
+                        isLeaf: 'leaf'
                     };
                 }
             }
@@ -80,11 +81,14 @@
                 });
             },
             checkmea(data, node) {
+                console.log(data);
                 this.customerForm.addForm.fname = data.name;
                 this.customerForm.addForm.pid = data.id;
+                this.customerForm.addForm.leaf = data.leaf;
                 this.customerForm.modifyInfo.pid = data.pid;
                 this.customerForm.modifyInfo.name = data.name;
                 this.customerForm.modifyInfo.id = data.id;
+                this.customerForm.modifyInfo.leaf = data.leaf;
                 this.$emit('customerForm', this.customerForm);
             }
         }

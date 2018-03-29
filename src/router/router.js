@@ -250,6 +250,20 @@ export const appRouter = [
         component: Main,
         children: [
             {
+                path: 'assetsRegister',
+                icon: 'compose',
+                name: 'assetsRegister',
+                title: '资产管理',
+                component: resolve => { require(['@/pages/assetsManager/assetsRegister/index.vue'], resolve); }
+            },
+            {
+                path: 'assetsApply',
+                icon: 'compose',
+                name: 'assetsApply',
+                title: '资产采购/报废申请',
+                component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
+            },
+            {
                 path: 'assetslocation',
                 icon: 'compose',
                 name: 'assetslocation',
@@ -262,13 +276,6 @@ export const appRouter = [
                 name: 'assetsCategory',
                 title: '资产分类',
                 component: resolve => { require(['@/pages/assetsManager/assetsCategory/index.vue'], resolve); }
-            },
-            {
-                path: 'assetsApply',
-                icon: 'compose',
-                name: 'assetsApply',
-                title: '资产申请/报废',
-                component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
             }
         ]
     },

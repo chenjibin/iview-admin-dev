@@ -4,17 +4,18 @@
         <Card>
             <Form inline :label-width="60">
                 <FormItem label="位置名称">
-                    <Input type="text" style="width: 173px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
-                           placeholder="位置名称"></Input>
+                    <Select type="text" style="width: 180px"
+                            @on-change="_inputDebounce"
+                            :clearable="true"
+                            v-model="filterOpt.name"
+                            placeholder="位置名称">
+                        <Option v-for="item, index in positionList" :key="index" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
+                    </Select>
                 </FormItem>
                 <Button type="ghost" @click="addInfo">
                     <Icon type="plus-circled"></Icon>
                     <span>新增</span>
                 </Button>
-                <!--<Button type="ghost" icon="edit">修改</Button>-->
-                <!--<Button type="ghost" icon="trash-b">删除</Button>-->
             </Form>
             <Table :columns="postColumns"
                    ref="attendanceTable"
@@ -70,6 +71,7 @@
                 filterOpt: {
                     name: ''
                 },
+                positionList: [],
                 baseInfo: {
                     name: '',
                     remarks: ''
@@ -136,10 +138,18 @@
         created () {
             this._getPostData();
             this._setTableHeight();
+            this.getPositionList();
         },
         methods: {
             changeInfo(data) {
                 this.baseInfo = data;
+            },
+            getPositionList() {
+                this.$http.post('assetsApplication/getPostionlist').then((res) => {
+                    if (res.success) {
+                        this.positionList = res.data;
+                    }
+                });
             },
             saveInfo() {
                 var vm = this;
@@ -177,7 +187,7 @@
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
-            }, 1600),
+            }, 200),
             _filterResultHandler () {
                 this.initPage();
                 this._getPostData();
