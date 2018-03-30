@@ -3,10 +3,12 @@
         <Card>
             <div class="fs-list-wrapper">
                 <div class="test-paper-info">
-                    <h2 class="paper-name">{{paperInfo.name}}</h2>
+                    <h2 class="paper-name">{{testPaperInfo.papername}}</h2>
                     <p>
                         <span>总分:</span>
-                        <span>{{paperInfo.totlemark}}分</span>
+                        <span>{{testPaperInfo.totlemark}}分</span>
+                        <span>得分:</span>
+                        <span>{{testInfo.score}}分</span>
                     </p>
                 </div>
                 <div class="" v-for="item,index in questionList" :key="index">
@@ -40,6 +42,21 @@
                             <div class="answer-block">
                                 <span>正确答案:</span>
                                 <span>{{_returnAnswer(question.answer,question.type)}}</span>
+                            </div>
+                            <div class="answer-block">
+                                <span>我的答案:</span>
+                                <span>{{_returnAnswer(question.answernew,question.type)}}</span>
+                            </div>
+                            <div class="answer-block">
+                                <span>本题满分:</span>
+                                <span>{{question.questionmark}}分</span>
+                            </div>
+                            <div class="answer-block">
+                                <span>得分:</span>
+                                <div class="" style="display: inline-block;" v-if="[4,5].indexOf(question.type) > -1">
+                                    <InputNumber :min="0" size="small" v-model="question.scorenew" @on-blur="_changeMark(question)"></InputNumber>分
+                                </div>
+                                <span v-else>{{question.scorenew}}分</span>
                             </div>
                         </div>
                     </div>
@@ -94,7 +111,8 @@
         },
         data () {
             return {
-                paperInfo: {},
+                testPaperInfo: {},
+                testInfo: {},
                 questionList: [],
                 numMap: ['一', '二', '三', '四', '五'],
                 typeMap: ['单选题', '多选题', '判断题', '填空题', '问答题']
@@ -127,24 +145,15 @@
             }
         },
         methods: {
-            _submitExam() {
-                let data = {};
-                data.pid = this.paperId;
-                data.answerList = [];
-                this.questionList.forEach(item => {
-                    item.questionList.forEach(question => {
-                        let obj = {};
-                        obj.id = question.id;
-                        obj.type = question.type;
-                        obj.answer = question.type === 2 ? question.answerNew.sort().join('') : question.answerNew;
-                        data.answerList.push(obj);
-                    });
-                });
-                data.answerList = JSON.stringify(data.answerList);
-                this.$http.post('/examtest/submitAnswerApp', data).then((res) => {
-                    console.log(res);
+            _changeMark(data) {
+                let sendData = {};
+                sendData.newScore = data.scorenew;
+                sendData.id = this.id;
+                sendData.pid = data.id;
+                sendData.type = data.type;
+                this.$http.post('/examtestpaper/editQuestionScore', sendData).then((res) => {
                     if (res.success) {
-                        this.$Message.success('交卷成功!');
+                        this.$Message.success('得分修改成功！');
                     }
                 });
             },
@@ -165,7 +174,6 @@
                     obj.questionList = questionList;
                     storeArray.push(obj);
                 });
-                console.log(storeArray);
                 return storeArray;
             },
             _getPaperDetail() {
@@ -175,7 +183,8 @@
                 sendData.pid = 1;
                 this.$http.post('/examtest/queryLookTest', sendData).then((res) => {
                     if (res.success) {
-                        this.paperInfo = res.data.test;
+                        this.testPaperInfo = res.data.testPaper;
+                        this.testInfo = res.data.test;
                         this.questionList = this.returnNeedList(res.data.questionList);
                     }
                 });

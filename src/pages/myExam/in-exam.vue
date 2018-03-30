@@ -55,8 +55,8 @@
                                 </div>
                             </CheckboxGroup>
                             <RadioGroup v-model="question.answerNew" v-if="question.type === 3">
-                                <Radio :label="1">正确</Radio>
-                                <Radio :label="2">错误</Radio>
+                                <Radio label="正确">正确</Radio>
+                                <Radio label="错误">错误</Radio>
                             </RadioGroup>
                             <Input v-model="question.answerNew"
                                    type="textarea"
@@ -139,6 +139,7 @@
         watch: {
             id() {
                 this._getPaperDetail();
+                this._startTime();
             }
         },
         filters: {
@@ -172,7 +173,7 @@
                         let obj = {};
                         obj.id = question.id;
                         obj.type = question.type;
-                        obj.answer = question.type === 2 ? question.answerNew.sort().join('') : question.answerNew;
+                        obj.answer = question.type === 2 ? question.answerNew.sort().join(',') : question.answerNew;
                         data.answerList.push(obj);
                     });
                 });
@@ -203,6 +204,14 @@
                 });
                 console.log(storeArray);
                 return storeArray;
+            },
+            _startTime() {
+                if (!this.id) return;
+                let data = {};
+                data.id = this.paperId;
+                this.$http.post('/examtest/startTime', data).then((res) => {
+                    console.log(res);
+                });
             },
             _getPaperDetail() {
                 if (!this.id) return;
