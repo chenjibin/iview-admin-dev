@@ -26,6 +26,7 @@
                                :size="null"
                                :height="tableHeight"
                                :params="paperFilter"
+                               ref="testPaperTable"
                                url="/examtest/getScoreManageList"></fs-table-page>
             </div>
         </Card>
@@ -35,7 +36,7 @@
             </p>
             <exam-check :id="testId"></exam-check>
             <div slot="footer">
-                <Button type="ghost" style="margin-left: 8px" @click="inExamFlag = false">完成阅卷</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="_completeCheck">完成阅卷</Button>
             </div>
         </Modal>
     </div>
@@ -222,6 +223,10 @@
                     }
                 });
             },
+            _completeCheck() {
+                this.inExamFlag = false;
+                this._updateTestPaperList();
+            },
             _checkPeoplePaper(data) {
                 this.testId = data.id;
                 this.inExamFlag = true;
@@ -232,6 +237,9 @@
             },
             _updatePelpleCheck() {
                 this.$refs.peopleCheck.getListData();
+            },
+            _updateTestPaperList() {
+                this.$refs.testPaperTable.getListData();
             }
         },
         components: {

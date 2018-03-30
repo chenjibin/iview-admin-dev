@@ -54,7 +54,7 @@
                             <div class="answer-block">
                                 <span>得分:</span>
                                 <div class="" style="display: inline-block;" v-if="[4,5].indexOf(question.type) > -1">
-                                    <InputNumber :min="0" size="small" v-model="question.scorenew" @on-blur="_changeMark(question)"></InputNumber>分
+                                    <InputNumber :min="0" :max="+question.questionmark" size="small" v-model="question.scorenew" @on-blur="_changeMark(question)"></InputNumber>分
                                 </div>
                                 <span v-else>{{question.scorenew}}分</span>
                             </div>
@@ -154,6 +154,7 @@
                 this.$http.post('/examtestpaper/editQuestionScore', sendData).then((res) => {
                     if (res.success) {
                         this.$Message.success('得分修改成功！');
+                        this._getPaperDetail();
                     }
                 });
             },

@@ -6,6 +6,7 @@
                     <h3 style="margin-bottom: 16px">我的成绩</h3>
                     <fs-table-page :columns="postColumns"
                                    :height="tableHeight"
+                                   ref="myGradeList"
                                    url="/examtest/queryScoreList"></fs-table-page>
                 </Card>
             </Col>
@@ -28,7 +29,7 @@
                 </Card>
             </Col>
         </Row>
-        <Modal v-model="modelFlag" width="900" :mask-closable="false">
+        <Modal v-model="modelFlag" width="1200" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>试卷详情</span>
             </p>
@@ -45,7 +46,9 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>考试中</span>
             </p>
-            <in-exam :id="testPaperId" :paper-id="testId"></in-exam>
+            <in-exam :id="testPaperId"
+                     :paper-id="testId"
+                     @submit-paper-success="_submitSuccessHandler"></in-exam>
             <div slot="footer">
             </div>
         </Modal>
@@ -187,11 +190,22 @@
                 downloadDom.download = name;
                 downloadDom.click();
             },
+            _submitSuccessHandler() {
+                this.$refs.myGradeList.getListData();
+                this._getMyTestList();
+                this.inExamFlag = false;
+            },
             _startTest(data) {
+                let sendData = {};
+                sendData.id = data.id;
                 console.log(data);
-                this.testPaperId = data.paperid;
-                this.testId = data.id;
-                this.inExamFlag = true;
+                this.$http.post('/examtest/startTime', sendData).then((res) => {
+                    if (res.success) {
+                        this.testPaperId = data.paperid;
+                        this.testId = data.id;
+                        this.inExamFlag = true;
+                    }
+                });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -208,7 +222,7 @@
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
                     if (res.success) {
-                        // this.downloadFile()
+                        this.downloadFile('/oa/download/' + res.data, res.data);
                     }
                 }).finally(() => {
                     this.exportLoading = false;

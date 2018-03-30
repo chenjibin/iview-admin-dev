@@ -139,7 +139,6 @@
         watch: {
             id() {
                 this._getPaperDetail();
-                this._startTime();
             }
         },
         filters: {
@@ -181,6 +180,7 @@
                 this.$http.post('/examtest/submitAnswerApp', data).then((res) => {
                     console.log(res);
                     if (res.success) {
+                        this.$emit('submit-paper-success');
                         this.$Message.success('交卷成功!');
                     }
                 });
@@ -204,14 +204,6 @@
                 });
                 console.log(storeArray);
                 return storeArray;
-            },
-            _startTime() {
-                if (!this.id) return;
-                let data = {};
-                data.id = this.paperId;
-                this.$http.post('/examtest/startTime', data).then((res) => {
-                    console.log(res);
-                });
             },
             _getPaperDetail() {
                 if (!this.id) return;
