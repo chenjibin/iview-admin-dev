@@ -83,23 +83,23 @@
                     </Select>
                 </FormItem>
                 <FormItem label="预约时间">
-                    <DatePicker :clearable = "true" format="yyyy-MM-dd" type="daterange" style="width: 173px"
+                    <DatePicker split-panels :clearable = "true" format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('startdate',$event)"
                                 @on-clear="clearDate('startdate')"
                                 :value="filterOpt.startdate"></DatePicker>
                 </FormItem>
                 <FormItem label="面试时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
+                    <DatePicker split-panels format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('interviewtime',$event)"
                                 :value="filterOpt.interviewtime"></DatePicker>
                 </FormItem>
                 <FormItem label="试岗时间">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
+                    <DatePicker split-panels format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('testtime',$event)"
                                 :value="filterOpt.testtime"></DatePicker>
                 </FormItem>
                 <FormItem label="备用时间" style="margin-right: 0;">
-                    <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px;"
+                    <DatePicker split-panels format="yyyy-MM-dd" type="daterange" style="width: 173px;"
                                 @on-change="_monthDateChange('sparetime',$event)"
                                 :value="filterOpt.sparetime"></DatePicker>
                 </FormItem>

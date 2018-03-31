@@ -5,7 +5,7 @@
                 <Card>
                     <Form inline :label-width="60" style="height: 30px">
                         <FormItem label="统计时间" style="margin-bottom: 0px">
-                            <DatePicker format="yyyy-MM-dd" type="daterange" style="width: 173px"
+                            <DatePicker split-panels format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                         @on-change="_monthDateChange('startdate',$event)"
                                         :value="startdate"
                                         placeholder="预约时间"></DatePicker>
