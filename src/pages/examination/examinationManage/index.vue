@@ -104,7 +104,7 @@
                     <FormItem label="试卷名称" prop="paperName">
                         <Select v-model="bindForm.paperName" filterable>
                             <Option v-for="item, index in paperList" :value="item.id" :key="'paper-list-' + index">
-                                <div class="">
+                                <div class="fs-paper-item">
                                     <span>{{item.name}}</span>
                                     <span>{{item.createbydate}}</span>
                                 </div>
@@ -137,6 +137,12 @@
         </Card>
     </div>
 </template>
+<style>
+    .fs-paper-item {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import peopleChoose from '../components/people-choose';

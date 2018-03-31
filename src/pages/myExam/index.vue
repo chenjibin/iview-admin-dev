@@ -6,13 +6,14 @@
                     <h3 style="margin-bottom: 16px">我的成绩</h3>
                     <fs-table-page :columns="postColumns"
                                    :height="tableHeight"
+                                   ref="myGradeList"
                                    url="/examtest/queryScoreList"></fs-table-page>
                 </Card>
             </Col>
             <Col :xs="24" :sm="24" :md="10" :lg="8">
                 <Card :dis-hover="true">
                     <h3 style="margin-bottom: 16px;">我的考试</h3>
-                    <div class="" style="">
+                    <div>
                         <Card v-for="item, index in myTestList" :key="'my-test-' + index">
                             <div class="">
                                 <strong style="font-size: 16px;">{{item.name}}</strong>
@@ -28,7 +29,7 @@
                 </Card>
             </Col>
         </Row>
-        <Modal v-model="modelFlag" width="900" :mask-closable="false">
+        <Modal v-model="modelFlag" width="1200" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>试卷详情</span>
             </p>
@@ -41,11 +42,13 @@
                 <Button type="ghost" style="margin-left: 8px" @click="modelFlag = false">取消</Button>
             </div>
         </Modal>
-        <Modal v-model="inExamFlag" width="900" :mask-closable="false" :closable="false">
+        <Modal v-model="inExamFlag" width="1200" :mask-closable="false" :closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>考试中</span>
             </p>
-            <in-exam :id="testId" :paper-id="testPaperId"></in-exam>
+            <in-exam :id="testPaperId"
+                     :paper-id="testId"
+                     @submit-paper-success="_submitSuccessHandler"></in-exam>
             <div slot="footer">
             </div>
         </Modal>
@@ -187,11 +190,22 @@
                 downloadDom.download = name;
                 downloadDom.click();
             },
+            _submitSuccessHandler() {
+                this.$refs.myGradeList.getListData();
+                this._getMyTestList();
+                this.inExamFlag = false;
+            },
             _startTest(data) {
+                let sendData = {};
+                sendData.id = data.id;
                 console.log(data);
-                this.paperId = data.paperid;
-                this.testId = data.id;
-                this.inExamFlag = true;
+                this.$http.post('/examtest/startTime', sendData).then((res) => {
+                    if (res.success) {
+                        this.testPaperId = data.paperid;
+                        this.testId = data.id;
+                        this.inExamFlag = true;
+                    }
+                });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
@@ -208,7 +222,7 @@
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
                     if (res.success) {
-                        // this.downloadFile()
+                        this.downloadFile('/oa/download/' + res.data, res.data);
                     }
                 }).finally(() => {
                     this.exportLoading = false;

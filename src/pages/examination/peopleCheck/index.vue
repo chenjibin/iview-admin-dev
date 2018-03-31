@@ -1,80 +1,81 @@
 <template>
     <div>
-        <Card>
-            <Form inline :label-width="60">
-                <FormItem label="考试名称">
-                    <Input type="text"
-                           v-model="filterOpt.name.value"
-                           placeholder="筛选试卷"></Input>
-                </FormItem>
-            </Form>
-            <fs-table-page :columns="postColumns"
-                           :size="null"
-                           :height="tableHeight"
-                           :params="filterOpt"
-                           url="/examtestpaper/getTestPaperList"></fs-table-page>
-            <Modal v-model="editorSettingFlag"
-                   width="300"
-                   :mask-closable="false">
-                <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                    <span>导出考勤</span>
-                </p>
-                <Form>
-                    <FormItem label="是否下架">
-                        <i-switch v-model="editorSettingData.isDown" size="large">
-                            <span slot="open">上架</span>
-                            <span slot="close">下架</span>
-                        </i-switch>
-                    </FormItem>
-                    <FormItem label="商品名称">
+        <Card style="overflow: hidden;">
+            <div class="" v-show="isTestList">
+                <Form inline :label-width="60">
+                    <FormItem label="考试名称">
                         <Input type="text"
-                               v-model="editorSettingData.name"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="所属分类">
-                        <Select v-model="editorSettingData.type"
-                                placeholder=""
-                                style="width: 100px">
-                            <Option value="纸品类">纸品类</Option>
-                            <Option value="饮品类">饮品类</Option>
-                            <Option value="纸品类">食品类</Option>
-                            <Option value="饮品类">卡券类</Option>
-                            <Option value="饮品类">服饰类</Option>
-                        </Select>
-                    </FormItem>
-                    <FormItem label="价格">
-                        <Input type="text"
-                               v-model="editorSettingData.price"
-                               placeholder=""></Input>
-                    </FormItem>
-                    <FormItem label="考勤月份">
-                        <DatePicker type="month"
-                                    placeholder="筛选考勤月份"
-                                    @on-change=""
-                                    :value="editorSettingData.month"></DatePicker>
+                               v-model="filterOpt.name.value"
+                               placeholder="筛选考试名称"></Input>
                     </FormItem>
                 </Form>
-                <div slot="footer">
-                    <Button type="primary"
-                            :loading="btnLoading"
-                            @click="">
-                        添加商品
-                    </Button>
-                    <Button type="ghost" style="margin-left: 8px" @click="editorSettingFlag = false">取消</Button>
-                </div>
-            </Modal>
+                <fs-table-page :columns="postColumns"
+                               :size="null"
+                               :height="tableHeight"
+                               :params="filterOpt"
+                               ref="peopleCheck"
+                               url="/examtestpaper/getTestPaperList"></fs-table-page>
+            </div>
+            <div class="" v-show="!isTestList">
+                <Form inline :label-width="0.1">
+                    <FormItem>
+                        <Button @click="isTestList = true" icon="arrow-left-a" type="primary">返回考试列表</Button>
+                    </FormItem>
+                </Form>
+                <fs-table-page :columns="paperColumns"
+                               :size="null"
+                               :height="tableHeight"
+                               :params="paperFilter"
+                               ref="testPaperTable"
+                               url="/examtest/getScoreManageList"></fs-table-page>
+            </div>
         </Card>
+        <Modal v-model="inExamFlag" width="1200" :mask-closable="false" :closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>手工阅卷</span>
+            </p>
+            <exam-check :id="testId"></exam-check>
+            <div slot="footer">
+                <Button type="ghost" style="margin-left: 8px" @click="_completeCheck">完成阅卷</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import examCheck from './exam-check';
     export default {
         name: 'peopleCheck',
         data () {
+            const colBtn = (vm, h, params, {content, icon, foo}) => {
+                return h('Tooltip', {
+                    props: {
+                        content: content,
+                        placement: 'top',
+                        transfer: true
+                    }
+                }, [
+                    h('Button', {
+                        props: {
+                            type: 'primary',
+                            icon: icon,
+                            shape: 'circle'
+                        },
+                        style: {
+                            margin: '0 2px'
+                        },
+                        on: {
+                            click: function () {
+                                foo(params.row);
+                            }
+                        }
+                    })
+                ]);
+            };
             return {
-                editorSettingFlag: false,
-                btnLoading: false,
-                postFormType: 'update',
+                inExamFlag: false,
+                isTestList: true,
+                testId: 0,
                 filterOpt: {
                     name: {
                         value: '',
@@ -82,6 +83,12 @@
                     },
                     status: {
                         value: 3,
+                        type: 'select'
+                    }
+                },
+                paperFilter: {
+                    pid: {
+                        value: 0,
                         type: 'select'
                     }
                 },
@@ -129,7 +136,63 @@
                         title: '操作',
                         key: 'user_name',
                         align: 'center',
+                        width: 160,
+                        render: (h, params) => {
+                            let vm = this;
+                            let status = params.row.manualpaper;
+                            if (status === 1) {
+                                return h('div', [
+                                    colBtn(vm, h, params, {content: '批改试卷', icon: 'compose', foo: vm._checkPaper}),
+                                    colBtn(vm, h, params, {content: '完成批改', icon: 'checkmark-round', foo: vm._completePaper})
+                                ]);
+                            }
+                        }
+                    }
+                ],
+                paperColumns: [
+                    {
+                        title: '考试名称',
+                        key: 'name'
+                    },
+                    {
+                        title: '部门名称',
+                        key: 'organizename'
+                    },
+                    {
+                        title: '考生',
+                        key: 'stuname',
+                        align: 'center',
                         width: 160
+                    },
+                    {
+                        title: '考试时间',
+                        key: 'starttime',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        title: '考试时长',
+                        key: 'totletime',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        title: '总分',
+                        key: 'score',
+                        align: 'center',
+                        width: 160
+                    },
+                    {
+                        title: '操作',
+                        key: 'user_name',
+                        align: 'center',
+                        width: 160,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                colBtn(vm, h, params, {content: '手工阅卷', icon: 'compose', foo: vm._checkPeoplePaper})
+                            ]);
+                        }
                     }
                 ],
                 tableHeight: 500
@@ -139,15 +202,49 @@
             this._setTableHeight();
         },
         methods: {
-            _initEditorSettingData() {
+            _checkPaper(data) {
+                this.paperFilter.pid.value = data.id;
+                this.isTestList = false;
+            },
+            _completePaper(data) {
+                this.$Modal.confirm({
+                    content: `确认完成【${data.name}】考试的手工阅卷么？`,
+                    okText: '确认完成',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = data.id;
+                        this.$http.post('/examtestpaper/closeTestPaper', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('操作成功!');
+                                this._updatePelpleCheck();
+                            }
+                        });
+                    }
+                });
+            },
+            _completeCheck() {
+                this.inExamFlag = false;
+                this._updateTestPaperList();
+            },
+            _checkPeoplePaper(data) {
+                this.testId = data.id;
+                this.inExamFlag = true;
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
+            },
+            _updatePelpleCheck() {
+                this.$refs.peopleCheck.getListData();
+            },
+            _updateTestPaperList() {
+                this.$refs.testPaperTable.getListData();
             }
         },
         components: {
-            fsTablePage
+            fsTablePage,
+            examCheck
         }
     };
 </script>

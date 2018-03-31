@@ -61,8 +61,6 @@
         overflow-x: hidden;
         overflow-y: auto;
         .fs-list-wrapper {
-            max-height: 600px;
-            overflow: auto;
             .test-paper-info {
                 text-align: center;
                 .paper-name {
@@ -127,7 +125,7 @@
                 return name;
             },
             _returnPicUrl(val) {
-                return val;
+                return '/oa' + val;
             }
         },
         methods: {
@@ -141,7 +139,6 @@
                     obj.questionList = questionList;
                     storeArray.push(obj);
                 });
-                console.log(storeArray);
                 return storeArray;
             },
             _getPaperDetail() {

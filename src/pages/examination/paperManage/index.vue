@@ -109,7 +109,7 @@
                 </div>
             </Modal>
             <Modal v-model="paperCheckFlag"
-                   width="800"
+                   width="1200"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>查看试卷</span>
@@ -333,7 +333,7 @@
         },
         methods: {
             _updateQuestionList() {
-                this.$refs.questionList._updateList()
+                this.$refs.questionList._updateList();
             },
             _getPaperDetail() {
                 this.$refs.paperDetail._getPaperDetail();
