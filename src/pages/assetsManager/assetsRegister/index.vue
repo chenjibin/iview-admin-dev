@@ -14,8 +14,7 @@
                             v-model="filterOpt.positionName"
                             placeholder="位置名称">
                         <Option v-for="item, index in positionList" :key="index" :value="item.name">
-                            <span>{{item.name}}</span><span :title="item.remarks"
-                                                            style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span>
+                            <span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span>
                         </Option>
                     </Select>
                 </FormItem>
@@ -28,18 +27,15 @@
                         <Option :value="3">报废</Option>
                     </Select>
                 </FormItem>
-                <ButtonGroup>
-                    <Button type="ghost" v-if="accessBtn.indexOf(29) > -1">新增</Button>
-                    <Button type="ghost" v-if="accessBtn.indexOf(29) > -1">修改</Button>
-                </ButtonGroup>
-                <ButtonGroup style="margin-left: 15px">
-                    <Button type="primary" class="cusBtn" v-if="accessBtn.indexOf(31) > -1" icon="code-download">
+                <FormItem :label-width="0.1">
+                    <Button type="ghost" v-if="accessBtn.indexOf(29) > -1" @click="addInfo" >新增</Button>
+                    <Button type="primary" class="cusBtn" v-if="accessBtn.indexOf(31) > -1" @click="exportExcel" icon="code-download">
                         导出
                     </Button>
-                    <Button type="primary" class="cusBtn" v-if="accessBtn.indexOf(32) > -1" icon="upload">
+                    <Button type="primary" class="cusBtn" v-if="accessBtn.indexOf(32) > -1" icon="upload" @click="attachFilesModal = true">
                         导入
                     </Button>
-                </ButtonGroup>
+                </FormItem>
             </Form>
             <Table :columns="postColumns"
                    ref="attendanceTable"
@@ -58,42 +54,35 @@
                   show-elevator
                   style="margin-top: 16px;"></Page>
         </Card>
-        <Modal v-model="changeInfoModal" width="300">
-            <Form style="margin-top: 20px">
-                <input style="display: none" v-model="baseInfo.id"/>
-                <FormItem label="位置名称">
-                    <Input type="text" style="width: 173px"
-                           v-model="baseInfo.name"
-                           placeholder="位置名称"></Input>
+        <Modal v-model="addAssetsModal" :width="385">
+            <Form style="margin-top: 20px" :label-width="100" ref="addAssetsInfo" :model="addAssetsInfo" :rules="addAssetsInfoRules">
+                <Input type="text" style="display: none" v-model="addAssetsInfo.id"></Input>
+                <FormItem label="资产名称" v-if="!addAssetsInfo.id" prop="nameId">
+                    <Cascader style="width: 180px" :data="cat1" v-model="selectArr2" :load-data="loadData"></Cascader>
                 </FormItem>
-                <FormItem label="位置备注">
-                    <Input type="text" style="width: 173px"
-                           v-model="baseInfo.remarks"
-                           placeholder="位置备注"></Input>
+                <FormItem label="资产名称" v-show="addAssetsInfo.id">
+                    <Input style="width: 180px" v-model="addAssetsInfo.name" readonly></Input>
                 </FormItem>
-            </Form>
-            <div slot="footer">
-                <Button type="primary" size="large" @click="saveInfo">
-                    <span>确定</span>
-                </Button>
-            </div>
-        </Modal>
-        <Modal v-model="addAssetsModal">
-            <Form style="margin-top: 20px" ref="newApplyForm" :model="newApply" :rules="newApplyRules">
-                <Input type="text" style="display: none" v-model="newApply.appType"></Input>
-                <FormItem label="资产名称" prop="categoryName">
-                    <Input type="text" v-model="newApply.categoryName" style="width: 173px" readonly>
-                    <Button slot="append" @click="showItmes(2)" icon="location" style="width: 30px"></Button></Input>
+                <FormItem label="申请数量" prop="num" v-if="!addAssetsInfo.id">
+                    <InputNumber type="text" :min="1" :max="99" style="width: 180px" v-model="addAssetsInfo.num"></InputNumber>
                 </FormItem>
-                <Input type="text" style="display: none" v-model="newApply.id"></Input>
-                <FormItem label="申请数量" prop="num">
-                    <InputNumber type="text" :min="1" :max="99" style="width: 173px" v-model="newApply.num"></InputNumber>
+                <FormItem label="资产状态">
+                    <Select style="width: 180px" v-model="addAssetsInfo.appStatus">
+                        <Option :value="0">在途</Option>
+                        <Option :value="1">在用</Option>
+                        <Option :value="2">备用</Option>
+                        <Option :value="3">报废</Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="资产位置" prop="positionName">
-                    <Input type="text" v-model="newApply.positionName" style="width: 173px"></Input>
+                    <Select type="text" style="width: 180px" v-model="addAssetsInfo.positionName" placeholder="位置名称">
+                        <Option v-for="item, index in positionList" :label="item.name" :key="index" :value="item.name">
+                            <span>{{item.name}}</span><span :title="item.remarks"  style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span>
+                        </Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="申请规格" prop="remarks">
-                    <Input type="text" style="width: 173px" v-model="newApply.remarks" placeholder="规格"></Input>
+                    <Input type="text" style="width: 180px" v-model="addAssetsInfo.remarks" placeholder="规格"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -103,7 +92,15 @@
             </div>
         </Modal>
         <Modal v-model="attachFilesModal">
-
+            <Upload accept="application/vnd.ms-excel" :data="{'fileName':'导入资产模版表.xls'}" action="/oa/assetsRegister/importAssetsRecord" name="file" :on-format-error="uploadInfo" :on-success="uploadInfo" type="drag">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>点击或者拖拽上传表格</p>
+                </div>
+            </Upload>
+            <div slot="footer">
+                <Button type="primary" @click="attachFilesModal = false">关闭</Button>
+            </div>
         </Modal>
     </div>
 </template>
@@ -124,26 +121,38 @@
                     category1_id: '',
                     category2_id: '',
                     category3_id: '',
+                    date: '',
                     approvalStatus: '',
                     positionName: ''
                 },
+                selectArr2: [],
                 addAssetsInfo: {
                     id: 0,
                     name: '',
-                    nameId: 0,
+                    nameId: '',
                     positionName: 0,
                     appStatus: 0,
                     num: 1,
                     remarks: ''
                 },
+                addAssetsInfoRules: {
+                    nameId: [
+                        {type: 'number', required: true, message: '资产名称不能为空!', trigger: 'blur'}
+                    ],
+                    num: [
+                        {type: 'number', required: true, message: '数量不能为空!', trigger: 'blur'}
+                    ],
+                    positionName: [
+                        {required: true, message: '资产位置不能为空!', trigger: 'blur'}
+                    ],
+                    remarks: [
+                        {required: true, message: '请填写规格或备注', trigger: 'blur'}
+                    ]
+                },
                 accessBtn: [],
                 cat1: [],
                 selectArr: [],
                 positionList: [],
-                baseInfo: {
-                    name: '',
-                    remarks: ''
-                },
                 changeInfoModal: false,
                 postColumns: [
                     {
@@ -195,6 +204,32 @@
                         align: 'center'
                     },
                     {
+                        title: '修改',
+                        align: 'center',
+                        render: (h, params) => {
+                            let row = params.row;
+                            var vm = this;
+                            return h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    icon: 'edit',
+                                    shape: 'circle'
+                                },
+                                on: {
+                                    click: function() {
+                                        vm.addAssetsInfo.appStatus = row.appstatus;
+                                        vm.addAssetsInfo.id = row.id;
+                                        vm.addAssetsInfo.name = row.name;
+                                        vm.addAssetsInfo.num = 1;
+                                        vm.addAssetsInfo.remarks = row.remarks;
+                                        vm.addAssetsInfo.positionName = row.positionname;
+                                        vm.addAssetsModal = true;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
                         title: '资产状态',
                         key: 'appstatus',
                         width: 120,
@@ -212,7 +247,6 @@
                                 },
                                 nativeOn: {
                                     click: () => {
-                                        console.log(1);
                                         if (this.accessBtn.indexOf(30) > -1) {
                                             this.$http.get('assetsOperateLog/reviewProcess?id=' + params.row.id).then((res) => {
                                                 if (res.success) {
@@ -247,27 +281,86 @@
         },
         mixins: [pageMixin],
         created () {
-            this.accessBtn = this.$route.meta.btn.map(x => x.id);
             this._getPostData();
             this._setTableHeight();
             this.getPositionList();
+            this.accessBtn = this.$route.meta.btn.map(x => x.id);
+            if (this.accessBtn.indexOf(30) < 0) {
+                this.postColumns.splice(7, 1);
+            }
             this.loadData(null, null, 1);
         },
         watch: {
             selectArr (arr) {
-                console.log(arr);
                 [this.filterOpt.category1_id, this.filterOpt.category2_id, this.filterOpt.category3_id] = arr;
-                // let j = 0;
-                // while (arr[j] !== undefined) {
-                // this.filterOpt['category' + (j + 1) + '_id'] = arr[j];
-                // j++;
-                // }
                 this._inputDebounce();
+            },
+            selectArr2 (arr) {
+                [, , this.addAssetsInfo.nameId] = arr;
             }
         },
         methods: {
             changeInfo(data) {
                 this.baseInfo = data;
+            },
+            exportExcel() {
+                var vm = this;
+                this.$Modal.confirm({
+                    title: '导出资产',
+                    okText: '导出',
+                    render: (h, params) => {
+                        return h('div', {
+                            style: {
+                                margin: '30px auto',
+                                width: '280px'
+                            }
+                        }, [
+                            h('span', {
+                                style: {
+                                    marginRight: '10px'
+                                }
+                            }, '选择月份'),
+                            h('DatePicker', {
+                                props: {
+                                    type: 'month',
+                                    clearable: true,
+                                    value: vm.filterOpt.date
+                                },
+                                on: {
+                                    'on-change': (val) => {
+                                        vm.filterOpt.date = val;
+                                    }
+                                }
+                            }),
+                            h('p', {
+                                style: {
+                                    color: '#ccc'
+                                }
+                            }, '不选月份下载全部')
+                        ]);
+                    },
+                    onOk: () => {
+                        let strExport = (vm.filterOpt.category1_id || '') + ',' +
+                            (vm.filterOpt.category2_id || '') + ',' +
+                            (vm.filterOpt.category3_id || '') + ',' +
+                            (vm.filterOpt.approvalStatus || '') + ',' +
+                            (vm.filterOpt.positionName || '');
+                        var a = document.createElement('a');
+                        a.type = 'download';
+                        a.href = '/oa/assetsRegister/export?date=' + vm.filterOpt.date + '&strExport=' + strExport;
+                        a.click();
+                    }
+                });
+            },
+            uploadInfo(response, file, fileList) {
+                console.log(response);
+                if (response.success) {
+                    this._filterResultHandler();
+                    this.$Message.success('导入成功');
+                    this.attachFilesModal = false;
+                } else {
+                    this.$Message.error('导入失败' + response.message);
+                }
             },
             getPositionList() {
                 this.$http.post('assetsApplication/getPostionlist').then((res) => {
@@ -312,37 +405,28 @@
             },
             saveInfo() {
                 var vm = this;
-                vm.$http.post('/assets/add', vm.baseInfo).then((res) => {
-                    if (res.success) {
-                        vm.$Message.success('保存成功');
-                        vm.changeInfoModal = false;
-                        vm._filterResultHandler();
-                    }
-                });
-            },
-            addInfo() {
-                this.baseInfo = {};
-                this.changeInfoModal = true;
-            },
-            delInfo(data) {
-                var vm = this;
-                this.baseInfo = data;
-                this.$Modal.confirm({
-                    title: '删除提醒',
-                    content: '是否确认删除？',
-                    okText: '删除',
-                    cancelText: '取消',
-                    loading: true,
-                    onOk () {
-                        this.$http.post('/assets/delete', {id: vm.baseInfo.id}).then((res) => {
+                this.$refs.addAssetsInfo.validate((isPass) => {
+                    if (isPass) {
+                        vm.$http.post('assetsRegister/addAndUpdate', vm.addAssetsInfo).then((res) => {
                             if (res.success) {
                                 vm._filterResultHandler();
-                                vm.$Modal.remove();
-                                vm.$Message.success('删除成功');
+                                vm.$Message.success('保存成功');
+                                vm.addAssetsModal = false;
+                                vm.$refs.addAssetsInfo.resetFields();
                             }
                         });
                     }
                 });
+            },
+            addInfo(row) {
+                this.addAssetsInfo.appStatus = '';
+                this.addAssetsInfo.id = '';
+                this.addAssetsInfo.name = '';
+                this.addAssetsInfo.num = 1;
+                this.addAssetsInfo.remarks = '';
+                this.addAssetsInfo.positionName = '';
+                this.selectArr2 = [];
+                this.addAssetsModal = true;
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -370,16 +454,17 @@
     };
 </script>
 
-<style>
-    #assetsRegister .cusBtn {
-        display: flex;
-        font-size: 18px;
-        justify-content: center;
-        align-items: center;
-    }
+<style lang="less">
+    #assetsRegister  {
+        .cusBtn {
+            span {
+                vertical-align: middle;
+            }
+            i {
+                vertical-align: middle;
+                font-size: 19px;
+            }
+        }
 
-    #assetsRegister .cusBtn span {
-        font-size: 14px;
-        line-height: 14px;
     }
 </style>
