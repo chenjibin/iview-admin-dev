@@ -264,6 +264,13 @@ export const appRouter = [
                 component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
             },
             {
+                path: 'assetsAllocation',
+                icon: 'compose',
+                name: 'assetsAllocation',
+                title: '资产调拨',
+                component: resolve => { require(['@/pages/assetsManager/assetsAllocation/index.vue'], resolve); }
+            },
+            {
                 path: 'assetslocation',
                 icon: 'compose',
                 name: 'assetslocation',
