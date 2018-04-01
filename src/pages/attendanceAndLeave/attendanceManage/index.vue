@@ -439,13 +439,17 @@
                                         value: params.row['c_count'],
                                         size: 'small',
                                         min: 0,
-                                        editable: false
+                                        editable: true
                                     },
                                     on: {
-                                        'on-change' (val) {
+                                        // 'on-change' (val) {
+                                        //     params.row['c_count'] = val;
+                                        //     vm._setEveryStrangeNumber(val, 'late', params.row);
+                                        // },
+                                        'on-change': debounce(function (val) {
                                             params.row['c_count'] = val;
                                             vm._setEveryStrangeNumber(val, 'late', params.row);
-                                        }
+                                        }, 300)
                                     }
                                 });
                             }
@@ -464,13 +468,17 @@
                                         value: params.row['z_count'],
                                         size: 'small',
                                         min: 0,
-                                        editable: false
+                                        editable: true
                                     },
                                     on: {
-                                        'on-change' (val) {
+                                        // 'on-change' (val) {
+                                        //     params.row['z_count'] = val;
+                                        //     vm._setEveryStrangeNumber(val, 'leave_early', params.row);
+                                        // },
+                                        'on-change': debounce(function (val) {
                                             params.row['z_count'] = val;
                                             vm._setEveryStrangeNumber(val, 'leave_early', params.row);
-                                        }
+                                        }, 300)
                                     }
                                 });
                             }
@@ -489,13 +497,17 @@
                                         value: params.row['l_count'],
                                         size: 'small',
                                         min: 0,
-                                        editable: false
+                                        editable: true
                                     },
                                     on: {
-                                        'on-change' (val) {
+                                        // 'on-change' (val) {
+                                        //     params.row['l_count'] = val;
+                                        //     vm._setEveryStrangeNumber(val, 'forget', params.row);
+                                        // },
+                                        'on-change': debounce(function (val) {
                                             params.row['l_count'] = val;
                                             vm._setEveryStrangeNumber(val, 'forget', params.row);
-                                        }
+                                        }, 300)
                                     }
                                 });
                             }

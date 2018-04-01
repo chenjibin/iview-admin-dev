@@ -13,7 +13,7 @@
                 <Button type="primary"
                         shape="circle"
                         icon="ios-search"
-                        @click.stop="modelFlag = true">我的金币动态</Button>
+                        @click.stop="_openMyCoinState">我的金币动态</Button>
             </Col>
         </Row>
         <div class="coin-change-list">
@@ -46,6 +46,7 @@
                 <span>我的金币动态</span>
             </p>
             <fs-table-page :columns="columns"
+                           ref="myCoinState"
                            url="/main/getMyCoinLogList"></fs-table-page>
             <div slot="footer">
             </div>
@@ -143,6 +144,12 @@
                 ],
                 rowData: []
             };
+        },
+        methods: {
+            _openMyCoinState() {
+                this.$refs.myCoinState.getListData();
+                this.modelFlag = true;
+            }
         },
         components: {
             coinRanking,

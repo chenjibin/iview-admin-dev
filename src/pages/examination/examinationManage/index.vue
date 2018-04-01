@@ -108,12 +108,15 @@
                       :rules="examRules">
                     <FormItem label="试卷名称" prop="paperName">
                         <Select v-model="bindForm.paperName" filterable>
-                            <Option v-for="item, index in paperList" :value="item.id" :key="'paper-list-' + index">
-                                <div class="fs-paper-item">
-                                    <span>{{item.name}}</span>
-                                    <span>{{item.createbydate}}</span>
-                                </div>
-                            </Option>
+                            <div class="" v-for="item, index in paperList" :key="'paper-list-' + index" v-if="item.paper.length">
+                                <h4 style="padding-left: 16px;font-size: 12px;font-weight:500;color: #909399;line-height: 30px;">{{item.name}}</h4>
+                                <Option v-for="paper, pindex in item.paper" :value="paper.id"  :key="'paper-list-' + index + '-' + pindex" >
+                                    <div class="fs-paper-item">
+                                        <span>{{paper.name}}</span>
+                                        <span>{{paper.createbydate}}创建</span>
+                                    </div>
+                                </Option>
+                            </div>
                         </Select>
                     </FormItem>
                 </Form>
@@ -146,6 +149,7 @@
     .fs-paper-item {
         display: flex;
         justify-content: space-between;
+        font-size: 14px;
     }
 </style>
 <script>
@@ -241,6 +245,19 @@
                         key: 'name'
                     },
                     {
+                        title: '考试类型',
+                        align: 'center',
+                        width: 160,
+                        render: (h, params) => {
+                            let resultList = this.subjectList.filter(x => x.id === params.row.subject);
+                            if (resultList.length) {
+                                return resultList[0].name;
+                            } else {
+                                return params.row.subject;
+                            }
+                        }
+                    },
+                    {
                         title: '试卷名称',
                         key: 'papername'
                     },
@@ -325,7 +342,7 @@
             },
             _bindPaper(data) {
                 this.bindForm.examId = data.id;
-                this.bindForm.paperName = '';
+                this.bindForm.paperName = data.paperid || '';
                 this.bindPaperFlag = true;
             },
             _bindExamConfirm() {
@@ -346,7 +363,7 @@
             _changePaperName(data) {
                 this._initEditorSettingData();
                 this.editorSettingData.name = data.name;
-                this.editorSettingData.subjectExam = data.subjectExam;
+                this.editorSettingData.subjectExam = data.subject;
                 this.editorSettingData.startTime = moment(data.starttime).format('YYYY-MM-DD HH:mm');
                 this.editorSettingData.totalTime = +data.totletime;
                 this.editorSettingData.id = data.id;
@@ -418,10 +435,8 @@
                 });
             },
             _getAllPaperList() {
-                let data = {};
-                data.page = 1;
-                data.pageSize = 10000;
-                this.$http.get('/exampaper/getPaperList', {params: data}).then((res) => {
+                this.$http.get('/exampaper/getSubjectPaperList').then((res) => {
+                    console.log(res);
                     if (res.success) {
                         this.paperList = res.data;
                     }

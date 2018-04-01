@@ -269,8 +269,12 @@
                         align: 'center',
                         width: 160,
                         render: (h, params) => {
-                            console.log(this.subjectList);
-                            return this.subjectList.filter(x => x.id === params.row.subject);
+                            let resultList = this.subjectList.filter(x => x.id === params.row.subject);
+                            if (resultList.length) {
+                                return resultList[0].name;
+                            } else {
+                                return params.row.subject;
+                            }
                         }
                     },
                     {
@@ -379,7 +383,7 @@
             },
             _changePaperName(data) {
                 this.paperNameForm.name = data.name;
-                this.paperNameForm.subjectPaper = data.subjectPaper;
+                this.paperNameForm.subjectPaper = data.subject;
                 this.paperNameForm.id = data.id;
                 this.paperNameflag = true;
             },
