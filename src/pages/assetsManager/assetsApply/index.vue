@@ -249,6 +249,7 @@
                         render: (h, params) => {
                             let color = '';
                             let text = '';
+                            let vm = this;
                             switch (params.row.approvalstatus) {
                                 case 0:
                                     color = 'blue';
@@ -268,9 +269,32 @@
                                     type: 'border',
                                     color: color
                                 },
-                                on: {
+                                nativeOn: {
                                     click: function() {
-
+                                        vm.$http.get('assetsManage/reviewProcess?id=' + params.row.id).then((res) => {
+                                            if (res.success) {
+                                                let data = res.data;
+                                                let msg = '';
+                                                let ops = ['审核中', '批准了', '拒绝了'];
+                                                for (let i = 0; i < data.length; i++) {
+                                                    let obj = data[i];
+                                                    let name = obj.approvalbyname;
+                                                    let time = obj.modifybydate;
+                                                    let opt = ops[obj.approvalstatus];
+                                                    let remarks = obj.remarks;
+                                                    if (obj.approvalstatus === 0) {
+                                                        msg += `<p style='font-size: 16px;'>递交 ${name || ''} 审批中</p>`;
+                                                    } else {
+                                                        msg += `<p style='font-size: 16px;'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span>${opt} 此资产<span style="margin: 0 10px 0 10px">备注：${remarks || ''}</span></p>`;
+                                                    }
+                                                }
+                                                vm.$Modal.info({
+                                                    title: '操作记录',
+                                                    content: msg
+                                                });
+                                            }
+                                        })
+                                        console.log(params.row);
                                     }
                                 }
                             }, text);
@@ -348,6 +372,7 @@
                             if (res.success) {
                                 vm.$Message.success('保存成功');
                                 vm.addInfoModal = false;
+                                newApplyForm.resetFields();
                                 refT._filterResultHandler();
                             }
                         });
