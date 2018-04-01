@@ -5,7 +5,7 @@
                 <FormItem label="考试名称">
                     <Input type="text"
                            v-model="filterOpt.name.value"
-                           placeholder="筛选姓名"></Input>
+                           placeholder="筛选考试"></Input>
                 </FormItem>
                 <FormItem label="考试状态">
                     <Select v-model="filterOpt.status.value"
@@ -44,6 +44,11 @@
                         <Input type="text"
                                v-model="editorSettingData.name"
                                placeholder=""></Input>
+                    </FormItem>
+                    <FormItem label="考试类型">
+                        <Select v-model="editorSettingData.subjectExam">
+                            <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
+                        </Select>
                     </FormItem>
                     <FormItem label="开始时间" prop="startTime">
                         <DatePicker type="datetime"
@@ -223,11 +228,13 @@
                 },
                 editorSettingData: {
                     name: '',
+                    subjectExam: '',
                     startTime: NOW_TIME,
                     totalTime: 30,
                     id: 0
                 },
                 paperList: [],
+                subjectList: [],
                 postColumns: [
                     {
                         title: '考试名称',
@@ -281,7 +288,7 @@
                             } else if (status === 2) {
                                 return h('div', [
                                     colBtn(vm, h, params, {content: '添加考生', icon: 'person-add', foo: vm._addQuestion}),
-                                    colBtn(vm, h, params, {content: '结束考试', icon: 'close-round', foo: vm._closePaper})
+                                    colBtn(vm, h, params, {content: '结束考试', icon: 'stop', foo: vm._closePaper})
                                 ]);
                             } else if (status === 3) {
                                 return h('div', [
@@ -296,6 +303,7 @@
         },
         created() {
             this._setTableHeight();
+            this._getSubjectList();
             this._getAllPaperList();
         },
         methods: {
@@ -305,6 +313,7 @@
             _initEditorSettingData() {
                 this.handleReset('examForm');
                 this.editorSettingData.name = '';
+                this.editorSettingData.subjectExam = this.subjectList[0].id;
                 this.editorSettingData.startTime = NOW_TIME;
                 this.editorSettingData.totalTime = 30;
                 this.editorSettingData.id = 0;
@@ -337,6 +346,7 @@
             _changePaperName(data) {
                 this._initEditorSettingData();
                 this.editorSettingData.name = data.name;
+                this.editorSettingData.subjectExam = data.subjectExam;
                 this.editorSettingData.startTime = moment(data.starttime).format('YYYY-MM-DD HH:mm');
                 this.editorSettingData.totalTime = +data.totletime;
                 this.editorSettingData.id = data.id;
@@ -393,6 +403,7 @@
                         let data = {};
                         let editorSettingData = this.editorSettingData;
                         data.id = editorSettingData.id;
+                        data.subjectExam = editorSettingData.subjectExam;
                         data.startTime = editorSettingData.startTime;
                         data.totleTime = editorSettingData.totalTime;
                         data.name = editorSettingData.name;
@@ -424,6 +435,14 @@
             },
             _updateExamList() {
                 this.$refs.examList.getListData();
+            },
+            _getSubjectList() {
+                this.$http.get('/examquestion/getSubjectList').then((res) => {
+                    if (res.success) {
+                        this.subjectList = res.data;
+                        this.editorSettingData.subjectExam = this.subjectList[0].id;
+                    }
+                });
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;

@@ -7,6 +7,13 @@
                            v-model="filterOpt.name.value"
                            placeholder="筛选试卷"></Input>
                 </FormItem>
+                <FormItem label="试卷分类">
+                    <Select v-model="filterOpt.subjectPaper.value"
+                            style="width: 200px"
+                            clearable>
+                        <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="试卷状态">
                     <Select v-model="filterOpt.status.value"
                             clearable
@@ -44,6 +51,11 @@
                         <Input type="text"
                                v-model="editorSettingData.name"
                                placeholder=""></Input>
+                    </FormItem>
+                    <FormItem label="试卷分类">
+                        <Select v-model="editorSettingData.subjectPaper">
+                            <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
+                        </Select>
                     </FormItem>
                     <FormItem label="是否随机">
                         <RadioGroup v-model="editorSettingData.isRandom">
@@ -136,6 +148,11 @@
                             <Input type="text"
                                    v-model="paperNameForm.name"></Input>
                         </FormItem>
+                        <FormItem label="试卷分类">
+                            <Select v-model="paperNameForm.subjectPaper">
+                                <Option :value="item.id" v-for="item, index in subjectList" :key="index">{{item.name}}</Option>
+                            </Select>
+                        </FormItem>
                     </Form>
                 </div>
                 <div slot="footer">
@@ -214,12 +231,17 @@
                     status: {
                         value: '',
                         type: 'select'
+                    },
+                    subjectPaper: {
+                        value: '',
+                        type: 'select'
                     }
                 },
                 editorSettingData: {
                     name: '',
                     isRandom: 2,
                     subject: 1,
+                    subjectPaper: 1,
                     singleTypeNum: 0,
                     multiTypeNum: 0,
                     trueOrFalseTypeNum: 0,
@@ -228,6 +250,7 @@
                 },
                 paperNameForm: {
                     name: '',
+                    subjectPaper: '',
                     id: 0
                 },
                 paperNameRules: {
@@ -239,6 +262,16 @@
                     {
                         title: '试卷名称',
                         key: 'name'
+                    },
+                    {
+                        title: '试卷类型',
+                        key: 'subject',
+                        align: 'center',
+                        width: 160,
+                        render: (h, params) => {
+                            console.log(this.subjectList);
+                            return this.subjectList.filter(x => x.id === params.row.subject);
+                        }
                     },
                     {
                         title: '总分',
@@ -334,9 +367,11 @@
         methods: {
             _updateQuestionList() {
                 this.$refs.questionList._updateList();
+                this._updatePaperList();
             },
             _getPaperDetail() {
                 this.$refs.paperDetail._getPaperDetail();
+                this._updatePaperList();
             },
             _addQuestion(data) {
                 this.paperId = data.id;
@@ -344,12 +379,14 @@
             },
             _changePaperName(data) {
                 this.paperNameForm.name = data.name;
+                this.paperNameForm.subjectPaper = data.subjectPaper;
                 this.paperNameForm.id = data.id;
                 this.paperNameflag = true;
             },
             _confirmSubmitPaperName() {
                 let data = {};
                 data.name = this.paperNameForm.name;
+                data.subjectPaper = this.paperNameForm.subjectPaper;
                 data.id = this.paperNameForm.id;
                 this.$http.post('/exampaper/add', data).then((res) => {
                     if (res.success) {
@@ -444,6 +481,7 @@
                 editorSetting.name = '';
                 editorSetting.isRandom = 2;
                 editorSetting.subject = this.subjectList[0].id;
+                editorSetting.subjectPaper = this.subjectList[0].id;
                 editorSetting.singleTypeNum = 0;
                 editorSetting.multiTypeNum = 0;
                 editorSetting.trueOrFalseTypeNum = 0;
@@ -461,6 +499,7 @@
                         if (editorSetting.isRandom === 1) {
                             let sendData = {};
                             sendData.id = 0;
+                            sendData.subjectPaper = editorSetting.subjectPaper;
                             sendData.name = editorSetting.name;
                             this.$http.post('/exampaper/add', sendData).then((res) => {
                                 if (res.success) {
@@ -472,6 +511,7 @@
                         } else {
                             let sendData = {};
                             sendData.name = editorSetting.name;
+                            sendData.subjectPaper = editorSetting.subjectPaper;
                             sendData.subject = editorSetting.subject;
                             sendData.count1 = editorSetting.singleTypeNum;
                             sendData.count2 = editorSetting.multiTypeNum;
