@@ -156,9 +156,9 @@
             </p>
             <Tabs type="card">
                 <TabPane label="基本信息" style="overflow: hidden;">
-                    <Form ref="talentBean" :label-width="130" style="overflow-y: auto;height: 600px;" inline>
+                    <Form ref="talentBean" :model="talentBean" :label-width="130" :rules="talentBeanRule" style="overflow-y: auto;height: 600px;" inline>
                         <Input type="text" style="display: none" v-model="talentBean.id"></Input>
-                        <FormItem label="姓名" style="width:460px">
+                        <FormItem label="姓名" style="width:460px" prop="name">
                             <Input type="text" v-model="talentBean.name"></Input>
                         </FormItem>
                         <FormItem label="性别" style="width:460px">
@@ -167,7 +167,7 @@
                                 <Option :value="2">女</Option>
                             </Select>
                         </FormItem>
-                        <FormItem label="岗位" style="width:460px">
+                        <FormItem label="岗位" style="width:460px" prop="postname">
                             <Select name="postname" v-model="talentBean.postname">
                                 <Option :value="item.id" v-for="item, index in positionData" :key="item.id">{{item.name}}</Option>
                             </Select>
@@ -178,10 +178,10 @@
                         <FormItem label="年龄" style="width:460px">
                             <Input type="text" v-model="talentBean.age"></Input>
                         </FormItem>
-                        <FormItem label="手机" style="width:460px">
+                        <FormItem label="手机" style="width:460px" prop="phone">
                             <Input type="text" v-model="talentBean.phone"></Input>
                         </FormItem>
-                        <FormItem label="信息来源" style="width:460px">
+                        <FormItem label="信息来源" style="width:460px" prop="resumesource">
                             <Select type="text" v-model="talentBean.resumesource">
                                 <Option value="">请选择</Option>
                                 <Option :value="1">58同城</Option>
@@ -683,6 +683,21 @@
                     emrelate: '',
                     emphone: ''
                 }, // 简历基本信息模块
+                talentBeanRule: {
+                    name: [
+                        { required: true, message: '姓名必填', trigger: 'blur' }
+                    ],
+                    postname: [
+                        { type: 'number', required: true, message: '面试岗位必填', trigger: 'change' }
+                    ],
+                    phone: [
+                        { required: true, message: '手机号码不为空', trigger: 'blur' },
+                        { len: 11, message: '手机号码不正确', trigger: 'blur' }
+                    ],
+                    resumesource: [
+                        { type: 'number', required: true, message: '简历来源必填', trigger: 'change' }
+                    ]
+                },
                 statusInfo: {}, // 每回合考核数据
                 tableLoading: true, // 表格加载
                 tableHeight: 400,
@@ -1039,22 +1054,31 @@
                 } else {
                     this.saveBtn2Loading = true;
                 }
-                var d = {};
-                d.bean = JSON.stringify(this.talentBean);
-                d.workingForm = JSON.stringify(this.workingForm);
-                d.educationForm = JSON.stringify(this.educationForm);
-                d.socailShipForm = JSON.stringify(this.socailShipForm);
-                this.$http.post('/talentLibrary/save', d).then((res) => {
-                    this.saveBtn1Loading = false;
-                    this.saveBtn2Loading = false;
-                    if (res.success) {
-                        this.$Message.success('保存成功');
-                        this._filterResultHandler();
-                        if (type === 2) {
-                            this.settingModalFlag = false;
-                            return;
-                        }
-                        this._findUser(res.message);
+                var vm = this;
+                this.$refs.talentBean.validate(function (isPass) {
+                    if (isPass) {
+                        console.log(1);
+                        var d = {};
+                        d.bean = JSON.stringify(vm.talentBean);
+                        d.workingForm = JSON.stringify(vm.workingForm);
+                        d.educationForm = JSON.stringify(vm.educationForm);
+                        d.socailShipForm = JSON.stringify(vm.socailShipForm);
+                        vm.$http.post('/talentLibrary/save', d).then((res) => {
+                            vm.saveBtn1Loading = false;
+                            vm.saveBtn2Loading = false;
+                            if (res.success) {
+                                vm.$Message.success('保存成功');
+                                vm._filterResultHandler();
+                                if (type === 2) {
+                                    vm.settingModalFlag = false;
+                                    return;
+                                }
+                                vm._findUser(res.message);
+                            }
+                        });
+                    } else {
+                        vm.saveBtn1Loading = false;
+                        vm.saveBtn2Loading = false;
                     }
                 });
             },
