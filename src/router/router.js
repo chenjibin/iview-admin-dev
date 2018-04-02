@@ -264,11 +264,25 @@ export const appRouter = [
                 component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
             },
             {
+                path: 'assetsBuyApprove',
+                icon: 'compose',
+                name: 'assetsBuyApprove',
+                title: '资产采购/报废审批',
+                component: resolve => { require(['@/pages/assetsManager/assetsBuyApprove/index.vue'], resolve); }
+            },
+            {
                 path: 'assetsAllocation',
                 icon: 'compose',
                 name: 'assetsAllocation',
                 title: '资产调拨',
                 component: resolve => { require(['@/pages/assetsManager/assetsAllocation/index.vue'], resolve); }
+            },
+            {
+                path: 'assetsBuyManager',
+                icon: 'compose',
+                name: 'assetsBuyManager',
+                title: '资产采购清单',
+                component: resolve => { require(['@/pages/assetsManager/assetsBuyManager/index.vue'], resolve); }
             },
             {
                 path: 'assetslocation',

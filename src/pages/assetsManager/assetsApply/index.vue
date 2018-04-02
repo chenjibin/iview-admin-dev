@@ -10,9 +10,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="资产名称">
-                    <Input type="text" v-model="filterOpt.categoryName.value" :clearable="true" style="width: 160px" readonly>
-                        <Button slot="append" @click="showItmes(1)" icon="location" style="width: 30px"></Button>
-                    </Input>
+                    <Cascader style="width: 180px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
                 </FormItem>
                 <FormItem label="位置名称">
                     <Select type="text" style="width: 180px"
@@ -20,11 +18,11 @@
                             :clearable="true"
                             v-model="filterOpt.positionName.value"
                             placeholder="位置名称">
-                        <Option v-for="item, index in positionList" :key="index" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
+                        <Option v-for="item, index in positionList" :key="index" :label="item.name" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
                     </Select>
                 </FormItem>
                 <FormItem label="审批状态">
-                    <Select type="text" v-model="filterOpt.approvalStatus.value" :clearable="true"  style="width: 160px">
+                    <Select type="text" v-model="filterOpt.approvalStatus.value" :clearable="true" style="width: 160px">
                         <Option :value="0">待审批</Option>
                         <Option :value="1">审批通过</Option>
                         <Option :value="2">审批拒绝</Option>
@@ -44,22 +42,21 @@
                            url="/assetsApplication/applicationList"></fs-table-page>
 
         </Card>
-        <Modal v-model="addInfoModal" width="300">
-            <Form style="margin-top: 20px" ref="newApplyForm" :model="newApply" :rules="newApplyRules">
+        <Modal v-model="addInfoModal" width="320">
+            <Form style="margin-top: 25px" :label-width="90" ref="newApplyForm" :model="newApply" :rules="newApplyRules">
                 <Input type="text" style="display: none" v-model="newApply.appType"></Input>
                 <FormItem label="资产名称" prop="categoryName">
-                    <Input type="text" v-model="newApply.categoryName" style="width: 173px" readonly>
-                    <Button slot="append" @click="showItmes(2)" icon="location" style="width: 30px"></Button></Input>
+                    <Cascader style="width: 180px" v-model="selectArr" :data="cat1" :clearable="true" @on-change="changeCataName(2, arguments)" :load-data="loadData"></Cascader>
                 </FormItem>
                 <Input type="text" style="display: none" v-model="newApply.id"></Input>
                 <FormItem label="申请数量" prop="num">
-                    <InputNumber type="text" :min="1" :max="99" style="width: 173px" v-model="newApply.num"></InputNumber>
+                    <InputNumber type="text" :min="1" :max="99" style="width: 180px" v-model="newApply.num"></InputNumber>
                 </FormItem>
                 <FormItem label="资产位置" prop="positionName">
-                    <Input type="text" v-model="newApply.positionName" style="width: 173px"></Input>
+                    <Input type="text" v-model="newApply.positionName" style="width: 180px"></Input>
                 </FormItem>
                 <FormItem label="申请规格" prop="remarks">
-                    <Input type="text" style="width: 173px" v-model="newApply.remarks" placeholder="规格"></Input>
+                    <Input type="text" style="width: 180px" v-model="newApply.remarks" placeholder="规格"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -79,8 +76,10 @@
                 <Button type="primary" @click="ItemChecked">确认</Button>
             </div>
         </Modal>
-        <Modal v-model="statusInfo">
-
+        <Modal v-model="reciveModal">
+            <Table :loading="reciveLoading" :height="300"
+                   :columns="reciveColumns"
+                   :data="reciveList"></Table>
         </Modal>
     </div>
 </template>
@@ -115,8 +114,12 @@
                         type: 'select'
                     }
                 },
+                cat1: [],
                 itemsModel: false,
                 statusInfo: false,
+                reciveModal: false,
+                reciveLoading: false,
+                reciveAppid: 0,
                 itemsType: 0, // 1查询 2采购申请
                 newApplyModal: false,
                 defaultProps: {
@@ -142,6 +145,70 @@
                     name: '',
                     id: -1
                 },
+                reciveList: [],
+                reciveColumns: [
+                    {
+                        title: '资产名称',
+                        key: 'name',
+                        align: 'center'
+                    },
+                    {
+                        title: '资产位置',
+                        key: 'positionname',
+                        align: 'center'
+                    },
+                    {
+                        title: '资产状态',
+                        key: 'appstatus',
+                        align: 'center',
+                        render: (h, params) => {
+                            let text = ['在途', '在用', '备用', '报废'];
+                            return text[params.row.appstatus];
+                        }
+                    },
+                    {
+                        title: '申请日期',
+                        key: 'createbydate',
+                        align: 'center',
+                        render: (h, params) => {
+                            if (!params.row.createbydate) {
+                                return '';
+                            } else {
+                                return params.row.createbydate.substring(0, 10);
+                            }
+                        }
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        render: (h, params) => {
+                            var vm = this;
+                            return h('Button', {
+                                props: {
+                                    type: 'success'
+                                },
+                                on: {
+                                    click() {
+                                        var d = {};
+                                        d.id = params.row.id;
+                                        vm.$http.post('assetsManage/getReceive', d).then((r) => {
+                                            if (r.success) {
+                                                vm.$Message.success('领取成功');
+                                                vm.getReciveList(vm.reciveAppid).then((res) => {
+                                                    vm.$refs.fsTable._filterResultHandler();
+                                                    if (res.data.length === 0) {
+                                                        vm.reciveAppid = 0;
+                                                        vm.reciveModal = false;
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+                            }, '领取');
+                        }
+                    }
+                ],
                 postColumns: [
                     {
                         title: '申请类型',
@@ -178,7 +245,16 @@
                     {
                         title: '报废方式',
                         key: 'scrappedtype',
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            var status = params.row.scrappedtype;
+                            if (status === 1) {
+                                return '直接销毁';
+                            }
+                            if (status === 2) {
+                                return '废品处理';
+                            }
+                        }
                     },
                     {
                         title: '申请部门',
@@ -250,6 +326,8 @@
                             let color = '';
                             let text = '';
                             let vm = this;
+                            let disable2 = ((params.row.approvalstatus === 1) && (params.row.apptype === 1));
+                            console.log(disable2);
                             switch (params.row.approvalstatus) {
                                 case 0:
                                     color = 'blue';
@@ -263,8 +341,13 @@
                                     color = 'red';
                                     text = '已拒绝';
                                     break;
+                                case 3:
+                                    color = 'green';
+                                    text = '已领取';
+                                    break;
                             }
-                            return h('Tag', {
+                            return h('div', [
+                                h('Tag', {
                                 props: {
                                     type: 'border',
                                     color: color
@@ -293,11 +376,28 @@
                                                     content: msg
                                                 });
                                             }
-                                        })
-                                        console.log(params.row);
+                                        });
                                     }
                                 }
-                            }, text);
+                            }, text),
+                                h('Tag', {
+                                    props: {
+                                        type: 'dot',
+                                        color: color
+                                    },
+                                    style: {
+                                        display: disable2 === true ? 'inline-block' : 'none'
+                                    },
+                                    nativeOn: {
+                                        click: function() {
+                                            vm.reciveAppid = params.row.id;
+                                            vm.getReciveList(params.row.id).then(() => {
+                                                vm.reciveModal = true;
+                                            });
+                                        }
+                                    }
+                                }, '领取我')
+                            ]);
                         }
                     }
                 ],
@@ -334,6 +434,7 @@
         created() {
             this._setTableHeight();
             this.getPositionList();
+            this.loadData(null, null, 1);
         },
         methods: {
             ItemChecked() {
@@ -354,6 +455,67 @@
             showItmes(type) {
                 this.itemsType = type;
                 this.itemsModel = true;
+            },
+            loadData(item, callback, type) {
+                if (item) {
+                    item.loading = true;
+                }
+                if (!type) {
+                    type = item.value;
+                }
+                let vm = this;
+                let d = [];
+                this.$http.post('assetsCategory/queryCategoryFather?pid=' + type).then((res) => {
+                    var data = res.data;
+                    if (res.success) {
+                        for (let i = 0; i < data.length; i++) {
+                            let tmp = data[i];
+                            let obj = {'label': tmp.name, 'value': tmp.id};
+                            if (tmp.leaf > 0) {
+                                obj.children = [];
+                                obj.loading = false;
+                            }
+                            d.push(obj);
+                        }
+                        if (item) {
+                            item.children = d;
+                        } else {
+                            vm.cat1 = d;
+                        }
+                    }
+                }).finally((res) => {
+                    if (item) {
+                        item.loading = false;
+                        callback();
+                    }
+                });
+            },
+            getReciveList(id) {
+                var vm = this;
+                vm.reciveLoading = true;
+                return new Promise((resolve, reject) => {
+                    this.$http.get('assetsManage/receive?id=' + id).then((res) => {
+                        if (res.success) {
+                            vm.reciveList = res.data;
+                            resolve(res);
+                        }
+                    }).finally(() => {
+                        vm.reciveLoading = false;
+                    });
+                });
+            },
+            changeCataName(type, arg) {
+                var [value, selectedData] = arg;
+                if (selectedData.length === 0) {
+                    this.filterOpt.categoryName.value = undefined;
+                    this.newApply.categoryName = undefined;
+                    return;
+                }
+                if (type === 1) {
+                    this.filterOpt.categoryName.value = selectedData[2].label;
+                } else {
+                    this.newApply.categoryName = selectedData[2].label;
+                }
             },
             getPositionList() {
                 this.$http.post('assetsApplication/getPostionlist').then((res) => {
@@ -380,6 +542,11 @@
                 });
             },
             addInfo(type) {
+                this.newApply.id = undefined;
+                this.newApply.categoryName = '';
+                this.newApply.num = 1;
+                this.newApply.remarks = '';
+                this.newApply.positionName = '';
                 this.newApply.appType = type;
                 this.addInfoModal = true;
             },
