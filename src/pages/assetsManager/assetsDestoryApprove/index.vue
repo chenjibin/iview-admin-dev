@@ -195,7 +195,6 @@
                             var vm = this;
                             var row = params.row;
                             var disable = row.approvalstatus > 0;
-                            console.log(row);
                             return h('div', [
                                 h('Button', {
                                     props: {
@@ -286,8 +285,7 @@
                                                     content: msg
                                                 });
                                             }
-                                        })
-                                        console.log(params.row);
+                                        });
                                     }
                                 }
                             }, text);

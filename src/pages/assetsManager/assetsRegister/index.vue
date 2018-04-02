@@ -250,7 +250,6 @@
                                         if (this.accessBtn.indexOf(30) > -1) {
                                             this.$http.get('assetsOperateLog/reviewProcess?id=' + params.row.id).then((res) => {
                                                 if (res.success) {
-                                                    console.log(res);
                                                     let data = res.data;
                                                     let msg = '';
 
@@ -353,7 +352,6 @@
                 });
             },
             uploadInfo(response, file, fileList) {
-                console.log(response);
                 if (response.success) {
                     this._filterResultHandler();
                     this.$Message.success('导入成功');

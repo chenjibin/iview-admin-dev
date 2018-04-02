@@ -115,6 +115,7 @@
                     }
                 },
                 cat1: [],
+                selectArr: [],
                 itemsModel: false,
                 statusInfo: false,
                 reciveModal: false,
@@ -214,6 +215,7 @@
                         title: '申请类型',
                         key: 'apptype',
                         align: 'center',
+                        width: 90,
                         render: (h, params) => {
                             if (params.row.apptype === 1) {
                                 return '采购申请';
@@ -230,12 +232,14 @@
                     {
                         title: '申请数量',
                         key: 'num',
-                        align: 'center'
+                        align: 'center',
+                        width: 90
                     },
                     {
                         title: '资产位置',
                         key: 'positionname',
-                        align: 'center'
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '申请规格',
@@ -246,6 +250,7 @@
                         title: '报废方式',
                         key: 'scrappedtype',
                         align: 'center',
+                        width: 90,
                         render: (h, params) => {
                             var status = params.row.scrappedtype;
                             if (status === 1) {
@@ -264,21 +269,30 @@
                     {
                         title: '申请人',
                         key: 'createbyname',
-                        align: 'center'
+                        align: 'center',
+                        width: 90
                     },
                     {
                         title: '申请日期',
                         key: 'createbydate',
-                        align: 'center'
+                        align: 'center',
+                        width: 100,
+                        render: (h, params) => {
+                            if (!params.row.createbydate) {
+                                return '';
+                            } else {
+                                return params.row.createbydate.substring(0, 10);
+                            }
+                        }
                     },
                     {
                         title: '操作',
                         align: 'center',
+                        width: 130,
                         render: (h, params) => {
                             var vm = this;
                             var row = params.row;
                             var disable = row.approvalstatus > 0;
-                            console.log(row);
                             return h('div', [
                                 h('Button', {
                                     props: {
@@ -321,13 +335,12 @@
                     {
                         title: '审批进度',
                         key: 'approvalstatus',
-                        align: 'center',
+                        align: 'left',
                         render: (h, params) => {
                             let color = '';
                             let text = '';
                             let vm = this;
                             let disable2 = ((params.row.approvalstatus === 1) && (params.row.apptype === 1));
-                            console.log(disable2);
                             switch (params.row.approvalstatus) {
                                 case 0:
                                     color = 'blue';
@@ -348,42 +361,48 @@
                             }
                             return h('div', [
                                 h('Tag', {
-                                props: {
-                                    type: 'border',
-                                    color: color
-                                },
-                                nativeOn: {
-                                    click: function() {
-                                        vm.$http.get('assetsManage/reviewProcess?id=' + params.row.id).then((res) => {
-                                            if (res.success) {
-                                                let data = res.data;
-                                                let msg = '';
-                                                let ops = ['审核中', '批准了', '拒绝了'];
-                                                for (let i = 0; i < data.length; i++) {
-                                                    let obj = data[i];
-                                                    let name = obj.approvalbyname;
-                                                    let time = obj.modifybydate;
-                                                    let opt = ops[obj.approvalstatus];
-                                                    let remarks = obj.remarks;
-                                                    if (obj.approvalstatus === 0) {
-                                                        msg += `<p style='font-size: 16px;'>递交 ${name || ''} 审批中</p>`;
-                                                    } else {
-                                                        msg += `<p style='font-size: 16px;'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span>${opt} 此资产<span style="margin: 0 10px 0 10px">备注：${remarks || ''}</span></p>`;
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    },
+                                    attrs: {
+                                        title: '点击查看审批流程'
+                                    },
+                                    nativeOn: {
+                                        click: function() {
+                                            vm.$http.get('assetsManage/reviewProcess?id=' + params.row.id).then((res) => {
+                                                if (res.success) {
+                                                    let data = res.data;
+                                                    let msg = '';
+                                                    let ops = ['审核中', '批准了', '拒绝了'];
+                                                    for (let i = 0; i < data.length; i++) {
+                                                        let obj = data[i];
+                                                        let name = obj.approvalbyname;
+                                                        let time = obj.modifybydate;
+                                                        let opt = ops[obj.approvalstatus];
+                                                        let remarks = obj.remarks;
+                                                        if (obj.approvalstatus === 0) {
+                                                            msg += `<p style='font-size: 16px;'>递交 ${name || ''} 审批中</p>`;
+                                                        } else {
+                                                            msg += `<p style='font-size: 16px;'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span>${opt} 此资产<span style="margin: 0 10px 0 10px">备注：${remarks || ''}</span></p>`;
+                                                        }
                                                     }
+                                                    vm.$Modal.info({
+                                                        title: '操作记录',
+                                                        content: msg
+                                                    });
                                                 }
-                                                vm.$Modal.info({
-                                                    title: '操作记录',
-                                                    content: msg
-                                                });
-                                            }
-                                        });
+                                            });
+                                        }
                                     }
-                                }
-                            }, text),
+                                }, text),
                                 h('Tag', {
                                     props: {
                                         type: 'dot',
                                         color: color
+                                    },
+                                    attrs: {
+                                        title: '点击领取'
                                     },
                                     style: {
                                         display: disable2 === true ? 'inline-block' : 'none'

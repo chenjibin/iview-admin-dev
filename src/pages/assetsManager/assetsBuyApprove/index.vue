@@ -255,7 +255,6 @@
                                             if (appBtnStatus) {
                                                 vm.$http.get('assetsApplication/find?id=' + params.row.id).then((res) => {
                                                     if (res.success) {
-                                                        console.log(res.data);
                                                         let data = res.data;
                                                         vm.approvalInfo.id = data.id;
                                                         vm.approvalInfo.num = data.num;
