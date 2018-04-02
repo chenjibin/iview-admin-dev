@@ -253,7 +253,7 @@ export const appRouter = [
                 path: 'assetsRegister',
                 icon: 'compose',
                 name: 'assetsRegister',
-                title: '资产管理',
+                title: '资产查询/管理',
                 component: resolve => { require(['@/pages/assetsManager/assetsRegister/index.vue'], resolve); }
             },
             {
