@@ -215,11 +215,11 @@
             _exportGrade() {
                 this.exportLoading = true;
                 let data = {};
-                data.id = this.testId;
+                data.id = this.testCheckId;
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
                     if (res.success) {
-                        // this.downloadFile()
+                        this.downloadFile('/oa/download/' + res.data, res.data);
                     }
                 }).finally(() => {
                     this.exportLoading = false;

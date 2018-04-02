@@ -39,7 +39,7 @@
                         </ul>
                         <div class="answer-block">
                             <span>正确答案:</span>
-                            <span>{{_returnAnswer(question.answer,question.type)}}</span>
+                            <span>{{question.answer}}</span>
                         </div>
                     </div>
                 </div>
@@ -165,10 +165,6 @@
                         this.questionList = this.returnNeedList(res.questionList);
                     }
                 });
-            },
-            _returnAnswer(answer, type) {
-                if (type === 3) answer = +answer === 1 ? '正确' : '错误';
-                return answer;
             }
         }
     };
