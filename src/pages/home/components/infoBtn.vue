@@ -3,18 +3,14 @@
 </style>
 
 <template>
-    <Card :padding="0">
+    <Card :padding="8" class="fs-border-radius">
         <div class="infor-card-con" @click="clickHandler">
-            <Col class="infor-card-icon-con" :style="{backgroundColor: color, color: 'white'}" span="8">
-            <Row class="height-100" type="flex" align="middle" justify="center">
+            <div class="icon-wrapper" :style="{backgroundColor: color, color: 'white'}">
                 <Icon :type="iconType" :size="iconSize"></Icon>
-            </Row>
-            </Col>
-            <Col span="16" class="height-100">
-            <Row type="flex" align="middle" justify="center" class="height-100">
-                <p class="infor-card-con-text" :style="{color: color}">{{btnText}}</p>
-            </Row>
-            </Col>
+            </div>
+            <div class="content-wrapper">
+                <p class="content" :style="{color: color}">{{btnText}}</p>
+            </div>
         </div>
     </Card>
 </template>
