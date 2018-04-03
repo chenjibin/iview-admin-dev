@@ -316,4 +316,14 @@ util.getPermissionData = function() {
 util.delHtmlTag = function (str) {
     return str.replace(/<[^>]+>/g, '').replace(/&nbsp[;]/g, '');
 };
+
+util.downloadFile = function (url, name) {
+    let downloadDom = document.createElement('a');
+    downloadDom.href = url;
+    downloadDom.download = name;
+    downloadDom.style.display = 'none';
+    document.body.appendChild(downloadDom);
+    downloadDom.click();
+    document.body.removeChild(downloadDom);
+};
 export default util;

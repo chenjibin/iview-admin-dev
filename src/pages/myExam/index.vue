@@ -61,6 +61,7 @@
     import fsTablePage from '@/baseComponents/fs-table-page';
     import testResult from '../examination/components/test-result';
     import inExam from './in-exam';
+    import utils from '@/libs/util.js';
     export default {
         name: 'myExam',
         data () {
@@ -184,12 +185,6 @@
             this._getMyTestList();
         },
         methods: {
-            downloadFile(url, name) {
-                let downloadDom = document.createElement('a');
-                downloadDom.href = url;
-                downloadDom.download = name;
-                downloadDom.click();
-            },
             _submitSuccessHandler() {
                 this.$refs.myGradeList.getListData();
                 this._getMyTestList();
@@ -222,7 +217,7 @@
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
                     if (res.success) {
-                        this.downloadFile('/oa/download/' + res.data, res.data);
+                        utils.downloadFile('/oa/download/' + res.data, res.data);
                     }
                 }).finally(() => {
                     this.exportLoading = false;

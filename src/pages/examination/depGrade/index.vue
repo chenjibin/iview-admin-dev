@@ -50,6 +50,7 @@
     import fsTablePage from '@/baseComponents/fs-table-page';
     import fsDepTree from '@/baseComponents/fs-dep-tree';
     import testResult from '../components/test-result';
+    import utils from '@/libs/util.js';
     export default {
         name: 'depGrade',
         data () {
@@ -219,7 +220,7 @@
                 data.pid = 1;
                 this.$http.post('/examtest/exportPaperPdf', data).then((res) => {
                     if (res.success) {
-                        this.downloadFile('/oa/download/' + res.data, res.data);
+                        utils.downloadFile('/oa/download/' + res.data, res.data);
                     }
                 }).finally(() => {
                     this.exportLoading = false;
