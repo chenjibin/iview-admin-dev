@@ -26,7 +26,7 @@
                         <img :src="question.questionpic | _returnPicUrl"
                              v-if="question.questionpic"
                              class="exam-pic"
-                             style="margin: 8px 0 16px 0;"/>
+                             style="margin: 8px 0 16px 0;max-width: 100%;"/>
                         <div class="">
                             <RadioGroup v-model="question.answerNew"
                                         vertical
@@ -38,7 +38,9 @@
                                         <span>{{option.optionnum}}.</span>
                                         <span>{{option.content}}</span>
                                     </Radio>
-                                    <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic" />
+                                    <img :src="option.optionpic | _returnPicUrl"
+                                         style="max-width: 100%;"
+                                         v-if="option.optionpic" />
                                 </div>
                             </RadioGroup>
                             <CheckboxGroup v-model="question.answerNew"
@@ -51,7 +53,9 @@
                                         <span>{{option.optionnum}}.</span>
                                         <span>{{option.content}}</span>
                                     </Checkbox>
-                                    <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic"/>
+                                    <img :src="option.optionpic | _returnPicUrl"
+                                         style="max-width: 100%;"
+                                         v-if="option.optionpic"/>
                                 </div>
                             </CheckboxGroup>
                             <RadioGroup v-model="question.answerNew" v-if="question.type === 3">

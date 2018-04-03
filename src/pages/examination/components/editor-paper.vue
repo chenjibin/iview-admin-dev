@@ -27,14 +27,18 @@
                                     @click="_delQuestion(question)"
                                     v-if="editorabled" size="small"></Button>
                         </p>
-                        <img :src="question.questionpic | _returnPicUrl" v-if="question.questionpic" class="exam-pic" style="margin: 8px 0 16px 0;"/>
+                        <img :src="question.questionpic | _returnPicUrl"
+                             v-if="question.questionpic" class="exam-pic"
+                             style="margin: 8px 0 16px 0;max-width: 100%;"/>
                         <ul class="" v-if="[1, 2].indexOf(question.type) > -1">
                             <li v-for="option in question.optionlist" :key="'option' + option.id" style="margin-bottom: 8px;">
                                 <div>
                                     <span>{{option.optionnum}}.</span>
                                     <span>{{option.content}}</span>
                                 </div>
-                                <img :src="option.optionpic | _returnPicUrl"  v-if="option.optionpic"/>
+                                <img :src="option.optionpic | _returnPicUrl"
+                                     style="max-width: 100%;"
+                                     v-if="option.optionpic"/>
                             </li>
                         </ul>
                         <div class="answer-block">
@@ -50,7 +54,7 @@
 
 <style lang="less">
     .test-badge {
-        background: #5cb85c !important;
+        background: #333 !important;
     }
     .fs-exam-paper {
         height: 100%;
