@@ -1,5 +1,5 @@
 <template>
-    <!--资产位置-->
+    <!--资产管理-->
     <div id="assetsRegister">
         <Card>
             <Form inline :label-width="60">

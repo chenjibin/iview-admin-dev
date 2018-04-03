@@ -1,5 +1,5 @@
 <template>
-    <!--资产分类-->
+    <!--资产采购清单-->
     <div id="assetsBuyManager">
         <Card>
             <Form inline :label-width="60">

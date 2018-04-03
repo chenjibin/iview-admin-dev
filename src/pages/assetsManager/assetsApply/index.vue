@@ -1,5 +1,5 @@
 <template>
-    <!--资产分类-->
+    <!--资产采购/报废申请-->
     <div id="assetsCategory">
         <Card>
             <Form inline :label-width="60">
@@ -10,7 +10,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="资产名称">
-                    <Cascader style="width: 180px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
+                    <Cascader style="width: 200px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
                 </FormItem>
                 <FormItem label="位置名称">
                     <Select type="text" style="width: 180px"
@@ -45,15 +45,22 @@
         <Modal v-model="addInfoModal" width="320">
             <Form style="margin-top: 25px" :label-width="90" ref="newApplyForm" :model="newApply" :rules="newApplyRules">
                 <Input type="text" style="display: none" v-model="newApply.appType"></Input>
-                <FormItem label="资产名称" prop="categoryName">
+                <FormItem label="资产名称" prop="categoryName" v-if="!newApply.id">
                     <Cascader style="width: 180px" v-model="selectArr" :data="cat1" :clearable="true" @on-change="changeCataName(2, arguments)" :load-data="loadData"></Cascader>
+                </FormItem>
+                <FormItem label="资产名称" v-if="newApply.id">
+                    <Input type="text" style="width: 180px" v-model="newApply.categoryName"></Input>
                 </FormItem>
                 <Input type="text" style="display: none" v-model="newApply.id"></Input>
                 <FormItem label="申请数量" prop="num">
                     <InputNumber type="text" :min="1" :max="99" style="width: 180px" v-model="newApply.num"></InputNumber>
                 </FormItem>
                 <FormItem label="资产位置" prop="positionName">
-                    <Input type="text" v-model="newApply.positionName" style="width: 180px"></Input>
+                    <Select type="text" style="width: 180px"
+                            v-model="newApply.positionName"
+                            placeholder="资产位置">
+                        <Option v-for="item, index in positionList" :key="index" :label="item.name" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="申请规格" prop="remarks">
                     <Input type="text" style="width: 180px" v-model="newApply.remarks" placeholder="规格"></Input>
@@ -380,11 +387,11 @@
                                                         let name = obj.approvalbyname;
                                                         let time = obj.modifybydate;
                                                         let opt = ops[obj.approvalstatus];
-                                                        let remarks = obj.remarks;
+                                                        let content = obj.content;
                                                         if (obj.approvalstatus === 0) {
                                                             msg += `<p style='font-size: 16px;'>递交 ${name || ''} 审批中</p>`;
                                                         } else {
-                                                            msg += `<p style='font-size: 16px;'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span>${opt} 此资产<span style="margin: 0 10px 0 10px">备注：${remarks || ''}</span></p>`;
+                                                            msg += `<div style="border-bottom: 1px solid #cccccc;margin-bottom: 15px"><p style='font-size: 16px;margin-bottom: 5px'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span>${opt} 此资产 <p><span style="font-size: 14px">备注：${content || ''}</span></p></p></div>`;
                                                         }
                                                     }
                                                     vm.$Modal.info({
@@ -545,7 +552,6 @@
             },
             saveInfo() {
                 var vm = this;
-                var refT = this.$refs.fsTable;
                 var newApplyForm = this.$refs.newApplyForm;
                 newApplyForm.validate((vpass) => {
                     if (vpass) {
@@ -553,14 +559,15 @@
                             if (res.success) {
                                 vm.$Message.success('保存成功');
                                 vm.addInfoModal = false;
+                                vm.$refs.fsTable._filterResultHandler();
                                 newApplyForm.resetFields();
-                                refT._filterResultHandler();
                             }
                         });
                     }
                 });
             },
             addInfo(type) {
+                this.selectArr = [];
                 this.newApply.id = undefined;
                 this.newApply.categoryName = '';
                 this.newApply.num = 1;

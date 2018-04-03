@@ -1,5 +1,5 @@
 <template>
-    <!--资产分类-->
+    <!--资产采购报废审批-->
     <div id="assetsBuyApprove">
         <Card>
             <Form inline :label-width="60">
