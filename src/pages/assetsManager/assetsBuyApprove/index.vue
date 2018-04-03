@@ -145,7 +145,16 @@
                         title: '报废方式',
                         key: 'scrappedtype',
                         align: 'center',
-                        width: 90
+                        width: 90,
+                        render: (h, params) => {
+                            var status = params.row.scrappedtype;
+                            if (status === 1) {
+                                return '直接销毁';
+                            }
+                            if (status === 2) {
+                                return '废品处理';
+                            }
+                        }
                     },
                     {
                         title: '申请部门',

@@ -347,7 +347,11 @@
                         var a = document.createElement('a');
                         a.type = 'download';
                         a.href = '/oa/assetsRegister/export?date=' + vm.filterOpt.date + '&strExport=' + strExport;
+                        a.style.display = 'none';
+                        a.id = 'temp1';
+                        document.body.appendChild(a);
                         a.click();
+                        a.remove();
                     }
                 });
             },
