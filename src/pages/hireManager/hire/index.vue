@@ -957,7 +957,9 @@
                 let downloadDom = document.createElement('a');
                 downloadDom.href = '/oa/talentLibrary/expTalent?id=' + this.talentBean.id;
                 downloadDom.download = name;
+                document.body.appendChild(downloadDom);
                 downloadDom.click();
+                downloadDom.remove();
             },
             editUser(row) {
                 this._findUser(row.id).then((res) => {
@@ -996,7 +998,14 @@
             },
             // 下载图片
             download(path) {
-                window.open('http://' + window.location.host + path);
+                var p = 'http://' + window.location.host + path;
+                let downloadDom = document.createElement('a');
+                downloadDom.id = 'ddom';
+                downloadDom.href = p;
+                downloadDom.download = '';
+                document.body.appendChild(downloadDom);
+                downloadDom.click();
+                downloadDom.remove();
             },
             showAttach(user) {
                 this.ticketNo = user.id + 666587;
@@ -1057,7 +1066,6 @@
                 var vm = this;
                 this.$refs.talentBean.validate(function (isPass) {
                     if (isPass) {
-                        console.log(1);
                         var d = {};
                         d.bean = JSON.stringify(vm.talentBean);
                         d.workingForm = JSON.stringify(vm.workingForm);

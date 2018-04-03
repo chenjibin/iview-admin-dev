@@ -529,9 +529,15 @@
                     });
                 });
             },
-            // 下载图片
             download(path) {
-                window.open('http://' + window.location.host + path);
+                var p = 'http://' + window.location.host + path;
+                let downloadDom = document.createElement('a');
+                downloadDom.id = 'ddom';
+                downloadDom.href = p;
+                downloadDom.download = '';
+                document.body.appendChild(downloadDom);
+                downloadDom.click();
+                downloadDom.remove();
             },
             // 删除关系
             delForm(index, formName) {
