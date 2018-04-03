@@ -23,7 +23,7 @@
                     <span>【资产】</span><span>您有{{purchaseMsgNumber}}条资产申请待处理</span>
                 </div>
                 <div class="todo-list-item-right">
-                    <Button type="ghost" icon="arrow-right-c">立即处理</Button>
+                    <Button type="ghost" icon="arrow-right-c" @click="toPage('assetsBuyApprove')">立即处理</Button>
                 </div>
             </li>
             <li v-if="!purchaseMsgNumber && !compactMsgNumber && !odmsgNumber">
