@@ -100,6 +100,13 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/myExam/index.vue'], resolve); }
         },
         {
+            path: 'assetsApply',
+            icon: 'compose',
+            name: 'assetsApply',
+            title: '资产采购/报废申请',
+            component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
+        },
+        {
             path: 'coinShop',
             title: '金币商城',
             name: 'coinShop',
@@ -256,13 +263,7 @@ export const appRouter = [
                 title: '资产查询/管理',
                 component: resolve => { require(['@/pages/assetsManager/assetsRegister/index.vue'], resolve); }
             },
-            {
-                path: 'assetsApply',
-                icon: 'compose',
-                name: 'assetsApply',
-                title: '资产采购/报废申请',
-                component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
-            },
+
             {
                 path: 'assetsBuyApprove',
                 icon: 'compose',
