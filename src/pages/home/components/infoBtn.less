@@ -1,16 +1,27 @@
-.infor-card-icon-con{
-  height: 100%;
+.fs-border-radius {
+  border-radius: 70px;
+  //border-top-left-radius: 70px;
+  //border-bottom-left-radius: 70px;
+  //border-top-right-radius: 70px;
+  //border-bottom-right-radius: 70px;
 }
-.height-100{
-  height: 100%;
-}
-.infor-card-con{
-  height: 60px;
+.infor-card-con {
+  display: flex;
   cursor: pointer;
-
-}
-
-.infor-card-con-text {
-  font-size: 18px;
-  font-weight: 700;
+  .icon-wrapper {
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    border-radius: 50%;
+  }
+  .content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    font-size: 18px;
+    font-weight: 700;
+  }
 }

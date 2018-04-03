@@ -1,7 +1,7 @@
 <template>
     <div class="home-main">
         <Row :gutter="6">
-            <Col :md="24" :lg="10">
+            <Col :md="24" :lg="12">
                 <Row class-name="home-page-row1" :gutter="6">
                     <Col :md="24" :lg="24" :style="{marginBottom: '6px'}">
                         <user-info></user-info>
@@ -46,28 +46,28 @@
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="university"
-                                        color="#2d8cf0"
+                                        color="rgb(242, 94, 67)"
                                         btn-text="考试"
                                         @card-click="$router.push('myExam')"></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="ribbon-a"
-                                        color="#19be6b"
+                                        color="rgb(255, 153, 0)"
                                         btn-text="培训"
                                         @card-click="$router.push('myTrain')"></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                             <info-btn
-                                    iconType="ribbon-a"
-                                    color="#2d8cf0"
+                                    iconType="printer"
+                                    color="rgb(242, 94, 67)"
                                     btn-text="资产"
                                     @card-click="$router.push('assetsApply')"></info-btn>
                             </Col>
                             <Col :xs="24" :sm="12" :md="6" :style="{marginBottom: '6px'}">
                                 <info-btn
                                         iconType="cash"
-                                        color="#19be6b"
+                                        color="rgb(255, 153, 0)"
                                         btn-text="金币商城"
                                         @card-click="$router.push('coinShop')"></info-btn>
                             </Col>
@@ -81,7 +81,7 @@
                     </Col>
                 </Row>
             </Col>
-            <Col :md="24" :lg="14">
+            <Col :md="24" :lg="12">
                 <Row>
                     <Notice></Notice>
                 </Row>

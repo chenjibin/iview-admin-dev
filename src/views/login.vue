@@ -55,8 +55,6 @@
 
 <script>
 import Cookies from 'js-cookie';
-import {appRouter, page404} from '@/router/router';
-import util from '@/libs/util';
 export default {
     data () {
         return {
