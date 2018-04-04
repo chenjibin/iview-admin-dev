@@ -42,7 +42,8 @@
             return {
                 innerHeight: null,
                 animationY: null,
-                animationFram: null
+                animationFram: null,
+                firstLoad: true
             };
         },
         watch: {
@@ -53,6 +54,13 @@
                     this._run();
                 });
             }
+        },
+        activated() {
+            if (!this.firstLoad) this.testLeave();
+            else this.firstLoad = false;
+        },
+        deactivated() {
+            this.testEnter();
         },
         destroyed() {
             cancelAnimationFrame(this.animationFram);

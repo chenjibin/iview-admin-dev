@@ -49,6 +49,7 @@
 </style>
 <script>
     import moment from 'moment';
+    import utils from '@/libs/util.js'
     export default {
         name: 'myClassList',
         data () {
@@ -65,12 +66,6 @@
             }
         },
         methods: {
-            downloadFile(url, name) {
-                let downloadDom = document.createElement('a');
-                downloadDom.href = url;
-                downloadDom.download = name;
-                downloadDom.click();
-            },
             _downloadGrade(data) {
                 let sendData = {};
                 sendData.id = data.id;
@@ -78,7 +73,7 @@
                 data.loading = true;
                 this.$http.post('/train/trainee_class_crdit_excel', sendData).then((res) => {
                     if (res.success) {
-                        this.downloadFile('/oa/download/' + res.data, res.data);
+                        utils.downloadFile('/oa/download/' + res.data, res.data);
                     }
                 }).finally(() => {
                     data.loading = false;

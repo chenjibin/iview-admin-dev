@@ -68,7 +68,6 @@
         },
         created () {
             this._toDoData();
-            this._getMessageData();
         },
         methods: {
             toPage(page) {
@@ -83,12 +82,6 @@
                         this.compactMsgNumber = resData.compactMsgNumber;
                         this.odmsgNumber = resData.odmsgNumber;
                         this.purchaseMsgNumber = resData.purchaseMsgNumber;
-                    }
-                });
-            },
-            _getMessageData() {
-                this.$http.get('/od/applyMsgWindow').then((res) => {
-                    if (res.success) {
                     }
                 });
             }
