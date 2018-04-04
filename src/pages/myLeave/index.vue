@@ -7,23 +7,10 @@
                         @click="leaveModalFlag = true"
                         type="primary">申请请假</Button>
             </ButtonGroup>
-            <Table :columns="postColumns"
-                   :loading="tableLoading"
-                   :height="tableHeight"
-                   ref="leaveTableDom"
-                   @on-row-click="onRowClickHandler"
-                   @on-selection-change="_tableSelectChange"
-                   :data="pageData.list"></Table>
-            <Page :total="pageData.totalCount"
-                  :current="pageData.page"
-                  @on-change="_setPage"
-                  @on-page-size-change="_setPageSize"
-                  :page-size="pageData.pageSize"
-                  placement="top"
-                  show-sizer
-                  show-total
-                  show-elevator
-                  style="margin-top: 16px;"></Page>
+            <fs-table-page :columns="postColumns"
+                           :height="tableHeight"
+                           ref="leaveTableDom"
+                           url="/od/getOdLog"></fs-table-page>
             <Modal title="查看图片证明" v-model="visible" width="800">
                 <div class="" style="max-height: 500px;overflow-y: auto;overflow-x: hidden;">
                     <img :src="'/oa/upload/' + item.pic"
@@ -43,13 +30,11 @@
     </div>
 </template>
 <script>
-    import pageMixin from '@/mixins/pageMixin';
-    import debounce from 'lodash/debounce';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     import tableExpend from './table-expend';
     import leaveModal from './components/leave-modal';
     export default {
         name: 'myLeave',
-        mixins: [pageMixin],
         data () {
             return {
                 leaveModalFlag: false,
@@ -191,7 +176,6 @@
         },
         created() {
             this._setTableHeight();
-            this._getPostData();
         },
         methods: {
             onRowClickHandler(data, index) {
@@ -235,23 +219,8 @@
                 }
                 this.imgArr = storeArr;
             },
-            _delLeaveInfo() {
-                let data = {};
-                data.ids = this.chooseDataArr.map(x => x.id).join(',');
-                this.$http.post('/od/deleteUserOdMsg', data).then((res) => {
-                    if (res.success) {
-                        this.$Message.success('删除成功!');
-                        this._getPostData();
-                        this.chooseDataArr = [];
-                    }
-                });
-            },
             _tableSelectChange(data) {
                 this.chooseDataArr = data;
-            },
-            _dateChange(date) {
-                this.filterOpt.date = date;
-                this._getPostData();
             },
             _delOd(data) {
                 let vm = this;
@@ -272,32 +241,18 @@
                     }
                 });
             },
-            _setPage(page) {
-                this.pageData.page = page;
-                this._getPostData();
-            },
-            _setPageSize(size) {
-                this.pageData.pageSize = size;
-                this._getPostData();
-            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
-            },
             _getPostData() {
-                this.getList('/od/getOdLog');
+                this.$refs.leaveTableDom.getListData();
             }
         },
         components: {
             tableExpend,
-            leaveModal
+            leaveModal,
+            fsTablePage
         }
     };
 </script>

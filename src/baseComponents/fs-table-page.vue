@@ -4,6 +4,7 @@
                :columns="columns"
                :data="pageData.list"
                @on-selection-change="selectionChange"
+               @on-row-click="rowClickHandler"
                :loading="tableLoading"></Table>
         <Page :total="pageData.totalCount"
               :current.sync="pageData.page"
@@ -61,11 +62,13 @@
         mixins: [pageMixin],
         data () {
             return {
+                isExpend: false
             };
         },
         created() {
             this.getListData();
             this.initWatch();
+            this.isExpend = this.columns.some(x => x.type === 'expand');
         },
         methods: {
             initWatch() {
@@ -77,6 +80,11 @@
                             this._filterResultHandler();
                         }
                     });
+                }
+            },
+            rowClickHandler(data, index) {
+                if (this.isExpend) {
+                    this.pageData.list[index]._expanded = !this.pageData.list[index]._expanded;
                 }
             },
             returnNeedParams() {

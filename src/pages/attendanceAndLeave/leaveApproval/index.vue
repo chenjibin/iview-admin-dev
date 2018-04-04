@@ -4,43 +4,29 @@
             <Form inline :label-width="60">
                 <FormItem label="姓名">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.userName"
+                           v-model="filterOpt.user_name.value"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="申请日期">
                     <DatePicker placeholder="筛选申请日期"
-                                @on-change="_dateChange"
-                                :value="filterOpt.date"></DatePicker>
+                                @on-change="filterOpt.applyDate.value = $event"
+                                :value="filterOpt.applyDate.value"></DatePicker>
                 </FormItem>
                 <FormItem label="审核状态">
-                    <Select v-model="filterOpt.status"
-                            @on-change="_filterResultHandler"
+                    <Select v-model="filterOpt.odstates.value"
                             placeholder="筛选审核状态"
-                            clearable
-                            style="width: 100px">
+                            clearable>
                         <Option value="1">未批准</Option>
                         <Option value="2">已批准</Option>
                         <Option value="3">批准中</Option>
                     </Select>
                 </FormItem>
             </Form>
-            <Table :columns="postColumns"
-                   :loading="tableLoading"
-                   :height="tableHeight"
-                   ref="leaveTableDom"
-                   @on-row-click="onRowClickHandler"
-                   :data="pageData.list"></Table>
-            <Page :total="pageData.totalCount"
-                  :current="pageData.page"
-                  @on-change="_setPage"
-                  @on-page-size-change="_setPageSize"
-                  :page-size="pageData.pageSize"
-                  placement="top"
-                  show-sizer
-                  show-total
-                  show-elevator
-                  style="margin-top: 16px;"></Page>
+            <fs-table-page :columns="postColumns"
+                           :height="tableHeight"
+                           ref="leaveTableDom"
+                           :params="filterOpt"
+                           url="/od/getManageOdLog"></fs-table-page>
             <Modal title="查看图片证明" v-model="visible" width="800">
                 <div style="max-height: 500px;overflow-y: auto;overflow-x: hidden;">
                     <img :src="'/oa/upload/' + item.pic"
@@ -59,20 +45,27 @@
     </div>
 </template>
 <script>
-    import pageMixin from '@/mixins/pageMixin';
-    import debounce from 'lodash/debounce';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     import tableExpend from './table-expend';
     export default {
         name: 'leaveApproval',
-        mixins: [pageMixin],
         data () {
             return {
                 visible: false,
                 imgArr: [],
                 filterOpt: {
-                    userName: '',
-                    date: '',
-                    status: ''
+                    user_name: {
+                        value: '',
+                        type: 'input'
+                    },
+                    applyDate: {
+                        value: '',
+                        type: 'date'
+                    },
+                    odstates: {
+                        value: '',
+                        type: 'select'
+                    }
                 },
                 postColumns: [
                     {
@@ -192,17 +185,13 @@
         },
         created() {
             this._setTableHeight();
-            this._getPostData();
         },
         computed: {
             userName() {
-                return this.$store.state.user.userInfo.realname
+                return this.$store.state.user.userInfo.realname;
             }
         },
         methods: {
-            onRowClickHandler(data, index) {
-                this.pageData.list[index]._expanded = !this.pageData.list[index]._expanded;
-            },
             _rotateImg(index) {
                 this.imgArr[index].deg += 90;
             },
@@ -241,48 +230,17 @@
                 }
                 this.imgArr = storeArr;
             },
-            _delLeaveInfo() {
-                let data = {};
-                data.ids = this.chooseDataArr.map(x => x.id).join(',');
-                this.$http.post('/od/deleteUserOdMsg', data).then((res) => {
-                    if (res.success) {
-                        this.$Message.success('删除成功!');
-                        this._getPostData();
-                        this.chooseDataArr = [];
-                    }
-                });
-            },
-            _dateChange(date) {
-                this.filterOpt.date = date;
-                this._getPostData();
-            },
-            _setPage(page) {
-                this.pageData.page = page;
-                this._getPostData();
-            },
-            _setPageSize(size) {
-                this.pageData.pageSize = size;
-                this._getPostData();
-            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
-            },
             _getPostData() {
-                let data = {};
-                data.user_name = this.filterOpt.userName;
-                data.applyDate = this.filterOpt.date;
-                data.odstates = this.filterOpt.status;
-                this.getList('/od/getManageOdLog', data);
+                this.$refs.leaveTableDom.getListData();
             }
         },
-        components: {tableExpend}
+        components: {
+            tableExpend,
+            fsTablePage
+        }
     };
 </script>
