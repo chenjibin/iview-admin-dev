@@ -73,6 +73,7 @@
                    :height="tableHeight"
                    ref="leaveTableDom"
                    @on-selection-change="_tableSelectChange"
+                   @on-row-click="onRowClickHandler"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
                   :current="pageData.page"
@@ -229,6 +230,9 @@
             this._getPostData();
         },
         methods: {
+            onRowClickHandler(data, index) {
+                this.pageData.list[index]._expanded = !this.pageData.list[index]._expanded;
+            },
             _rotateImg(index) {
                 this.imgArr[index].deg += 90;
             },

@@ -33,6 +33,9 @@
         background: #f0f0f0;
         overflow: hidden;
     }
+    ul {
+        list-style: none;
+    }
     .ivu-scroll-container {
         overflow-y: auto;
     }

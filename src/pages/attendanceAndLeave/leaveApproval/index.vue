@@ -29,6 +29,7 @@
                    :loading="tableLoading"
                    :height="tableHeight"
                    ref="leaveTableDom"
+                   @on-row-click="onRowClickHandler"
                    :data="pageData.list"></Table>
             <Page :total="pageData.totalCount"
                   :current="pageData.page"
@@ -152,7 +153,7 @@
                     },
                     {
                         title: '审核状态',
-                        width: 120,
+                        width: 180,
                         render: (h, params) => {
                             let color = '';
                             switch (params.row.status) {
@@ -166,12 +167,22 @@
                                     color = 'blue';
                                     break;
                             }
-                            return h('Tag', {
-                                props: {
-                                    type: 'border',
-                                    color: color
-                                }
-                            }, params.row.status);
+                            let renderDom = '';
+                            if (this.userName === params.row.waitoperatorname) {
+                                renderDom = h('Tag', {
+                                    props: {
+                                        color: 'green'
+                                    }
+                                }, '可审批');
+                            }
+                            return h('div', [
+                                h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, params.row.status), renderDom
+                            ]);
                         }
                     }
                 ],
@@ -182,7 +193,15 @@
             this._setTableHeight();
             this._getPostData();
         },
+        computed: {
+            userName() {
+                return this.$store.state.user.userInfo.realname
+            }
+        },
         methods: {
+            onRowClickHandler(data, index) {
+                this.pageData.list[index]._expanded = !this.pageData.list[index]._expanded;
+            },
             _rotateImg(index) {
                 this.imgArr[index].deg += 90;
             },

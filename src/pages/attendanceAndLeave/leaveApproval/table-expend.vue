@@ -124,7 +124,6 @@
         data() {
             return {
                 progressData: this.row.operatelog.split(','),
-                userName: '',
                 visible: false,
                 visible2: false,
                 btnLoading: false,
@@ -148,7 +147,11 @@
             };
         },
         created() {
-            this.userName = this.$store.state.user.userInfo.realname;
+        },
+        computed: {
+            userName() {
+                return this.$store.state.user.userInfo.realname;
+            }
         },
         methods: {
             validaContent(rule, value, callback) {

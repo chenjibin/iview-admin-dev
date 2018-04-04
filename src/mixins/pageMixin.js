@@ -32,7 +32,10 @@ export default {
             this.$http.get(url, {params: data}).then((res) => {
                 if (res.success) {
                     this.pageData.totalCount = res.totalCount;
-                    this.pageData.list = res.data;
+                    this.pageData.list = res.data.map(x => {
+                        x._expanded = false;
+                        return x;
+                    });
                 }
             }).finally(() => {
                 this.tableLoading = false;
