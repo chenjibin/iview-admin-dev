@@ -353,7 +353,7 @@
             };
         },
         watch: {
-            'planForm.people'(val) {
+            chooseDataArray(val) {
                 console.log(val);
             },
             allProjectOpt(val) {
@@ -543,7 +543,6 @@
                     if (res.success) {
                         this.allTeacherOpt = res.data;
                         this.defaultPeople = this.allTeacherOpt.filter(x => x.isdefault === 1).map(x => x.user_id);
-                        console.log(this.planForm.people);
                     }
                 });
             }

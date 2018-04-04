@@ -57,18 +57,24 @@
                 default() {
                     return [];
                 }
+            },
+            idFlag: {
+                type: String,
+                default: 'id'
             }
         },
         mixins: [pageMixin],
         data () {
             return {
-                isExpend: false
+                isExpend: false,
+                isSelection: false
             };
         },
         created() {
             this.getListData();
             this.initWatch();
             this.isExpend = this.columns.some(x => x.type === 'expand');
+            this.isSelection = this.columns.some(x => x.type === 'selection');
         },
         methods: {
             initWatch() {
@@ -86,6 +92,11 @@
                 if (this.isExpend) {
                     this.pageData.list[index]._expanded = !this.pageData.list[index]._expanded;
                 }
+                if (this.isSelection) {
+                    this.pageData.list[index]._checked = !this.pageData.list[index]._checked;
+                    let chooseData = this.pageData.list.filter(x => x._checked);
+                    this.$emit('update:choosearray', chooseData);
+                }
             },
             returnNeedParams() {
                 let params = {};
@@ -97,6 +108,13 @@
                 return params;
             },
             selectionChange(data) {
+                data.forEach(item => {
+                    item._checked = true;
+                });
+                let chooseIdArr = data.map(x => x[this.idFlag]);
+                this.pageData.list.forEach(item => {
+                    item._checked = chooseIdArr.indexOf(item[this.idFlag]) > -1;
+                });
                 this.$emit('update:choosearray', data);
             },
             _inputDebounce: debounce(function () {

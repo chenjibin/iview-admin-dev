@@ -33,7 +33,12 @@ export default {
                 if (res.success) {
                     this.pageData.totalCount = res.totalCount;
                     this.pageData.list = res.data.map(x => {
-                        x._expanded = false;
+                        if (this.isExpend) {
+                            x._expanded = false;
+                        }
+                        if (this.isSelection) {
+                            x._checked = false;
+                        }
                         return x;
                     });
                 }
