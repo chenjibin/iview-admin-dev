@@ -115,7 +115,8 @@
                                             size: 'small'
                                         },
                                         on: {
-                                            click: function () {
+                                            click: function (e) {
+                                                e.stopPropagation();
                                                 vm._prewImg(params.row);
                                             }
                                         }
