@@ -202,8 +202,8 @@
                         <FormItem label="电子邮箱" style="width:460px">
                             <Input type="text" v-model="talentBean.email"></Input>
                         </FormItem>
-                        <FormItem label="预约时间" style="width:460px">
-                            <DatePicker format="yyyy-MM-dd" type="date" style="width: 100%"
+                        <FormItem label="预约时间" style="width:460px" prop="appointment">
+                            <DatePicker :clearable="false" type="date" style="width: 100%" :editable="false"
                                         @on-change="_infoDateChange(0,0,'appointment',$event)"
                                         :value="talentBean.appointment"></DatePicker>
                         </FormItem>
@@ -684,6 +684,9 @@
                     emphone: ''
                 }, // 简历基本信息模块
                 talentBeanRule: {
+                    appointment: [
+                        { required: true, message: 'Please select the date', trigger: 'change' }
+                    ],
                     name: [
                         { required: true, message: '姓名必填', trigger: 'blur' }
                     ],
@@ -1246,6 +1249,7 @@
                 this.educationForm = [];
                 this.workingForm = [];
                 this.talentBean = {};
+                //this.talentBean.appointment = new Date();
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -1324,11 +1328,14 @@
                 return new Promise(function (resolve, reject) {
                     vm.$http.post('/talentLibrary/find', {id: id}).then((res) => {
                         if (res.success) {
-                            resolve();
                             vm.educationForm = res.educations;
                             vm.workingForm = res.workings;
                             vm.talentBean = res.talentLibrary;
+                            if (!vm.talentBean.appointment) {
+                                //vm.talentBean.appointment = new Date();
+                            }
                             vm.socailShipForm = res.socails;
+                            resolve();
                         } else {
                             reject(new Error('数据不存在'));
                         }
