@@ -1071,8 +1071,14 @@
                     if (isPass) {
                         var d = {};
                         d.bean = JSON.stringify(vm.talentBean);
-                        d.workingForm = JSON.stringify(vm.workingForm);
-                        d.educationForm = JSON.stringify(vm.educationForm);
+                        let workingForm = vm.workingForm.filter(function(item) {
+                            return item.starttime;
+                        });
+                        d.workingForm = JSON.stringify(workingForm);
+                        let educationForm = vm.educationForm.filter(function(item) {
+                            return item.starttime;
+                        })
+                        d.educationForm = JSON.stringify(educationForm);
                         d.socailShipForm = JSON.stringify(vm.socailShipForm);
                         vm.$http.post('/talentLibrary/save', d).then((res) => {
                             vm.saveBtn1Loading = false;

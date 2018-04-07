@@ -462,8 +462,14 @@
                     if (valid) {
                         var d = {};
                         d.bean = JSON.stringify(this.talentBean);
-                        d.workingForm = JSON.stringify(this.workingForm);
-                        d.educationForm = JSON.stringify(this.educationForm);
+                        let workingForm = this.workingForm.filter(function(item) {
+                            return item.starttime;
+                        });
+                        d.workingForm = JSON.stringify(workingForm);
+                        let educationForm = this.educationForm.filter(function(item) {
+                            return item.starttime;
+                        })
+                        d.educationForm = JSON.stringify(educationForm);
                         d.socailShipForm = JSON.stringify(this.socailShipForm);
                         g.$http.post('/talentLibrary/saveGuest', d).then((res) => {
                             g.saveBtn1Loading = false;
