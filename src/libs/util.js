@@ -2,6 +2,7 @@ import axios from 'axios';
 import env from '../../build/env';
 import semver from 'semver';
 import packjson from '../../package.json';
+import store from '../store';
 import {appRouter, page404} from '../router/router';
 
 let util = {
@@ -225,27 +226,42 @@ util.openNewPage = function (vm, name, argu, query) {
     vm.$store.commit('setCurrentPageName', name);
 };
 
-util.toDefaultPage = function (routers, name, route, next) {
-    let len = routers.length;
-    let i = 0;
-    let notHandle = true;
-    while (i < len) {
-        if (routers[i].name === name && routers[i].children && routers[i].redirect === undefined) {
-            route.replace({
-                name: routers[i].children[0].name
-            });
-            notHandle = false;
-            next();
-            break;
-        }
-        i++;
-    }
-    if (!name) {
-        next({
-            name: localStorage.currentPageName || 'home_index'
-        });
-    }
-    if (notHandle) {
+util.toDefaultPage = function (routers, to, route, next) {
+    if (!to.meta.whiteIn) {
+        let aa = setInterval(function () {
+            if (store.state.app.premissionMenuStringLoaded) {
+                if (!(store.state.app.premissionMenuString.indexOf(to.name || to.path.split('/')[to.path.split('/').length - 1]) > -1)) {
+                    next({
+                        name: 'error-403'
+                    });
+                } else {
+                    let len = routers.length;
+                    let i = 0;
+                    let notHandle = true;
+                    while (i < len) {
+                        if (routers[i].name === to.name && routers[i].children && routers[i].redirect === undefined) {
+                            route.replace({
+                                name: routers[i].children[0].name
+                            });
+                            notHandle = false;
+                            next();
+                            break;
+                        }
+                        i++;
+                    }
+                    if (!to.name) {
+                        next({
+                            name: localStorage.currentPageName || 'home_index'
+                        });
+                    }
+                    if (notHandle) {
+                        next();
+                    }
+                }
+                clearInterval(aa);
+            }
+        }, 10);
+    } else {
         next();
     }
 };
@@ -273,10 +289,12 @@ util.checkUpdate = function (vm) {
 };
 
 util.getNeedRouter = function (routeData) {
+    let storePressionString = [];
     appRouter.forEach((item) => {
         item.children = item.children.filter((val) => {
             for (let i = 0, length = routeData.length; i < length; i++) {
                 if (val.name === routeData[i].menu.name) {
+                    storePressionString.push(val.name);
                     let obj = {};
                     obj.id = routeData[i].menu.id;
                     obj.btn = routeData[i].btn || [];
@@ -286,6 +304,7 @@ util.getNeedRouter = function (routeData) {
             }
         });
     });
+    store.commit('setPremissionMenuString', storePressionString);
     return appRouter.filter(val => val.children.length > 0);
 };
 

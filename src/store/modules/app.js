@@ -9,6 +9,8 @@ const app = {
         cachePage: [],
         isPermission: 0,
         premissionMenu: [],
+        premissionMenuString: [],
+        premissionMenuStringLoaded: false,
         lang: '',
         isFullScreen: false,
         openedSubmenuArr: [], // 要展开的菜单数组
@@ -42,6 +44,10 @@ const app = {
         },
         setPremissionMenu(state, menu) {
             state.premissionMenu = menu;
+        },
+        setPremissionMenuString(state, menuArr) {
+            state.premissionMenuString = menuArr;
+            state.premissionMenuStringLoaded = true;
         },
         setTagsList(state, list) {
             state.tagsList.push(...list);

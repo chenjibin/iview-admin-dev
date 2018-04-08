@@ -301,9 +301,8 @@
                     },
                     {
                         title: '培训计划',
-                        fixed: 'right',
                         align: 'center',
-                        width: 80,
+                        width: 120,
                         render: (h, params) => {
                             let vm = this;
                             return h('div', [
