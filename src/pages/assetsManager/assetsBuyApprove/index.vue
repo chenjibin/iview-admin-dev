@@ -113,9 +113,9 @@
                         align: 'center',
                         render: (h, params) => {
                             if (params.row.apptype === 1) {
-                                return '采购申请';
+                                return h('span', '采购申请');
                             } else if (params.row.apptype === 3) {
-                                return '报废申请';
+                                return h('span', '报废申请');
                             }
                         }
                     },
@@ -149,10 +149,10 @@
                         render: (h, params) => {
                             var status = params.row.scrappedtype;
                             if (status === 1) {
-                                return '直接销毁';
+                                return h('span', '直接销毁');
                             }
                             if (status === 2) {
-                                return '废品处理';
+                                return h('span', '废品处理');
                             }
                         }
                     },
@@ -177,7 +177,7 @@
                             if (!params.row.createbydate) {
                                 return '';
                             } else {
-                                return params.row.createbydate.substring(0, 10);
+                                return h('span', params.row.createbydate.substring(0, 10));
                             }
                         }
                     },

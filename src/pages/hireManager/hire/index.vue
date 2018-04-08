@@ -752,7 +752,7 @@
                         key: 'poststring',
                         align: 'center',
                         fixed: 'left',
-                        width: 160
+                        width: 96
                     },
                     {
                         title: '性别',
@@ -835,7 +835,7 @@
                         render: (h, params) => {
                             let vm = this;
                             let text = vm.getStatusText(params.row.status);
-                            return text;
+                            return h('span', text);
                         }
                     },
                     {

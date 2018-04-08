@@ -117,7 +117,7 @@
                         key: 'fillscore',
                         width: 80,
                         render: (h, params) => {
-                            return params.row.fillscore || 0;
+                            return h('span', params.row.fillscore || 0);
                         }
                     },
                     {
@@ -126,7 +126,7 @@
                         key: 'qandascore',
                         width: 80,
                         render: (h, params) => {
-                            return params.row.qandascore || 0;
+                            return h('span', params.row.qandascore || 0);
                         }
                     },
                     {

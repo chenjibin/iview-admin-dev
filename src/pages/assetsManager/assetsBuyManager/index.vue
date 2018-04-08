@@ -91,7 +91,7 @@
                             if (!params.row.createbydate) {
                                 return '';
                             } else {
-                                return params.row.createbydate.substring(0, 10);
+                                return h('span', params.row.createbydate.substring(0, 10));
                             }
                         }
                     },
@@ -104,7 +104,7 @@
                             if (!params.row.createbydate) {
                                 return '';
                             } else {
-                                return params.row.createbydate.substring(0, 10);
+                                return h('span', params.row.createbydate.substring(0, 10));
                             }
                         }
                     },

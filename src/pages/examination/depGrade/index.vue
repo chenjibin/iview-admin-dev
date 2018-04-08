@@ -92,7 +92,7 @@
                         key: 'singlescore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.singlescore === null ? 0 : params.row.singlescore;
+                            return h('span', params.row.singlescore === null ? 0 : params.row.singlescore);
                         }
                     },
                     {
@@ -101,7 +101,7 @@
                         key: 'multiplescore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.multiplescore === null ? 0 : params.row.multiplescore;
+                            return h('span', params.row.multiplescore === null ? 0 : params.row.multiplescore);
                         }
                     },
                     {
@@ -110,7 +110,7 @@
                         key: 'torfscore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.torfscore === null ? 0 : params.row.torfscore;
+                            return h('span', params.row.torfscore === null ? 0 : params.row.torfscore);
                         }
                     },
                     {
@@ -119,7 +119,7 @@
                         key: 'fillscore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.fillscore === null ? 0 : params.row.fillscore;
+                            return h('span', params.row.fillscore === null ? 0 : params.row.fillscore);
                         }
                     },
                     {
@@ -128,7 +128,7 @@
                         key: 'qandascore',
                         width: 120,
                         render: (h, params) => {
-                            return params.row.qandascore === null ? 0 : params.row.qandascore;
+                            return h('span', params.row.qandascore === null ? 0 : params.row.qandascore);
                         }
                     },
                     {

@@ -19,8 +19,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="资产状态">
-                    <Select :clearable="true" style="width: 180px" v-model="filterOpt.approvalStatus"
-                            @on-change="_inputDebounce">
+                    <Select :clearable="true" style="width: 180px" v-model="filterOpt.approvalStatus" @on-change="_inputDebounce">
                         <Option :value="0">在途</Option>
                         <Option :value="1">在用</Option>
                         <Option :value="2">备用</Option>
@@ -191,10 +190,10 @@
                         render: (h, params) => {
                             var status = params.row.scrappedtype;
                             if (status === 1) {
-                                return '直接销毁';
+                                return h('span', '直接销毁');
                             }
                             if (status === 2) {
-                                return '废品处理';
+                                return h('span', '废品处理');
                             }
                         }
                     },
