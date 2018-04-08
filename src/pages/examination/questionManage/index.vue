@@ -330,7 +330,7 @@
                         title: '试题分类',
                         align: 'center',
                         render: (h, params) => {
-                            return (this.subjectList.filter(x => x.id === params.row.subject))[0].name;
+                            return h('span', (this.subjectList.filter(x => x.id === params.row.subject))[0].name);
                         }
                     },
                     {
@@ -338,7 +338,7 @@
                         key: 'user_name',
                         align: 'center',
                         render: (h, params) => {
-                            return this.typeOptMap[params.row.type - 1].label;
+                            return h('span', this.typeOptMap[params.row.type - 1].label);
                         }
                     },
                     {

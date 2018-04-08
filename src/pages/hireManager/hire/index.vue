@@ -761,10 +761,10 @@
                         width: 60,
                         render: (h, params) => {
                             if (params.row.sex === 1) {
-                                return '男';
+                                return h('span', '男');
                             }
                             if (params.row.sex === 2) {
-                                return '女';
+                                return h('span', '女');
                             }
                             return '';
                         }
@@ -781,7 +781,7 @@
                         align: 'center',
                         width: 80,
                         render: (h, params) => {
-                            return this.educationMapping[params.row.education];
+                            return h('span', this.educationMapping[params.row.education]);
                         }
                     },
                     {
@@ -806,7 +806,7 @@
                         align: 'center',
                         width: 150,
                         render: (h, params) => {
-                            return this.resumeSourceMapping[+params.row.resumesource];
+                            return h('span', this.resumeSourceMapping[+params.row.resumesource]);
                         }
                     },
                     {
