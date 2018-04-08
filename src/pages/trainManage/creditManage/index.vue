@@ -203,7 +203,7 @@
                         title: '月份',
                         key: 'class_date',
                         render: (h, params) => {
-                            return moment(params.row.class_date).format('YYYY-MM');
+                            return h('span', moment(params.row.class_date).format('YYYY-MM'));
                         }
                     }
                 ]

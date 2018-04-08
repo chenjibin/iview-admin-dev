@@ -383,7 +383,7 @@
                         align: 'center',
                         render: (h, params) => {
                             if (params.row.birthday) {
-                                return moment(params.row.birthday).format('YYYY-MM-DD');
+                                return h('span', moment(params.row.birthday).format('YYYY-MM-DD'));
                             }
                         }
                     },

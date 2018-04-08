@@ -46,7 +46,7 @@
                         key: 'name',
                         width: 120,
                         render: (h, params) => {
-                            return moment(params.row.period).format('YYYY-MM');
+                            return h('span', moment(params.row.period).format('YYYY-MM'));
                         }
                     },
                     {

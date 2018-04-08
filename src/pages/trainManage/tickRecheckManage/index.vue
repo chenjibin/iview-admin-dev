@@ -168,7 +168,7 @@
                         align: 'center',
                         width: 100,
                         render: (h, params) => {
-                            return params.row.review_type === 2 ? '月度复盘' : params.row.review_type === 3 ? '季度复盘' : '年度复盘';
+                            return h('span', params.row.review_type === 2 ? '月度复盘' : params.row.review_type === 3 ? '季度复盘' : '年度复盘');
                         }
                     },
                     {
@@ -176,7 +176,7 @@
                         align: 'center',
                         width: 160,
                         render: (h, params) => {
-                            return moment(params.row.review_time).format('YYYY-MM-DD');
+                            return h('span', moment(params.row.review_time).format('YYYY-MM-DD'));
                         }
                     },
                     {

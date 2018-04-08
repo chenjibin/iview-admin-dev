@@ -453,7 +453,7 @@
                         width: 120,
                         render: (h, params) => {
                             let birthday = params.row.birthday;
-                            return birthday ? moment(birthday).format('YYYY-MM-DD') : '';
+                            return h('span', birthday ? moment(birthday).format('YYYY-MM-DD') : '');
                         }
                     },
                     {
