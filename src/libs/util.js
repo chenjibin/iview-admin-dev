@@ -225,38 +225,43 @@ util.openNewPage = function (vm, name, argu, query) {
     }
     vm.$store.commit('setCurrentPageName', name);
 };
-const isInPremissionMenu = function (name) {
 
-}
-util.toDefaultPage = function (routers, name, route, next) {
-    // TODO 403加入
-    console.log(store.state.app.premissionMenuString);
-    // next({
-    //     replace: true,
-    //     name: 'error-403'
-    // });
-    // if (!(store.state.app.premissionMenuString.indexOf(name) > -1)) {
-    // }
-    let len = routers.length;
-    let i = 0;
-    let notHandle = true;
-    while (i < len) {
-        if (routers[i].name === name && routers[i].children && routers[i].redirect === undefined) {
-            route.replace({
-                name: routers[i].children[0].name
-            });
-            notHandle = false;
-            next();
-            break;
-        }
-        i++;
-    }
-    if (!name) {
-        next({
-            name: localStorage.currentPageName || 'home_index'
-        });
-    }
-    if (notHandle) {
+util.toDefaultPage = function (routers, to, route, next) {
+    if (!to.meta.whiteIn) {
+        let aa = setInterval(function () {
+            if (store.state.app.premissionMenuStringLoaded) {
+                if (!(store.state.app.premissionMenuString.indexOf(to.name || to.path.split('/')[to.path.split('/').length - 1]) > -1)) {
+                    next({
+                        name: 'error-403'
+                    });
+                } else {
+                    let len = routers.length;
+                    let i = 0;
+                    let notHandle = true;
+                    while (i < len) {
+                        if (routers[i].name === to.name && routers[i].children && routers[i].redirect === undefined) {
+                            route.replace({
+                                name: routers[i].children[0].name
+                            });
+                            notHandle = false;
+                            next();
+                            break;
+                        }
+                        i++;
+                    }
+                    if (!to.name) {
+                        next({
+                            name: localStorage.currentPageName || 'home_index'
+                        });
+                    }
+                    if (notHandle) {
+                        next();
+                    }
+                }
+                clearInterval(aa);
+            }
+        }, 10);
+    } else {
         next();
     }
 };

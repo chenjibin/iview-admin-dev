@@ -77,8 +77,6 @@ export default {
             }
         };
     },
-    activated() {
-    },
     mounted() {
         this.getCode();
     },
@@ -96,7 +94,7 @@ export default {
                         if (res.success) {
                             // this.$store.commit('updateUserInfo');
                             Cookies.set('user', this.form.userName);
-                            Cookies.set('password', this.form.password);
+                            Cookies.set('password', this.form.passWord);
                             Cookies.set('token', '1010101010');
                             this.$router.push({
                                 name: 'home_index'

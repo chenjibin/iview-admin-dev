@@ -47,10 +47,10 @@ router.beforeEach((to, from, next) => {
                     store.commit('setRefresh', false);
                     store.commit('updateUserInfo');
                     Util.initMenu(router, store, data);
-                    Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to.name, router, next);
+                    Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to, router, next);
                 });
             } else {
-                Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to.name, router, next);
+                Util.toDefaultPage([...routers, ...store.state.app.premissionMenu], to, router, next);
             }
         }
     }

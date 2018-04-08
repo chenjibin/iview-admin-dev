@@ -25,7 +25,7 @@ export const page404 = {
     name: 'error-404',
     meta: {
         title: '404-页面不存在',
-        white: true
+        whiteIn: true
     },
     component: resolve => { require(['@/views/error-page/404.vue'], resolve); }
 };
@@ -34,10 +34,10 @@ export const page403 = {
     path: '/403',
     meta: {
         title: '403-权限不足',
-        white: true
+        whiteIn: true
     },
     name: 'error-403',
-    component: resolve => { require(['@//views/error-page/403.vue'], resolve); }
+    component: resolve => { require(['@/views/error-page/403.vue'], resolve); }
 };
 
 export const page500 = {
@@ -53,6 +53,9 @@ export const page500 = {
 export const locking = {
     path: '/locking',
     name: 'locking',
+    meta: {
+        whiteIn: true
+    },
     component: resolve => { require(['@/views/main-components/lockscreen/components/locking-page.vue'], resolve); }
 };
 
@@ -67,7 +70,7 @@ export const otherRouter = {
             path: 'home',
             title: {i18n: 'home'},
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'home_index',
             component: resolve => { require(['@/pages/home/index.vue'], resolve); }
@@ -76,7 +79,7 @@ export const otherRouter = {
             path: 'myLog',
             title: '我的日志',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'myLog',
             component: resolve => { require(['@/pages/myLog/index.vue'], resolve); }
@@ -85,7 +88,7 @@ export const otherRouter = {
             path: 'myAttendance',
             title: '我的考勤',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'myAttendance',
             component: resolve => { require(['@/pages/myAttendance/index.vue'], resolve); }
@@ -94,7 +97,7 @@ export const otherRouter = {
             path: 'myLeave',
             title: '我的请假',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'myLeave',
             component: resolve => { require(['@/pages/myLeave/index.vue'], resolve); }
@@ -103,7 +106,7 @@ export const otherRouter = {
             path: 'myArrange',
             title: '我的排班',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'myArrange',
             component: resolve => { require(['@/pages/myArrange/index.vue'], resolve); }
@@ -112,7 +115,7 @@ export const otherRouter = {
             path: 'myExam',
             title: '我的考试',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'myExam',
             component: resolve => { require(['@/pages/myExam/index.vue'], resolve); }
@@ -120,7 +123,7 @@ export const otherRouter = {
         {
             path: 'assetsApply',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'assetsApply',
             title: '资产采购/报废申请',
@@ -130,7 +133,7 @@ export const otherRouter = {
             path: 'coinShop',
             title: '金币商城',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'coinShop',
             component: resolve => { require(['@/pages/coinManage/coinShop/index.vue'], resolve); }
@@ -139,7 +142,7 @@ export const otherRouter = {
             path: 'myTrain',
             title: '我的培训',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'myTrain',
             component: resolve => { require(['@/pages/myTrain/index.vue'], resolve); }
@@ -148,7 +151,7 @@ export const otherRouter = {
             path: 'ownspace',
             title: '个人中心',
             meta: {
-                white: true
+                whiteIn: true
             },
             name: 'ownspace_index',
             component: resolve => { require(['@/views/own-space/own-space.vue'], resolve); }
