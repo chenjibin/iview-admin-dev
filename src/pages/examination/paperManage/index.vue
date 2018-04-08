@@ -271,9 +271,9 @@
                         render: (h, params) => {
                             let resultList = this.subjectList.filter(x => x.id === params.row.subject);
                             if (resultList.length) {
-                                return resultList[0].name;
+                                return h('span', resultList[0].name);
                             } else {
-                                return params.row.subject;
+                                return h('span', params.row.subject);
                             }
                         }
                     },
@@ -282,7 +282,7 @@
                         align: 'center',
                         width: 160,
                         render: (h, params) => {
-                            return params.row.totlemark || 0;
+                            return h('span', params.row.totlemark || 0);
                         }
                     },
                     {

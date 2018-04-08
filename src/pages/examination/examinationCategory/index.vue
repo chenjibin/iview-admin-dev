@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Card style="width: 40%">
+        <Card >
             <Form inline :label-width="60">
                 <FormItem label="分类名称">
                     <Input type="text"
@@ -81,13 +81,10 @@
                     {
                         title: '创建日期',
                         key: 'createbydate',
-                        align: 'center',
-                        width: 160
+                        align: 'center'
                     },
                     {
                         title: '操作',
-                        width: 60,
-                        fixed: 'right',
                         align: 'center',
                         render: (h, params) => {
                             let vm = this;
