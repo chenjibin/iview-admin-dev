@@ -41,18 +41,6 @@
                             <Icon type="ios-cloud-upload-outline"></Icon>
                             上传成绩
                         </Button>
-                        <!--<Button type="info"-->
-                                <!--:disabled="classChooseDataArray.length !== 1"-->
-                                <!--@click="">-->
-                            <!--<Icon type="ios-eye"></Icon>-->
-                             <!--查看公告-->
-                        <!--</Button>-->
-                        <!--<Button type="info"-->
-                                <!--:disabled="classChooseDataArray.length !== 1"-->
-                                <!--@click="">-->
-                            <!--<Icon type="edit"></Icon>-->
-                            <!--编辑公告-->
-                        <!--</Button>-->
                     </ButtonGroup>
                 </FormItem>
             </Form>
@@ -370,7 +358,6 @@
                     },
                     {
                         title: '操作',
-                        fixed: 'right',
                         align: 'center',
                         width: 80,
                         render: (h, params) => {

@@ -4,32 +4,28 @@
             <Form inline :label-width="60">
                 <FormItem label="姓名">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.userName"
+                           v-model="filterOpt.userName.value"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="考勤月份">
                     <DatePicker type="month"
                                 placeholder="筛选考勤月份"
-                                @on-change="_monthDateChange"
-                                :value="filterOpt.monthDate"></DatePicker>
+                                @on-change="filterOpt.monthDate.value = $event"
+                                :value="filterOpt.monthDate.value"></DatePicker>
                 </FormItem>
                 <FormItem label="部门">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.organizeName"
+                           v-model="filterOpt.organizeName.value"
                            placeholder="筛选部门"></Input>
                 </FormItem>
                 <FormItem label="岗位">
                     <Input type="text"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.postName"
+                           v-model="filterOpt.postName.value"
                            placeholder="筛选岗位"></Input>
                 </FormItem>
                 <FormItem label="审核状态">
-                    <Select v-model="filterOpt.kqstates"
+                    <Select v-model="filterOpt.kqstates.value"
                             clearable
-                            @on-change="_filterResultHandler"
                             placeholder="筛选状态"
                             style="width: 100px">
                         <Option value="2">审核完毕</Option>
@@ -60,22 +56,13 @@
                     </ButtonGroup>
                 </FormItem>
             </Form>
-            <Table :columns="postColumns"
-                   :loading="tableLoading"
-                   :height="tableHeight"
-                   ref="attendanceTable"
-                   @on-selection-change="chooseDataArr = $event"
-                   :data="pageData.list"></Table>
-            <Page :total="pageData.totalCount"
-                  :current="pageData.page"
-                  @on-change="_setPage"
-                  @on-page-size-change="_setPageSize"
-                  :page-size="pageData.pageSize"
-                  placement="top"
-                  show-sizer
-                  show-total
-                  show-elevator
-                  style="margin-top: 16px;"></Page>
+            <fs-table-page :columns="postColumns"
+                           :size="null"
+                           :height="tableHeight"
+                           :params="filterOpt"
+                           :choosearray.sync="chooseDataArr"
+                           ref="attendanceTable"
+                           url="/kq/getStatisticList"></fs-table-page>
             <Modal v-model="importModalFlag"
                    width="400"
                    :mask-closable="false">
@@ -222,9 +209,9 @@
     </div>
 </template>
 <script>
-    import pageMixin from '@/mixins/pageMixin';
-    import moment from 'moment';
+    import fsTablePage from '@/baseComponents/fs-table-page';
     import debounce from 'lodash/debounce';
+    import moment from 'moment';
     export default {
         name: 'attendanceManage',
         data () {
@@ -264,11 +251,26 @@
                     username: ''
                 },
                 filterOpt: {
-                    kqstates: '',
-                    userName: '',
-                    monthDate: '',
-                    organizeName: '',
-                    postName: ''
+                    kqstates: {
+                        value: '',
+                        type: 'select'
+                    },
+                    userName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    monthDate: {
+                        value: '',
+                        type: 'date'
+                    },
+                    organizeName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    postName: {
+                        value: '',
+                        type: 'input'
+                    }
                 },
                 attendanceDelData: [],
                 chooseDataArr: [],
@@ -442,10 +444,6 @@
                                         editable: true
                                     },
                                     on: {
-                                        // 'on-change' (val) {
-                                        //     params.row['c_count'] = val;
-                                        //     vm._setEveryStrangeNumber(val, 'late', params.row);
-                                        // },
                                         'on-change': debounce(function (val) {
                                             params.row['c_count'] = val;
                                             vm._setEveryStrangeNumber(val, 'late', params.row);
@@ -471,10 +469,6 @@
                                         editable: true
                                     },
                                     on: {
-                                        // 'on-change' (val) {
-                                        //     params.row['z_count'] = val;
-                                        //     vm._setEveryStrangeNumber(val, 'leave_early', params.row);
-                                        // },
                                         'on-change': debounce(function (val) {
                                             params.row['z_count'] = val;
                                             vm._setEveryStrangeNumber(val, 'leave_early', params.row);
@@ -500,10 +494,6 @@
                                         editable: true
                                     },
                                     on: {
-                                        // 'on-change' (val) {
-                                        //     params.row['l_count'] = val;
-                                        //     vm._setEveryStrangeNumber(val, 'forget', params.row);
-                                        // },
                                         'on-change': debounce(function (val) {
                                             params.row['l_count'] = val;
                                             vm._setEveryStrangeNumber(val, 'forget', params.row);
@@ -587,7 +577,6 @@
                 }
             };
         },
-        mixins: [pageMixin],
         watch: {
             exportType(val) {
                 if (val === 'month') this.exportMonth = moment().format('YYYY-MM');
@@ -595,7 +584,6 @@
             }
         },
         created() {
-            this._getPostData();
             this._setTableHeight();
         },
         methods: {
@@ -725,13 +713,6 @@
                     }
                 });
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this.initPage();
-                this._getPostData();
-            },
             _uploadProgress(event) {
                 this.spinShow = true;
             },
@@ -754,18 +735,6 @@
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
             },
-            _monthDateChange(val) {
-                this.filterOpt.monthDate = val;
-                this._filterResultHandler();
-            },
-            _setPage(page) {
-                this.pageData.page = page;
-                this._getPostData();
-            },
-            _setPageSize(size) {
-                this.pageData.pageSize = size;
-                this._getPostData();
-            },
             _editorSetting(data) {
                 this._initAttendanceOpt();
                 this.attendanceOpt.userName = data.user_name;
@@ -787,16 +756,9 @@
                 });
             },
             _getPostData() {
-                this.chooseDataArr = [];
-                let data = {};
-                data.userName = this.filterOpt.userName;
-                data.monthDate = this.filterOpt.monthDate;
-                data.kqstates = this.filterOpt.kqstates;
-                data.organizeName = this.filterOpt.organizeName;
-                data.postName = this.filterOpt.postName;
-                this.getList('/kq/getStatisticList', data);
+                this.$refs.attendanceTable.getListData();
             }
         },
-        components: {}
+        components: {fsTablePage}
     };
 </script>

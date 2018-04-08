@@ -23,6 +23,7 @@ router.beforeEach((to, from, next) => {
         if (to.meta.white) {
             next();
         } else if (to.name !== 'login') {
+            store.commit('clearAllTags');
             next({
                 name: 'login'
             });

@@ -154,8 +154,7 @@
                     },
                     {
                         title: '操作',
-                        width: 60,
-                        fixed: 'right',
+                        width: 80,
                         align: 'center',
                         render: (h, params) => {
                             let vm = this;
@@ -280,7 +279,7 @@
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 300;
-                this.tableHeight2 = dm - 316;
+                this.tableHeight2 = dm - 300;
             }
         },
         components: {

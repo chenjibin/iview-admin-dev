@@ -66,42 +66,62 @@ export const otherRouter = {
         {
             path: 'home',
             title: {i18n: 'home'},
+            meta: {
+                white: true
+            },
             name: 'home_index',
             component: resolve => { require(['@/pages/home/index.vue'], resolve); }
         },
         {
             path: 'myLog',
             title: '我的日志',
+            meta: {
+                white: true
+            },
             name: 'myLog',
             component: resolve => { require(['@/pages/myLog/index.vue'], resolve); }
         },
         {
             path: 'myAttendance',
             title: '我的考勤',
+            meta: {
+                white: true
+            },
             name: 'myAttendance',
             component: resolve => { require(['@/pages/myAttendance/index.vue'], resolve); }
         },
         {
             path: 'myLeave',
             title: '我的请假',
+            meta: {
+                white: true
+            },
             name: 'myLeave',
             component: resolve => { require(['@/pages/myLeave/index.vue'], resolve); }
         },
         {
             path: 'myArrange',
             title: '我的排班',
+            meta: {
+                white: true
+            },
             name: 'myArrange',
             component: resolve => { require(['@/pages/myArrange/index.vue'], resolve); }
         },
         {
             path: 'myExam',
             title: '我的考试',
+            meta: {
+                white: true
+            },
             name: 'myExam',
             component: resolve => { require(['@/pages/myExam/index.vue'], resolve); }
         },
         {
             path: 'assetsApply',
-            icon: 'compose',
+            meta: {
+                white: true
+            },
             name: 'assetsApply',
             title: '资产采购/报废申请',
             component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
@@ -109,18 +129,27 @@ export const otherRouter = {
         {
             path: 'coinShop',
             title: '金币商城',
+            meta: {
+                white: true
+            },
             name: 'coinShop',
             component: resolve => { require(['@/pages/coinManage/coinShop/index.vue'], resolve); }
         },
         {
             path: 'myTrain',
             title: '我的培训',
+            meta: {
+                white: true
+            },
             name: 'myTrain',
             component: resolve => { require(['@/pages/myTrain/index.vue'], resolve); }
         },
         {
             path: 'ownspace',
             title: '个人中心',
+            meta: {
+                white: true
+            },
             name: 'ownspace_index',
             component: resolve => { require(['@/views/own-space/own-space.vue'], resolve); }
         },
