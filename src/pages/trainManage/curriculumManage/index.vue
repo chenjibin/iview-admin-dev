@@ -300,7 +300,7 @@
                         align: 'center',
                         width: 160,
                         render: (h, params) => {
-                            return moment(params.row.class_date).format('YYYY-MM-DD');
+                            return h('span', moment(params.row.class_date).format('YYYY-MM-DD'));
                         }
                     },
                     {

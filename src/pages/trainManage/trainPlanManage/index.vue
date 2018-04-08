@@ -253,7 +253,7 @@
                         align: 'center',
                         width: 160,
                         render: (h, params) => {
-                            return moment(params.row.period).format('YYYY-MM');
+                            return h('span', moment(params.row.period).format('YYYY-MM'));
                         }
                     },
                     {
@@ -276,7 +276,7 @@
                             let filterResult = this.roleData.filter(x => x.id === params.row.role_id);
                             if (filterResult.length) roleName = filterResult[0].name;
                             else roleName = params.row.id;
-                            return roleName;
+                            return h('span', roleName);
                         }
                     },
                     {
