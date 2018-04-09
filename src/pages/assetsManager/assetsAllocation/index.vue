@@ -1,13 +1,12 @@
 <template>
     <div id="assetsAllocation">
-        <Card>
+        <Card v-if="!isCommon">
             <Form inline :label-width="90">
                 <FormItem label="资产名称">
                     <Cascader style="width: 180px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
                 </FormItem>
                 <FormItem label="移入位置名称">
                     <Select type="text" style="width: 180px"
-                            @on-change="_inputDebounce"
                             :clearable="true"
                             v-model="filterOpt.inPositionName.value"
                             placeholder="位置名称">
@@ -17,7 +16,6 @@
                 <Input style="display: none" v-model="filterOpt.type.value"></Input>
                 <FormItem label="移出位置名称">
                     <Select type="text" style="width: 180px"
-                            @on-change="_inputDebounce"
                             :clearable="true"
                             v-model="filterOpt.outPositionName.value"
                             placeholder="位置名称">
@@ -38,6 +36,46 @@
             </Form>
             <fs-table-page ref="fsTable" :columns="postColumns" :size="null" :height="tableHeight" :params="filterOpt" :url="getListUrl"></fs-table-page>
         </Card>
+        <div class="" v-else>
+            <Form inline :label-width="90">
+                <FormItem label="资产名称">
+                    <Cascader style="width: 180px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
+                </FormItem>
+                <FormItem label="移入位置名称">
+                    <Select type="text" style="width: 180px"
+                            :clearable="true"
+                            v-model="filterOpt.inPositionName.value"
+                            placeholder="位置名称">
+                        <Option v-for="item, index in positionList" :key="index" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
+                    </Select>
+                </FormItem>
+                <Input style="display: none" v-model="filterOpt.type.value"></Input>
+                <FormItem label="移出位置名称">
+                    <Select type="text" style="width: 180px"
+                            :clearable="true"
+                            v-model="filterOpt.outPositionName.value"
+                            placeholder="位置名称">
+                        <Option v-for="item, index in positionList" :key="index" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="审批状态">
+                    <Select type="text" v-model="filterOpt.approvalStatus.value" :clearable="true"  style="width: 160px">
+                        <Option :value="0">待审批</Option>
+                        <Option :value="1">审批通过</Option>
+                        <Option :value="2">审批拒绝</Option>
+                    </Select>
+                </FormItem>
+                <Button type="ghost" @click="addInfo">
+                    <Icon type="plus-circled"></Icon>
+                    <span>调拨申请</span>
+                </Button>
+                <Button type="primary" @click="$emit('to-bf')">
+                    <span>进入资产报废/申请</span>
+                    <Icon type="arrow-right-c"></Icon>
+                </Button>
+            </Form>
+            <fs-table-page ref="fsTable" :columns="postColumns" :size="null" :height="tableHeight" :params="filterOpt" :url="getListUrl"></fs-table-page>
+        </div>
         <Modal v-model="addInfoModal" width="400">
             <Form style="margin-top: 20px" :label-width="120" ref="newApplyForm" :model="newApply" :rules="newApplyRules">
                 <Input type="text" style="display: none" v-model="newApply.id"></Input>
@@ -48,7 +86,7 @@
                     <Input style="width: 180px" v-model="newApply.categoryName" readonly></Input>
                 </FormItem>
                 <FormItem label="申请数量" prop="num">
-                    <InputNumber type="text" :min="1" :max="99" style="width: 180px" v-model="newApply.num"></InputNumber>
+                    <InputNumber :min="1" :max="99" style="width: 180px" v-model="newApply.num"></InputNumber>
                 </FormItem>
                 <FormItem label="移入资产位置" prop="inPositionName">
                     <Select type="text" prop="positionName" style="width: 180px" v-model="newApply.inPositionName" placeholder="位置名称">
@@ -103,13 +141,15 @@
 </template>
 
 <script>
-    // 简单的axios薄层封装
-    import pageMixin from '@/mixins/pageMixin';
-    // lodash输入延时
-    import debounce from 'lodash/debounce';
     import fsTablePage from '@/baseComponents/fs-table-page';
     export default {
         name: 'assetsAllocation',
+        props: {
+            isCommon: {
+                type: Boolean,
+                default: false
+            }
+        },
         components: {fsTablePage},
         data() {
             return {
@@ -367,12 +407,11 @@
                 tableHeight: 500
             };
         },
-        mixins: [pageMixin],
         created() {
             this._setTableHeight();
             this.getPositionList();
             this.loadData();
-            this.accessBtn = this.$route.meta.btn.map(x => x.id);
+            if (!this.isCommon) this.accessBtn = this.$route.meta.btn.map(x => x.id);
             if (this.accessBtn.indexOf(33) > -1) {
                 this.filterOpt.type.value = 0;
             }
@@ -468,7 +507,7 @@
             addInfo() {
                 this.newApply.id = '';
                 this.newApply.categoryName = '';
-                this.newApply.num = '';
+                this.newApply.num = 0;
                 this.newApply.inPositionName = '';
                 this.newApply.outPositionName = '';
                 this.newApply.remarks = '';
@@ -501,12 +540,9 @@
                     }
                 });
             },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 1600),
             _setTableHeight () {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 100 - 20 - 2 - 32 - 10 - 32 - 57 - 7;
+                this.tableHeight = dm - 260;
             }
         }
     };
