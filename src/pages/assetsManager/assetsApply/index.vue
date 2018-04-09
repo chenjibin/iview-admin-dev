@@ -650,12 +650,12 @@
         flex-direction: column;
         .btn {
             margin-bottom: 40px;
-            padding: 32px 0;
-            font-size: 30px;
+            padding: 24px 0;
+            font-size: 24px;
             font-weight: 700;
-            background-color: rgb(242, 94, 67);
+            background-color: #f25e43;
             color: #fff;
-            width: 400px;
+            width: 380px;
             text-align: center;
             border-radius: 40px;
             cursor: pointer;
