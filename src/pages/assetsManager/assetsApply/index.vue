@@ -4,7 +4,7 @@
         <Card>
             <div class="center-button-wrapper" v-show="zichanType === 'chooseType'" :style="{minHeight: minHeight}">
                 <div class="btn" @click="zichanType = 'cbType'">
-                    进入资产报废/申请
+                    进入资产采购/报废申请
                 </div>
                 <div class="btn" @click="zichanType = 'dbType'">
                     进入资产调拨

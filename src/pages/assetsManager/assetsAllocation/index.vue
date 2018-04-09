@@ -70,7 +70,7 @@
                     <span>调拨申请</span>
                 </Button>
                 <Button type="primary" @click="$emit('to-bf')">
-                    <span>进入资产报废/申请</span>
+                    <span>进入资产采购/报废申请</span>
                     <Icon type="arrow-right-c"></Icon>
                 </Button>
             </Form>
