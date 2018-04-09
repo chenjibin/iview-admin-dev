@@ -10,7 +10,7 @@
                     进入资产调拨
                 </div>
             </div>
-            <div class="" v-show="zichanType === 'cbType'" >
+            <div class="" v-show="zichanType !== 'dbType'" >
                 <Form inline :label-width="60">
                     <FormItem label="申请类型">
                         <Select type="text" :clearable="true" v-model="filterOpt.appType.value" style="width: 130px">
@@ -648,17 +648,29 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 2;
+        right: 0;
+        background-color: rgba(255,255,255,0.7);
         .btn {
             margin-bottom: 40px;
-            padding: 24px 0;
-            font-size: 24px;
+            padding: 32px 0;
+            font-size: 30px;
             font-weight: 700;
-            background-color: #f25e43;
+            background-color: rgb(242, 94, 67);
             color: #fff;
-            width: 380px;
+            width: 400px;
             text-align: center;
             border-radius: 40px;
             cursor: pointer;
+        }
+        .btn:hover{
+            background-color: #f58875;
+            padding-right: 25px;
+            transition: all 0.35s;
         }
     }
 </style>
