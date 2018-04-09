@@ -2,45 +2,61 @@
     <!--资产采购/报废申请-->
     <div id="assetsCategory">
         <Card>
-            <Form inline :label-width="60">
-                <FormItem label="申请类型">
-                    <Select type="text" :clearable="true" v-model="filterOpt.appType.value" style="width: 130px">
-                        <Option :value="1">采购申请</Option>
-                        <Option :value="3">报废申请</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="资产名称">
-                    <Cascader style="width: 200px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
-                </FormItem>
-                <FormItem label="位置名称">
-                    <Select type="text" style="width: 180px"
-                            @on-change="_inputDebounce"
-                            :clearable="true"
-                            v-model="filterOpt.positionName.value"
-                            placeholder="位置名称">
-                        <Option v-for="item, index in positionList" :key="index" :label="item.name" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="审批状态">
-                    <Select type="text" v-model="filterOpt.approvalStatus.value" :clearable="true" style="width: 160px">
-                        <Option :value="0">待审批</Option>
-                        <Option :value="1">审批通过</Option>
-                        <Option :value="2">审批拒绝</Option>
-                        <Option :value="3">已领取</Option>
-                    </Select>
-                </FormItem>
-                <Button type="ghost" @click="addInfo(1)">
-                    <Icon type="plus-circled"></Icon>
-                    <span>新增采购</span>
-                </Button>
-                <Button type="ghost" @click="addInfo(3)">
-                    <Icon type="plus-circled"></Icon>
-                    <span>报废申请</span>
-                </Button>
-            </Form>
-            <fs-table-page ref="fsTable" :columns="postColumns" :size="null" :height="tableHeight" :params="filterOpt"
-                           url="/assetsApplication/applicationList"></fs-table-page>
-
+            <div class="center-button-wrapper" v-show="zichanType === 'chooseType'" :style="{minHeight: minHeight}" >
+                <div class="btn" @click="zichanType = 'cbType'">
+                    进入资产采购/报废申请
+                </div>
+                <div class="btn" @click="zichanType = 'dbType'">
+                    进入资产调拨
+                </div>
+            </div>
+            <div class="" v-show="zichanType === 'cbType'" >
+                <Form inline :label-width="60">
+                    <FormItem label="申请类型">
+                        <Select type="text" :clearable="true" v-model="filterOpt.appType.value" style="width: 130px">
+                            <Option :value="1">采购申请</Option>
+                            <Option :value="3">报废申请</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="资产名称">
+                        <Cascader style="width: 200px" :data="cat1" @on-change="changeCataName(1, arguments)" :load-data="loadData"></Cascader>
+                    </FormItem>
+                    <FormItem label="位置名称">
+                        <Select type="text" style="width: 180px"
+                                @on-change="_inputDebounce"
+                                :clearable="true"
+                                v-model="filterOpt.positionName.value"
+                                placeholder="位置名称">
+                            <Option v-for="item, index in positionList" :key="index" :label="item.name" :value="item.name"><span>{{item.name}}</span><span :title="item.remarks" style="float:right;color:#ccc;width:104px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.remarks}}</span></Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="审批状态">
+                        <Select type="text" v-model="filterOpt.approvalStatus.value" :clearable="true" style="width: 160px">
+                            <Option :value="0">待审批</Option>
+                            <Option :value="1">审批通过</Option>
+                            <Option :value="2">审批拒绝</Option>
+                            <Option :value="3">已领取</Option>
+                        </Select>
+                    </FormItem>
+                    <Button type="ghost" @click="addInfo(1)">
+                        <Icon type="plus-circled"></Icon>
+                        <span>新增采购</span>
+                    </Button>
+                    <Button type="ghost" @click="addInfo(3)">
+                        <Icon type="plus-circled"></Icon>
+                        <span>报废申请</span>
+                    </Button>
+                    <Button type="primary"  @click="zichanType = 'dbType'">
+                        <span>进入资产调拨</span>
+                        <Icon type="arrow-right-c"></Icon>
+                    </Button>
+                </Form>
+                <fs-table-page ref="fsTable" :columns="postColumns" :size="null" :height="tableHeight" :params="filterOpt"
+                               url="/assetsApplication/applicationList"></fs-table-page>
+            </div>
+            <div class="" v-show="zichanType === 'dbType'">
+                <assets-allocation :is-common="true" @to-bf="zichanType = 'cbType'"></assets-allocation>
+            </div>
         </Card>
         <Modal v-model="addInfoModal" width="320">
             <Form style="margin-top: 25px" :label-width="90" ref="newApplyForm" :model="newApply" :rules="newApplyRules">
@@ -98,11 +114,18 @@
     import debounce from 'lodash/debounce';
     import assetsTree from '@/baseComponents/assets-tree.vue';
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import assetsAllocation from '@/pages/assetsManager/assetsAllocation/index';
     export default {
         name: 'assetsApply',
-        components: {assetsTree, fsTablePage},
+        components: {
+            assetsTree,
+            fsTablePage,
+            assetsAllocation
+        },
         data() {
             return {
+                minHeight: '',
+                zichanType: 'chooseType',
                 filterOpt: {
                     categoryName: {
                         value: '',
@@ -458,6 +481,8 @@
         },
         mixins: [pageMixin],
         created() {
+            let dm = document.body.clientHeight - 180;
+            this.minHeight = dm + 'px';
             this._setTableHeight();
             this.getPositionList();
             this.loadData(null, null, 1);
@@ -618,4 +643,22 @@
 </script>
 
 <style lang="less">
+    .center-button-wrapper{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        .btn {
+            margin-bottom: 40px;
+            padding: 24px 0;
+            font-size: 24px;
+            font-weight: 700;
+            background-color: #f25e43;
+            color: #fff;
+            width: 380px;
+            text-align: center;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+    }
 </style>

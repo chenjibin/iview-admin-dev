@@ -90,7 +90,7 @@
                         key: 'singlescore',
                         width: 80,
                         render: (h, params) => {
-                            return params.row.singlescore || 0;
+                            return h('span', params.row.singlescore || 0);
                         }
                     },
                     {
@@ -99,7 +99,7 @@
                         key: 'multiplescore',
                         width: 80,
                         render: (h, params) => {
-                            return params.row.multiplescore || 0;
+                            return h('span', params.row.multiplescore || 0);
                         }
                     },
                     {
@@ -108,7 +108,7 @@
                         key: 'torfscore',
                         width: 80,
                         render: (h, params) => {
-                            return params.row.torfscore || 0;
+                            return h('span', params.row.torfscore || 0);
                         }
                     },
                     {

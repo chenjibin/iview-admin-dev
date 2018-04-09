@@ -271,7 +271,7 @@
                         render: (h, params) => {
                             let resultList = this.subjectList.filter(x => x.id === params.row.subject);
                             if (resultList.length) {
-                                return h('span', resultList[0].name);
+                                return h('span', resultList[0].name || '');
                             } else {
                                 return h('span', params.row.subject);
                             }
@@ -327,7 +327,6 @@
                     {
                         title: '操作',
                         key: 'user_name',
-                        fixed: 'right',
                         align: 'center',
                         width: 300,
                         render: (h, params) => {
@@ -541,6 +540,7 @@
                 this.$http.get('/examquestion/getSubjectList').then((res) => {
                     if (res.success) {
                         this.subjectList = res.data;
+                        this._updatePaperList();
                     }
                 });
             }

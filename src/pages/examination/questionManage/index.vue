@@ -470,7 +470,7 @@
                         data.answer = editorSettingData.singleType;
                         break;
                     case '2':
-                        data.answer = editorSettingData.multiType.join(',');
+                        data.answer = editorSettingData.multiType.join('');
                         break;
                     case '3':
                         data.answer = editorSettingData.trueOrFalseType;

@@ -19,23 +19,24 @@
                 <Form ref="searchData" :model="searchData" inline :label-width="50">
                     <FormItem prop="realName" label="姓名">
                         <Input type="text"
-                               @on-change="_inputDebounce"
-                               v-model="searchData.realName"
+                               v-model="searchData.realName.value"
                                placeholder="筛选姓名"></Input>
                     </FormItem>
                     <FormItem prop="postName" label="岗位">
                         <Input type="text"
-                               @on-change="_inputDebounce"
-                               v-model="searchData.postName"
+                               v-model="searchData.postName.value"
                                placeholder="筛选岗位"></Input>
                     </FormItem>
                     <FormItem label="角色">
-                        <Select v-model="searchData.roleId" clearable :transfer="true" placeholder="筛选角色" style="width: 120px">
+                        <Select v-model="searchData.roleId.value"
+                                clearable
+                                :transfer="true"
+                                placeholder="筛选角色" style="width: 120px">
                             <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="状态">
-                        <Select v-model="searchData.states"
+                        <Select v-model="searchData.states.value"
                                 clearable
                                 placeholder="筛选状态"
                                 style="width: 100px">
@@ -60,21 +61,13 @@
                         </ButtonGroup>
                     </FormItem>
                 </Form>
-                <Table :columns="columns1"
-                       :loading="tableLoading"
-                       @on-sort-change="_tableSortChange"
-                       @on-selection-change="_tableSelectChange"
-                       :height="tableHeight"
-                       :data="userData"></Table>
-                <Page :total="totalCount"
-                      @on-change="_setPage"
-                      @on-page-size-change="_setPageSize"
-                      :page-size="searchData.pageSize"
-                      placement="top"
-                      show-sizer
-                      show-total
-                      show-elevator
-                      style="margin-top: 16px;"></Page>
+                <fs-table-page :columns="columns1"
+                               :size="null"
+                               :height="tableHeight"
+                               :params="searchData"
+                               :choosearray.sync="chooseDataArr"
+                               ref="userTable"
+                               url="/user/dataList"></fs-table-page>
             </Card>
             </Col>
         </Row>
@@ -418,6 +411,7 @@
     }
 </style>
 <script>
+    import fsTablePage from '@/baseComponents/fs-table-page';
     import moment from 'moment';
     import debounce from 'lodash/debounce';
     export default {
@@ -425,18 +419,6 @@
         watch: {
             filterText(val) {
                 this.$refs.treeDom.filter(val);
-            },
-            'searchData.pageSize'() {
-                this._filterResultHandler();
-            },
-            'searchData.nodeId'() {
-                this._filterResultHandler();
-            },
-            'searchData.states'() {
-                this._filterResultHandler();
-            },
-            'searchData.roleId'() {
-                this._filterResultHandler();
             },
             'userSettingForm.post'(val) {
                 if (val) {
@@ -581,13 +563,26 @@
                 },
                 totalCount: 1,
                 searchData: {
-                    realName: '',
-                    postName: '',
-                    states: '1',
-                    roleId: '',
-                    nodeId: 1,
-                    page: 1,
-                    pageSize: 20
+                    realName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    postName: {
+                        value: '',
+                        type: 'input'
+                    },
+                    states: {
+                        value: '1',
+                        type: 'select'
+                    },
+                    roleId: {
+                        value: '',
+                        type: 'select'
+                    },
+                    nodeId: {
+                        value: 1,
+                        type: 'tree'
+                    }
                 },
                 columns1: [
                     {
@@ -757,7 +752,6 @@
 
                 ],
                 roleData: [],
-                userData: [],
                 levelData: [],
                 orgTreeData: [],
                 levelCodeOpt: {
@@ -1007,36 +1001,16 @@
                     }
                 });
             },
-            _tableSortChange(data) {
-            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 280;
             },
-            _tableSelectChange(data) {
-                this.chooseDataArr = data;
-            },
             _getUserData() {
-                this.chooseDataArr = [];
-                this.tableLoading = true;
-                this.$http.get('/user/dataList', {params: this.searchData}).then((res) => {
-                    if (res.success) {
-                        this.totalCount = res.totalCount;
-                        this.userData = res.data;
-                    }
-                }).finally(() => {
-                    this.tableLoading = false;
-                });
-            },
-            _setPage(page) {
-                this.searchData.page = page;
-                this._getUserData();
-            },
-            _setPageSize(size) {
-                this.searchData.pageSize = size;
+                this.$refs.userTable.getListData();
             },
             _treeNodeClickHandler(data) {
-                this.searchData.nodeId = data.id;
+                console.log(data)
+                this.searchData.nodeId.value = data.id;
             },
             _depChange(data) {
                 this._getPostList(data.slice(-1)[0]).then(() => {
@@ -1164,7 +1138,7 @@
                     this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.orgTreeData = res.data;
-                            this.searchData.nodeId = res.data[0].id;
+                            this.searchData.nodeId.value = res.data[0].id;
                             resolve(res.data[0].id);
                         }
                     });
@@ -1263,6 +1237,8 @@
                 this.userAccessModalFlag = true;
             }
         },
-        components: {}
+        components: {
+            fsTablePage
+        }
     };
 </script>

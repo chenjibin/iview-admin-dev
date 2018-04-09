@@ -101,7 +101,6 @@
     import messageTip from './main-components/message-tip.vue';
     import themeSwitch from './main-components/theme-switch/theme-switch.vue';
     import util from '@/libs/util.js';
-
     export default {
         components: {
             shrinkableMenu,

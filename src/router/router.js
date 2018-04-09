@@ -126,7 +126,7 @@ export const otherRouter = {
                 whiteIn: true
             },
             name: 'assetsApply',
-            title: '资产采购/报废申请',
+            title: '我的资产',
             component: resolve => { require(['@/pages/assetsManager/assetsApply/index.vue'], resolve); }
         },
         {
