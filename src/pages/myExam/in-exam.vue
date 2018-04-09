@@ -176,7 +176,7 @@
                         let obj = {};
                         obj.id = question.id;
                         obj.type = question.type;
-                        obj.answer = question.type === 2 ? question.answerNew.sort().join(',') : question.answerNew;
+                        obj.answer = question.type === 2 ? question.answerNew.sort().join('') : question.answerNew;
                         data.answerList.push(obj);
                     });
                 });

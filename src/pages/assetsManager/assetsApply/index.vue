@@ -2,7 +2,7 @@
     <!--资产采购/报废申请-->
     <div id="assetsCategory">
         <Card>
-            <div class="center-button-wrapper" v-show="zichanType === 'chooseType'" :style="{minHeight: minHeight}">
+            <div class="center-button-wrapper" v-show="zichanType === 'chooseType'" :style="{minHeight: minHeight}" >
                 <div class="btn" @click="zichanType = 'cbType'">
                     进入资产采购/报废申请
                 </div>
@@ -10,7 +10,7 @@
                     进入资产调拨
                 </div>
             </div>
-            <div class="" v-show="zichanType === 'cbType'">
+            <div class="" v-show="zichanType === 'cbType'" >
                 <Form inline :label-width="60">
                     <FormItem label="申请类型">
                         <Select type="text" :clearable="true" v-model="filterOpt.appType.value" style="width: 130px">
