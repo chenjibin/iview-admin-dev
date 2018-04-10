@@ -16,7 +16,7 @@
             </Col>
             <Col :span="20">
             <Card>
-                <Form ref="searchData" :model="searchData" inline :label-width="50">
+                <Form ref="searchData" :model="searchData" inline :label-width="40">
                     <FormItem prop="realName" label="姓名">
                         <Input type="text"
                                v-model="searchData.realName.value"
@@ -44,7 +44,7 @@
                             <Option value="0">禁用</Option>
                         </Select>
                     </FormItem>
-                    <FormItem>
+                    <FormItem :label-width="0.1">
                         <ButtonGroup>
                             <Button type="primary" @click="_addUserOpen">
                                 <Icon type="plus-round"></Icon>
@@ -57,6 +57,10 @@
                             <Button type="primary" @click="banciModalFlag = true">
                                 <Icon type="ios-book-outline"></Icon>
                                 班次管理
+                            </Button>
+                            <Button type="error" @click="_openLeaveSettingModal" :disabled="chooseDataArr.length !== 1">
+                                <Icon type="minus"></Icon>
+                                账号离职
                             </Button>
                         </ButtonGroup>
                     </FormItem>
@@ -201,11 +205,6 @@
                            readonly
                            v-model="coinSettingForm.target"></Input>
                 </FormItem>
-                <!--<FormItem label="类型">-->
-                    <!--<Select @on-change="_coinTypeChangeHandler">-->
-                        <!--<Option :value="item.value" v-for="item in coinTypeSelect" :key="'coin-type-' + item.value">{{item.label}}</Option>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
                 <FormItem label="属性" prop="coinProperty">
                     <Select v-model="coinSettingForm.coinProperty">
                         <Option :value="item.value" v-for="(item, index) in coinOptSelect" :key="'coin-property' + index">{{item.label}}</Option>
@@ -364,6 +363,42 @@
                 <Button type="ghost" @click="specAccessFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="leaveSettingFlag"
+               :mask-closable="false"
+               width="600">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>{{leavePeople}}离职设置</span>
+            </p>
+            <Form :model="leaveSettingForm"
+                  ref="leaveForm"
+                  :label-width="90">
+                <FormItem prop="target" label="离职时间">
+                    <DatePicker @on-change="leaveSettingForm.resignationTime = $event"
+                                :clearable="false"
+                                :value="leaveSettingForm.resignationTime"></DatePicker>
+                </FormItem>
+                <FormItem label="离职原因" prop="coinProperty">
+                    <Select v-model="leaveSettingForm.reasonLeaving">
+                        <Option value="个人原因">个人原因</Option>
+                        <Option value="公司劝退">公司劝退</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="离职等级" prop="coinNumber">
+                    <Select v-model="leaveSettingForm.gradeLeaving">
+                        <Option value="A">A</Option>
+                        <Option value="B">B</Option>
+                        <Option value="C">C</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="备注" prop="content">
+                    <Input v-model="leaveSettingForm.leaveRemarks" type="textarea" :autosize="{minRows: 2,maxRows: 5}"></Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="primary" @click="_coinLeaveHandler">确认</Button>
+                <Button type="ghost" style="margin-left: 8px" @click="leaveSettingFlag = false">取消</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 <style lang="less">
@@ -413,7 +448,7 @@
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import moment from 'moment';
-    import debounce from 'lodash/debounce';
+    const NOW_DATE = moment().format('YYYY-MM-DD');
     export default {
         name: 'userManage',
         watch: {
@@ -686,7 +721,8 @@
                                             shape: 'circle'
                                         },
                                         on: {
-                                            click: function() {
+                                            click: function(e) {
+                                                e.stopPropagation();
                                                 vm._specAccessOpen(params.row);
                                             }
                                         },
@@ -709,7 +745,8 @@
                                             shape: 'circle'
                                         },
                                         on: {
-                                            click: function() {
+                                            click: function(e) {
+                                                e.stopPropagation();
                                                 vm._userAccessOpen(params.row);
                                             }
                                         },
@@ -732,7 +769,8 @@
                                             shape: 'circle'
                                         },
                                         on: {
-                                            click: function () {
+                                            click: function (e) {
+                                                e.stopPropagation();
                                                 vm._editorSetting(params.row);
                                             }
                                         }
@@ -802,7 +840,16 @@
                     ]
                 },
                 accessCheckArr: [1, 2],
-                accseeList: []
+                accseeList: [],
+                leaveSettingFlag: false,
+                leaveSettingForm: {
+                    reasonLeaving: '个人原因',
+                    gradeLeaving: 'A',
+                    leaveRemarks: '',
+                    resignationTime: NOW_DATE,
+                    id: 0
+                },
+                leavePeople: ''
             };
         },
         created() {
@@ -812,9 +859,7 @@
             this._getGuiderList();
             this._getRoleData();
             this._getAccessMenu();
-            this._getOrgTree().then(() => {
-                this._getUserData();
-            });
+            this._getOrgTree();
         },
         methods: {
             filterNode(value, data) {
@@ -938,23 +983,6 @@
                     this.coinSettingForm.target = '选中的员工';
                 }
             },
-            _initPage() {
-                this.searchData.page = 1;
-            },
-            _inputDebounce: debounce(function () {
-                this._filterResultHandler();
-            }, 600),
-            _filterResultHandler() {
-                this._initPage();
-                this._getUserData();
-            },
-            // _coinTypeChangeHandler(val) {
-            //     let storeArr = this.coinTypeSelect.filter((item) => {
-            //         return +item.value === +val;
-            //     });
-            //     this.coinSettingForm.coinNumber = storeArr[0].coin;
-            //     this.coinSettingForm.content = storeArr[0].label;
-            // },
             _storeFilter(root, path, id) {
                 root.forEach((item) => {
                     if (item.id === id) this.storePath = [...path, id];
@@ -1009,7 +1037,6 @@
                 this.$refs.userTable.getListData();
             },
             _treeNodeClickHandler(data) {
-                console.log(data)
                 this.searchData.nodeId.value = data.id;
             },
             _depChange(data) {
@@ -1235,6 +1262,30 @@
                 this.social = pageArr.concat(btnArr);
                 this.editUserId = data.id;
                 this.userAccessModalFlag = true;
+            },
+            _initLeaveSetting() {
+                let leaveSetting = this.leaveSettingForm;
+                leaveSetting.reasonLeaving = '个人原因';
+                leaveSetting.gradeLeaving = 'A';
+                leaveSetting.leaveRemarks = '';
+                leaveSetting.resignationTime = NOW_DATE;
+                leaveSetting.id = 0;
+                this.leavePeople = '';
+            },
+            _openLeaveSettingModal() {
+                this._initLeaveSetting();
+                this.leaveSettingForm.id = this.chooseDataArr[0].id;
+                this.leavePeople = this.chooseDataArr[0].realname;
+                this.leaveSettingFlag = true;
+            },
+            _coinLeaveHandler() {
+                this.$http.post('/user/state', this.leaveSettingForm).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('操作成功!');
+                        this.leaveSettingFlag = false;
+                        this._getUserData();
+                    }
+                });
             }
         },
         components: {

@@ -456,7 +456,11 @@
                     {
                         title: '离职时间',
                         key: 'resignationTime',
-                        align: 'center'
+                        align: 'center',
+                        render: (h, params) => {
+                            let leaveTime = params.row.resignationTime ? moment(params.row.resignationTime).format('YYYY-MM-DD') : '';
+                            return h('span', leaveTime);
+                        }
                     },
                     {
                         title: '操作',
