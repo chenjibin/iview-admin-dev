@@ -91,26 +91,13 @@
                         <Option value="公司劝退">公司劝退</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="离职级别">
+                <FormItem label="返聘意愿">
                     <Select type="text" style="width: 120px"
                             @on-change="_inputDebounce"
                             v-model="filterOpt.gradeLeaving" clearable>
-                        <Option value="p1">p1</Option>
-                        <Option value="p2">p2</Option>
-                        <Option value="p3">p3</Option>
-                        <Option value="p4">p4</Option>
-                        <Option value="p5">p5</Option>
-                        <Option value="p6">p6</Option>
-                        <Option value="p7">p7</Option>
-                        <Option value="p8">p8</Option>
-                        <Option value="m1">m1</Option>
-                        <Option value="m2">m2</Option>
-                        <Option value="m3">m3</Option>
-                        <Option value="m4">m4</Option>
-                        <Option value="m5">m5</Option>
-                        <Option value="m6">m6</Option>
-                        <Option value="m7">m7</Option>
-                        <Option value="m8">m8</Option>
+                        <Option value="A" label="A"><span>A</span><span style="float:right;color:#ccc;width:50px;text-align: right;">优秀</span></Option>
+                        <Option value="B" label="B"><span>B</span><span style="float:right;color:#ccc;width:50px;text-align: right;">良好</span></Option>
+                        <Option value="C" label="C"><span>C</span><span style="float:right;color:#ccc;width:50px;text-align: right;">较差</span></Option>
                     </Select>
                 </FormItem>
                 <FormItem label="入职日期">
@@ -462,7 +449,7 @@
                         align: 'center'
                     },
                     {
-                        title: '离职级别',
+                        title: '返聘意愿',
                         key: 'gradeLeaving',
                         align: 'center'
                     },
