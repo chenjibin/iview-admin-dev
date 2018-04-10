@@ -377,7 +377,8 @@
                                             shape: 'circle'
                                         },
                                         on: {
-                                            click: function() {
+                                            click: function(e) {
+                                                e.stopPropagation();
                                                 vm._checkTest(params.row);
                                             }
                                         }
@@ -394,13 +395,15 @@
                     }
                 },
                 trainTypeOpt: [],
-                teacherOpt: []
+                teacherOpt: [],
+                compangsList: []
             };
         },
         created() {
             this._setTableHeight();
             this._getTrainTypeOpt();
             this._getTeacherOpt();
+            this._getAllCompangsList();
         },
         methods: {
             formReset (name) {
@@ -561,7 +564,6 @@
                 this.modelFlag = true;
             },
             _checkTest(data) {
-                console.log(data);
                 this.classFormType = 'update';
                 this._initClassForm();
                 this.classId = data.id;
@@ -584,6 +586,13 @@
             },
             _updateClassTable() {
                 this.$refs.classTable.getListData();
+            },
+            _getAllCompangsList() {
+                this.$http.get('/user/getCompanys').then((res) => {
+                    if (res.success) {
+                        this.compangsList = res.data;
+                    }
+                });
             }
         },
         components: {

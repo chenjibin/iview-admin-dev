@@ -120,7 +120,6 @@
                                      ref="treeDom"
                                      show-checkbox
                                      default-expand-all
-                                     :check-strictly="true"
                                      :expand-on-click-node="false"
                                      :default-checked-keys="strangeSettingForm.deps"
                                      :highlight-current="true"
