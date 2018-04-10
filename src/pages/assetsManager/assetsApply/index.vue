@@ -660,17 +660,17 @@
             padding: 32px 0;
             font-size: 30px;
             font-weight: 700;
-            background-color: rgb(242, 94, 67);
             color: #fff;
+            background-color: #f58875;
             width: 400px;
             text-align: center;
             border-radius: 40px;
             cursor: pointer;
+            transition: all 0.35s;
         }
         .btn:hover{
-            background-color: #f58875;
+            background-color: rgb(242, 94, 67);
             padding-right: 25px;
-            transition: all 0.35s;
         }
     }
 </style>

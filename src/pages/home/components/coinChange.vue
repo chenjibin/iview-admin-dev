@@ -9,7 +9,7 @@
                         shape="circle"
                         icon="ios-flag-outline"
                         style="margin-right: 8px;"
-                        @click.stop="modelCoinFlag = true">金币排行</Button>
+                        @click.stop="_openCoinRanking">金币排行</Button>
                 <Button type="primary"
                         shape="circle"
                         icon="ios-search"
@@ -27,12 +27,16 @@
             <Row :gutter="6" style="margin-bottom: 10px;">
                 <Col :md="12" :lg="12">
                     <coin-ranking tag-color="#19be6b"
+                                  ref="redRanking"
+                                  v-if="modelCoinFlag"
                                   coin-title="金币排行红榜"
                                   url="/main/Ranking?type=1">
                     </coin-ranking>
                 </Col>
                 <Col :md="12" :lg="12">
                     <coin-ranking tag-color="#ed3f14"
+                                  ref="blackRanking"
+                                  v-if="modelCoinFlag"
                                   coin-title="金币排行黑榜"
                                   url="/main/Ranking?type=2">
                     </coin-ranking>
@@ -146,6 +150,11 @@
             };
         },
         methods: {
+            _openCoinRanking() {
+                this.modelCoinFlag = true;
+                // this.$refs.redRanking.getRowData();
+                // this.$refs.blackRanking.getRowData();
+            },
             _openMyCoinState() {
                 this.$refs.myCoinState.getListData();
                 this.modelFlag = true;

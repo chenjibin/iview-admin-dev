@@ -1,8 +1,8 @@
 <template>
-    <Card class="coin-ranking">
+    <div class="coin-ranking">
         <p class="coin-ranking-title">{{coinTitle}}</p>
         <Table height="300" :loading="loading" :columns="columns" :data="rowData"></Table>
-    </Card>
+    </div>
 </template>
 <style lang="less">
     .coin-ranking {
