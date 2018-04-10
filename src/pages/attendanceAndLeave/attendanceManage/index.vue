@@ -386,7 +386,8 @@
                                             shape: 'circle'
                                         },
                                         on: {
-                                            click: function () {
+                                            click: function (e) {
+                                                e.stopPropagation();
                                                 vm._editorSetting(params.row);
                                             }
                                         }
