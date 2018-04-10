@@ -320,7 +320,8 @@
                                             shape: 'circle'
                                         },
                                         on: {
-                                            click: function() {
+                                            click: function(e) {
+                                                e.stopPropagation();
                                                 vm._checkTest(params.row);
                                             }
                                         }
@@ -352,9 +353,6 @@
             };
         },
         watch: {
-            chooseDataArray(val) {
-                console.log(val);
-            },
             allProjectOpt(val) {
                 this.planForm.project = val.map(x => x.id);
             }
@@ -493,9 +491,11 @@
                             let obj = {};
                             obj.type = 'input';
                             trainData[item.name] = item.value;
+                            obj.value = item.value || '';
                             switch (item.xtype) {
                                 case 'numberfield':
                                     obj.type = 'number';
+                                    obj.value = +item.value;
                                     break;
                                 case 'textarea':
                                     obj.type = 'textarea';
@@ -503,7 +503,6 @@
                             }
                             obj.label = item.fieldLabel;
                             obj.key = item.name;
-                            obj.value = item.value || '';
                             obj.required = true;
                             formList.push(obj);
                         });

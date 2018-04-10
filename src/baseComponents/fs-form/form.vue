@@ -15,6 +15,7 @@
 </style>
 <script>
     import fsFormItem from './item';
+    import deepClone from 'lodash/cloneDeep';
     export default {
         name: 'fsForm',
         props: {
@@ -30,11 +31,13 @@
                 type: Number
             }
         },
+        watch: {
+            itemList(value) {
+                this.setDefaultValue();
+            }
+        },
         data() {
             return {};
-        },
-        mounted() {
-            this.setDefaultValue();
         },
         methods: {
             validForm(foo) {
@@ -56,8 +59,9 @@
                 // 设置默认值
                 this.itemList.forEach(item => {
                     const { key, value } = item;
-                    if (formData[key] === undefined || formData[key] === null) {
-                        formData[key] = value;
+                    formData[key] = value;
+                    if (item.type === 'number') {
+                        formData[key] = +value;
                     }
                 });
                 this.$emit('input', formData);

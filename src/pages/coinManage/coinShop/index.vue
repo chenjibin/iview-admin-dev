@@ -179,10 +179,10 @@
             _openBuy(data) {
                 this._initData();
                 this.buyForm.id = data.id;
-                this.buyFlag = true;
                 this.goodDesc.name = data.name;
                 this.goodDesc.pic = '/oa/upload/' + data.image_path;
                 this.goodDesc.coin = data.price;
+                this.buyFlag = true;
             },
             _submitBuy() {
                 this.subLoading = true;
