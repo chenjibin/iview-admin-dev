@@ -97,7 +97,7 @@
                             v-model="filterOpt.gradeLeaving" clearable>
                         <Option value="A" label="A"><span>A</span><span style="float:right;color:#ccc;width:50px;text-align: right;">优秀</span></Option>
                         <Option value="B" label="B"><span>B</span><span style="float:right;color:#ccc;width:50px;text-align: right;">良好</span></Option>
-                        <Option value="C" label="C"><span>C</span><span style="float:right;color:#ccc;width:50px;text-align: right;">较差</span></Option>
+                        <Option value="C" label=""><span>C</span><span style="float:right;color:#ccc;width:50px;text-align: right;">较差</span></Option>
                     </Select>
                 </FormItem>
                 <FormItem label="入职日期">
@@ -733,7 +733,7 @@
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 260;
+                this.tableHeight = dm - 100 - 20 - 34 - 114 - 49;
             },
             _setPage(page) {
                 this.pageData.page = page;

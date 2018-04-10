@@ -744,21 +744,20 @@
                         title: '姓名',
                         key: 'name',
                         align: 'center',
-                        fixed: 'left',
                         width: 90
                     },
                     {
                         title: '岗位',
                         key: 'poststring',
                         align: 'center',
-                        fixed: 'left',
-                        width: 96
+                        width: 100
                     },
                     {
                         title: '性别',
                         key: 'sex',
                         align: 'center',
                         width: 60,
+                        className: 'tableDataCustom',
                         render: (h, params) => {
                             if (params.row.sex === 1) {
                                 return h('span', '男');
@@ -773,13 +772,15 @@
                         title: '年龄',
                         key: 'age',
                         align: 'center',
-                        width: 80
+                        width: 60,
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '学历',
                         key: 'education',
                         align: 'center',
                         width: 80,
+                        className: 'tableDataCustom',
                         render: (h, params) => {
                             return h('span', this.educationMapping[params.row.education]);
                         }
@@ -787,24 +788,30 @@
                     {
                         title: '毕业院校',
                         key: 'graduatedschool',
-                        width: 200
+                        align: 'center',
+                        width: 110,
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '专业',
                         key: 'profession',
-                        width: 200
+                        width: 100,
+                        align: 'center',
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '电话',
                         key: 'phone',
                         align: 'center',
-                        width: 120
+                        width: 80,
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '信息来源',
                         key: 'resumeSource',
                         align: 'center',
-                        width: 150,
+                        width: 80,
+                        className: 'tableDataCustom',
                         render: (h, params) => {
                             return h('span', this.resumeSourceMapping[+params.row.resumesource]);
                         }
@@ -813,24 +820,21 @@
                         title: '预约时间',
                         key: 'appointment',
                         align: 'center',
-                        width: 120
+                        width: 80,
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '面试时间',
                         key: 'interviewtime',
                         align: 'center',
-                        width: 120
-                    },
-                    {
-                        title: '试岗时间',
-                        key: 'testtime',
-                        align: 'center',
-                        width: 120
+                        width: 80,
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '所在周期',
                         key: 'status',
-                        width: 120,
+                        width: 80,
+                        className: 'tableDataCustom',
                         align: 'center',
                         render: (h, params) => {
                             let vm = this;
@@ -839,15 +843,23 @@
                         }
                     },
                     {
+                        title: '试岗时间',
+                        key: 'testtime',
+                        align: 'center',
+                        width: 80,
+                        className: 'tableDataCustom'
+                    },
+                    {
                         title: '面试官',
                         key: 'interviewer',
                         align: 'center',
-                        width: 90
+                        width: 90,
+                        className: 'tableDataCustom'
                     },
                     {
                         title: '面试意见',
                         key: 'remarks',
-                        width: 400,
+                        className: 'tableDataCustom',
                         render: (h, params) => {
                             return h('span', {
                                 style: {
@@ -861,8 +873,8 @@
                         title: '操作',
                         key: 'action',
                         align: 'center',
-                        fixed: 'right',
-                        width: 110,
+                        className: 'tableDataCustom',
+                        width: 120,
                         render: (h, params) => {
                             var vm = this;
                             return h('div', {
@@ -872,70 +884,52 @@
                                     justifyContent: 'space-around'
                                 }
                             }, [
-                                h('Tooltip', {
+                                h('Button', {
                                     props: {
-                                        content: '进度设置',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            icon: 'flash',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function () {
-                                                vm.changeUsersInfo(params.row);
-                                                vm.modalFlag2 = true;
-                                            }
+                                        type: 'primary',
+                                        icon: 'flash',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '进度设置'
+                                    },
+                                    on: {
+                                        click: function () {
+                                            vm.changeUsersInfo(params.row);
+                                            vm.modalFlag2 = true;
                                         }
                                     }
-                                    )
-                                ]),
-                                h('Tooltip', {
+                                }),
+                                h('Button', {
                                     props: {
-                                        content: '修改简历',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'ghost',
-                                            icon: 'edit',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function () {
-                                                vm.editUser(params.row);
-                                            }
+                                        type: 'ghost',
+                                        icon: 'edit',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '编辑'
+                                    },
+                                    on: {
+                                        click: function () {
+                                            vm.editUser(params.row);
                                         }
                                     }
-                                    )
-                                ]),
-                                h('Tooltip', {
+                                }),
+                                h('Button', {
                                     props: {
-                                        content: '查看附件',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'ghost',
-                                            icon: 'arrow-expand',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function () {
-                                                vm.showAttach(params.row);
-                                            }
+                                        type: 'ghost',
+                                        icon: 'arrow-expand',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '查看附件'
+                                    },
+                                    on: {
+                                        click: function () {
+                                            vm.showAttach(params.row);
                                         }
                                     }
-                                    )
-                                ])
+                                })
                             ]);
                         }
                     }
@@ -1255,7 +1249,6 @@
                 this.educationForm = [];
                 this.workingForm = [];
                 this.talentBean = {};
-                //this.talentBean.appointment = new Date();
             },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
@@ -1287,7 +1280,7 @@
             },
             _setTableHeight () {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 375;
+                this.tableHeight = dm - 100 - 20 - 34 - 114 - 49;
             },
             _setPage (page) {
                 this.pageData.page = page;
@@ -1337,9 +1330,6 @@
                             vm.educationForm = res.educations;
                             vm.workingForm = res.workings;
                             vm.talentBean = res.talentLibrary;
-                            if (!vm.talentBean.appointment) {
-                                //vm.talentBean.appointment = new Date();
-                            }
                             vm.socailShipForm = res.socails;
                             resolve();
                         } else {
@@ -1370,7 +1360,11 @@
                 background-color: rgba(255, 255, 255, 0.5);
             }
         }
-        .ivu-table-wrapper{
+        .tableDataCustom{
+            .ivu-table-cell{
+                padding: 0;
+                min-width: 60px;
+            }
         }
     }
     .showUserInfoItem {
