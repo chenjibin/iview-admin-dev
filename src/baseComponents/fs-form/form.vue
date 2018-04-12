@@ -15,7 +15,6 @@
 </style>
 <script>
     import fsFormItem from './item';
-    import deepClone from 'lodash/cloneDeep';
     export default {
         name: 'fsForm',
         props: {

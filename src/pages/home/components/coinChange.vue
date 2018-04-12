@@ -51,6 +51,7 @@
             </p>
             <fs-table-page :columns="columns"
                            ref="myCoinState"
+                           v-if="modelFlag"
                            url="/main/getMyCoinLogList"></fs-table-page>
             <div slot="footer">
             </div>
@@ -152,11 +153,9 @@
         methods: {
             _openCoinRanking() {
                 this.modelCoinFlag = true;
-                // this.$refs.redRanking.getRowData();
-                // this.$refs.blackRanking.getRowData();
             },
             _openMyCoinState() {
-                this.$refs.myCoinState.getListData();
+                // this.$refs.myCoinState.getListData();
                 this.modelFlag = true;
             }
         },
