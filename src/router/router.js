@@ -487,6 +487,22 @@ export const appRouter = [
         ]
     },
     {
+        path: '/knowledgeManage',
+        icon: 'ios-gear',
+        name: 'knowledgeManage',
+        title: '知识库管理',
+        component: Main,
+        children: [
+            {
+                path: 'knowledgeSetting',
+                icon: 'ios-gear',
+                name: 'knowledgeSetting',
+                title: '知识库设置',
+                component: resolve => { require(['@/pages/knowledgeManage/knowledgeSetting/index.vue'], resolve); }
+            }
+        ]
+    },
+    {
         path: '/systemManage',
         icon: 'ios-gear',
         name: 'systemManage',
