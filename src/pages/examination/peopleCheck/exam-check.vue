@@ -41,11 +41,11 @@
                             </ul>
                             <div class="answer-block">
                                 <span>正确答案:</span>
-                                <span>{{_returnAnswer(question.answer,question.type)}}</span>
+                                <span>{{question.answer}}</span>
                             </div>
                             <div class="answer-block">
                                 <span>我的答案:</span>
-                                <span>{{_returnAnswer(question.answernew,question.type)}}</span>
+                                <span>{{question.answernew}}</span>
                             </div>
                             <div class="answer-block">
                                 <span>本题满分:</span>
