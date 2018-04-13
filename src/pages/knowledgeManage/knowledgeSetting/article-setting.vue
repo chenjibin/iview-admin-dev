@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <Card>
         <Form inline :label-width="60">
             <FormItem label="文章标题">
                 <Input type="text"
-                       v-model="filterOpt.userName.value"
+                       v-model="filterOpt.title.value"
                        placeholder="筛选文章"></Input>
             </FormItem>
             <FormItem :label-width="0.1">
@@ -15,14 +15,14 @@
                 </ButtonGroup>
             </FormItem>
         </Form>
-        <fs-table-page :columns="postColumns"
-                       :size="null"
-                       :height="tableHeight"
-                       :params="filterOpt"
-                       :choosearray.sync="chooseDataArr"
-                       ref="attendanceTable"
-                       url="/kq/getStatisticList"></fs-table-page>
-    </div>
+        <!--<fs-table-page :columns="postColumns"-->
+                       <!--:size="null"-->
+                       <!--:height="tableHeight"-->
+                       <!--:params="filterOpt"-->
+                       <!--:choosearray.sync="chooseDataArr"-->
+                       <!--ref="attendanceTable"-->
+                       <!--url=""></fs-table-page>-->
+    </Card>
 </template>
 <style lang="less">
 
@@ -61,6 +61,10 @@
                 chooseDataArr: [],
                 tableHeight: 500,
                 filterOpt: {
+                    title: {
+                        value: '',
+                        type: 'input'
+                    }
 
                 },
                 postColumns: [
@@ -97,10 +101,17 @@
                 ]
             };
         },
+        created() {
+            this._setTableHeight();
+        },
         methods: {
             _checkArticleCommon() {
             },
             _articleEditor() {
+            },
+            _setTableHeight() {
+                let dm = document.body.clientHeight;
+                this.tableHeight = dm - 260;
             }
         },
         components: {
