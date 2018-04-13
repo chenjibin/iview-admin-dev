@@ -31,7 +31,6 @@ const user = {
                     Cookies.remove('user');
                     Cookies.remove('userInfo');
                     Cookies.remove('password');
-                    Cookies.remove('token');
                     store.commit('setPremissionMenu', []);
                     store.commit('clearAllTags');
                     window.location.reload();
