@@ -260,21 +260,21 @@ export const appRouter = [
         children: [
             {
                 path: 'hire',
-                icon: 'compose',
+                icon: 'ios-people',
                 name: 'hire',
                 title: '员工招聘',
                 component: resolve => { require(['@/pages/hireManager/hire/index.vue'], resolve); }
             },
             {
                 path: 'position',
-                icon: 'compose',
+                icon: 'ios-people',
                 name: 'position',
                 title: '岗位设置',
                 component: resolve => { require(['@/pages/hireManager/position/index.vue'], resolve); }
             },
             {
                 path: 'statistics',
-                icon: 'compose',
+                icon: 'ios-people',
                 name: 'statistics',
                 title: '数据统计',
                 component: resolve => { require(['@/pages/hireManager/statistics/index.vue'], resolve); }
