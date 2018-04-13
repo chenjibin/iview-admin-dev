@@ -230,21 +230,21 @@ export const appRouter = [
     },
     {
         path: '/employeeFileManager',
-        icon: 'ios-book',
+        icon: 'ios-bookmarks',
         name: 'employeeFileManager',
         title: '员工档案管理',
         component: Main,
         children: [
             {
                 path: 'employeeAchives',
-                icon: 'ios-book',
+                icon: 'ios-bookmarks',
                 name: 'employeeAchives',
                 title: '员工档案',
                 component: resolve => { require(['@/pages/employeeFileManager/employeeAchives/index.vue'], resolve); }
             },
             {
                 path: 'employeeOrganize',
-                icon: 'ios-book',
+                icon: 'ios-bookmarks',
                 name: 'employeeOrganize',
                 title: '部门员工档案',
                 component: resolve => { require(['@/pages/employeeFileManager/employeeOrganize/index.vue'], resolve); }
@@ -488,14 +488,14 @@ export const appRouter = [
     },
     {
         path: '/knowledgeManage',
-        icon: 'ios-gear',
+        icon: 'ios-book',
         name: 'knowledgeManage',
         title: '知识库管理',
         component: Main,
         children: [
             {
                 path: 'knowledgeSetting',
-                icon: 'ios-gear',
+                icon: 'ios-book',
                 name: 'knowledgeSetting',
                 title: '知识库设置',
                 component: resolve => { require(['@/pages/knowledgeManage/knowledgeSetting/index.vue'], resolve); }

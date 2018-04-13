@@ -25,7 +25,7 @@
                   show-elevator
                   style="margin-top: 16px;"></Page>
             <Modal v-model="settingModalFlag"
-                   width="400"
+                   width="600"
                    :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>添加角色</span>
@@ -44,7 +44,7 @@
                 </div>
             </Modal>
             <Modal v-model="roleAccessModalFlag"
-               width="800"
+               width="1000"
                :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>角色授权</span>
@@ -80,10 +80,10 @@
         </Card>
     </div>
 </template>
-<style lang="less">
+<style lang="less" scoped>
     #fs-access-control-block {
         padding: 10px;
-        height: 400px;
+        height: 600px;
         overflow: auto;
         background-color: #dddee1;
         .cate-title {

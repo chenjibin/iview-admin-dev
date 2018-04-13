@@ -401,7 +401,7 @@
         </Modal>
     </div>
 </template>
-<style lang="less">
+<style lang="less" scoped>
     #fs-spec-access-block {
         max-height: 400px;
         overflow-x: hidden;

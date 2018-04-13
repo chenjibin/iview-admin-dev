@@ -1,10 +1,10 @@
 <template>
     <div>
         <Row :gutter="16">
-            <Col :span="4">
+            <Col :span="6">
                 <fs-knowledge-tree></fs-knowledge-tree>
             </Col>
-            <Col :span="20">
+            <Col :span="18">
                 <article-setting></article-setting>
             </Col>
         </Row>
