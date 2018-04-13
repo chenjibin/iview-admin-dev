@@ -93,7 +93,6 @@ export default {
                     this.loading = true;
                     this.$http.post('/login/login', this.form).then((res) => {
                         if (res.success) {
-                            // this.$store.commit('updateUserInfo');
                             Cookies.set('user', this.form.userName);
                             Cookies.set('password', MD5(this.form.passWord).toString());
                             this.$router.push({

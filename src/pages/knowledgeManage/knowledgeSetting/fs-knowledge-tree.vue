@@ -9,7 +9,6 @@
                      :data="orgData"
                      :props="defaultProps"
                      node-key="id"
-                     draggable
                      default-expand-all
                      highlight-current
                      v-if="orgData.length"
@@ -290,7 +289,7 @@
                     <div class="fs-node-wrapper">
                         <div class="title">
                             <span class="head">{data.name}</span>
-                            {data.important === 1 ? <i class="ivu-icon ivu-icon-star" style="margin-left: 6px;color:#dc0707;"></i> : ''}
+                            {data.important === 1 ? <i class="ivu-icon ivu-icon-star" style="margin-left: 6px;color:#ff0036;"></i> : ''}
                         </div>
                         <div class="tag-group">
                             <i-button  on-click={ (e) => this.append(store, data, e) }  size="small" style="margin-left:6px;" type="text" icon="plus-round"></i-button>

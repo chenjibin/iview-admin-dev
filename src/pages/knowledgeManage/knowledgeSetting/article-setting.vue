@@ -24,49 +24,61 @@
                        url="/share/getShareList"></fs-table-page>
         <Modal v-model="depSettingFlag"
                :mask-closable="false"
-               width="1000">
+               width="1200">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>{{formType === 'create' ? '新增文章' : '编辑文章'}}</span>
             </p>
             <Form :model="depSettingForm"
                   ref="articleForm"
-                  :rules="articleRules"
-                  :label-width="100">
-                <Row type="flex">
-                    <Col :span="24">
-                    <FormItem label="上级菜单" prop="fatherId">
-                        <el-cascader
-                                :options="orgData"
-                                :props="depProps"
-                                v-model="depSettingForm.fatherId"
-                                change-on-select
-                                size="small"
-                                style="width: 100%"
-                        ></el-cascader>
-                    </FormItem>
+                  :rules="articleRules">
+                <Row>
+                    <Col :span="6">
+                        <FormItem label="所属菜单" prop="fatherId">
+                            <el-cascader
+                                    :options="orgData"
+                                    :props="depProps"
+                                    v-model="depSettingForm.knowledgeId"
+                                    change-on-select
+                                    size="small"
+                                    style="width: 100%"
+                            ></el-cascader>
+                        </FormItem>
+                        <FormItem prop="shareItem" label="文章标题">
+                            <Input type="text"
+                                   v-model="depSettingForm.name"></Input>
+                        </FormItem>
+                        <div class="" style="margin-bottom: 16px;">
+                            <span>文章主图</span>
+                            <div class="" style="margin-top: 8px;">
+                                <Upload action="/oa/share/uploadFile">
+                                    <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
+                                </Upload>
+                            </div>
+                        </div>
+                        <div class="" style="margin-bottom: 16px;">
+                            <span>文章附件</span>
+                            <div class="" style="margin-top: 8px;">
+                                <Upload
+                                        multiple
+                                        action="/oa/share/uploadFile">
+                                    <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
+                                </Upload>
+                            </div>
+                        </div>
                     </Col>
-                    <Col :span="24">
-                    <FormItem prop="shareItem" label="文章标题">
-                        <Input type="text"
-                               v-model="depSettingForm.name"></Input>
-                    </FormItem>
-                    </Col>
-                    <Col :span="24">
-                    <FormItem prop="isImportant" label="是否重点知识">
-                        <i-switch v-model="depSettingForm.important" size="large" :true-value="1" :false-value="0">
-                            <span slot="open">是</span>
-                            <span slot="close">否</span>
-                        </i-switch>
-                    </FormItem>
+                    <Col :span="18">
+                        <FormItem label="文章内容">
+
+                        </FormItem>
                     </Col>
                 </Row>
             </Form>
             <div slot="footer">
                 <Button type="primary"
                         v-show="formType === 'create'"
-                        @click="_createCate">创建菜单</Button>
+                        @click="_createArticle">创建菜单</Button>
                 <Button type="primary"
-                        @click="_updateCare"
+                        @click="_updateArticle"
                         v-show="formType === 'update'">确认修改</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
@@ -74,7 +86,11 @@
     </Card>
 </template>
 <style lang="less">
-
+    .ivu-upload-list-file {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 </style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
@@ -110,12 +126,17 @@
                 depSettingFlag: false,
                 formType: '',
                 chooseDataArr: [],
+                orgData: [],
+                depProps: {
+                    value: 'id',
+                    label: 'name'
+                },
                 tableHeight: 500,
                 depSettingForm: {
 
                 },
                 articleRules: {
-                    knowledgeId: 0,
+                    knowledgeId: [],
                     shareItem: '',
                     showpic: '',
                     fileNames: '',
@@ -133,13 +154,14 @@
                 },
                 postColumns: [
                     {
-                        type: 'selection',
-                        width: 60,
-                        align: 'center'
+                        title: '文章标题',
+                        key: 'share_item'
                     },
                     {
-                        title: '文章标题',
-                        key: 'organizename'
+                        title: '作者',
+                        key: 'insert_username',
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '文章主图',
@@ -147,17 +169,23 @@
                         align: 'center',
                         width: 240,
                         render: (h, params) => {
-
+                            return h('img', {
+                                attrs: {
+                                    src: params.row.file_path
+                                }
+                            });
                         }
                     },
                     {
                         title: '评论次数',
-                        key: 'organizename',
+                        key: 'share_comment_times',
+                        align: 'center',
                         width: 100
                     },
                     {
                         title: '点赞次数',
-                        key: 'organizename',
+                        key: 'thumb_up_times',
+                        align: 'center',
                         width: 100
                     },
                     {
@@ -168,7 +196,7 @@
                             let vm = this;
                             return h('div', [
                                 colBtn(vm, h, params, {content: '修改文章', icon: 'compose', foo: vm._articleEditor}),
-                                colBtn(vm, h, params, {content: '查看评论', icon: 'compose', foo: vm._checkArticleCommon})
+                                colBtn(vm, h, params, {content: '查看评论', icon: 'eye', foo: vm._checkArticleCommon})
                             ]);
                         }
                     }
@@ -179,6 +207,10 @@
             this._setTableHeight();
         },
         methods: {
+            _createArticle() {
+            },
+            _updateArticle() {
+            },
             _addArticleOpen() {
                 this.depSettingFlag = true;
             },
