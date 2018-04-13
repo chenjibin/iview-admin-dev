@@ -463,11 +463,11 @@
                         var d = {};
                         d.bean = JSON.stringify(this.talentBean);
                         let workingForm = this.workingForm.filter(function(item) {
-                            return item.starttime;
+                            return item.companyname;
                         });
                         d.workingForm = JSON.stringify(workingForm);
                         let educationForm = this.educationForm.filter(function(item) {
-                            return item.starttime;
+                            return item.graduatedschool;
                         })
                         d.educationForm = JSON.stringify(educationForm);
                         d.socailShipForm = JSON.stringify(this.socailShipForm);
