@@ -45,14 +45,21 @@
                     </div>
                 </div>
                 <div class="header-avator-con">
+                    <Dropdown v-if="isManger == 0 || isManger == 1" transfer @on-click="changeCompany" style="margin-right: 10px">
+                        <a href="javascript:void(0)" style="font-size: 14px;color: #333;">
+                            {{currentCompanyName}}<Icon type="arrow-down-b" style="margin-left: 5px"></Icon>
+                        </a>
+                        <DropdownMenu slot="list">
+                            <DropdownItem :name="item.name" v-for="item,index in companyList">{{item.name}}</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+
                     <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     <lock-screen></lock-screen>
                     <!--<message-tip v-model="mesCount"></message-tip>-->
                     <theme-switch v-if="premissionMenu.length"></theme-switch>
                     <div class="coin-left">
-                        <Tooltip content="金币余额" placement="bottom">
-                            <fs-icon type="moneynew" :size="26" color="#FF5722"></fs-icon>
-                        </Tooltip>
+                        <fs-icon type="moneynew" :size="26" color="#FF5722"></fs-icon>
                         <span class="coin">{{tmCoin}}</span>
                     </div>
                     <div class="user-dropdown-menu-con">
@@ -115,6 +122,8 @@
             return {
                 shrink: true,
                 isFullScreen: false,
+                companyList: [],
+                isManger: -1,
                 openedSubmenuArr: this.$store.state.app.openedSubmenuArr
             };
         },
@@ -154,6 +163,9 @@
             },
             mesCount () {
                 return this.$store.state.app.messageCount;
+            },
+            currentCompanyName() {
+                return this.$store.state.user.userInfo.currentcompanyname;
             }
         },
         methods: {
@@ -169,6 +181,27 @@
             },
             toggleClick () {
                 this.shrink = !this.shrink;
+            },
+            changeCompany(name) {
+                var vm = this;
+                this.$store.commit('changeCompanyName', name);
+                var d = {};
+                d.name = name;
+                this.$Notice.config({
+                    top: 62,
+                    duration: 1.5
+                });
+                this.$http.post('/login/changeCompany', d).then((res) => {
+                    if (res.success) {
+                        vm.$Notice.success({
+                            title: '公司切换成功',
+                            desc: '正在前往' + name
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1800);
+                    }
+                });
             },
             handleClickUserDropdown (name) {
                 if (name === 'ownSpace') {
@@ -232,6 +265,18 @@
         created () {
             // 显示打开的页面的列表
             this.$store.commit('setOpenedList');
+            this.isManger = this.$store.state.user.userInfo.ismanger;
+            this.$http.post('/company/lists').then((res) => {
+                this.companyList = res.data;
+                let cid = this.$store.state.user.userInfo.companyid;
+                for (var i = 0; i < res.data.length; i++) {
+                    let item = res.data[i];
+                    if (cid === item.id) {
+                        this.$store.state.user.userInfo.currentcompanyname = item.name;
+                        break;
+                    }
+                }
+            });
         }
     };
 </script>

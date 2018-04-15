@@ -25,6 +25,9 @@ const user = {
                 }
             });
         },
+        changeCompanyName(state, name) {
+            state.userInfo.currentcompanyname = name;
+        },
         logout () {
             axios.get('/login/logout').then((res) => {
                 if (res.success) {

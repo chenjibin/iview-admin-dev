@@ -111,5 +111,10 @@ export default {
 </script>
 
 <style>
+    input:-webkit-autofill {
+        background-color: #ffffff !important;
+        background-image: none !important;
+        color: #000;
+    }
 
 </style>
