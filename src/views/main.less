@@ -8,6 +8,7 @@
     transform: translate(-50%,-50%);
     transition: all 3s;
 }
+
 .main{
     position: absolute;
     width: 100%;
@@ -110,22 +111,27 @@
             overflow: hidden;
         }
         .header-avator-con{
-            display: flex;
             align-items: center;
             position: absolute;
             right: 0;
             top: 0;
             height: 100%;
-            width: 340px;
+            min-width: 290px;
+            max-width: 440px;
+            line-height: 60px;
             .coin-left {
-                display: flex;
+                display: inline-block;
+                margin-right: 150px;
+                height: 60px;
                 align-items: center;
-                padding: 0 12px;
                 line-height: 1;
                 i {
+                    vertical-align: middle;
                     cursor: pointer;
                 }
                 .coin {
+                    height:60px;
+                    vertical-align: middle;
                     margin-left: 6px;
                     font-size: 16px;
                     font-weight: 700;
@@ -147,8 +153,10 @@
                 font-size: 14px;
                 font-weight: 500;
                 padding-right: 5px;
+                display: inline-block;
             }
             .switch-theme{
+                display: inline-block;
                 height: 100%;
             }
             .user-dropdown{
@@ -176,6 +184,7 @@
             }
             .full-screen-btn-con{
                 width: 30px;
+                display: inline-block;
                 text-align: center;
                 cursor: pointer;
                 i{
@@ -185,6 +194,7 @@
             .lock-screen-btn-con{
                 width: 30px;
                 text-align: center;
+                display: inline-block;
                 cursor: pointer;
                 i{
                     vertical-align: middle;

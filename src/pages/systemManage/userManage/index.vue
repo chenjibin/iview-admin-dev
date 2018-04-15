@@ -2,7 +2,7 @@
     <div id="employee-manage">
         <Row :gutter="10">
             <Col :span="4">
-            <Card>
+            <Card style="height: 819px;overflow: auto;" :style="{'height':(tableHeight + 138)+'px'}">
                 <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
                 <el-tree :data="orgTreeData"
                          ref="treeDom"
@@ -102,6 +102,7 @@
                         </i-switch>
                     </FormItem>
                     </Col>
+                    </Col>
                     <Col :span="8">
                     <FormItem label="入职时间" prop="inJobTime">
                         <DatePicker type="date"
@@ -127,12 +128,26 @@
                     </FormItem>
                     </Col>
                 </Row>
-                <FormItem label="性别" prop="sex">
-                    <RadioGroup v-model="userSettingForm.sex">
-                        <Radio label="女">女</Radio>
-                        <Radio label="男">男</Radio>
-                    </RadioGroup>
-                </FormItem>
+                <Row>
+                    <Col :span="8">
+                        <FormItem label="性别" prop="sex">
+                            <RadioGroup v-model="userSettingForm.sex">
+                                <Radio label="女">女</Radio>
+                                <Radio label="男">男</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </Col>
+                    <Col :span="8">
+                        <FormItem label="用户类型">
+                            <Select v-model="userSettingForm.isManger" v-show="(isManger == 0 || isManger == 1)">
+                                <Option :value="3">普通用户</Option>
+                                <Option :value="2">分公司管理员</Option>
+                                <Option :value="1">可见所有人的特权人员</Option>
+                                <Option :value="0"><span style="color: #ff8766;">超级管理员</span></Option>
+                            </Select>
+                        </FormItem>
+                    </Col>
+                </Row>
                 <Row>
                     <Col :span="8">
                     <FormItem label="角色" prop="role">
@@ -570,6 +585,7 @@
                 userSettingForm: {
                     states: true,
                     account: '',
+                    isManger: 3,
                     name: '',
                     sex: '',
                     inJobTime: '',
@@ -596,6 +612,7 @@
                         { required: true, message: '请选择性别', trigger: 'change' }
                     ]
                 },
+                isManager: -1,
                 totalCount: 1,
                 searchData: {
                     realName: {
@@ -853,6 +870,7 @@
             };
         },
         created() {
+            this.isManger = this.$store.state.user.userInfo.ismanger;
             this._getBanCiData();
             this._setTableHeight();
             this._getAllMenu();
@@ -1018,6 +1036,7 @@
                 this._initUserInfo();
                 this.$refs.userSettingDom.resetFields();
                 this.userFormType = 'add';
+                this.userSettingForm.isManger = 3;
                 this.settingModalFlag = true;
             },
             _resetPassWord() {
@@ -1040,8 +1059,14 @@
                 this.searchData.nodeId.value = data.id;
             },
             _depChange(data) {
+                let vm = this;
                 this._getPostList(data.slice(-1)[0]).then(() => {
                     this.userSettingForm.post = this.postList.length ? this.postList[0].id : '';
+                });
+                this._getRoleList(data.slice(-1)[0]).then((res) => {
+                    if (res) {
+                        vm.userSettingForm.role = vm.roleData.length ? vm.roleData[0].id : '';
+                    }
                 });
             },
             _updateUserInfo() {
@@ -1099,6 +1124,7 @@
                 });
             },
             _editorSetting(data) {
+                console.log(data);
                 this.userSettingForm.states = !!data.states;
                 this.userSettingForm.account = data.username;
                 this.userSettingForm.name = data.realname;
@@ -1111,6 +1137,8 @@
                 this.userSettingForm.vUp = data.p_name;
                 this.userSettingForm.level = data.levelcode;
                 this.userSettingForm.isLog = !data.no_write;
+                this.userSettingForm.companyId = data.companyid;
+                this.userSettingForm.isManger = data.ismanger;
                 this._getPostList(data.lv);
                 this.userFormType = 'update';
                 this.settingModalFlag = true;
@@ -1142,6 +1170,22 @@
                     });
                 });
             },
+            _getRoleList(id) {
+                let data = {};
+                data.lv = id;
+                return new Promise((resolve) => {
+                    this.$http.get('/role/getAllRoleByLv', {params: data}).then((res) => {
+                        if (res.success) {
+                            if (res.isOtherCompany) {
+                                this.roleData = res.data;
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        }
+                    });
+                });
+            },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
                     if (res.success) {
@@ -1150,7 +1194,7 @@
                 });
             },
             _getAllMenu() {
-                this.$http.get('/jurisdiction/getAllSystemMenu ').then((res) => {
+                this.$http.get('/jurisdiction/getAllSystemMenu').then((res) => {
                 });
             },
             _getRoleData() {
@@ -1162,7 +1206,7 @@
             },
             _getOrgTree() {
                 return new Promise((resolve) => {
-                    this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
+                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.orgTreeData = res.data;
                             this.searchData.nodeId.value = res.data[0].id;

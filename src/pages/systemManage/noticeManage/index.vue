@@ -454,7 +454,7 @@
             },
             _getOrgTree() {
                 return new Promise((resolve) => {
-                    this.$http.get('/organize/organizeTree?fatherId=-1').then((res) => {
+                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.orgTreeData = res.data;
                             resolve(res.data);

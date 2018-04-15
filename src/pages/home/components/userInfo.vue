@@ -12,7 +12,8 @@
                 <Row class-name="made-child-con-middle" type="flex" align="middle">
                     <div>
                         <b class="card-user-infor-name">{{userName}}</b>
-                        <p>{{organizeName + '（' + postName + '）'}}</p>
+                        <p style="font-size: 1.3em;color: #666">{{organizeName + '（' + postName + '）'}}</p>
+                        <p style="font-size: 1.1em;line-height: 1;color: #999;letter-spacing: 2px;">{{companyName}}</p>
                     </div>
                 </Row>
             </Col>
@@ -158,7 +159,6 @@
             };
         },
         created() {
-            // this.userInfo = JSON.parse(Cookies.get('userInfo'));
         },
         methods: {
             _submitAvatorChange() {
@@ -200,6 +200,9 @@
             },
             organizeName() {
                 return this.$store.state.user.userInfo.organizename;
+            },
+            companyName() {
+                return this.$store.state.user.userInfo.companyname;
             },
             postName() {
                 return this.$store.state.user.userInfo.postname;
