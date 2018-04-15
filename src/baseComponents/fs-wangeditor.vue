@@ -1,9 +1,8 @@
 <template>
     <div>
         <div class="fs-wangeditor-toolbar" ref="tool"></div>
-        <div style="padding: 8px 0; color: #ccc"></div>
-        <div class="fs-wangeditot-text" ref="content"> <!--可使用 min-height 实现编辑区域自动增加高度-->
-        </div>
+        <div style="padding: 4px 0; color: #ccc"></div>
+        <div class="fs-wangeditot-text" ref="content"></div>
     </div>
 </template>
 <style lang="less">
@@ -15,11 +14,13 @@
     }
     .fs-wangeditot-text {
         min-height: 500px;
-        width: 690px;
+        padding-left: 8px;
+        width: 698px;
         .w-e-text {
             padding: 0;
+            min-height: 500px;
             overflow-y: auto;
-            font-size: 16px;
+            font-size: 18px;
         }
     }
 </style>
@@ -55,23 +56,26 @@
                         'redo' // 重复
                     ];
                 }
-            }
+            },
+            editorcontent: String
         },
         data () {
             return {
-                editorContent: ''
             };
-        },
-        methods: {
         },
         mounted() {
             let editor = new E(this.$refs.tool, this.$refs.content);
             editor.customConfig.uploadImgServer = this.imgUrl;
             editor.customConfig.menus = this.menus;
             editor.customConfig.onchange = (html) => {
-                this.editorContent = html;
+                this.$emit('update:editorcontent', html);
             };
             editor.create();
+            if (this.editorcontent) {
+                editor.txt.html(this.editorcontent);
+            } else {
+                editor.txt.html('<p>正文...</p>');
+            }
         },
         components: {}
     };

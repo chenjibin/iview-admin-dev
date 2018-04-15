@@ -4,17 +4,18 @@
                    ref="autoTextarea"
                    :value="currentValue"
                    class="fs-article-textarea"
-                   @keydown.enter.prevent
+                   @keyup.enter.prevent
                    @input="handleInput"
-                   @keyup.delete="calcHeight"
+                   @keyup="calcHeight"
                    placeholder="请输入文章标题"></textarea>
     </div>
 </template>
 <style lang="less">
     .fs-article-textarea {
+        height: 1.4em;
         display: block;
         width: 100%;
-        border: 0;
+        border: 0 none white;
         font-size: 24px;
         line-height: 1.4;
         font-weight: 600;
@@ -22,8 +23,7 @@
         outline: none;
         box-shadow: none;
         resize: none;
-        overflow: auto;
-        box-sizing: content-box;
+        overflow: hidden;
     }
 </style>
 <script>
@@ -45,13 +45,11 @@
             calcHeight() {
                 let el = this.$refs.autoTextarea;
                 el.style.height = 'auto';
-                console.log(el.scrollHeight)
                 el.style.height = el.scrollTop + el.scrollHeight + 'px';
             },
             handleInput(event) {
                 let value = event.target.value;
-                this.calcHeight();
-                this.$emit('imput', value);
+                this.$emit('input', value);
             },
             handlerCompositionstart() {
                 this.isComposition = true;

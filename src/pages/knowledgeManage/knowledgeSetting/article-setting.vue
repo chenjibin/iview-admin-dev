@@ -65,9 +65,14 @@
                         </div>
                     </Col>
                     <Col :span="18">
-                        <fs-auto-textarea v-model="depSettingForm.name"></fs-auto-textarea>
+                        <div class="" style="padding-left:8px;width: 698px">
+                            <fs-auto-textarea v-model="depSettingForm.shareItem"></fs-auto-textarea>
+                        </div>
                         <div class="" style="margin-top: 20px">
-                            <wang-editor :menus="editorMeun" img-url="/oa/share/uploadFile"></wang-editor>
+                            <wang-editor
+                                    :menus="editorMeun"
+                                    :editorcontent.sync="shareDetail"
+                                    img-url="/oa/share/uploadFile"></wang-editor>
                         </div>
                     </Col>
                 </Row>
@@ -75,10 +80,10 @@
             <div slot="footer">
                 <Button type="primary"
                         v-show="formType === 'create'"
-                        @click="_createArticle">创建菜单</Button>
+                        @click="_createArticle">新增文章</Button>
                 <Button type="primary"
                         @click="_updateArticle"
-                        v-show="formType === 'update'">确认修改</Button>
+                        v-show="formType === 'update'">修改文章</Button>
                 <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
         </Modal>
@@ -125,6 +130,7 @@
                 ]);
             };
             return {
+                shareDetail: '',
                 depSettingFlag: false,
                 formType: '',
                 chooseDataArr: [],
@@ -132,8 +138,6 @@
                 editorMeun: [
                     'bold',
                     'italic',
-                    'underline',
-                    'strikeThrough',
                     'link',
                     'list',
                     'quote',
@@ -147,14 +151,12 @@
                 },
                 tableHeight: 500,
                 depSettingForm: {
-
-                },
-                articleRules: {
                     knowledgeId: [],
                     shareItem: '',
                     showpic: '',
-                    fileNames: '',
-                    shareDetail: ''
+                    fileNames: ''
+                },
+                articleRules: {
                 },
                 filterOpt: {
                     shareItem: {
@@ -222,10 +224,12 @@
         },
         methods: {
             _createArticle() {
+                console.log(this.shareDetail);
             },
             _updateArticle() {
             },
             _addArticleOpen() {
+                this.formType = 'create';
                 this.depSettingFlag = true;
             },
             _checkArticleCommon() {

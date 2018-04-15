@@ -76,6 +76,15 @@ export const otherRouter = {
             component: resolve => { require(['@/pages/home/index.vue'], resolve); }
         },
         {
+            path: 'knowledgePublic',
+            title: '知识库',
+            meta: {
+                whiteIn: true
+            },
+            name: 'knowledgePublic',
+            component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/index.vue'], resolve); }
+        },
+        {
             path: 'myLog',
             title: '我的日志',
             meta: {
