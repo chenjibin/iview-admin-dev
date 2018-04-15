@@ -62,7 +62,7 @@
                         title: '记录月份',
                         key: 'record_month',
                         align: 'center',
-                        width: '120',
+                        width: 120,
                         render: (h, params) => {
                             return h('span', moment(params.row.record_month).format('YYYY-MM'));
                         }
@@ -119,7 +119,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '250',
+                        width: 210,
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = +params.row.c_count || +params.row.z_count || +params.row.l_count;
@@ -139,7 +139,7 @@
                         title: '日期',
                         key: 'k_date',
                         align: 'center',
-                        width: '110'
+                        width: 110
                     },
                     {
                         title: '迟到',
