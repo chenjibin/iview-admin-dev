@@ -50,7 +50,9 @@
                             {{currentCompanyName}}<Icon type="arrow-down-b" style="margin-left: 5px"></Icon>
                         </a>
                         <DropdownMenu slot="list">
-                            <DropdownItem :name="item.name" v-for="item,index in companyList">{{item.name}}</DropdownItem>
+                            <DropdownItem :name="item.name"
+                                          v-for="item,index in companyList"
+                                          :key="'company' + index">{{item.name}}</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
 

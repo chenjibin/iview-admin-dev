@@ -11,19 +11,27 @@
             {{commentContent}}
         </div>
         <div class="fs-comment-list-tool" v-show="!isInComment">
-            <div class="comment-btn always">
+            <div class="comment-btn always" @click.stop="_thumbsupHandler">
                 <Icon type="thumbsup"></Icon>
                 <span>赞</span>
             </div>
-            <div class="comment-btn" @click="isInComment = true">
+            <div class="comment-btn" @click.stop="openReplay">
                 <Icon type="ios-undo"></Icon>
                 <span>回复</span>
             </div>
         </div>
-        <div class="fs-comment-list-comment" v-show="isInComment">
+        <div class="fs-comment-list-comment" v-if="isInComment">
+            <div>
+                <wang-editor
+                        :menus="editorMeun"
+                        :min-height="64"
+                        :defaul-text="defaultText"
+                        :editorcontent.sync="editorContent"></wang-editor>
+
+            </div>
             <div class="btn-group">
                 <Button type="text" @click="isInComment = false">取消</Button>
-                <Button type="primary">评论</Button>
+                <Button type="primary" @click="replyHandler">评论</Button>
             </div>
         </div>
     </div>
@@ -67,6 +75,7 @@
     }
 </style>
 <script>
+    import WangEditor from '@/baseComponents/fs-wangeditor';
     export default {
         name: 'FsCommentList',
         props: {
@@ -76,14 +85,30 @@
             commentTime: String
         },
         data () {
+            const defaultContent = `回复${this.name}`;
             return {
+                defaultText: defaultContent,
+                editorContent: '',
+                editorMeun: [
+                    'emoticon'
+                ],
                 isInComment: false
             };
         },
         methods: {
-            replyHandler() {
+            _thumbsupHandler() {
 
+            },
+            openReplay() {
+                this.editorContent = '';
+                this.isInComment = true;
+            },
+            replyHandler() {
+                console.log(this.editorContent);
             }
+        },
+        components: {
+            WangEditor
         }
     };
 </script>
