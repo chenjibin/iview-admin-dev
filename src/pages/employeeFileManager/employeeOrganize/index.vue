@@ -1,8 +1,8 @@
 <template>
     <div>
-        <Row>
+        <Row :gutter="10">
             <Col :span="4">
-            <Card>
+            <Card style="height: 819px;overflow: auto;" :style="{'height':(tableHeight + 138)+'px'}">
                 <Input v-model="filterText" size="large" placeholder="快速查找部门"></Input>
                 <el-tree :data="orgTreeData"
                          ref="treeDom"
