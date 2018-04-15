@@ -55,6 +55,7 @@
 
 <script>
 import Cookies from 'js-cookie';
+import MD5 from 'crypto-js/md5';
 export default {
     data () {
         return {
@@ -92,10 +93,8 @@ export default {
                     this.loading = true;
                     this.$http.post('/login/login', this.form).then((res) => {
                         if (res.success) {
-                            // this.$store.commit('updateUserInfo');
                             Cookies.set('user', this.form.userName);
-                            Cookies.set('password', this.form.passWord);
-                            Cookies.set('token', '1010101010');
+                            Cookies.set('password', MD5(this.form.passWord).toString());
                             this.$router.push({
                                 name: 'home_index'
                             });

@@ -28,6 +28,7 @@
 
 <script>
 import Cookies from 'js-cookie';
+import MD5 from 'crypto-js/md5';
 export default {
     name: 'Unlock',
     data () {
@@ -51,7 +52,7 @@ export default {
     },
     methods: {
         validator () {
-            return this.password === Cookies.get('password'); // 你可以在这里写密码验证方式，如发起ajax请求将用户输入的密码this.password与数据库用户密码对比
+            return MD5(this.password).toString() === Cookies.get('password');
         },
         handleClickAvator () {
             this.avatorLeft = '-180px';

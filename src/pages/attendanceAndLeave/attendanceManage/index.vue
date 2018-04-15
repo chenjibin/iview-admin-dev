@@ -401,7 +401,7 @@
                     {
                         title: '打卡记录',
                         key: 'kq_re',
-                        width: '250',
+                        width: 210,
                         render: (h, params) => {
                             if (params.row.kq_re) {
                                 let flag = params.row.exception === null || +params.row.exception === 0;
@@ -421,7 +421,7 @@
                         title: '日期',
                         key: 'k_date',
                         align: 'center',
-                        width: '110'
+                        width: 110
                     },
                     {
                         title: '工种',
@@ -513,11 +513,13 @@
                     {
                         title: '备注信息',
                         key: 'describeex',
-                        align: 'center'
+                        align: 'center',
+                        minWidth: 100
                     },
                     {
                         title: '操作',
                         width: 120,
+                        align: 'center',
                         render: (h, params) => {
                             let vm = this;
                             let flag = params.row.exception === null || +params.row.exception === 0;
