@@ -30,8 +30,10 @@
             </p>
             <Form :model="depSettingForm"
                   ref="articleForm"
+                  @submit.native.prevent
+                  v-if="depSettingFlag"
                   :rules="articleRules">
-                <Row>
+                <Row :gutter="16">
                     <Col :span="6">
                         <FormItem label="所属菜单" prop="fatherId">
                             <el-cascader
@@ -42,10 +44,6 @@
                                     size="small"
                                     style="width: 100%"
                             ></el-cascader>
-                        </FormItem>
-                        <FormItem prop="shareItem" label="文章标题">
-                            <Input type="text"
-                                   v-model="depSettingForm.name"></Input>
                         </FormItem>
                         <div class="" style="margin-bottom: 16px;">
                             <span>文章主图</span>
@@ -67,9 +65,10 @@
                         </div>
                     </Col>
                     <Col :span="18">
-                        <FormItem label="文章内容">
-
-                        </FormItem>
+                        <fs-auto-textarea v-model="depSettingForm.name"></fs-auto-textarea>
+                        <div class="" style="margin-top: 20px">
+                            <wang-editor :menus="editorMeun" img-url="/oa/share/uploadFile"></wang-editor>
+                        </div>
                     </Col>
                 </Row>
             </Form>
@@ -91,9 +90,12 @@
         align-items: center;
         justify-content: space-between;
     }
+
 </style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
+    import WangEditor from '@/baseComponents/fs-wangeditor';
+    import fsAutoTextarea from '@/baseComponents/fs-auto-textarea';
     export default {
         name: 'ArticleSetting',
         data () {
@@ -127,6 +129,18 @@
                 formType: '',
                 chooseDataArr: [],
                 orgData: [],
+                editorMeun: [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikeThrough',
+                    'link',
+                    'list',
+                    'quote',
+                    'image',
+                    'undo',
+                    'redo'
+                ],
                 depProps: {
                     value: 'id',
                     label: 'name'
@@ -224,7 +238,9 @@
             }
         },
         components: {
-            fsTablePage
+            fsTablePage,
+            WangEditor,
+            fsAutoTextarea
         }
     };
 </script>
