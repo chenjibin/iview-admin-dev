@@ -1077,6 +1077,7 @@
                 data.joinDate = this.userSettingForm.inJobTime;
                 data.realName = this.userSettingForm.name;
                 data.sex = this.userSettingForm.sex;
+                data.isManger = this.userSettingForm.isManger;
                 data.no_write = this.userSettingForm.isLog ? 0 : 1;
                 data.banci = this.userSettingForm.banci.join(',');
                 data.organizeId = this.userSettingForm.dep.slice(-1)[0];
@@ -1111,6 +1112,7 @@
                         data.organizeId = this.userSettingForm.dep.slice(-1)[0] || '';
                         data.level = this.userSettingForm.level;
                         data.postId = this.userSettingForm.post;
+                        data.isManger = this.userSettingForm.isManger;
                         // data.leaderName = this.userSettingForm.vUp;
                         data.roleId = this.userSettingForm.role;
                         this.$http.post('/user/setUserInfo ', data).then((res) => {
