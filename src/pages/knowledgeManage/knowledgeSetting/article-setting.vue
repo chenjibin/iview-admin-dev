@@ -37,7 +37,7 @@
                     <Col :span="6">
                         <FormItem label="所属菜单" prop="fatherId">
                             <el-cascader
-                                    :options="orgData"
+                                    :options="treeData"
                                     :props="depProps"
                                     v-model="depSettingForm.knowledgeId"
                                     change-on-select
@@ -219,16 +219,29 @@
                 ]
             };
         },
+        computed: {
+            treeData() {
+                return this.$store.state.knowledge.treeData;
+            }
+        },
         created() {
             this._setTableHeight();
         },
         methods: {
+            _initSendForm() {
+                this.shareDetail = '';
+                this.depSettingForm.knowledgeId = [];
+                this.depSettingForm.shareItem = '';
+                this.depSettingForm.showpic = '';
+                this.depSettingForm.fileNames = '';
+            },
             _createArticle() {
                 console.log(this.shareDetail);
             },
             _updateArticle() {
             },
             _addArticleOpen() {
+                this._initSendForm();
                 this.formType = 'create';
                 this.depSettingFlag = true;
             },

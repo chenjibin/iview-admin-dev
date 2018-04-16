@@ -6,12 +6,12 @@
         </Input>
         <div class="">
             <el-tree class="fs-tree"
-                     :data="orgData"
+                     :data="treeData"
                      :props="defaultProps"
                      node-key="id"
                      default-expand-all
                      highlight-current
-                     v-if="orgData.length"
+                     v-if="treeData.length"
                      :expand-on-click-node="false"
                      :filter-node-method="filterNode"
                      :render-content="renderContent"
@@ -52,7 +52,7 @@
                     <Col :span="24">
                         <FormItem label="上级菜单" prop="fatherId">
                             <el-cascader
-                                    :options="orgData"
+                                    :options="treeData"
                                     :props="depProps"
                                     v-model="depSettingForm.fatherId"
                                     change-on-select
@@ -123,7 +123,6 @@
         data () {
             return {
                 mubanBtnLoading: false,
-                orgData: [],
                 formType: '',
                 rootRules: {
                     name: [
@@ -158,12 +157,17 @@
         },
         watch: {
             'filterTextName'(val) {
-                if (!this.orgData.length) return;
+                if (!this.treeData.length) return;
                 this.$refs.tree1.filter(val);
             }
         },
+        computed: {
+            treeData() {
+                return this.$store.state.knowledge.treeData;
+            }
+        },
         created() {
-            this._getOrgData();
+            this.$store.commit('getTreeData');
         },
         methods: {
             _initFormData() {
@@ -179,7 +183,7 @@
                 });
             },
             _returnOrgIds(id) {
-                let depsStore = this.orgData;
+                let depsStore = this.treeData;
                 let path = [];
                 this._storeFilter(depsStore, path, id);
                 return this.storePath;
@@ -203,7 +207,7 @@
                             if (res.success) {
                                 this.$Message.success('菜单创建成功!');
                                 this.depSettingFlag = false;
-                                this._getOrgData();
+                                this.$store.commit('getTreeData');
                             }
                         });
                     }
@@ -230,7 +234,7 @@
                             if (res.success) {
                                 this.$Message.success('菜单更新成功!');
                                 this.depSettingFlag = false;
-                                this._getOrgData();
+                                this.$store.commit('getTreeData');
                             }
                         });
                     }
@@ -249,7 +253,7 @@
                         this.$http.post('/knowledge/deleteMenu', sendData).then((res) => {
                             if (res.success) {
                                 this.$Message.success('删除成功!');
-                                this._getOrgData();
+                                this.$store.commit('getTreeData');
                             }
                         });
                     }
@@ -265,18 +269,11 @@
                         this.$http.post('/knowledge/addMenu', data).then((res) => {
                             if (res.success) {
                                 this.$Message.success('添加成功!');
-                                this._getOrgData();
+                                this.$store.commit('getTreeData');
                             }
                         }).finally(() => {
                             this.mubanBtnLoading = false;
                         });
-                    }
-                });
-            },
-            _getOrgData() {
-                this.$http.get('/knowledge/getMenu').then((res) => {
-                    if (res.success) {
-                        this.orgData = [res.data];
                     }
                 });
             },

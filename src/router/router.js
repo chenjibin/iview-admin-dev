@@ -19,7 +19,46 @@ export const guestRouter = {
     },
     component: resolve => { require(['@/pages/hireManager/guest/index.vue'], resolve); }
 };
-
+export const knowledgeRouter = {
+    path: '/knowledgePublic',
+    title: '知识库',
+    name: 'knowledgePublic',
+    component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/route.vue'], resolve); },
+    children: [
+        {
+            path: 'detail/:id',
+            name: 'articleDetail',
+            meta: {
+                whiteIn: true
+            },
+            component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/article.vue'], resolve); }
+        },
+        {
+            path: 'index',
+            name: 'articleIndex',
+            title: '知识库',
+            component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/index.vue'], resolve); },
+            children: [
+                {
+                    path: 'home',
+                    name: 'articleHome',
+                    meta: {
+                        whiteIn: true
+                    },
+                    component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/home.vue'], resolve); }
+                },
+                {
+                    path: 'list',
+                    name: 'articleList',
+                    meta: {
+                        whiteIn: true
+                    },
+                    component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/list.vue'], resolve); }
+                }
+            ]
+        }
+    ]
+};
 export const page404 = {
     path: '/*',
     name: 'error-404',
@@ -74,15 +113,6 @@ export const otherRouter = {
             },
             name: 'home_index',
             component: resolve => { require(['@/pages/home/index.vue'], resolve); }
-        },
-        {
-            path: 'knowledgePublic',
-            title: '知识库',
-            meta: {
-                whiteIn: true
-            },
-            name: 'knowledgePublic',
-            component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/index.vue'], resolve); }
         },
         {
             path: 'myLog',
@@ -579,6 +609,7 @@ export const routers = [
     loginRouter,
     otherRouter,
     guestRouter,
+    knowledgeRouter,
     locking,
     page500,
     page403
