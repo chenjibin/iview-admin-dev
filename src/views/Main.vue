@@ -180,28 +180,34 @@
                 this.messageCount = messageCount.toString();
                 this.checkTag(this.$route.name);
                 this.$store.commit('setMessageCount', 3);
+                var name = sessionStorage.getItem('newCompany');
+                if (name) {
+                    this.$Notice.config({
+                        top: 62,
+                        duration: 3.5
+                    });
+                    setTimeout(() => {
+                        this.$Notice.success({
+                            title: '公司切换成功',
+                            desc: '正在查看 ' + name
+                        });
+                        sessionStorage.removeItem('newCompany');
+                    }, 300);
+                }
             },
             toggleClick () {
                 this.shrink = !this.shrink;
             },
             changeCompany(name) {
-                var vm = this;
                 this.$store.commit('changeCompanyName', name);
                 var d = {};
                 d.name = name;
-                this.$Notice.config({
-                    top: 62,
-                    duration: 1.5
-                });
                 this.$http.post('/login/changeCompany', d).then((res) => {
                     if (res.success) {
-                        vm.$Notice.success({
-                            title: '公司切换成功',
-                            desc: '正在前往' + name
-                        });
+                        sessionStorage.setItem('newCompany', name);
                         setTimeout(function () {
                             window.location.reload();
-                        }, 1800);
+                        }, 200);
                     }
                 });
             },
