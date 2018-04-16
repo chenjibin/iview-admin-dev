@@ -1,11 +1,11 @@
 <template>
-    <div>
+    <div class="article-home">
         <Row :gutter="10">
             <Col :span="12" style="margin-bottom: 8px">
             <Card :padding="0">
                 <Carousel v-model="value1" loop>
                     <CarouselItem>
-                        <div class="demo-carousel">1</div>
+                        <div class="demo-carousel" @click="toDetailPage">1</div>
                     </CarouselItem>
                     <CarouselItem>
                         <div class="demo-carousel">2</div>
@@ -21,57 +21,241 @@
             </Col>
             <Col :span="12" style="margin-bottom: 8px">
             <Card :padding="0">
-                <div class="" style="height: 320px;padding: 12px;overflow: hidden">
-
+                <div class="article-important-block">
+                    <div class="top">
+                        <h2>重要知识一</h2>
+                        <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+                    </div>
+                    <div class="content-list-wrapper">
+                        <Row :gutter="16">
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item" :title="itemName">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                        </Row>
+                    </div>
                 </div>
             </Card>
             </Col>
             <Col :span="12" style="margin-bottom: 8px">
             <Card :padding="0">
-                <div class="" style="height: 320px;padding: 12px;overflow: hidden">
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
+                <div class="article-important-block">
+                    <div class="top">
+                        <h2>重要知识一</h2>
+                        <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+                    </div>
+                    <div class="content-list-wrapper">
+                        <Row :gutter="16">
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item" :title="itemName">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                        </Row>
+                    </div>
                 </div>
             </Card>
             </Col>
             <Col :span="12" style="margin-bottom: 8px">
             <Card :padding="0">
-                <div class="" style="height: 320px;padding: 12px;overflow: hidden">
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
+                <div class="article-important-block">
+                    <div class="top">
+                        <h2>重要知识一</h2>
+                        <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+                    </div>
+                    <div class="content-list-wrapper">
+                        <Row :gutter="16">
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item" :title="itemName">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                            <Col :span="12">
+                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
+                            </Col>
+                        </Row>
+                    </div>
                 </div>
             </Card>
             </Col>
             <Col :span="24">
             <Row :gutter="10">
-                <Col :span="6"><Card>
-                <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-
-            </Card></Col>
-                <Col :span="6"><Card>
-                <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-
-            </Card></Col>
-                <Col :span="6"><Card>
-                <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-            </Card></Col>
-                <Col :span="6"><Card>
-                <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-            </Card></Col>
+                <Col :span="6">
+                    <Card :padding="0">
+                        <div class="fs-holder-img">
+                            <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                        </div>
+                    </Card>
+                </Col>
+                <Col :span="6">
+                <Card :padding="0">
+                    <div class="fs-holder-img">
+                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                    </div>
+                </Card>
+                </Col>
+                <Col :span="6">
+                <Card :padding="0">
+                    <div class="fs-holder-img">
+                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                    </div>
+                </Card>
+                </Col>
+                <Col :span="6">
+                <Card :padding="0">
+                    <div class="fs-holder-img">
+                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                    </div>
+                </Card>
+                </Col>
             </Row>
             </Col>
         </Row>
     </div>
 </template>
-<style>
-.demo-carousel {
-    height: 320px;
-    line-height: 360px;
-    text-align: center;
-    color: #fff;
-    font-size: 20px;
-    background: #506b9e;
-}
+<style lang="less">
+    .article-home {
+        padding-top: 8px;
+        .demo-carousel {
+            height: 280px;
+            line-height: 360px;
+            text-align: center;
+            color: #fff;
+            font-size: 20px;
+            background: #506b9e;
+        }
+        .article-important-block {
+            height: 280px;
+            padding: 16px;
+            overflow: hidden;
+            .top {
+                display: flex;
+                justify-content: space-between;
+            }
+            .content-list-wrapper {
+                margin-top: 16px;
+                .item {
+                    font-size: 14px;
+                    margin-bottom: 14px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    display: block;
+                    color: #333;
+                    transition: color 0.5s ease;
+                    &:hover {
+                        color: #0077e6;
+                    }
+                }
+            }
+        }
+        .fs-holder-img {
+            position: relative;
+            width: 100%;
+            padding-top: 56%;
+            img {
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 2;
+                width: 100%;
+                height: 100%;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        }
+    }
 </style>
 <script>
     import FsCommentList from '@/baseComponents/fs-comment-list';
@@ -80,11 +264,25 @@
         data () {
             return {
                 value1: 0,
-                img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                name: '大田集',
-                commentContent: '😂 去年重构一个老项目，想用babel来搞，被babel文档虐得死去活来，最后还是看不懂',
-                commentTime: '7天前'
+                itemName: '范围广问过问过而望各位个问过嗡嗡而格外个额外给望各位'
             };
+        },
+        created() {
+
+        },
+        methods: {
+            toDetailPage() {
+                let params = {};
+                params.name = 'articleDetail';
+                params.params = { id: 123 };
+                this.$router.push(params);
+            },
+            _getCarouseData() {
+
+            },
+            getMainBolckData() {
+
+            }
         },
         components: {FsCommentList}
     };

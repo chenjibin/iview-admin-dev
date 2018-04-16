@@ -77,9 +77,12 @@
                         <Button type="ghost" shape="circle" icon="lock-combination"></Button>
                     </Tooltip>
                 </Poptip>
-                <!--<Tooltip placement="top" content="商品订单" :transfer="true">-->
-                    <!--<Button type="ghost" shape="circle" icon="android-list"></Button>-->
-                <!--</Tooltip>-->
+                <Tooltip placement="top" content="进入知识库" :transfer="true">
+                    <Button type="ghost"
+                            shape="circle"
+                            @click.stop="$router.replace({name: 'articleHome'})"
+                            icon="ios-book"></Button>
+                </Tooltip>
             </Col>
         </Row>
         <Modal title="修改头像" v-model="changeAvatorFlag" width="800">
@@ -161,9 +164,6 @@
         created() {
         },
         methods: {
-            _submitAvatorChange() {
-
-            },
             _cancelResetPwd() {
                 this.$refs.psdForm.resetFields();
                 this.pwsFlag = false;

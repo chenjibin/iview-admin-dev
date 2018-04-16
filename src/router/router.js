@@ -26,7 +26,7 @@ export const knowledgeRouter = {
     component: resolve => { require(['@/pages/knowledgeManage/knowledgePublic/route.vue'], resolve); },
     children: [
         {
-            path: 'detail/:id',
+            path: 'article/:id',
             name: 'articleDetail',
             meta: {
                 whiteIn: true
