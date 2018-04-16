@@ -1,6 +1,20 @@
 <template>
     <div class="article-detail">
         <div class="inner">
+            <div class="ver-btn">
+                <div class="zan-btn" @click.stop="$router.go(-1)">
+                    <div class="icon-wrapper" style="background-color: #ddd;color: #666;">
+                        <Icon type="ios-undo"></Icon>
+                    </div>
+                    <div class="text" style="color: #666;">返回</div>
+                </div>
+                <div class="zan-btn">
+                    <div class="icon-wrapper">
+                        <Icon type="thumbsup"></Icon>
+                    </div>
+                    <div class="text">80</div>
+                </div>
+            </div>
             <h2 class="title">测试文章标题</h2>
             <div class="main-content" v-html="html"></div>
             <div class="comment-block">
@@ -35,6 +49,57 @@
         .inner {
             width: 690px;
             margin: 0 auto;
+            .ver-btn {
+                position: fixed;
+                left: 0;
+                right: 0;
+                width: 884px;
+                height: 0;
+                pointer-events: none;
+                margin: auto;
+                top: 106px;
+                .zan-btn {
+                    display: block;
+                    width: 48px;
+                    color: #8590a6;
+                    line-height: 1.14286;
+                    font-size: 14px;
+                    margin-bottom: 20px;
+                    pointer-events: auto;
+                    transition: color .3s;
+                    text-align: center;
+                    cursor: pointer;
+                    &:hover .icon-wrapper {
+                        background: rgba(0,132,255,.15);
+                        transform: scale(1.1);
+                    }
+                    &:hover .text {
+                        transform: translateY(4px);
+                    }
+                    .icon-wrapper {
+                        border-radius: 50%;
+                        width: 48px;
+                        height: 48px;
+                        line-height: 48px;
+                        background-color: rgba(0,132,255,.1);
+                        color: #0084ff;
+                        font-size: 26px;
+                        will-change: transform;
+                        transition: -webkit-transform .3s;
+                        transition: transform .3s;
+                        transition: transform .3s,-webkit-transform .3s;
+                    }
+                    .text {
+                        margin-top: 8px;
+                        height: 16px;
+                        overflow: hidden;
+                        color: #0084ff;
+                        transition: -webkit-transform .3s;
+                        transition: transform .3s;
+                        transition: transform .3s,-webkit-transform .3s;
+                    }
+                }
+            }
             .title {
                 margin-bottom: 20px;
                 font-size: 24px;
@@ -45,8 +110,7 @@
             .comment-block {
                 margin-top: 16px;
                 .top {
-                    padding: 16px 0;
-                    border-bottom: 1px solid #ddd;
+                    padding: 16px 8px 0;
                     .number {
                         font-size: 16px;
                         font-weight: 700;
@@ -54,6 +118,8 @@
                 }
                 .your-comment {
                     margin-top: 16px;
+                    padding-bottom: 8px;
+                    border-bottom: 1px solid #ddd;
                 }
             }
         }

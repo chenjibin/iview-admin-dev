@@ -20,7 +20,7 @@
             left: 10px;
             top: 54px;
             z-index: 0;
-            color: #666;
+            color: #999;
         }
         .editor {
             .fs-wangeditor-toolbar {

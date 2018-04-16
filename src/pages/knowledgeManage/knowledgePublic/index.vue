@@ -1,6 +1,7 @@
 <template>
     <div class="fs-article-index">
         <div class="tree">
+            <p class="title">知识体系</p>
             <el-tree class="fs-tree"
                      :data="treeData"
                      :props="defaultProps"
@@ -10,9 +11,6 @@
                      :expand-on-click-node="false"
                      ref="tree1">
             </el-tree>
-            <div class="">
-
-            </div>
         </div>
         <div class="main-inner">
             <keep-alive>
@@ -31,6 +29,12 @@
             top: 60px;
             width: 200px;
             background-color: #fff;
+            .title {
+                padding: 0 0 12px 12px;
+                font-size: 18px;
+                font-weight: 700;
+                border-bottom: 1px solid #ddd;
+            }
         }
         .main-inner {
             width: 1200px;

@@ -7,12 +7,13 @@
                     <Button type="text"
                             style="font-size: 16px;margin-left: 16px"
                             @click.stop="$router.push({name: 'articleHome'})">首页</Button>
-                    <div class="search-wrapper" :class="{'is-focus': isFocus}">
+                    <div class="search-wrapper"
+                         v-clickoutside="clickoutsideHandler"
+                         :class="{'is-focus': isFocus}">
                         <input type="text"
                                maxlength="100"
                                placeholder="搜索知识..."
                                @focus="isFocus = true"
-                               @blur="isFocus = false"
                                v-model="searchValue"
                                autocomplete="off"/>
                         <div class="search-btn"
@@ -127,8 +128,10 @@
     }
 </style>
 <script>
+    import clickoutside from '@/directives/click-outside';
     export default {
         name: 'knowledgePublic',
+        directives: {clickoutside},
         data () {
             return {
                 isFocus: false,
@@ -136,8 +139,21 @@
                 searchValue: ''
             };
         },
+        watch: {
+            searchValue(val) {
+                this.canSearch = !!val;
+            }
+        },
         methods: {
+            clickoutsideHandler() {
+                this.isFocus = false;
+            },
             _searchKnowledge() {
+                if (!this.canSearch) return;
+                let routeParams = {};
+                routeParams.name = 'articleList';
+                routeParams.query = {keyword: this.searchValue};
+                this.$router.push(routeParams);
             }
         },
         components: {}
