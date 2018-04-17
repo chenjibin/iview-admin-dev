@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="header-avator-con">
-                    <Dropdown v-if="isManger == 0 || isManger == 1" transfer @on-click="changeCompany" style="margin-right: 10px">
+                    <Dropdown v-if="isManger === 0 || isManger === 1" transfer @on-click="changeCompany" style="margin-right: 10px">
                         <a href="javascript:void(0)" style="font-size: 14px;color: #333;">
                             {{currentCompanyName}}<Icon type="arrow-down-b" style="margin-left: 5px"></Icon>
                         </a>
@@ -130,7 +130,7 @@
         },
         computed: {
             isManger() {
-                return this.$store.state.user.userInfo.ismanger;
+                return this.$store.state.user.userInfo.ismanger || 3;
             },
             returnNeedPadding() {
                 return this.premissionMenu.length ? this.shrink ? '60px' : '200px' : '0';

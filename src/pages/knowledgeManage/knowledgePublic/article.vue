@@ -19,23 +19,31 @@
             <div class="main-content" v-html="html"></div>
             <div class="comment-block">
                 <div class="top">
-                    <span class="number">12条评论</span>
+                    <span class="number">{{pageData.totalCount || 0}}条评论</span>
                 </div>
                 <div class="your-comment">
                     <wang-editor
                             :menus="editorMeun"
                             :min-height="64"
                             :defaul-text="defaultText"
+                            ref="wangEditor"
                             :editorcontent.sync="editorContent"></wang-editor>
                     <div class="btn-group" style="text-align: right">
                         <Button type="primary" @click.stop="replyHandler">评论</Button>
                     </div>
                 </div>
                 <div class="list">
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
-                    <fs-comment-list v-bind={avatar:img,name:name,commentContent:commentContent,commentTime:commentTime}></fs-comment-list>
+                    <fs-comment-list :comment-data="item"
+                                     :key="'comment-' + index"
+                                     v-for="item, index in pageData.list"></fs-comment-list>
                 </div>
+                <Page :total="pageData.totalCount"
+                      :current.sync="pageData.page"
+                      :page-size="pageData.pageSize"
+                      @on-change="getCommentList"
+                      show-total
+                      v-if="pageData.totalCount > 20"
+                      style="margin-top: 16px;"></Page>
             </div>
         </div>
     </div>
@@ -105,6 +113,10 @@
             }
             .main-content {
                 font-size: 16px;
+                p {
+                    margin: 10px 0;
+                    line-height: 1.5;
+                }
             }
             .comment-block {
                 margin-top: 16px;
@@ -148,15 +160,16 @@
             };
         },
         activated() {
-            let data = {}
+            let data = {};
             data.shareId = this.$route.params.id;
             this.$http.get('/share/getShareDetail', {params: data}).then((res) => {
                 if (res.success) {
                     this.articleTitle = res.data.share_item;
                     this.html = res.data.share_detail;
-                    this.thumbUpTimes = res.data.thumb_up_times
+                    this.thumbUpTimes = res.data.thumb_up_times;
                 }
             });
+            this.getCommentList();
         },
         methods: {
             replyHandler() {
@@ -166,8 +179,15 @@
                 this.$http.post('/share/addShareComment', data).then((res) => {
                     if (res.success) {
                         this.$Message.success('评论成功 ！');
+                        this.$refs.wangEditor.clearContent();
+                        this.getCommentList();
                     }
-                })
+                });
+            },
+            getCommentList() {
+                let params = {};
+                params.shareId = this.$route.params.id;
+                this.getList('/share/getShareCommentList', params);
             }
         },
         components: {FsCommentList, WangEditor}

@@ -2,14 +2,12 @@
     <div class="fs-comment-list">
         <div class="fs-comment-list-top">
             <div>
-                <Avatar :src="avatar" icon="person" size="large" />
-                <span class="name">{{name}}</span>
+                <Avatar :src="commentData.headimagepath" icon="person" size="large" />
+                <span class="name">{{commentData.username || '...'}}</span>
             </div>
-            <div>{{commentTime}}</div>
+            <div>{{commentData.insert_time || '...'}}</div>
         </div>
-        <div class="fs-comment-list-content">
-            {{commentContent}}
-        </div>
+        <div class="fs-comment-list-content" v-html="commentData.content || '...'"></div>
         <div class="fs-comment-list-tool" v-show="!isInComment">
             <div class="comment-btn always" @click.stop="_thumbsupHandler">
                 <Icon type="thumbsup"></Icon>
@@ -79,13 +77,15 @@
     export default {
         name: 'FsCommentList',
         props: {
-            avatar: String,
-            name: String,
-            commentContent: String,
-            commentTime: String
+            commentData: {
+                type: Object,
+                default() {
+                    return {};
+                }
+            }
         },
         data () {
-            const defaultContent = `回复${this.name}`;
+            const defaultContent = `回复${this.commentData.username}`;
             return {
                 defaultText: defaultContent,
                 editorContent: '',

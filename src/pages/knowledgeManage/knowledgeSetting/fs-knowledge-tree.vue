@@ -14,6 +14,7 @@
                      v-if="treeData.length"
                      :expand-on-click-node="false"
                      :filter-node-method="filterNode"
+                     @node-click="nodeClickHandler"
                      :render-content="renderContent"
                      ref="tree1">
             </el-tree>
@@ -170,6 +171,9 @@
             this.$store.commit('getTreeData');
         },
         methods: {
+            nodeClickHandler(data) {
+                this.$emit('node-click', data.id)
+            },
             _initFormData() {
                 this.chooseCateId = 0;
                 this.depSettingForm.name = '';

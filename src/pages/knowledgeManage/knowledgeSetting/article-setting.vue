@@ -26,7 +26,7 @@
                :mask-closable="false"
                width="1200">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>{{formType === 'create' ? '新增文章' : '编辑文章'}}</span>
+                <span>{{formType === 'create' ? '新增文章' : '修改文章'}}</span>
             </p>
             <Form :model="depSettingForm"
                   ref="articleForm"
@@ -51,6 +51,7 @@
                                 <Upload action="/oa/share/uploadFile"
                                         :format="['jpg','jpeg','png']"
                                         accept="image/jpeg,image/jpg,image/png"
+                                        :default-file-list="imgDefault"
                                         :on-success="_imgUpSuccessHandler"
                                         :on-remove="_imgRemoveSuccessHandler">
                                     <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
@@ -61,6 +62,7 @@
                             <span>文章附件</span>
                             <div class="" style="margin-top: 8px;">
                                 <Upload :on-success="_fileUpSuccessHandler"
+                                        :default-file-list="fileDefault"
                                         :on-remove="_fileRemoveSuccessHandler"
                                         action="/oa/share/uploadFile">
                                     <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
@@ -107,6 +109,14 @@
     import fsAutoTextarea from '@/baseComponents/fs-auto-textarea';
     export default {
         name: 'ArticleSetting',
+        props: {
+            nodeId: Number
+        },
+        watch: {
+            nodeId(val) {
+                this.filterOpt.knowledgeId.value = val;
+            }
+        },
         data () {
             const colBtn = (vm, h, params, {content, icon, foo}) => {
                 return h('Tooltip', {
@@ -134,6 +144,8 @@
                 ]);
             };
             return {
+                imgDefault: [],
+                fileDefault: [],
                 shareDetail: '',
                 depSettingFlag: false,
                 formType: '',
@@ -223,7 +235,8 @@
                             ]);
                         }
                     }
-                ]
+                ],
+                articleId: null
             };
         },
         computed: {
@@ -248,22 +261,27 @@
                 return this.storePath;
             },
             _imgUpSuccessHandler(res, file, fileList) {
+                file.url = fileList[0].response.data[0].filename;
                 this.depSettingForm.showpic = fileList[0].response.data[0].filename;
             },
             _imgRemoveSuccessHandler(file, fileList) {
                 this.depSettingForm.showpic = '';
             },
             _fileUpSuccessHandler(res, file, fileList) {
+                console.log(fileList)
                 this.depSettingForm.fileNames = fileList.map(item => {
-                    return item.response.data[0].filename;
+                    return item.url;
                 }).join(',');
             },
             _fileRemoveSuccessHandler(file, fileList) {
                 this.depSettingForm.fileNames = fileList.map(item => {
-                    return item.response.data[0].filename;
+                    return item.url;
                 }).join(',');
             },
             _initSendForm() {
+                this.articleId = null;
+                this.imgDefault = [];
+                this.fileDefault = [];
                 this.shareDetail = '';
                 this.depSettingForm.knowledgeId = [];
                 this.depSettingForm.shareItem = '';
@@ -279,12 +297,27 @@
                 if (this.depSettingForm.fileNames) data.fileNames = this.depSettingForm.fileNames;
                 this.$http.post('/share/addShare', data).then((res) => {
                     if (res.success) {
+                        this.depSettingFlag = false;
+                        this.$refs.attendanceTable.getListData();
                         this.$Message.success('文章创建成功!');
                     }
                 });
-                console.log(data);
             },
             _updateArticle() {
+                let data = {};
+                data.id = this.articleId;
+                data.shareItem = this.depSettingForm.shareItem;
+                data.shareDetail = this.shareDetail;
+                data.knowledgeId = this.depSettingForm.knowledgeId.slice(-1)[0];
+                data.showpic = this.depSettingForm.showpic;
+                data.fileNames = this.depSettingForm.fileNames;
+                this.$http.post('/share/updateShare', data).then((res) => {
+                    if (res.success) {
+                        this.depSettingFlag = false;
+                        this.$refs.attendanceTable.getListData();
+                        this.$Message.success('文章修改成功!');
+                    }
+                });
             },
             _addArticleOpen() {
                 this._initSendForm();
@@ -295,14 +328,32 @@
             },
             _articleEditor(data) {
                 this._initSendForm();
+                this.articleId = data.id;
                 this.formType = 'update';
                 this.shareDetail = data.share_detail;
                 this.depSettingForm.knowledgeId = this._returnOrgIds(data.knowledge_id);
                 this.depSettingForm.shareItem = data.share_item;
-                this.depSettingForm.showpic = '';
-                this.depSettingForm.fileNames = '';
+                if (data.file_path) {
+                    this.depSettingForm.showpic = data.file_path;
+                    this.imgDefault = [
+                        {
+                            name: data.file_name,
+                            url: data.file_path
+                        }
+                    ];
+                }
+                if (data.sharefiles.length) {
+                    let storeArr = [];
+                    data.sharefiles.forEach(item => {
+                        let obj = {};
+                        obj.name = item.file_name;
+                        obj.url = item.file_path;
+                        storeArr.push(obj);
+                    });
+                    this.fileDefault = storeArr;
+                }
+                this.depSettingForm.fileNames = data.sharefiles.map(x => x.file_path).join(',');
                 this.depSettingFlag = true;
-                console.log(data);
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;

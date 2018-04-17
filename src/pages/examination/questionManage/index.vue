@@ -470,7 +470,7 @@
                         data.answer = editorSettingData.singleType;
                         break;
                     case '2':
-                        data.answer = editorSettingData.multiType.join('');
+                        data.answer = editorSettingData.multiType.sort().join('');
                         break;
                     case '3':
                         data.answer = editorSettingData.trueOrFalseType;
@@ -573,7 +573,7 @@
                         editorSettingData.singleType = data.answer;
                         break;
                     case '2':
-                        editorSettingData.multiType = data.answer.split(',');
+                        editorSettingData.multiType = data.answer.split('');
                         break;
                     case '3':
                         editorSettingData.trueOrFalseType = data.answer;

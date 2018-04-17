@@ -7,7 +7,6 @@
             <div class="fs-wangeditot-text"
                  :style="{minHeight: minHeight + 'px'}"
                  ref="content"></div>
-
         </div>
     </div>
 </template>
@@ -86,21 +85,29 @@
         },
         data () {
             return {
-                holderShow: !this.editorcontent
+                holderShow: !this.editorcontent,
+                editor: null
             };
         },
         mounted() {
-            let editor = new E(this.$refs.tool, this.$refs.content);
-            editor.customConfig.uploadImgServer = this.imgUrl;
-            editor.customConfig.menus = this.menus;
-            editor.customConfig.onchange = (html) => {
-                console.log(html)
+            this.editor = new E(this.$refs.tool, this.$refs.content);
+            this.editor.customConfig.uploadImgServer = this.imgUrl;
+            this.editor.customConfig.menus = this.menus;
+            this.editor.customConfig.onchange = (html) => {
                 let realContent = utils.delHtmlTag(html);
                 this.holderShow = !realContent;
                 this.$emit('update:editorcontent', html);
             };
-            editor.create();
-            if (this.editorcontent) editor.txt.html(this.editorcontent);
+            this.editor.create();
+            if (this.editorcontent) this.editor.txt.html(this.editorcontent);
+        },
+        methods: {
+            clearContent() {
+                if (this.editor) {
+                    this.editor.txt.html('');
+                    this.$emit('update:editorcontent', '');
+                }
+            }
         },
         components: {}
     };

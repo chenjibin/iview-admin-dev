@@ -27,155 +27,27 @@
                 </Carousel>
             </Card>
             </Col>
-            <Col :span="12" style="margin-bottom: 8px">
-            <Card :padding="0">
-                <div class="article-important-block">
-                    <div class="top">
-                        <h2>重要知识一</h2>
-                        <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+            <Col :span="12" style="margin-bottom: 8px"
+                 v-for="item,index in mainBlockData"
+                 :key="'main-block' + index">
+                <Card :padding="0">
+                    <div class="article-important-block">
+                        <div class="top">
+                            <h2>{{item.name}}</h2>
+                            <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+                        </div>
+                        <div class="content-list-wrapper">
+                            <Row :gutter="16">
+                                <Col :span="12" v-for="article, aindex in item.share">
+                                    <a href="javascript:void(0)"
+                                       class="item"
+                                       @click.stop="toDetailPage(article.shareId)"
+                                       :title="article.share_item">{{article.share_item}}</a>
+                                </Col>
+                            </Row>
+                        </div>
                     </div>
-                    <div class="content-list-wrapper">
-                        <Row :gutter="16">
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item" :title="itemName">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                        </Row>
-                    </div>
-                </div>
-            </Card>
-            </Col>
-            <Col :span="12" style="margin-bottom: 8px">
-            <Card :padding="0">
-                <div class="article-important-block">
-                    <div class="top">
-                        <h2>重要知识一</h2>
-                        <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
-                    </div>
-                    <div class="content-list-wrapper">
-                        <Row :gutter="16">
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item" :title="itemName">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                        </Row>
-                    </div>
-                </div>
-            </Card>
-            </Col>
-            <Col :span="12" style="margin-bottom: 8px">
-            <Card :padding="0">
-                <div class="article-important-block">
-                    <div class="top">
-                        <h2>重要知识一</h2>
-                        <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
-                    </div>
-                    <div class="content-list-wrapper">
-                        <Row :gutter="16">
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item" :title="itemName">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                            <Col :span="12">
-                            <a href="javascript:void(0)" class="item">{{itemName}}</a>
-                            </Col>
-                        </Row>
-                    </div>
-                </div>
-            </Card>
+                </Card>
             </Col>
             <Col :span="24">
             <Row :gutter="10">
@@ -276,24 +148,29 @@
         data () {
             return {
                 value1: 0,
-                itemName: '范围广问过问过而望各位个问过嗡嗡而格外个额外给望各位'
+                itemName: '范围广问过问过而望各位个问过嗡嗡而格外个额外给望各位',
+                mainBlockData: []
             };
         },
         created() {
-
+            this._getMainBolckData();
         },
         methods: {
-            toDetailPage() {
+            toDetailPage(id) {
                 let params = {};
                 params.name = 'articleDetail';
-                params.params = { id: 123 };
+                params.params = { id: id };
                 this.$router.push(params);
             },
             _getCarouseData() {
 
             },
-            getMainBolckData() {
-
+            _getMainBolckData() {
+                this.$http.get('/share/getImportantShare').then((res) => {
+                    if (res.success) {
+                        this.mainBlockData = res.data;
+                    }
+                });
             }
         },
         components: {FsCommentList}

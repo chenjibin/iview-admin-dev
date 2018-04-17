@@ -2,10 +2,10 @@
     <div>
         <Row :gutter="16">
             <Col :span="6">
-                <fs-knowledge-tree></fs-knowledge-tree>
+                <fs-knowledge-tree @node-click="nodeId = $event"></fs-knowledge-tree>
             </Col>
             <Col :span="18">
-                <article-setting></article-setting>
+                <article-setting :node-id="nodeId"></article-setting>
             </Col>
         </Row>
     </div>
@@ -19,7 +19,9 @@
     export default {
         name: 'knowledgeSetting',
         data () {
-            return {};
+            return {
+                nodeId: 0
+            };
         },
         components: {
             fsKnowledgeTree,
