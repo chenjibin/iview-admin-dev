@@ -173,10 +173,10 @@
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" style="width:460px">
-                            <Input type="text" v-model="talentBean.monthlysalary"></Input>
+                            <InputNumber style="width: 100%" :min="1000" type="text" v-model="talentBean.monthlysalary"></InputNumber>
                         </FormItem>
                         <FormItem label="年龄" style="width:460px">
-                            <Input type="text" v-model="talentBean.age"></Input>
+                            <InputNumber style="width: 100%" :min="10" :max="99" type="text" v-model="talentBean.age"></InputNumber>
                         </FormItem>
                         <FormItem label="手机" style="width:460px" prop="phone">
                             <Input type="text" v-model="talentBean.phone"></Input>
@@ -264,10 +264,10 @@
                     <Form :gutter="1" ref="educationForm" style="overflow-y: auto;height: 600px;" inline>
                         <div v-for="(item,index) in educationForm">
                             <FormItem label="开始时间" style="width:17%">
-                                <DatePicker type="date" @on-change="_infoDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
+                                <DatePicker type="date" :editable="false" @on-change="_infoDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" style="width:17%">
-                                <DatePicker type="date" @on-change="_infoDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
+                                <DatePicker type="date" :editable="false" @on-change="_infoDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="毕业院校	" style="width:17%">
                                 <Input type="text" v-model="item.graduatedschool"></Input>
@@ -311,10 +311,10 @@
                     <Form ref="workingForm" inline style="overflow-y: auto;height: 600px;">
                         <div v-for="(item,index) in workingForm" style="margin: 10px auto;border-bottom: 1px solid #f3f3f3;">
                             <FormItem label="开始时间" style="width:18%">
-                                <DatePicker type="date" @on-change="_infoDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
+                                <DatePicker :editable="false" type="date" @on-change="_infoDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" style="width:18%">
-                                <DatePicker type="date" @on-change="_infoDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
+                                <DatePicker :editable="false" type="date" @on-change="_infoDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="公司名称" style="width:18%">
                                 <Input type="text" v-model="item.companyname"></Input>
@@ -323,7 +323,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="月薪" style="width:18%">
-                                <Input type="text" v-model="item.monthlysalary"></Input>
+                                <InputNumber style="width: 100%" :min="1000" :step="1000" type="text" v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
                             <FormItem label="工作描述" style="width:37%">
                                 <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>
@@ -359,7 +359,7 @@
                                 <Input type="text" name="name" v-model="item.witness" ></Input>
                             </FormItem>
                             <FormItem label="年龄" style="width:13%">
-                                <Input type="text" v-model="item.age" ></Input>
+                                <InputNumber :min="14" :max="99" type="text" v-model="item.age" ></InputNumber>
                             </FormItem>
                             <FormItem label="工作单位	" style="width:13%">
                                 <Input type="text" v-model="item.companyname" ></Input>
@@ -1080,11 +1080,11 @@
                             if (res.success) {
                                 vm.$Message.success('保存成功');
                                 vm._filterResultHandler();
+                                vm._findUser(res.message);
                                 if (type === 2) {
                                     vm.settingModalFlag = false;
                                     return;
                                 }
-                                vm._findUser(res.message);
                             }
                         });
                     } else {

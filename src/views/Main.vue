@@ -159,6 +159,9 @@
             cachePage () {
                 return this.$store.state.app.cachePage;
             },
+            isManger() {
+                return this.$store.state.user.userInfo.ismanger;
+            },
             lang () {
                 return this.$store.state.app.lang;
             },

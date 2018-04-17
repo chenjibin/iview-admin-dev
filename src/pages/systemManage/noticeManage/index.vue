@@ -96,14 +96,14 @@
                                 </Select>
                             </FormItem>
                             </Col>
-                            <Col :span="8">
-                            <FormItem label="发布状态">
-                                <Select v-model="strangeSettingForm.status">
-                                    <Option value="0">草稿</Option>
-                                    <Option value="1">发布</Option>
-                                </Select>
-                            </FormItem>
-                            </Col>
+                            <!--<Col :span="8">-->
+                            <!--<FormItem label="发布状态">-->
+                                <!--<Select v-model="strangeSettingForm.status">-->
+                                    <!--<Option value="0">草稿</Option>-->
+                                    <!--<Option value="1">发布</Option>-->
+                                <!--</Select>-->
+                            <!--</FormItem>-->
+                            <!--</Col>-->
                         </Row>
                         <text-editor
                                 :menubar="editorOpt.menubar"
@@ -132,19 +132,19 @@
                 </Row>
                 <div slot="footer">
                     <Button type="primary"
-                            v-show="strangeSettingForm.status === '1' && isNoticeType === 'create'"
+                            v-show="isNoticeType === 'create'"
                             :loading="btnLoading"
                             @click="_operateNotice">
                         <span v-if="!btnLoading">立即发布</span>
                         <span v-else>发布中...</span>
                     </Button>
-                    <Button type="primary"
-                            v-show="strangeSettingForm.status === '0' && isNoticeType === 'create'"
-                            :loading="btnLoading"
-                            @click="_saveNotice">
-                        <span v-if="!btnLoading">存为草稿</span>
-                        <span v-else>保存中...</span>
-                    </Button>
+                    <!--<Button type="primary"-->
+                            <!--v-show="strangeSettingForm.status === '0' && isNoticeType === 'create'"-->
+                            <!--:loading="btnLoading"-->
+                            <!--@click="_saveNotice">-->
+                        <!--<span v-if="!btnLoading">存为草稿</span>-->
+                        <!--<span v-else>保存中...</span>-->
+                    <!--</Button>-->
                     <Button type="primary"
                             v-show="isNoticeType === 'update'"
                             :loading="btnLoading"
@@ -377,9 +377,9 @@
             _operateNotice() {
                 this._noticeHandler(0, '发布公告成功!');
             },
-            _saveNotice() {
-                this._noticeHandler(0, '保存草稿成功!');
-            },
+//            _saveNotice() {
+//                this._noticeHandler(0, '保存草稿成功!');
+//            },
             _getAllDepIds(data) {
                 data.forEach((item) => {
                     this.allTreeId.push(item.id);
