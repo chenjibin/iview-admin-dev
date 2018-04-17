@@ -3,7 +3,7 @@
         <Row :gutter="10">
             <Col :span="12" style="margin-bottom: 8px">
             <Card :padding="0">
-                <Carousel v-model="value1" autoplay :autoplay-speed="3000" trigger="hover">
+                <Carousel v-model="value1" trigger="hover">
                     <CarouselItem>
                         <div class="demo-carousel" @click.stop="toDetailPage">
                             <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />

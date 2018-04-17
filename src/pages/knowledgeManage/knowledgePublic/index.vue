@@ -47,10 +47,6 @@
         name: 'articleIndex',
         data () {
             return {
-                img: 'https://i.loli.net/2017/08/21/599a521472424.jpg',
-                name: '大田集',
-                commentContent: '😂 去年重构一个老项目，想用babel来搞，被babel文档虐得死去活来，最后还是看不懂',
-                commentTime: '7天前',
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -66,7 +62,11 @@
             }
         },
         methods: {
-            nodeClickHandler() {
+            nodeClickHandler(data) {
+                let params = {};
+                params.name = 'articleList';
+                params.query = {cateId: data.id, cateName: data.name};
+                this.$router.push(params);
             }
         },
         components: {

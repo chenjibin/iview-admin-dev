@@ -271,7 +271,10 @@
             return {};
         },
         activated() {
-            console.log(this.$route);
+            let query = this.$route.query;
+            if (query.hasOwnProperty('cateId')) {
+            } else if (query.hasOwnProperty('keyword')) {
+            }
         },
         methods: {
             toArticlePage() {
