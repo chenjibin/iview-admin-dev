@@ -100,11 +100,7 @@
                 this.$emit('update:editorcontent', html);
             };
             editor.create();
-            // if (this.editorcontent) {
-            //     editor.txt.html(this.editorcontent);
-            // } else {
-            //     editor.txt.html(`<p>${this.defaulText}</p>`);
-            // }
+            if (this.editorcontent) editor.txt.html(this.editorcontent);
         },
         components: {}
     };

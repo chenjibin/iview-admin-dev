@@ -125,11 +125,13 @@
                 shrink: true,
                 isFullScreen: false,
                 companyList: [],
-                isManger: -1,
                 openedSubmenuArr: this.$store.state.app.openedSubmenuArr
             };
         },
         computed: {
+            isManger() {
+                return this.$store.state.user.userInfo.ismanger;
+            },
             returnNeedPadding() {
                 return this.premissionMenu.length ? this.shrink ? '60px' : '200px' : '0';
             },
@@ -273,7 +275,6 @@
         created () {
             // 显示打开的页面的列表
             this.$store.commit('setOpenedList');
-            this.isManger = this.$store.state.user.userInfo.ismanger;
             this.$http.post('/company/lists').then((res) => {
                 this.companyList = res.data;
                 let cid = this.$store.state.user.userInfo.companyid;

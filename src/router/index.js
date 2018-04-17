@@ -57,7 +57,6 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-    console.log(to);
     Util.openNewPage(router.app, to.name, to.params, to.query);
     iView.LoadingBar.finish();
     window.scrollTo(0, 0);

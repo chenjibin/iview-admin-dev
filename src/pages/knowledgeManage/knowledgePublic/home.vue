@@ -3,18 +3,26 @@
         <Row :gutter="10">
             <Col :span="12" style="margin-bottom: 8px">
             <Card :padding="0">
-                <Carousel v-model="value1" loop>
+                <Carousel v-model="value1" autoplay :autoplay-speed="3000" trigger="hover">
                     <CarouselItem>
-                        <div class="demo-carousel" @click="toDetailPage">1</div>
+                        <div class="demo-carousel" @click.stop="toDetailPage">
+                            <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                        </div>
                     </CarouselItem>
                     <CarouselItem>
-                        <div class="demo-carousel">2</div>
+                        <div class="demo-carousel">
+                            <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                        </div>
                     </CarouselItem>
                     <CarouselItem>
-                        <div class="demo-carousel">3</div>
+                        <div class="demo-carousel">
+                            <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                        </div>
                     </CarouselItem>
                     <CarouselItem>
-                        <div class="demo-carousel">4</div>
+                        <div class="demo-carousel">
+                            <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                        </div>
                     </CarouselItem>
                 </Carousel>
             </Card>
@@ -209,11 +217,15 @@
         padding-top: 8px;
         .demo-carousel {
             height: 280px;
-            line-height: 360px;
             text-align: center;
             color: #fff;
             font-size: 20px;
             background: #506b9e;
+            cursor: pointer;
+            img {
+                width: 100%;
+                height: 100%;
+            }
         }
         .article-important-block {
             height: 280px;

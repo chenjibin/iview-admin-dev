@@ -8,14 +8,13 @@
                      node-key="id"
                      default-expand-all
                      highlight-current
+                     @node-click="nodeClickHandler"
                      :expand-on-click-node="false"
                      ref="tree1">
             </el-tree>
         </div>
         <div class="main-inner">
-            <keep-alive>
-                <router-view></router-view>
-            </keep-alive>
+            <router-view></router-view>
         </div>
     </div>
 </template>
@@ -67,6 +66,8 @@
             }
         },
         methods: {
+            nodeClickHandler() {
+            }
         },
         components: {
             FsCommentList

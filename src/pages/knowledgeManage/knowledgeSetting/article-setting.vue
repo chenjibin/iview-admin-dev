@@ -48,7 +48,11 @@
                         <div class="" style="margin-bottom: 16px;">
                             <span>文章主图</span>
                             <div class="" style="margin-top: 8px;">
-                                <Upload action="/oa/share/uploadFile">
+                                <Upload action="/oa/share/uploadFile"
+                                        :format="['jpg','jpeg','png']"
+                                        accept="image/jpeg,image/jpg,image/png"
+                                        :on-success="_imgUpSuccessHandler"
+                                        :on-remove="_imgRemoveSuccessHandler">
                                     <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
                                 </Upload>
                             </div>
@@ -56,8 +60,8 @@
                         <div class="" style="margin-bottom: 16px;">
                             <span>文章附件</span>
                             <div class="" style="margin-top: 8px;">
-                                <Upload
-                                        multiple
+                                <Upload :on-success="_fileUpSuccessHandler"
+                                        :on-remove="_fileRemoveSuccessHandler"
                                         action="/oa/share/uploadFile">
                                     <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
                                 </Upload>
@@ -188,6 +192,9 @@
                             return h('img', {
                                 attrs: {
                                     src: params.row.file_path
+                                },
+                                style: {
+                                    'maxWidth': '100%'
                                 }
                             });
                         }
@@ -228,6 +235,34 @@
             this._setTableHeight();
         },
         methods: {
+            _storeFilter(root, path, id) {
+                root.forEach((item) => {
+                    if (item.id === id) this.storePath = [...path, id];
+                    if (item.children) this._storeFilter(item.children, [...path, item.id], id);
+                });
+            },
+            _returnOrgIds(id) {
+                let depsStore = this.treeData;
+                let path = [];
+                this._storeFilter(depsStore, path, id);
+                return this.storePath;
+            },
+            _imgUpSuccessHandler(res, file, fileList) {
+                this.depSettingForm.showpic = fileList[0].response.data[0].filename;
+            },
+            _imgRemoveSuccessHandler(file, fileList) {
+                this.depSettingForm.showpic = '';
+            },
+            _fileUpSuccessHandler(res, file, fileList) {
+                this.depSettingForm.fileNames = fileList.map(item => {
+                    return item.response.data[0].filename;
+                }).join(',');
+            },
+            _fileRemoveSuccessHandler(file, fileList) {
+                this.depSettingForm.fileNames = fileList.map(item => {
+                    return item.response.data[0].filename;
+                }).join(',');
+            },
             _initSendForm() {
                 this.shareDetail = '';
                 this.depSettingForm.knowledgeId = [];
@@ -236,7 +271,18 @@
                 this.depSettingForm.fileNames = '';
             },
             _createArticle() {
-                console.log(this.shareDetail);
+                let data = {};
+                data.shareItem = this.depSettingForm.shareItem;
+                data.shareDetail = this.shareDetail;
+                data.knowledgeId = this.depSettingForm.knowledgeId.slice(-1)[0];
+                if (this.depSettingForm.showpic) data.showpic = this.depSettingForm.showpic;
+                if (this.depSettingForm.fileNames) data.fileNames = this.depSettingForm.fileNames;
+                this.$http.post('/share/addShare', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('文章创建成功!');
+                    }
+                });
+                console.log(data);
             },
             _updateArticle() {
             },
@@ -247,7 +293,16 @@
             },
             _checkArticleCommon() {
             },
-            _articleEditor() {
+            _articleEditor(data) {
+                this._initSendForm();
+                this.formType = 'update';
+                this.shareDetail = data.share_detail;
+                this.depSettingForm.knowledgeId = this._returnOrgIds(data.knowledge_id);
+                this.depSettingForm.shareItem = data.share_item;
+                this.depSettingForm.showpic = '';
+                this.depSettingForm.fileNames = '';
+                this.depSettingFlag = true;
+                console.log(data);
             },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
