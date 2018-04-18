@@ -18,12 +18,16 @@
                             <Avatar :src="item.headimagepath"  size="small"/>
                             <span style="margin-left: 2px;">{{item.insert_username}}</span>
                         </div>
-                        <div>ssssss</div>
+                        <div>{{item.menuname}}</div>
                         <div>点赞{{item.thumb_up_times}}</div>
                         <div>评论{{item.share_comment_times}}</div>
                     </div>
                     <div class="article-desc">{{item.share_detail | deleteTag}}</div>
                 </div>
+            </div>
+            <div class="no-result-block" v-if="!pageData.totalCount">
+                <img src="../../../images/fail_pic.png" />
+                <p class="info">暂无相关知识</p>
             </div>
             <Page :total="pageData.totalCount"
                   :current.sync="pageData.page"
@@ -42,6 +46,21 @@
         width: 1000px;
         margin: 0 auto;
         cursor: pointer;
+        .no-result-block {
+            margin-top: 88px;
+            padding-bottom: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            img {
+                width: 300px;
+            }
+            .info {
+                font-size: 18px;
+                font-weight: 700;
+            }
+        }
         .cate-title {
             font-size: 18px;
         }
@@ -69,10 +88,17 @@
             .right {
                 flex: 1;
                 margin-left: 18px;
+                &:hover .article-title {
+                    color: #0077e6;
+                }
+                &:hover .article-desc {
+                    color: #999;
+                }
                 .article-title {
                     padding: 8px 0;
                     font-size: 16px;
                     font-weight: 700;
+                    transition: all 0.3s ease-in;
                 }
                 .article-info {
                     display: flex;
@@ -92,6 +118,7 @@
                     margin-top: 8px;
                     height: 63px;
                     overflow: hidden;
+                    transition: all 0.3s ease-in;
                 }
             }
         }
@@ -123,6 +150,7 @@
             }
         },
         created() {
+            this.$store.commit('setToHeight', '1000px');
             let query = this.$route.query;
             this.cateName = query.cateName;
             this.getArticleList(query);

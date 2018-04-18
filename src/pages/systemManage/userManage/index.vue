@@ -1126,6 +1126,7 @@
                 });
             },
             _editorSetting(data) {
+                this._initUserInfo();
                 this.userSettingForm.states = !!data.states;
                 this.userSettingForm.account = data.username;
                 this.userSettingForm.name = data.realname;

@@ -7,7 +7,7 @@
                        placeholder="筛选文章"></Input>
             </FormItem>
             <FormItem label="是否轮播">
-                <Select v-model="filterOpt.isC.value"
+                <Select v-model="filterOpt.isShowbanner.value"
                         clearable
                         placeholder="筛选状态"
                         style="width: 100px">
@@ -16,7 +16,7 @@
                 </Select>
             </FormItem>
             <FormItem label="是否首图">
-                <Select v-model="filterOpt.isH.value"
+                <Select v-model="filterOpt.isShowpic.value"
                         clearable
                         placeholder="筛选状态"
                         style="width: 100px">
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                     </Col>
-                    <Col :span="18">
+                    <Col :span="18" style="padding-left: 80px">
                         <div class="" style="padding-left:8px;width: 698px">
                             <fs-auto-textarea v-model="depSettingForm.shareItem"></fs-auto-textarea>
                         </div>
@@ -126,12 +126,6 @@
     </Card>
 </template>
 <style lang="less">
-    .ivu-upload-list-file {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
 </style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
@@ -215,11 +209,11 @@
                         value: 1,
                         type: 'tree'
                     },
-                    isC: {
+                    isShowbanner: {
                         value: '',
                         type: 'select'
                     },
-                    isH: {
+                    isShowpic: {
                         value: '',
                         type: 'select'
                     }
@@ -241,14 +235,28 @@
                         align: 'center',
                         width: 240,
                         render: (h, params) => {
-                            return h('img', {
-                                attrs: {
-                                    src: params.row.file_path
-                                },
+                            return h('div', {
                                 style: {
-                                    'maxWidth': '100%'
+                                    'position': 'relative',
+                                    'paddingTop': '56%',
+                                    'margin': '6px 0',
+                                    'width': '100%'
                                 }
-                            });
+                            }, [
+                                h('img', {
+                                    attrs: {
+                                        src: params.row.file_path
+                                    },
+                                    style: {
+                                        'position': 'absolute',
+                                        'left': '0',
+                                        'top': '0',
+                                        'zIndex': '1',
+                                        'height': '100%',
+                                        'width': '100%'
+                                    }
+                                })
+                            ]);
                         }
                     },
                     {
@@ -334,6 +342,8 @@
                 data.shareItem = this.depSettingForm.shareItem;
                 data.shareDetail = this.shareDetail;
                 data.knowledgeId = this.depSettingForm.knowledgeId.slice(-1)[0];
+                data.isShowpic = this.depSettingForm.isHomePage;
+                data.isShowbanner = this.depSettingForm.isCarousel;
                 if (this.depSettingForm.showpic) data.showpic = this.depSettingForm.showpic;
                 if (this.depSettingForm.fileNames) data.fileNames = this.depSettingForm.fileNames;
                 this.$http.post('/share/addShare', data).then((res) => {
@@ -350,6 +360,8 @@
                 data.shareItem = this.depSettingForm.shareItem;
                 data.shareDetail = this.shareDetail;
                 data.knowledgeId = this.depSettingForm.knowledgeId.slice(-1)[0];
+                data.isShowpic = this.depSettingForm.isHomePage;
+                data.isShowbanner = this.depSettingForm.isCarousel;
                 data.showpic = this.depSettingForm.showpic;
                 data.fileNames = this.depSettingForm.fileNames;
                 this.$http.post('/share/updateShare', data).then((res) => {
@@ -374,6 +386,8 @@
                 this.shareDetail = data.share_detail;
                 this.depSettingForm.knowledgeId = this._returnOrgIds(data.knowledge_id);
                 this.depSettingForm.shareItem = data.share_item;
+                this.depSettingForm.isHomePage = data.show_pic;
+                this.depSettingForm.isCarousel = data.show_banner;
                 if (data.file_path) {
                     this.depSettingForm.showpic = data.file_path;
                     this.imgDefault = [

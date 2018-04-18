@@ -8,7 +8,7 @@
                     </div>
                     <div class="text" style="color: #666;">返回</div>
                 </div>
-                <div class="zan-btn">
+                <div class="zan-btn" :class="{'is-zan': isZan}">
                     <div class="icon-wrapper">
                         <Icon type="thumbsup"></Icon>
                     </div>
@@ -16,6 +16,11 @@
                 </div>
             </div>
             <h2 class="title">{{articleTitle}}</h2>
+            <div class="article-info">
+                <Avatar :src="articleHeadpic" />
+                <span style="margin-left: 4px;">{{articleAuthor}}</span>
+            </div>
+            <p class="zan-info">{{thumbUpTimes}}人赞了该文章</p>
             <div class="main-content" v-html="html"></div>
             <div class="comment-block">
                 <div class="top">
@@ -108,11 +113,23 @@
                     }
                 }
             }
+            .article-info {
+                display: flex;
+                align-items: center;
+                font-size: 16px;
+                font-weight: 700;
+            }
+            .zan-info {
+                font-size: 14px;
+                margin-top: 8px;
+                padding-left: 6px;
+            }
             .title {
-                margin-bottom: 20px;
+                margin-bottom: 16px;
                 font-size: 24px;
             }
             .main-content {
+                margin-top: 32px;
                 font-size: 16px;
                 p {
                     margin: 10px 0;
@@ -147,26 +164,32 @@
         data () {
             return {
                 articleTitle: '',
+                articleAuthor: '',
+                articleHeadpic: '',
                 thumbUpTimes: 0,
                 editorContent: '',
                 editorMeun: [
                     'emoticon'
                 ],
                 defaultText: '写下你的评论...',
-                html: ''
+                html: '',
+                isZan: false
             };
         },
-        activated() {
+        created() {
             let data = {};
             data.shareId = this.$route.params.id;
             this.$http.get('/share/getShareDetail', {params: data}).then((res) => {
                 if (res.success) {
                     this.articleTitle = res.data.share_item;
+                    this.articleAuthor = res.data.insert_username;
+                    this.articleHeadpic = res.data.headimagepath;
                     this.html = res.data.share_detail;
                     this.thumbUpTimes = res.data.thumb_up_times;
                 }
             });
             this.getCommentList();
+            this.$store.commit('setToHeight', '880px');
         },
         methods: {
             replyHandler() {

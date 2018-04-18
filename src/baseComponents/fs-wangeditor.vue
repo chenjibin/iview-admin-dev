@@ -24,6 +24,7 @@
         .editor {
             .fs-wangeditor-toolbar {
                 padding: 0;
+                width: 698px;
                 border-top: 1px solid #ddd;
                 border-bottom: 1px solid #ddd;
             }

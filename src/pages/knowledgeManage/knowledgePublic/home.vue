@@ -3,7 +3,7 @@
         <Row :gutter="10">
             <Col :span="12" style="margin-bottom: 8px">
                 <Card :padding="0">
-                    <Carousel v-model="value1" trigger="hover">
+                    <Carousel v-model="value1" trigger="hover" autoplay :autoplay-speed="3000">
                         <CarouselItem v-for="item, index in mainBannerData" :key="'banner-' + index">
                             <div class="demo-carousel" @click.stop="toDetailPage(item.id)">
                                 <img :src="item.file_path" />
@@ -19,7 +19,7 @@
                     <div class="article-important-block">
                         <div class="top">
                             <h2>{{item.name}}</h2>
-                            <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+                            <Button type="text" @click="checkMore(item)">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
                         </div>
                         <div class="content-list-wrapper">
                             <Row :gutter="16">
@@ -124,6 +124,11 @@
             this._getShowPicData();
         },
         methods: {
+            checkMore(data) {
+                this.$store.commit('setCateId', data.khmId);
+                this.$store.commit('setCateName', data.name);
+                this.$store.commit('toListPage', this);
+            },
             toDetailPage(id) {
                 let params = {};
                 params.name = 'articleDetail';

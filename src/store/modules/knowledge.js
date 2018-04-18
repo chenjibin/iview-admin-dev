@@ -9,7 +9,8 @@ const knowledge = {
         treeData: [],
         keyword: '',
         cateId: '',
-        cateName: ''
+        cateName: '',
+        topHeight: '1200px'
     },
     mutations: {
         getTreeData(state) {
@@ -27,6 +28,9 @@ const knowledge = {
         },
         setCateName(state, cateName) {
             state.cateName = cateName;
+        },
+        setToHeight(state, height) {
+            state.topHeight = height;
         },
         toListPage(state, vm) {
             let params = {};

@@ -14,9 +14,9 @@
             </el-tree>
         </div>
         <div class="main-inner">
-            <keep-alive>
+            <transition name="route-fade" mode="out-in">
                 <router-view></router-view>
-            </keep-alive>
+            </transition>
         </div>
     </div>
 </template>
