@@ -130,7 +130,7 @@
         },
         computed: {
             isManger() {
-                return this.$store.state.user.userInfo.ismanger || 3;
+                return this.$store.state.user.userInfo.ismanger;
             },
             returnNeedPadding() {
                 return this.premissionMenu.length ? this.shrink ? '60px' : '200px' : '0';
