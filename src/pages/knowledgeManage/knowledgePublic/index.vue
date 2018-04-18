@@ -14,7 +14,9 @@
             </el-tree>
         </div>
         <div class="main-inner">
-            <router-view></router-view>
+            <keep-alive>
+                <router-view></router-view>
+            </keep-alive>
         </div>
     </div>
 </template>
@@ -63,10 +65,9 @@
         },
         methods: {
             nodeClickHandler(data) {
-                let params = {};
-                params.name = 'articleList';
-                params.query = {cateId: data.id, cateName: data.name};
-                this.$router.push(params);
+                this.$store.commit('setCateId', data.id);
+                this.$store.commit('setCateName', data.name);
+                this.$store.commit('toListPage', this);
             }
         },
         components: {

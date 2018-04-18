@@ -1,7 +1,7 @@
 <template>
     <div class="article-list">
         <Card>
-            <h2 class="cate-title">商品知识</h2>
+            <h2 class="cate-title">{{cateName}}</h2>
             <div class="list-item-block" @click.stop="toArticlePage">
                 <div class="left">
                     <div class="fs-auto-img">
@@ -24,182 +24,13 @@
                     </div>
                 </div>
             </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
-            <div class="list-item-block">
-                <div class="left">
-                    <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
-                    <div class="article-info">
-                        <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
-                        </div>
-                        <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
-                    </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
-                </div>
-            </div>
+            <Page :total="pageData.totalCount"
+                  :current.sync="pageData.page"
+                  :page-size="pageData.pageSize"
+                  @on-change="getCommentList"
+                  show-total
+                  v-if="pageData.totalCount > 20"
+                  style="margin-top: 16px;"></Page>
         </Card>
     </div>
 </template>
@@ -265,16 +96,18 @@
     }
 </style>
 <script>
+    import pageMixin from '@/mixins/pageMixin';
     export default {
         name: 'articleList',
+        mixins: [pageMixin],
         data () {
-            return {};
+            return {
+                cateName: ''
+            };
         },
         activated() {
             let query = this.$route.query;
-            if (query.hasOwnProperty('cateId')) {
-            } else if (query.hasOwnProperty('keyword')) {
-            }
+            this.getArticleList(query);
         },
         methods: {
             toArticlePage() {
@@ -282,6 +115,12 @@
                 params.name = 'articleDetail';
                 params.params = { id: 3 };
                 this.$router.push(params);
+            },
+            getArticleList(query) {
+                let params = {};
+                params.shareItem = query.keyword;
+                params.knowledgeId = query.cateId;
+                this.getList('/share/getShareList', params);
             }
         },
         components: {}

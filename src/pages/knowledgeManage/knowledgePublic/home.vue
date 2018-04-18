@@ -38,7 +38,7 @@
                         </div>
                         <div class="content-list-wrapper">
                             <Row :gutter="16">
-                                <Col :span="12" v-for="article, aindex in item.share">
+                                <Col :span="12" v-for="article, aindex in item.share" :key="'article-' + aindex">
                                     <a href="javascript:void(0)"
                                        class="item"
                                        @click.stop="toDetailPage(article.shareId)"
