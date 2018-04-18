@@ -6,7 +6,10 @@ import axios from 'axios';
 
 const knowledge = {
     state: {
-        treeData: []
+        treeData: [],
+        keyword: '',
+        cateId: '',
+        cateName: ''
     },
     mutations: {
         getTreeData(state) {
@@ -15,6 +18,21 @@ const knowledge = {
                     state.treeData = [res.data];
                 }
             });
+        },
+        setKeyWord(state, keyword) {
+            state.keyword = keyword;
+        },
+        setCateId(state, cateId) {
+            state.cateId = cateId;
+        },
+        setCateName(state, cateName) {
+            state.cateName = cateName;
+        },
+        toListPage(state, vm) {
+            let params = {};
+            params.name = 'articleList';
+            params.query = {cateId: state.cateId, cateName: state.cateName, keyword: state.keyword};
+            vm.$router.push(params);
         }
     }
 };

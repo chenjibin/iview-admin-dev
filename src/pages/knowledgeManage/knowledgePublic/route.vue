@@ -135,25 +135,17 @@
         data () {
             return {
                 isFocus: false,
-                canSearch: false,
+                canSearch: true,
                 searchValue: ''
             };
-        },
-        watch: {
-            searchValue(val) {
-                this.canSearch = !!val;
-            }
         },
         methods: {
             clickoutsideHandler() {
                 this.isFocus = false;
             },
             _searchKnowledge() {
-                if (!this.canSearch) return;
-                let routeParams = {};
-                routeParams.name = 'articleList';
-                routeParams.query = {keyword: this.searchValue};
-                this.$router.push(routeParams);
+                this.$store.commit('setKeyWord', this.searchValue);
+                this.$store.commit('toListPage', this);
             }
         },
         components: {}

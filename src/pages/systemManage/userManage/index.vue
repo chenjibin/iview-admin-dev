@@ -985,6 +985,7 @@
                         this.$http.post('/user/coinOpt', data).then((res) => {
                             if (res.success) {
                                 this.$Message.success('金币操作成功!');
+                                this._getUserData();
                                 this.coinSettingFlag = false;
                             }
                         });
@@ -1113,7 +1114,6 @@
                         data.level = this.userSettingForm.level;
                         data.postId = this.userSettingForm.post;
                         data.isManger = this.userSettingForm.isManger;
-                        // data.leaderName = this.userSettingForm.vUp;
                         data.roleId = this.userSettingForm.role;
                         this.$http.post('/user/setUserInfo ', data).then((res) => {
                             if (res.success) {
@@ -1126,7 +1126,6 @@
                 });
             },
             _editorSetting(data) {
-                console.log(data);
                 this.userSettingForm.states = !!data.states;
                 this.userSettingForm.account = data.username;
                 this.userSettingForm.name = data.realname;
