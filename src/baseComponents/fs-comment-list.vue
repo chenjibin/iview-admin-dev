@@ -4,6 +4,7 @@
             <div>
                 <Avatar :src="commentData.headimagepath" icon="person" size="large" />
                 <span class="name">{{commentData.username || '...'}}</span>
+                <span v-if="commentData.to_username"> 回复 {{commentData.to_username}}</span>
             </div>
             <div>{{commentData.insert_time || '...'}}</div>
         </div>
@@ -24,6 +25,7 @@
                         :menus="editorMeun"
                         :min-height="64"
                         :defaul-text="defaultText"
+                        ref="wangEditor"
                         :editorcontent.sync="editorContent"></wang-editor>
 
             </div>
@@ -104,7 +106,19 @@
                 this.isInComment = true;
             },
             replyHandler() {
-                console.log(this.editorContent);
+                let data = {};
+                data.shareId = this.commentData.share_id;
+                data.content = this.editorContent;
+                data.toUserId = this.commentData.userid;
+                data.toUserName = this.commentData.username;
+                this.$http.post('/share/addShareComment', data).then((res) => {
+                    if (res.success) {
+                        this.$Message.success('评论成功 ！');
+                        this.$refs.wangEditor.clearContent();
+                        this.$emit('comment-success');
+                        this.isInComment = false;
+                    }
+                });
             }
         },
         components: {

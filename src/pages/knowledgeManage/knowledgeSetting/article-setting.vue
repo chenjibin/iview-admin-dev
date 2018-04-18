@@ -6,6 +6,24 @@
                        v-model="filterOpt.shareItem.value"
                        placeholder="筛选文章"></Input>
             </FormItem>
+            <FormItem label="是否轮播">
+                <Select v-model="filterOpt.isC.value"
+                        clearable
+                        placeholder="筛选状态"
+                        style="width: 100px">
+                    <Option :value="0">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="是否首图">
+                <Select v-model="filterOpt.isH.value"
+                        clearable
+                        placeholder="筛选状态"
+                        style="width: 100px">
+                    <Option :value="0">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
             <FormItem :label-width="0.1">
                 <ButtonGroup>
                     <Button type="ghost" @click="_addArticleOpen">
@@ -44,6 +62,18 @@
                                     size="small"
                                     style="width: 100%"
                             ></el-cascader>
+                        </FormItem>
+                        <FormItem prop="isCarousel" label="是否轮播展示">
+                            <i-switch v-model="depSettingForm.isCarousel" size="large" :true-value="1" :false-value="0">
+                                <span slot="open">是</span>
+                                <span slot="close">否</span>
+                            </i-switch>
+                        </FormItem>
+                        <FormItem prop="isHomePage" label="是否首图展示">
+                            <i-switch v-model="depSettingForm.isHomePage" size="large" :true-value="1" :false-value="0">
+                                <span slot="open">是</span>
+                                <span slot="close">否</span>
+                            </i-switch>
                         </FormItem>
                         <div class="" style="margin-bottom: 16px;">
                             <span>文章主图</span>
@@ -170,7 +200,9 @@
                     knowledgeId: [],
                     shareItem: '',
                     showpic: '',
-                    fileNames: ''
+                    fileNames: '',
+                    isCarousel: 0,
+                    isHomePage: 0
                 },
                 articleRules: {
                 },
@@ -182,6 +214,14 @@
                     knowledgeId: {
                         value: 1,
                         type: 'tree'
+                    },
+                    isC: {
+                        value: '',
+                        type: 'select'
+                    },
+                    isH: {
+                        value: '',
+                        type: 'select'
                     }
                 },
                 postColumns: [
@@ -268,7 +308,6 @@
                 this.depSettingForm.showpic = '';
             },
             _fileUpSuccessHandler(res, file, fileList) {
-                console.log(fileList)
                 this.depSettingForm.fileNames = fileList.map(item => {
                     return item.url;
                 }).join(',');
@@ -287,6 +326,8 @@
                 this.depSettingForm.shareItem = '';
                 this.depSettingForm.showpic = '';
                 this.depSettingForm.fileNames = '';
+                this.depSettingForm.isCarousel = 0;
+                this.depSettingForm.isHomePage = 0;
             },
             _createArticle() {
                 let data = {};

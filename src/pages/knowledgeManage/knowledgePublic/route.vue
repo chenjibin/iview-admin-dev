@@ -29,7 +29,7 @@
                 </div>
             </div>
         </div>
-        <div class="main">
+        <div class="fs-article-main">
             <keep-alive>
                 <router-view></router-view>
             </keep-alive>
@@ -116,7 +116,7 @@
                 }
             }
         }
-        .main {
+        .fs-article-main {
             position: absolute;
             z-index: 1;
             left: 0;
@@ -138,6 +138,11 @@
                 canSearch: true,
                 searchValue: ''
             };
+        },
+        watch: {
+            searchValue(val) {
+                this.$store.commit('setKeyWord', val);
+            }
         },
         methods: {
             clickoutsideHandler() {

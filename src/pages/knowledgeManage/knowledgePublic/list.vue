@@ -1,33 +1,34 @@
 <template>
     <div class="article-list">
         <Card>
-            <h2 class="cate-title">{{cateName}}</h2>
-            <div class="list-item-block" @click.stop="toArticlePage">
+            <h2 class="cate-title">{{cateName}}<span v-if="pageData.totalCount">(共{{pageData.totalCount}}篇)</span></h2>
+            <div class="list-item-block"
+                 @click.stop="toArticlePage(item.id)"
+                 v-for="item,index in pageData.list"
+                 :key="'list-' + index">
                 <div class="left">
                     <div class="fs-auto-img">
-                        <img src="http://img2.xyyzi.com/Upload/images/20180320/5ab066516d795.jpg" />
+                        <img :src="item.file_path" />
                     </div>
                 </div>
                 <div class="right">
-                    <div class="article-title">硬件知识树 ！从0开始组装一台自己电脑</div>
+                    <div class="article-title">{{item.share_item}}</div>
                     <div class="article-info">
                         <div class="author">
-                            <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg"  size="small"/>
-                            <span style="margin-left: 2px;">大田集</span>
+                            <Avatar :src="item.headimagepath"  size="small"/>
+                            <span style="margin-left: 2px;">{{item.insert_username}}</span>
                         </div>
                         <div>ssssss</div>
-                        <div>点赞12</div>
-                        <div>评论21</div>
+                        <div>点赞{{item.thumb_up_times}}</div>
+                        <div>评论{{item.share_comment_times}}</div>
                     </div>
-                    <div class="article-desc">
-                        缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过缝问过问过问过问过问过额外给额外给额外给额外给问过
-                    </div>
+                    <div class="article-desc">{{item.share_detail | deleteTag}}</div>
                 </div>
             </div>
             <Page :total="pageData.totalCount"
                   :current.sync="pageData.page"
                   :page-size="pageData.pageSize"
-                  @on-change="getCommentList"
+                  @on-change="getArticleList"
                   show-total
                   v-if="pageData.totalCount > 20"
                   style="margin-top: 16px;"></Page>
@@ -37,6 +38,7 @@
 <style lang="less">
     .article-list {
         padding-top: 8px;
+        padding-bottom: 16px;
         width: 1000px;
         margin: 0 auto;
         cursor: pointer;
@@ -97,6 +99,7 @@
 </style>
 <script>
     import pageMixin from '@/mixins/pageMixin';
+    import utils from '@/libs/util';
     export default {
         name: 'articleList',
         mixins: [pageMixin],
@@ -105,15 +108,30 @@
                 cateName: ''
             };
         },
-        activated() {
+        filters: {
+            deleteTag(val) {
+                return utils.delHtmlTag(val);
+            }
+        },
+        watch: {
+            '$route'(to) {
+                if (to.name === 'articleList') {
+                    let query = this.$route.query;
+                    this.cateName = query.cateName;
+                    this.getArticleList(query);
+                }
+            }
+        },
+        created() {
             let query = this.$route.query;
+            this.cateName = query.cateName;
             this.getArticleList(query);
         },
         methods: {
-            toArticlePage() {
+            toArticlePage(id) {
                 let params = {};
                 params.name = 'articleDetail';
-                params.params = { id: 3 };
+                params.params = { id: id };
                 this.$router.push(params);
             },
             getArticleList(query) {
