@@ -172,7 +172,7 @@
         },
         methods: {
             nodeClickHandler(data) {
-                this.$emit('node-click', data.id)
+                this.$emit('node-click', data.id);
             },
             _initFormData() {
                 this.chooseCateId = 0;

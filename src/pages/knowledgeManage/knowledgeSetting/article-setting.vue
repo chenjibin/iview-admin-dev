@@ -6,6 +6,24 @@
                        v-model="filterOpt.shareItem.value"
                        placeholder="筛选文章"></Input>
             </FormItem>
+            <FormItem label="是否轮播">
+                <Select v-model="filterOpt.isShowbanner.value"
+                        clearable
+                        placeholder="筛选状态"
+                        style="width: 100px">
+                    <Option :value="0">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="是否首图">
+                <Select v-model="filterOpt.isShowpic.value"
+                        clearable
+                        placeholder="筛选状态"
+                        style="width: 100px">
+                    <Option :value="0">否</Option>
+                    <Option :value="1">是</Option>
+                </Select>
+            </FormItem>
             <FormItem :label-width="0.1">
                 <ButtonGroup>
                     <Button type="ghost" @click="_addArticleOpen">
@@ -45,6 +63,18 @@
                                     style="width: 100%"
                             ></el-cascader>
                         </FormItem>
+                        <FormItem prop="isCarousel" label="是否轮播展示">
+                            <i-switch v-model="depSettingForm.isCarousel" size="large" :true-value="1" :false-value="0">
+                                <span slot="open">是</span>
+                                <span slot="close">否</span>
+                            </i-switch>
+                        </FormItem>
+                        <FormItem prop="isHomePage" label="是否首图展示">
+                            <i-switch v-model="depSettingForm.isHomePage" size="large" :true-value="1" :false-value="0">
+                                <span slot="open">是</span>
+                                <span slot="close">否</span>
+                            </i-switch>
+                        </FormItem>
                         <div class="" style="margin-bottom: 16px;">
                             <span>文章主图</span>
                             <div class="" style="margin-top: 8px;">
@@ -70,7 +100,7 @@
                             </div>
                         </div>
                     </Col>
-                    <Col :span="18">
+                    <Col :span="18" style="padding-left: 80px">
                         <div class="" style="padding-left:8px;width: 698px">
                             <fs-auto-textarea v-model="depSettingForm.shareItem"></fs-auto-textarea>
                         </div>
@@ -96,12 +126,6 @@
     </Card>
 </template>
 <style lang="less">
-    .ivu-upload-list-file {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
 </style>
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
@@ -170,7 +194,9 @@
                     knowledgeId: [],
                     shareItem: '',
                     showpic: '',
-                    fileNames: ''
+                    fileNames: '',
+                    isCarousel: 0,
+                    isHomePage: 0
                 },
                 articleRules: {
                 },
@@ -182,6 +208,14 @@
                     knowledgeId: {
                         value: 1,
                         type: 'tree'
+                    },
+                    isShowbanner: {
+                        value: '',
+                        type: 'select'
+                    },
+                    isShowpic: {
+                        value: '',
+                        type: 'select'
                     }
                 },
                 postColumns: [
@@ -201,14 +235,28 @@
                         align: 'center',
                         width: 240,
                         render: (h, params) => {
-                            return h('img', {
-                                attrs: {
-                                    src: params.row.file_path
-                                },
+                            return h('div', {
                                 style: {
-                                    'maxWidth': '100%'
+                                    'position': 'relative',
+                                    'paddingTop': '56%',
+                                    'margin': '6px 0',
+                                    'width': '100%'
                                 }
-                            });
+                            }, [
+                                h('img', {
+                                    attrs: {
+                                        src: params.row.file_path
+                                    },
+                                    style: {
+                                        'position': 'absolute',
+                                        'left': '0',
+                                        'top': '0',
+                                        'zIndex': '1',
+                                        'height': '100%',
+                                        'width': '100%'
+                                    }
+                                })
+                            ]);
                         }
                     },
                     {
@@ -268,7 +316,6 @@
                 this.depSettingForm.showpic = '';
             },
             _fileUpSuccessHandler(res, file, fileList) {
-                console.log(fileList)
                 this.depSettingForm.fileNames = fileList.map(item => {
                     return item.url;
                 }).join(',');
@@ -287,12 +334,16 @@
                 this.depSettingForm.shareItem = '';
                 this.depSettingForm.showpic = '';
                 this.depSettingForm.fileNames = '';
+                this.depSettingForm.isCarousel = 0;
+                this.depSettingForm.isHomePage = 0;
             },
             _createArticle() {
                 let data = {};
                 data.shareItem = this.depSettingForm.shareItem;
                 data.shareDetail = this.shareDetail;
                 data.knowledgeId = this.depSettingForm.knowledgeId.slice(-1)[0];
+                data.isShowpic = this.depSettingForm.isHomePage;
+                data.isShowbanner = this.depSettingForm.isCarousel;
                 if (this.depSettingForm.showpic) data.showpic = this.depSettingForm.showpic;
                 if (this.depSettingForm.fileNames) data.fileNames = this.depSettingForm.fileNames;
                 this.$http.post('/share/addShare', data).then((res) => {
@@ -309,6 +360,8 @@
                 data.shareItem = this.depSettingForm.shareItem;
                 data.shareDetail = this.shareDetail;
                 data.knowledgeId = this.depSettingForm.knowledgeId.slice(-1)[0];
+                data.isShowpic = this.depSettingForm.isHomePage;
+                data.isShowbanner = this.depSettingForm.isCarousel;
                 data.showpic = this.depSettingForm.showpic;
                 data.fileNames = this.depSettingForm.fileNames;
                 this.$http.post('/share/updateShare', data).then((res) => {
@@ -333,6 +386,8 @@
                 this.shareDetail = data.share_detail;
                 this.depSettingForm.knowledgeId = this._returnOrgIds(data.knowledge_id);
                 this.depSettingForm.shareItem = data.share_item;
+                this.depSettingForm.isHomePage = data.show_pic;
+                this.depSettingForm.isCarousel = data.show_banner;
                 if (data.file_path) {
                     this.depSettingForm.showpic = data.file_path;
                     this.imgDefault = [

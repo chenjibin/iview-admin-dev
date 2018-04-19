@@ -201,7 +201,7 @@
             return {
                 loadingBtn: false,
                 uploadList: [],
-                needPic: ['2', '3', '4', '7', '8', '10'],
+                needPic: ['2', '3', '4', '8', '10'],
                 odTypeOpt: [
                     {
                         value: '1',

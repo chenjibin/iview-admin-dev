@@ -24,6 +24,7 @@
         .editor {
             .fs-wangeditor-toolbar {
                 padding: 0;
+                width: 698px;
                 border-top: 1px solid #ddd;
                 border-bottom: 1px solid #ddd;
             }
@@ -42,6 +43,13 @@
 <script>
     import E from 'wangeditor';
     import utils from '@/libs/util';
+    import biaoqing from './biaoqing';
+    const biaoqingcontent = biaoqing.map(x => {
+        let obj = {};
+        obj.alt = x.phrase;
+        obj.src = x.url;
+        return obj;
+    });
     export default {
         name: 'FsWangeditor',
         props: {
@@ -90,9 +98,33 @@
             };
         },
         mounted() {
+            let vm = this;
             this.editor = new E(this.$refs.tool, this.$refs.content);
-            this.editor.customConfig.uploadImgServer = this.imgUrl;
+            this.editor.customConfig.customUploadImg = function (files, insert) {
+                console.log(files);
+                const xhr = new XMLHttpRequest();
+                const formData = new FormData();
+                formData.append(files[0].name, files[0]);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        let respondData = JSON.parse(xhr.responseText);
+                        console.log(respondData);
+                        if (respondData.success) {
+                            insert(respondData.data[0].filename);
+                        }
+                    }
+                };
+                xhr.open('post', vm.imgUrl, true);
+                xhr.send(formData);
+            };
             this.editor.customConfig.menus = this.menus;
+            this.editor.customConfig.emotions = [
+                {
+                    title: '默认',
+                    type: 'image',
+                    content: biaoqingcontent
+                }
+            ];
             this.editor.customConfig.onchange = (html) => {
                 let realContent = utils.delHtmlTag(html);
                 this.holderShow = !realContent;

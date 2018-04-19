@@ -1,7 +1,7 @@
 <template>
     <div class="knowledge-page">
         <div class="tooltop">
-            <div class="tooltop-main">
+            <div class="tooltop-main" :style="{width: topHeight}">
                 <div class="left">
                     <h1>天马知识库</h1>
                     <Button type="text"
@@ -29,14 +29,20 @@
                 </div>
             </div>
         </div>
-        <div class="main">
-            <keep-alive>
+        <div class="fs-article-main">
+            <transition name="route-fade" mode="out-in">
                 <router-view></router-view>
-            </keep-alive>
+            </transition>
         </div>
     </div>
 </template>
 <style lang="less">
+    .route-fade-enter-active, .route-fade-leave-active {
+        transition: opacity .3s;
+    }
+    .route-fade-enter, .route-fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0;
+    }
     .knowledge-page {
         position: relative;
         width: 100%;
@@ -59,6 +65,7 @@
                 width: 1200px;
                 height: 100%;
                 margin: 0 auto;
+                transition: width 0.3s ease-in;
                 .left {
                     display: flex;
                     .search-wrapper {
@@ -116,7 +123,7 @@
                 }
             }
         }
-        .main {
+        .fs-article-main {
             position: absolute;
             z-index: 1;
             left: 0;
@@ -138,6 +145,30 @@
                 canSearch: true,
                 searchValue: ''
             };
+        },
+        computed: {
+            topHeight() {
+                return this.$store.state.knowledge.topHeight;
+            }
+        },
+        created() {
+            this.$store.commit('setToHeight', '1200px');
+        },
+        watch: {
+            '$route'(to) {
+                let topHeight = '';
+                if (to.name === 'articleDetail') {
+                    topHeight = '880px';
+                } else if (to.name === 'articleList') {
+                    topHeight = '1000px';
+                } else if (to.name === 'articleHome') {
+                    topHeight = '1200px';
+                }
+                this.$store.commit('setToHeight', topHeight);
+            },
+            searchValue(val) {
+                this.$store.commit('setKeyWord', val);
+            }
         },
         methods: {
             clickoutsideHandler() {

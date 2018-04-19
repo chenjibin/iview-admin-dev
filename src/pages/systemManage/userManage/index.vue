@@ -31,7 +31,7 @@
                         <Select v-model="searchData.roleId.value"
                                 clearable
                                 :transfer="true"
-                                placeholder="筛选角色" style="width: 120px">
+                                placeholder="筛选角色" style="width: 180px">
                             <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
                         </Select>
                     </FormItem>
@@ -1126,6 +1126,7 @@
                 });
             },
             _editorSetting(data) {
+                this._initUserInfo();
                 this.userSettingForm.states = !!data.states;
                 this.userSettingForm.account = data.username;
                 this.userSettingForm.name = data.realname;
