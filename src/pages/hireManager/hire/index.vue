@@ -359,7 +359,7 @@
                                 <Input type="text" name="name" v-model="item.witness" ></Input>
                             </FormItem>
                             <FormItem label="年龄" style="width:13%">
-                                <InputNumber :min="14" :max="99" type="text" v-model="item.age" ></InputNumber>
+                                <InputNumber style="width: 100%" :min="14" :max="99" type="text" v-model="item.age" ></InputNumber>
                             </FormItem>
                             <FormItem label="工作单位	" style="width:13%">
                                 <Input type="text" v-model="item.companyname" ></Input>
@@ -1066,12 +1066,12 @@
                         var d = {};
                         d.bean = JSON.stringify(vm.talentBean);
                         let workingForm = vm.workingForm.filter(function(item) {
-                            return (item.companyname || item.post);
+                            return (item.companyname || item.post || item.monthlysalary || item.starttime || item.endtime);
                         });
                         d.workingForm = JSON.stringify(workingForm);
                         let educationForm = vm.educationForm.filter(function(item) {
-                            return (item.education || item.graduatedschool || item.profession);
-                        })
+                            return (item.education || item.graduatedschool || item.profession || item.starttime || item.endtime);
+                        });
                         d.educationForm = JSON.stringify(educationForm);
                         d.socailShipForm = JSON.stringify(vm.socailShipForm);
                         vm.$http.post('/talentLibrary/save', d).then((res) => {

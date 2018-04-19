@@ -45,16 +45,16 @@
                     </div>
                 </div>
                 <div class="header-avator-con">
-                    <Dropdown v-if="isManger === 0 || isManger === 1" transfer @on-click="changeCompany" style="margin-right: 10px">
-                        <a href="javascript:void(0)" style="font-size: 14px;color: #333;">
-                            {{currentCompanyName}}<Icon type="arrow-down-b" style="margin-left: 5px"></Icon>
-                        </a>
-                        <DropdownMenu slot="list">
-                            <DropdownItem :name="item.name"
-                                          v-for="item,index in companyList"
-                                          :key="'company' + index">{{item.name}}</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
+                    <!--<Dropdown v-if="isManger === 0 || isManger === 1" transfer @on-click="changeCompany" style="margin-right: 10px">-->
+                        <!--<a href="javascript:void(0)" style="font-size: 14px;color: #333;">-->
+                            <!--{{currentCompanyName}}<Icon type="arrow-down-b" style="margin-left: 5px"></Icon>-->
+                        <!--</a>-->
+                        <!--<DropdownMenu slot="list">-->
+                            <!--<DropdownItem :name="item.name"-->
+                                          <!--v-for="item,index in companyList"-->
+                                          <!--:key="'company' + index">{{item.name}}</DropdownItem>-->
+                        <!--</DropdownMenu>-->
+                    <!--</Dropdown>-->
 
                     <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     <lock-screen></lock-screen>

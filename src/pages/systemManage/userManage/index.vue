@@ -17,6 +17,11 @@
             <Col :span="20">
             <Card>
                 <Form ref="searchData" :model="searchData" inline :label-width="40">
+                    <FormItem label="公司" v-if="isManger == 0 || isManger == 1">
+                        <Select v-model="searchData.companyId.value" clearable placeholder="筛选公司" style="width: 180px">
+                            <Option v-for="(item, index) in companyList" :value="item.id" :name="item.name" :key="'c' + index">{{item.name}}</Option>
+                        </Select>
+                    </FormItem>
                     <FormItem prop="realName" label="姓名">
                         <Input type="text"
                                v-model="searchData.realName.value"
@@ -159,7 +164,7 @@
                     <Col :span="16">
                     <FormItem label="部门" prop="dep">
                         <el-cascader
-                                :options="orgTreeData"
+                                :options="orgComboList"
                                 :props="depProps"
                                 v-model="userSettingForm.dep"
                                 change-on-select
@@ -605,6 +610,12 @@
                     account: [
                         { required: true, message: '账号不能为空', trigger: 'blur' }
                     ],
+                    role: [
+                        { required: true, message: '角色不能为空', trigger: 'blur' }
+                    ],
+                    dep: [
+                        { type: 'array', required: true, message: '部门不能为空', trigger: 'blur' }
+                    ],
                     name: [
                         { required: true, message: '姓名不能为空', trigger: 'blur' }
                     ],
@@ -628,6 +639,10 @@
                         type: 'select'
                     },
                     roleId: {
+                        value: '',
+                        type: 'select'
+                    },
+                    companyId: {
                         value: '',
                         type: 'select'
                     },
@@ -809,6 +824,8 @@
                 roleData: [],
                 levelData: [],
                 orgTreeData: [],
+                orgComboList: [],
+                companyList: [],
                 levelCodeOpt: {
                     code: ''
                 },
@@ -878,6 +895,8 @@
             this._getRoleData();
             this._getAccessMenu();
             this._getOrgTree();
+            this._getOrgComboList();
+            this._getCompanyList();
         },
         methods: {
             filterNode(value, data) {
@@ -942,6 +961,14 @@
                 let obj = {};
                 obj.dep = [];
                 this.specAccessData.deps.push(obj);
+            },
+            _getCompanyList() {
+                if (this.ismanger === 3 || this.isManger === 2) {
+                    return false;
+                }
+                this.$http.post('/company/lists').then((res) => {
+                    this.companyList = res.data;
+                });
             },
             _addNewArrangeDep() {
                 let obj = {};
@@ -1207,14 +1234,23 @@
                 });
             },
             _getOrgTree() {
+                // 同一个接口调用两次是因为左侧的树和下拉输入框是同一个接口，存在不合理的地方
+                // 为未来分割独立保留一个方法
                 return new Promise((resolve) => {
-                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
+                    this.$http.get('/organize/userOrganizeTree?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.orgTreeData = res.data;
                             this.searchData.nodeId.value = res.data[0].id;
                             resolve(res.data[0].id);
                         }
                     });
+                });
+            },
+            _getOrgComboList() {
+                this.$http.get('/organize/organizeTreeCertainVmC?fatherId=-1').then((res) => {
+                    if (res.success) {
+                        this.orgComboList = res.data;
+                    }
                 });
             },
             _getBanCiData() {
