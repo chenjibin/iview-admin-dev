@@ -53,63 +53,51 @@
                   :rules="articleRules">
                 <Row :gutter="16">
                     <Col :span="6">
-                        <FormItem label="所属菜单" prop="fatherId">
-                            <el-cascader
-                                    :options="treeData"
-                                    :props="depProps"
-                                    v-model="depSettingForm.knowledgeId"
-                                    change-on-select
-                                    size="small"
-                                    style="width: 100%"
-                            ></el-cascader>
-                        </FormItem>
-                        <FormItem prop="isCarousel" label="是否轮播展示">
-                            <i-switch v-model="depSettingForm.isCarousel" size="large" :true-value="1" :false-value="0">
-                                <span slot="open">是</span>
-                                <span slot="close">否</span>
-                            </i-switch>
-                        </FormItem>
-                        <FormItem prop="isHomePage" label="是否首图展示">
-                            <i-switch v-model="depSettingForm.isHomePage" size="large" :true-value="1" :false-value="0">
-                                <span slot="open">是</span>
-                                <span slot="close">否</span>
-                            </i-switch>
-                        </FormItem>
-                        <div class="" style="margin-bottom: 16px;">
-                            <span>文章主图</span>
-                            <div class="" style="margin-top: 8px;">
-                                <Upload action="/oa/share/uploadFile"
-                                        :format="['jpg','jpeg','png']"
-                                        accept="image/jpeg,image/jpg,image/png"
-                                        :default-file-list="imgDefault"
-                                        :on-success="_imgUpSuccessHandler"
-                                        :on-remove="_imgRemoveSuccessHandler">
-                                    <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
-                                </Upload>
-                            </div>
+                    <FormItem label="所属菜单" prop="fatherId">
+                        <el-cascader
+                                :options="treeData"
+                                :props="depProps"
+                                v-model="depSettingForm.knowledgeId"
+                                change-on-select
+                                size="small"
+                                style="width: 100%"
+                        ></el-cascader>
+                    </FormItem>
+                    <div class="" style="margin-bottom: 16px;">
+                        <span>文章主图</span>
+                        <div class="" style="margin-top: 8px;">
+                            <Upload action="/oa/share/uploadFile"
+                                    :format="['jpg','jpeg','png']"
+                                    accept="image/jpeg,image/jpg,image/png"
+                                    :default-file-list="imgDefault"
+                                    :on-success="_imgUpSuccessHandler"
+                                    :on-remove="_imgRemoveSuccessHandler">
+                                <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
+                            </Upload>
                         </div>
-                        <div class="" style="margin-bottom: 16px;">
-                            <span>文章附件</span>
-                            <div class="" style="margin-top: 8px;">
-                                <Upload :on-success="_fileUpSuccessHandler"
-                                        :default-file-list="fileDefault"
-                                        :on-remove="_fileRemoveSuccessHandler"
-                                        action="/oa/share/uploadFile">
-                                    <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
-                                </Upload>
-                            </div>
+                    </div>
+                    <div class="" style="margin-bottom: 16px;">
+                        <span>文章附件</span>
+                        <div class="" style="margin-top: 8px;">
+                            <Upload :on-success="_fileUpSuccessHandler"
+                                    :default-file-list="fileDefault"
+                                    :on-remove="_fileRemoveSuccessHandler"
+                                    action="/oa/share/uploadFile">
+                                <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
+                            </Upload>
                         </div>
+                    </div>
                     </Col>
                     <Col :span="18" style="padding-left: 80px">
-                        <div class="" style="padding-left:8px;width: 698px">
-                            <fs-auto-textarea v-model="depSettingForm.shareItem"></fs-auto-textarea>
-                        </div>
-                        <div class="" style="margin-top: 20px">
-                            <wang-editor
-                                    :menus="editorMeun"
-                                    :editorcontent.sync="shareDetail"
-                                    img-url="/oa/share/uploadFile"></wang-editor>
-                        </div>
+                    <div class="" style="padding-left:8px;width: 698px">
+                        <fs-auto-textarea v-model="depSettingForm.shareItem"></fs-auto-textarea>
+                    </div>
+                    <div class="" style="margin-top: 20px">
+                        <wang-editor
+                                :menus="editorMeun"
+                                :editorcontent.sync="shareDetail"
+                                img-url="/oa/share/uploadFile"></wang-editor>
+                    </div>
                     </Col>
                 </Row>
             </Form>
@@ -123,53 +111,16 @@
                 <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
         </Modal>
-        <Modal v-model="commentFlag" width="800" :mask-closable="false">
-            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>查看评论</span>
-            </p>
-            <div class="">
-                <fs-comment-list :comment-data="item"
-                                 :key="'comment-' + index"
-                                 @comment-success="getCommentList"
-                                 v-for="item, index in pageData.list"></fs-comment-list>
-                <div class="no-result-block" v-if="!pageData.totalCount && !tableLoading">
-                    <img src="../../../images/fail_pic.png"  style="width: 200px;"/>
-                    <p class="info">暂无评论</p>
-                </div>
-                <Page :total="pageData.totalCount"
-                      :current.sync="pageData.page"
-                      :page-size="pageData.pageSize"
-                      @on-change="getCommentList"
-                      show-total
-                      v-if="pageData.totalCount > 20"
-                      style="margin-top: 16px;"></Page>
-            </div>
-            <div slot="footer">
-                <Button type="ghost" style="margin-left: 8px" @click="commentFlag = false">关闭</Button>
-            </div>
-        </Modal>
     </Card>
 </template>
 <style lang="less">
-
 </style>
 <script>
-    import FsCommentList from '@/baseComponents/fs-comment-list';
     import fsTablePage from '@/baseComponents/fs-table-page';
     import WangEditor from '@/baseComponents/fs-wangeditor';
     import fsAutoTextarea from '@/baseComponents/fs-auto-textarea';
-    import pageMixin from '@/mixins/pageMixin';
     export default {
-        name: 'ArticleSetting',
-        mixins: [pageMixin],
-        props: {
-            nodeId: Number
-        },
-        watch: {
-            nodeId(val) {
-                this.filterOpt.knowledgeId.value = val;
-            }
-        },
+        name: 'myKnowledge',
         data () {
             const colBtn = (vm, h, params, {content, icon, foo}) => {
                 return h('Tooltip', {
@@ -201,7 +152,6 @@
                 fileDefault: [],
                 shareDetail: '',
                 depSettingFlag: false,
-                commentFlag: false,
                 formType: '',
                 chooseDataArr: [],
                 orgData: [],
@@ -235,17 +185,9 @@
                         value: '',
                         type: 'input'
                     },
-                    knowledgeId: {
+                    type: {
                         value: 1,
-                        type: 'tree'
-                    },
-                    isShowbanner: {
-                        value: '',
-                        type: 'select'
-                    },
-                    isShowpic: {
-                        value: '',
-                        type: 'select'
+                        type: 'default'
                     }
                 },
                 postColumns: [
@@ -407,10 +349,7 @@
                 this.formType = 'create';
                 this.depSettingFlag = true;
             },
-            _checkArticleCommon(data) {
-                this.getCommentList(data.id);
-                console.log(data.id)
-                this.commentFlag = true;
+            _checkArticleCommon() {
             },
             _articleEditor(data) {
                 this._initSendForm();
@@ -443,11 +382,6 @@
                 this.depSettingForm.fileNames = data.sharefiles.map(x => x.file_path).join(',');
                 this.depSettingFlag = true;
             },
-            getCommentList(id) {
-                let params = {};
-                params.shareId = id;
-                this.getList('/share/getShareCommentList', params);
-            },
             _setTableHeight() {
                 let dm = document.body.clientHeight;
                 this.tableHeight = dm - 260;
@@ -456,8 +390,7 @@
         components: {
             fsTablePage,
             WangEditor,
-            fsAutoTextarea,
-            FsCommentList
+            fsAutoTextarea
         }
     };
 </script>

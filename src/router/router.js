@@ -538,6 +538,13 @@ export const appRouter = [
                 name: 'knowledgeSetting',
                 title: '知识库设置',
                 component: resolve => { require(['@/pages/knowledgeManage/knowledgeSetting/index.vue'], resolve); }
+            },
+            {
+                path: 'myKnowledge',
+                icon: 'ios-book',
+                name: 'myKnowledge',
+                title: '我的知识',
+                component: resolve => { require(['@/pages/knowledgeManage/myKnowledge/index.vue'], resolve); }
             }
         ]
     },

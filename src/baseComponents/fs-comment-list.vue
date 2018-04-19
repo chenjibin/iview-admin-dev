@@ -10,13 +10,17 @@
         </div>
         <div class="fs-comment-list-content" v-html="commentData.content || '...'"></div>
         <div class="fs-comment-list-tool" v-show="!isInComment">
-            <div class="comment-btn always" @click.stop="_thumbsupHandler">
+            <div class="comment-btn always " @click.stop="_thumbsupHandler" :class="{'is-active': isZan}">
                 <Icon type="thumbsup"></Icon>
-                <span>赞</span>
+                <span>{{+thumbUpTimes ? thumbUpTimes : '赞'}}</span>
             </div>
             <div class="comment-btn" @click.stop="openReplay">
                 <Icon type="ios-undo"></Icon>
                 <span>回复</span>
+            </div>
+            <div class="comment-btn" @click.stop="" v-if="+commentData.status === 1">
+                <Icon type="ios-trash"></Icon>
+                <span>删除</span>
             </div>
         </div>
         <div class="fs-comment-list-comment" v-if="isInComment">
@@ -59,6 +63,9 @@
                 cursor: pointer;
                 opacity: 0;
                 transition: all 0.3s;
+                &.is-active {
+                    color: #0084ff;
+                }
                 &.always {
                     opacity: 0.8;
                 }
@@ -94,12 +101,38 @@
                 editorMeun: [
                     'emoticon'
                 ],
-                isInComment: false
+                isInComment: false,
+                thumbUpTimes: this.commentData.thumb_up_times,
+                isZan: !!this.commentData.thumbupid,
+                thumbUpId: this.commentData.thumbupid || null
             };
         },
         methods: {
             _thumbsupHandler() {
-
+                if (!this.isZan) {
+                    let data = {};
+                    data.shareId = this.commentData.share_id;
+                    data.shareCommentId = this.commentData.id;
+                    data.type = 1;
+                    this.$http.post('/share/addThumbup', data).then((res) => {
+                        if (res.success) {
+                            this.isZan = true;
+                            this.thumbUpId = res.data.id;
+                            this.thumbUpTimes = res.data.thumb_up_times;
+                        }
+                    });
+                } else {
+                    let data = {};
+                    data.id = this.thumbUpId;
+                    this.$http.post('/share/deleteThumbup', data).then((res) => {
+                        if (res.success) {
+                            this.isZan = false;
+                            this.thumbUpId = null;
+                            this.thumbUpTimes = res.data.thumb_up_times;
+                        }
+                    });
+                }
+                console.log(this.commentData);
             },
             openReplay() {
                 this.editorContent = '';
