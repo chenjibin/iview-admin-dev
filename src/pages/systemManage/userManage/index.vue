@@ -28,11 +28,11 @@
                                placeholder="筛选岗位"></Input>
                     </FormItem>
                     <FormItem label="角色">
-                        <Select v-model="searchData.roleId.value"
+                        <Select filterable v-model="searchData.roleId.value"
                                 clearable
                                 :transfer="true"
-                                placeholder="筛选角色" style="width: 180px">
-                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
+                                placeholder="筛选角色" style="width: 200px">
+                            <Option :value="item.id" v-for="(item, index) in roleCombo" :key="'role' + index">{{item.name}} <span :title="item.companyname" style="float:right;color:#ccc;width:65px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
                         </Select>
                     </FormItem>
                     <FormItem label="状态">
@@ -130,36 +130,36 @@
                 </Row>
                 <Row>
                     <Col :span="8">
-                        <FormItem label="性别" prop="sex">
-                            <RadioGroup v-model="userSettingForm.sex">
-                                <Radio label="女">女</Radio>
-                                <Radio label="男">男</Radio>
-                            </RadioGroup>
-                        </FormItem>
+                    <FormItem label="性别" prop="sex">
+                        <RadioGroup v-model="userSettingForm.sex">
+                            <Radio label="女">女</Radio>
+                            <Radio label="男">男</Radio>
+                        </RadioGroup>
+                    </FormItem>
                     </Col>
                     <Col :span="8">
-                        <FormItem label="用户类型" v-show="(isManger == 0 || isManger == 1)">
-                            <Select v-model="userSettingForm.isManger">
-                                <Option :value="3">普通用户</Option>
-                                <Option :value="2">分公司管理员</Option>
-                                <Option :value="1">可见所有人的特权人员</Option>
-                                <Option :value="0"><span style="color: #ff8766;">超级管理员</span></Option>
-                            </Select>
-                        </FormItem>
+                    <FormItem label="用户类型" v-show="(isManger == 0 || isManger == 1)">
+                        <Select v-model="userSettingForm.isManger">
+                            <Option :value="3">普通用户</Option>
+                            <Option :value="2">分公司管理员</Option>
+                            <Option :value="1">可见所有人的特权人员</Option>
+                            <Option :value="0"><span style="color: #ff8766;">超级管理员</span></Option>
+                        </Select>
+                    </FormItem>
                     </Col>
                 </Row>
                 <Row>
                     <Col :span="8">
                     <FormItem label="角色" prop="role">
-                        <Select v-model="userSettingForm.role">
-                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
+                        <Select v-model="userSettingForm.role" ref="roleSelect">
+                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'nrole' + index">{{item.name}}</Option>
                         </Select>
                     </FormItem>
                     </Col>
                     <Col :span="16">
                     <FormItem label="部门" prop="dep">
                         <el-cascader
-                                :options="orgTreeData"
+                                :options="orgComboList"
                                 :props="depProps"
                                 v-model="userSettingForm.dep"
                                 change-on-select
@@ -605,6 +605,12 @@
                     account: [
                         { required: true, message: '账号不能为空', trigger: 'blur' }
                     ],
+                    role: [
+                        { type: 'number', required: true, message: '角色不能为空', trigger: 'blur' }
+                    ],
+                    dep: [
+                        { type: 'array', required: true, message: '部门不能为空', trigger: 'blur' }
+                    ],
                     name: [
                         { required: true, message: '姓名不能为空', trigger: 'blur' }
                     ],
@@ -614,6 +620,7 @@
                 },
                 isManger: -1,
                 totalCount: 1,
+                roleCombo: [],
                 searchData: {
                     realName: {
                         value: '',
@@ -628,6 +635,10 @@
                         type: 'select'
                     },
                     roleId: {
+                        value: '',
+                        type: 'select'
+                    },
+                    companyId: {
                         value: '',
                         type: 'select'
                     },
@@ -809,6 +820,7 @@
                 roleData: [],
                 levelData: [],
                 orgTreeData: [],
+                orgComboList: [],
                 levelCodeOpt: {
                     code: ''
                 },
@@ -878,6 +890,8 @@
             this._getRoleData();
             this._getAccessMenu();
             this._getOrgTree();
+            this._getOrgComboList();
+//            this._getRoleComboList();
         },
         methods: {
             filterNode(value, data) {
@@ -1017,21 +1031,21 @@
                 return this.storePath;
             },
             _initUserInfo() {
-                this.userSettingForm = {
-                    states: true,
-                    account: '',
-                    name: '',
-                    sex: '',
-                    inJobTime: '',
-                    role: '',
-                    dep: [],
-                    post: '',
-                    guider: [],
-                    banci: [],
-                    level: '',
-                    vUp: '',
-                    isLog: true
-                };
+                this.userSettingForm.states = true;
+                this.userSettingForm.account = '';
+                this.userSettingForm.name = '';
+                this.userSettingForm.sex = '';
+                this.userSettingForm.inJobTime = '';
+                this.userSettingForm.role = '';
+                this.userSettingForm.dep = [];
+                this.userSettingForm.post = '';
+                this.userSettingForm.guider = [];
+                this.userSettingForm.banci = [];
+                this.userSettingForm.level = '';
+                this.userSettingForm.vUp = '';
+                this.userSettingForm.isLog = true;
+                this.userSettingForm.role = '';
+                this.$refs.roleSelect.clearSingleSelect();
             },
             _addUserOpen() {
                 this._initUserInfo();
@@ -1061,6 +1075,8 @@
             },
             _depChange(data) {
                 let vm = this;
+                console.log(data);
+                console.log(data.slice(-1)[0]);
                 this._getPostList(data.slice(-1)[0]).then(() => {
                     this.userSettingForm.post = this.postList.length ? this.postList[0].id : '';
                 });
@@ -1178,16 +1194,20 @@
                 return new Promise((resolve) => {
                     this.$http.get('/role/getAllRoleByLv', {params: data}).then((res) => {
                         if (res.success) {
-                            if (res.isOtherCompany) {
-                                this.roleData = res.data;
-                                resolve(true);
-                            } else {
-                                resolve(false);
-                            }
+                            this.roleData = res.data;
+                            resolve(true);
                         }
                     });
                 });
             },
+//            _getRoleComboList() {
+//                let data = {};
+//                this.$http.get('/role/getRoleCombo').then((res) => {
+//                    if (res.success) {
+//                        this.roleCombo = res.data;
+//                    }
+//                });
+//            },
             _getGuiderList() {
                 this.$http.get('/post/getPdftree?userId=0').then((res) => {
                     if (res.success) {
@@ -1200,21 +1220,31 @@
                 });
             },
             _getRoleData() {
-                this.$http.get('/role/getAllRole').then((res) => {
+                this.$http.get('/role/getRoleCombo').then((res) => {
                     if (res.success) {
                         this.roleData = res.data;
+                        this.roleCombo = res.data;
                     }
                 });
             },
             _getOrgTree() {
+                // 同一个接口调用两次是因为左侧的树和下拉输入框是同一个接口，存在不合理的地方
+                // 为未来分割独立保留一个方法
                 return new Promise((resolve) => {
-                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
+                    this.$http.get('/organize/userOrganizeTree?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.orgTreeData = res.data;
                             this.searchData.nodeId.value = res.data[0].id;
                             resolve(res.data[0].id);
                         }
                     });
+                });
+            },
+            _getOrgComboList() {
+                this.$http.get('/organize/organizeTreeCertainVmC?fatherId=-1').then((res) => {
+                    if (res.success) {
+                        this.orgComboList = res.data;
+                    }
                 });
             },
             _getBanCiData() {
