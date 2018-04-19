@@ -173,7 +173,7 @@
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" style="width:460px">
-                            <InputNumber style="width: 100%" :min="1000" type="text" v-model="talentBean.monthlysalary"></InputNumber>
+                            <InputNumber style="width: 100%" :min="500" :step="500" type="text" v-model="talentBean.monthlysalary"></InputNumber>
                         </FormItem>
                         <FormItem label="年龄" style="width:460px">
                             <InputNumber style="width: 100%" :min="10" :max="99" type="text" v-model="talentBean.age"></InputNumber>
@@ -323,7 +323,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="月薪" style="width:18%">
-                                <InputNumber style="width: 100%" :min="1000" :step="1000" type="text" v-model="item.monthlysalary"></InputNumber>
+                                <InputNumber style="width: 100%" :min="500" :step="500" type="text" v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
                             <FormItem label="工作描述" style="width:37%">
                                 <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>
@@ -359,7 +359,7 @@
                                 <Input type="text" name="name" v-model="item.witness" ></Input>
                             </FormItem>
                             <FormItem label="年龄" style="width:13%">
-                                <InputNumber :min="14" :max="99" type="text" v-model="item.age" ></InputNumber>
+                                <InputNumber style="width: 100%" :min="14" :max="99" type="text" v-model="item.age" ></InputNumber>
                             </FormItem>
                             <FormItem label="工作单位	" style="width:13%">
                                 <Input type="text" v-model="item.companyname" ></Input>
@@ -1066,12 +1066,12 @@
                         var d = {};
                         d.bean = JSON.stringify(vm.talentBean);
                         let workingForm = vm.workingForm.filter(function(item) {
-                            return (item.companyname || item.post);
+                            return (item.companyname || item.post || item.monthlysalary || item.starttime || item.endtime);
                         });
                         d.workingForm = JSON.stringify(workingForm);
                         let educationForm = vm.educationForm.filter(function(item) {
-                            return (item.education || item.graduatedschool || item.profession);
-                        })
+                            return (item.education || item.graduatedschool || item.profession || item.starttime || item.endtime);
+                        });
                         d.educationForm = JSON.stringify(educationForm);
                         d.socailShipForm = JSON.stringify(vm.socailShipForm);
                         vm.$http.post('/talentLibrary/save', d).then((res) => {

@@ -171,7 +171,7 @@
                                 <Input type="text" v-model="baseForm.account"></Input>
                             </FormItem>
                             <FormItem label="年龄" style="width:49%;margin-right:1%;">
-                                <Input type="text" v-model="baseForm.nation"></Input>
+                                <InputNumber :min="18" style="width: 100%" type="text" v-model="baseForm.nation"></InputNumber>
                             </FormItem>
                             <FormItem label="政治面貌" style="width:49%;margin-right:1%;">
                                 <Select style="width: 100%" v-model="baseForm.party" >
@@ -259,7 +259,7 @@
                                     <Input type="text" v-model="item.duties" ></Input>
                                 </FormItem>
                                 <FormItem label="月薪" style="width:12%">
-                                    <Input type="text" v-model="item.monthlysalary" ></Input>
+                                    <InputNumber :min="500" :step="500" style="width: 100%" type="text" v-model="item.monthlysalary" ></InputNumber>
                                 </FormItem>
                                 <FormItem label="离职原因" style="width:12%">
                                     <Input type="text" v-model="item.reasonleaving"></Input>
@@ -297,7 +297,7 @@
                                     <Input type="text" name="name" v-model="item.name" ></Input>
                                 </FormItem>
                                 <FormItem label="年龄" style="width:13%">
-                                    <Input type="text" v-model="item.age" ></Input>
+                                    <InputNumber :min="10" :step="1" style="width: 100%" type="text" v-model="item.age" ></InputNumber>
                                 </FormItem>
                                 <FormItem label="工作单位	" style="width:13%">
                                     <Input type="text" v-model="item.employer" ></Input>

@@ -59,10 +59,10 @@
                 startdate: [],
                 filterOpt: {
                     startTimes: {
-                        value : ''
+                        value: ''
                     },
                     endTimes: {
-                        value : ''
+                        value: ''
                     }
                 },
                 postColumns: [
@@ -127,23 +127,23 @@
                     },
                     tooltip: {
                         trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c}人 ({d}%)"
+                        formatter: '{a} <br/>{b} : {c}人 ({d}%)'
                     },
                     legend: {
                         orient: 'vertical',
                         right: 'right',
-                        data: ['状态1', '状态2'],
+                        data: ['示例状态1', '示例状态2'],
                         selected: {}
                     },
                     series: [
                         {
                             name: '状态',
                             type: 'pie',
-                            radius : '55%',
+                            radius: '55%',
                             center: ['40%', '50%'],
                             data: [
-                                {name: '状态1', value: 40},
-                                {name: '状态2', value: 60}
+                                {name: '示例状态1', value: 1},
+                                {name: '示例状态2', value: 2}
                             ],
                             itemStyle: {
                                 emphasis: {
@@ -163,24 +163,24 @@
                     },
                     tooltip: {
                         trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c}份 ({d}%)"
+                        formatter: '{a} <br/>{b} : {c}份 ({d}%)'
                     },
                     legend: {
                         orient: 'vertical',
                         right: 'right',
-                        data: ['来源1', '来源2', '来源3'],
+                        data: ['示例来源1', '示例来源2', '示例来源3'],
                         selected: {}
                     },
                     series: [
                         {
-                            name: '来源',
+                            name: '示例来源',
                             type: 'pie',
-                            radius : '55%',
+                            radius: '55%',
                             center: ['40%', '50%'],
                             data: [
-                                {name: '来源1', value: Math.round(Math.random() * 100000)},
-                                {name: '来源2', value: Math.round(Math.random() * 100000)},
-                                {name: '来源3', value: Math.round(Math.random() * 100000)},
+                                {name: '示例来源1', value: Math.round(Math.random() * 10)},
+                                {name: '示例来源2', value: Math.round(Math.random() * 10)},
+                                {name: '示例来源3', value: Math.round(Math.random() * 10)}
                             ],
                             itemStyle: {
                                 emphasis: {
@@ -239,7 +239,7 @@
                         vm.dataSourcePie.setOption(vm.option);
                     }
                 });
-                this.$http.post('/talentLibrary/sourceData', d).then((res) =>{
+                this.$http.post('/talentLibrary/sourceData', d).then((res) => {
                     if (res.success) {
                         var d = res.data;
                         for (let key in d) {

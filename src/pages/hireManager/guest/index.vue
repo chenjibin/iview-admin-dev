@@ -26,7 +26,7 @@
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <Input type="text" v-model="talentBean.monthlysalary"></Input>
+                            <InputNumber style="width: 100%" :min="500"  :step="500" type="text" v-model="talentBean.monthlysalary"></InputNumber>
                         </FormItem>
                         <FormItem label="信息来源"  prop="resumesource" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.resumesource">
@@ -74,7 +74,7 @@
                             </Select>
                         </FormItem>
                         <FormItem label="预期入职时间" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(0, 0, 'testtime',$event)" :value="talentBean.testtime"></DatePicker>
+                            <DatePicker :editable="false" style="width: 100%"  type="date" @on-change="_monthDateChange(0, 0, 'testtime',$event)" :value="talentBean.testtime"></DatePicker>
                         </FormItem>
                         <FormItem label="有无子女" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.had_child">
@@ -107,10 +107,10 @@
                     <Form :gutter="1" ref="educationForm" inline style="font-size: 0px;overflow-y: auto; overflow-x: hidden;height: 100%;">
                         <div v-for="(item,index) in educationForm" class="custom-div">
                             <FormItem label="开始时间" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
-                                <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
+                                <DatePicker style="width: 100%" :editable="false" type="date" @on-change="_monthDateChange(1, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" :class="device.mobile?'mobileFormRight':'pcEducationFormItem'">
-                                <DatePicker style="width: 100%" placement="bottom-end"  type="date" @on-change="_monthDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
+                                <DatePicker style="width: 100%" placement="bottom-end" :editable="false" type="date" @on-change="_monthDateChange(1, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="毕业院校	" :class="device.mobile?'mobileFormItemLeft':'pcEducationFormItem'">
                                 <Input type="text" v-model="item.graduatedschool"></Input>
@@ -155,10 +155,10 @@
                     <Form ref="workingForm" inline style="font-size: 0px;overflow-y: auto; overflow-x: hidden;height: 100%;">
                         <div v-for="(item,index) in workingForm" class="custom-div">
                             <FormItem label="开始时间" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
-                                <DatePicker style="width: 100%"  type="date" @on-change="_monthDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
+                                <DatePicker style="width: 100%" :editable="false" type="date" @on-change="_monthDateChange(2, index, 'starttime',$event)" :value="item.starttime"></DatePicker>
                             </FormItem>
                             <FormItem label="结束时间" :class="device.mobile?'mobileFormRight':'pcWorkingFormItem'">
-                                <DatePicker style="width: 100%" placement="bottom-end"  type="date" @on-change="_monthDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
+                                <DatePicker style="width: 100%" :editable="false" placement="bottom-end"  type="date" @on-change="_monthDateChange(2, index, 'endtime',$event)" :value="item.endtime"></DatePicker>
                             </FormItem>
                             <FormItem label="公司名称" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.companyname"></Input>
@@ -167,7 +167,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="月薪" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
-                                <InputNumber style="width: 100%" :min="0" :max="1000000" :step="500" :precision='0' v-model="item.monthlysalary"></InputNumber>
+                                <InputNumber style="width: 100%" :min="500" :step="500" :precision='0' v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
                             <FormItem label="离职原因" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.reasonleaving"></Input>
@@ -212,7 +212,7 @@
                                 <Input type="text"  v-model="item.relationship" placeholder="父母/配偶/子女"></Input>
                             </FormItem>
                             <FormItem label="年龄" :class="device.mobile?'mobileFormItemLeft':'pcRelationFormItem'">
-                                <Input type="text" v-model="item.age"></Input>
+                                <InputNumber style="width: 100%" :min="10" :max="99" type="text" v-model="item.age"></InputNumber>
                             </FormItem>
                             <FormItem label="工作单位	" :class="device.mobile?'mobileFormRight':'pcRelationFormItem'">
                                 <Input type="text" v-model="item.companyname" ></Input>
@@ -463,11 +463,11 @@
                         var d = {};
                         d.bean = JSON.stringify(this.talentBean);
                         let workingForm = this.workingForm.filter(function(item) {
-                            return item.companyname;
+                            return (item.companyname || item.post || item.monthlysalary || item.starttime || item.descriptioncontent);
                         });
                         d.workingForm = JSON.stringify(workingForm);
                         let educationForm = this.educationForm.filter(function(item) {
-                            return item.graduatedschool;
+                            return (item.education || item.graduatedschool || item.profession || item.starttime || item.endtime);
                         })
                         d.educationForm = JSON.stringify(educationForm);
                         d.socailShipForm = JSON.stringify(this.socailShipForm);
