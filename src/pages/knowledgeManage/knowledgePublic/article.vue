@@ -8,7 +8,7 @@
                     </div>
                     <div class="text" style="color: #666;">返回</div>
                 </div>
-                <div class="zan-btn" :class="{'is-zan': isZan}">
+                <div class="zan-btn" :class="{'is-zan': isZan}" @click.stop="_thumbArticle">
                     <div class="icon-wrapper">
                         <Icon type="thumbsup"></Icon>
                     </div>
@@ -88,6 +88,10 @@
                     }
                     &:hover .text {
                         transform: translateY(4px);
+                    }
+                    &.is-zan .icon-wrapper {
+                        color: #f6f6f6;
+                        background-color: #0084ff
                     }
                     .icon-wrapper {
                         border-radius: 50%;
@@ -173,7 +177,8 @@
                 ],
                 defaultText: '写下你的评论...',
                 html: '',
-                isZan: false
+                isZan: false,
+                thumbUpId: null
             };
         },
         created() {
@@ -186,12 +191,38 @@
                     this.articleHeadpic = res.data.headimagepath;
                     this.html = res.data.share_detail;
                     this.thumbUpTimes = res.data.thumb_up_times;
+                    this.isZan = !!res.data.thumbupid;
+                    this.thumbUpId = res.data.thumbupid || null;
                 }
             });
             this.getCommentList();
             this.$store.commit('setToHeight', '880px');
         },
         methods: {
+            _thumbArticle() {
+                if (!this.isZan) {
+                    let data = {};
+                    data.shareId = this.$route.params.id;
+                    data.type = 0;
+                    this.$http.post('/share/addThumbup', data).then((res) => {
+                        if (res.success) {
+                            this.isZan = true;
+                            this.thumbUpId = res.data.id;
+                            this.thumbUpTimes = res.data.thumb_up_times;
+                        }
+                    });
+                } else {
+                    let data = {};
+                    data.id = this.thumbUpId;
+                    this.$http.post('/share/deleteThumbup', data).then((res) => {
+                        if (res.success) {
+                            this.isZan = false;
+                            this.thumbUpId = null;
+                            this.thumbUpTimes = res.data.thumb_up_times;
+                        }
+                    });
+                }
+            },
             replyHandler() {
                 let data = {};
                 data.shareId = this.$route.params.id;

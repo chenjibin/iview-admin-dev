@@ -26,7 +26,7 @@
     };
 </script>
 
-<style>
+<style lang="less">
     html,body{
         width: 100%;
         height: 100%;
@@ -66,5 +66,20 @@
     .app-main{
         width: 100%;
         height: 100%;
+    }
+    .no-result-block {
+        margin-top: 88px;
+        padding-bottom: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        img {
+            width: 300px;
+        }
+        .info {
+            font-size: 18px;
+            font-weight: 700;
+        }
     }
 </style>

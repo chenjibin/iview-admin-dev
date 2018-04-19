@@ -25,7 +25,8 @@
                     <div class="article-desc">{{item.share_detail | deleteTag}}</div>
                 </div>
             </div>
-            <div class="no-result-block" v-if="!pageData.totalCount">
+            <Spin size="large" fix v-if="tableLoading"></Spin>
+            <div class="no-result-block" v-if="!pageData.totalCount && !tableLoading">
                 <img src="../../../images/fail_pic.png" />
                 <p class="info">暂无相关知识</p>
             </div>
@@ -46,21 +47,6 @@
         width: 1000px;
         margin: 0 auto;
         cursor: pointer;
-        .no-result-block {
-            margin-top: 88px;
-            padding-bottom: 88px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            img {
-                width: 300px;
-            }
-            .info {
-                font-size: 18px;
-                font-weight: 700;
-            }
-        }
         .cate-title {
             font-size: 18px;
         }
