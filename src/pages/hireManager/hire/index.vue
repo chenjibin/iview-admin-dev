@@ -173,7 +173,7 @@
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" style="width:460px">
-                            <InputNumber style="width: 100%" :min="1000" type="text" v-model="talentBean.monthlysalary"></InputNumber>
+                            <InputNumber style="width: 100%" :min="500" :step="500" type="text" v-model="talentBean.monthlysalary"></InputNumber>
                         </FormItem>
                         <FormItem label="年龄" style="width:460px">
                             <InputNumber style="width: 100%" :min="10" :max="99" type="text" v-model="talentBean.age"></InputNumber>
@@ -323,7 +323,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="月薪" style="width:18%">
-                                <InputNumber style="width: 100%" :min="1000" :step="1000" type="text" v-model="item.monthlysalary"></InputNumber>
+                                <InputNumber style="width: 100%" :min="500" :step="500" type="text" v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
                             <FormItem label="工作描述" style="width:37%">
                                 <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>

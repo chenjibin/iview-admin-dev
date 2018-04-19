@@ -26,7 +26,7 @@
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" :class="device.mobile?'mobileFormItemLeft':'pcFormItem'">
-                            <InputNumber style="width: 100%" :min="2000"  :step="500" type="text" v-model="talentBean.monthlysalary"></InputNumber>
+                            <InputNumber style="width: 100%" :min="500"  :step="500" type="text" v-model="talentBean.monthlysalary"></InputNumber>
                         </FormItem>
                         <FormItem label="信息来源"  prop="resumesource" :class="device.mobile?'mobileFormRight':'pcFormItem'">
                             <Select type="text" v-model="talentBean.resumesource">
@@ -167,7 +167,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="月薪" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
-                                <InputNumber style="width: 100%" :min="0" :max="1000000" :step="500" :precision='0' v-model="item.monthlysalary"></InputNumber>
+                                <InputNumber style="width: 100%" :min="500" :step="500" :precision='0' v-model="item.monthlysalary"></InputNumber>
                             </FormItem>
                             <FormItem label="离职原因" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.reasonleaving"></Input>
