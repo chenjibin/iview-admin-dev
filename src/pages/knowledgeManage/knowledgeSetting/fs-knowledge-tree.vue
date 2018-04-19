@@ -200,6 +200,9 @@
                 this.chooseCateId = data.id;
                 this.depSettingFlag = true;
             },
+            appendItem(store, data, e) {
+                e.stopPropagation();
+            },
             _createCate() {
                 this.$refs.cateForm.validate((valid) => {
                     if (valid) {
@@ -293,7 +296,8 @@
                             {data.important === 1 ? <i class="ivu-icon ivu-icon-star" style="margin-left: 6px;color:#ff0036;"></i> : ''}
                         </div>
                         <div class="tag-group">
-                            <i-button  on-click={ (e) => this.append(store, data, e) }  size="small" style="margin-left:6px;" type="text" icon="plus-round"></i-button>
+                            {data.important === 1 ? <i-button  on-click={ (e) => this.appendItem(store, data, e) }  size="small" style="margin-left:6px;" type="text" icon="android-apps"></i-button> : ''}
+                            {data.important === 1 ? '' : <i-button  on-click={ (e) => this.append(store, data, e) }  size="small" style="margin-left:6px;" type="text" icon="plus-round"></i-button>}
                             <i-button  on-click={ (e) => this.editInfo(store, data, e) } size="small" style="margin-left: 6px;" type="text" icon="edit"></i-button>
                             <i-button  on-click={ (e) => this.removeCate(store, data, e) } size="small" style="margin-left: 6px;" type="text" icon="ios-trash"></i-button>
                         </div>

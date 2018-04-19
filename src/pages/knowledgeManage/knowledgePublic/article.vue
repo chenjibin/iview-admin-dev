@@ -39,7 +39,7 @@
                 </div>
                 <div class="list">
                     <fs-comment-list :comment-data="item"
-                                     :key="'comment-' + index"
+                                     :key="'comment-' + item.id"
                                      @comment-success="getCommentList"
                                      v-for="item, index in pageData.list"></fs-comment-list>
                 </div>

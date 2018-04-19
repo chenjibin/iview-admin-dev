@@ -18,7 +18,7 @@
                 <Icon type="ios-undo"></Icon>
                 <span>回复</span>
             </div>
-            <div class="comment-btn" @click.stop="" v-if="+commentData.status === 1">
+            <div class="comment-btn" @click.stop="_delComment" v-if="+commentData.status === 1">
                 <Icon type="ios-trash"></Icon>
                 <span>删除</span>
             </div>
@@ -132,7 +132,23 @@
                         }
                     });
                 }
-                console.log(this.commentData);
+            },
+            _delComment() {
+                this.$Modal.confirm({
+                    content: '确认删除此条评价么？',
+                    okText: '确认删除',
+                    cancelText: '取消',
+                    onOk: () => {
+                        let sendData = {};
+                        sendData.id = this.commentData.id;
+                        this.$http.post('/share/deleteShareComment', sendData).then((res) => {
+                            if (res.success) {
+                                this.$Message.success('评论删除成功!');
+                                this.$emit('comment-success');
+                            }
+                        });
+                    }
+                });
             },
             openReplay() {
                 this.editorContent = '';
