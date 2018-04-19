@@ -151,7 +151,7 @@
                 <Row>
                     <Col :span="8">
                     <FormItem label="角色" prop="role">
-                        <Select v-model="userSettingForm.role">
+                        <Select v-model="userSettingForm.role" ref="roleSelect">
                             <Option :value="item.id" v-for="(item, index) in roleData" :key="'role' + index">{{item.name}}</Option>
                         </Select>
                     </FormItem>
@@ -1017,21 +1017,21 @@
                 return this.storePath;
             },
             _initUserInfo() {
-                this.userSettingForm = {
-                    states: true,
-                    account: '',
-                    name: '',
-                    sex: '',
-                    inJobTime: '',
-                    role: '',
-                    dep: [],
-                    post: '',
-                    guider: [],
-                    banci: [],
-                    level: '',
-                    vUp: '',
-                    isLog: true
-                };
+                this.userSettingForm.states = true;
+                this.userSettingForm.account = '';
+                this.userSettingForm.name = '';
+                this.userSettingForm.sex = '';
+                this.userSettingForm.inJobTime = '';
+                this.userSettingForm.role = '';
+                this.userSettingForm.dep = [];
+                this.userSettingForm.post = '';
+                this.userSettingForm.guider = [];
+                this.userSettingForm.banci = [];
+                this.userSettingForm.level = '';
+                this.userSettingForm.vUp = '';
+                this.userSettingForm.isLog = true;
+                this.userSettingForm.role = '';
+                this.$refs.roleSelect.clearSingleSelect();
             },
             _addUserOpen() {
                 this._initUserInfo();

@@ -405,16 +405,19 @@
                                                     let data = res.data;
                                                     let msg = '';
                                                     let ops = ['审核中', '批准了', '拒绝了'];
+                                                    let colors = ['blue', 'green', 'red', 'blue'];
                                                     for (let i = 0; i < data.length; i++) {
                                                         let obj = data[i];
                                                         let name = obj.approvalbyname;
                                                         let time = obj.modifybydate;
                                                         let opt = ops[obj.approvalstatus];
                                                         let content = obj.content;
+                                                        let remarks = obj.remarks;
+                                                        let color = colors[obj.approvalstatus];
                                                         if (obj.approvalstatus === 0) {
                                                             msg += `<p style='font-size: 16px;'>递交 ${name || ''} 审批中</p>`;
                                                         } else {
-                                                            msg += `<div style="border-bottom: 1px solid #cccccc;margin-bottom: 15px"><p style='font-size: 16px;margin-bottom: 5px'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span>${opt} 此资产 <p><span style="font-size: 14px">备注：${content || ''}</span></p></p></div>`;
+                                                            msg += `<div style="border-bottom: 1px solid #cccccc;margin-bottom: 15px"><p style='font-size: 16px;margin-bottom: 5px'>${name || ''}<span style="margin: 0 10px 0 10px">${time || ''}</span><span style="color: ${color}">${opt}</span> 此资产<p><span style="font-size: 14px;display: ${content ? 'block' : 'none'}">备注：${content || ''}</span></p><p><span style="font-size: 14px;line-height: 2;display: ${remarks ? 'block' : 'none'}">变动：${remarks || ''}</span></p></p></div>`;
                                                         }
                                                     }
                                                     vm.$Modal.info({
