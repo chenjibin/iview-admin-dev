@@ -100,8 +100,18 @@
         mounted() {
             let vm = this;
             this.editor = new E(this.$refs.tool, this.$refs.content);
+            this.editor.customConfig.onfocus = function () {
+                vm.holderShow = false;
+            };
+            this.editor.customConfig.onblur = function (html) {
+                if (/img/g.test(html)) {
+                    vm.holderShow = false;
+                } else {
+                    let realContent = utils.delHtmlTag(html);
+                    vm.holderShow = !realContent;
+                }
+            };
             this.editor.customConfig.customUploadImg = function (files, insert) {
-                console.log(files);
                 const xhr = new XMLHttpRequest();
                 const formData = new FormData();
                 formData.append(files[0].name, files[0]);
@@ -126,8 +136,12 @@
                 }
             ];
             this.editor.customConfig.onchange = (html) => {
-                let realContent = utils.delHtmlTag(html);
-                this.holderShow = !realContent;
+                if (/img/g.test(html)) {
+                    this.holderShow = false;
+                } else {
+                    let realContent = utils.delHtmlTag(html);
+                    this.holderShow = !realContent;
+                }
                 this.$emit('update:editorcontent', html);
             };
             this.editor.create();

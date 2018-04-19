@@ -127,15 +127,16 @@
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>查看评论</span>
             </p>
-            <div class="">
+            <div class="" style="position: relative;">
                 <fs-comment-list :comment-data="item"
-                                 :key="'comment-' + index"
-                                 @comment-success="getCommentList"
+                                 :key="'comment-' + item.id"
+                                 @comment-success="getCommentList(item.id)"
                                  v-for="item, index in pageData.list"></fs-comment-list>
                 <div class="no-result-block" v-if="!pageData.totalCount && !tableLoading">
                     <img src="../../../images/fail_pic.png"  style="width: 200px;"/>
                     <p class="info">暂无评论</p>
                 </div>
+                <Spin size="large" fix v-if="tableLoading"></Spin>
                 <Page :total="pageData.totalCount"
                       :current.sync="pageData.page"
                       :page-size="pageData.pageSize"
@@ -200,6 +201,7 @@
                 imgDefault: [],
                 fileDefault: [],
                 shareDetail: '',
+                checkArticleId: null,
                 depSettingFlag: false,
                 commentFlag: false,
                 formType: '',
@@ -347,8 +349,10 @@
             },
             _fileUpSuccessHandler(res, file, fileList) {
                 this.depSettingForm.fileNames = fileList.map(item => {
-                    return item.url;
+                    console.log(item);
+                    return item.response.data[0].filename;
                 }).join(',');
+                console.log(this.depSettingForm.fileNames);
             },
             _fileRemoveSuccessHandler(file, fileList) {
                 this.depSettingForm.fileNames = fileList.map(item => {
@@ -408,8 +412,8 @@
                 this.depSettingFlag = true;
             },
             _checkArticleCommon(data) {
-                this.getCommentList(data.id);
-                console.log(data.id)
+                this.getCommentList();
+                this.checkArticleId = data.id;
                 this.commentFlag = true;
             },
             _articleEditor(data) {
@@ -443,9 +447,9 @@
                 this.depSettingForm.fileNames = data.sharefiles.map(x => x.file_path).join(',');
                 this.depSettingFlag = true;
             },
-            getCommentList(id) {
+            getCommentList() {
                 let params = {};
-                params.shareId = id;
+                params.shareId = this.checkArticleId;
                 this.getList('/share/getShareCommentList', params);
             },
             _setTableHeight() {

@@ -6,24 +6,6 @@
                        v-model="filterOpt.shareItem.value"
                        placeholder="筛选文章"></Input>
             </FormItem>
-            <FormItem label="是否轮播">
-                <Select v-model="filterOpt.isShowbanner.value"
-                        clearable
-                        placeholder="筛选状态"
-                        style="width: 100px">
-                    <Option :value="0">否</Option>
-                    <Option :value="1">是</Option>
-                </Select>
-            </FormItem>
-            <FormItem label="是否首图">
-                <Select v-model="filterOpt.isShowpic.value"
-                        clearable
-                        placeholder="筛选状态"
-                        style="width: 100px">
-                    <Option :value="0">否</Option>
-                    <Option :value="1">是</Option>
-                </Select>
-            </FormItem>
             <FormItem :label-width="0.1">
                 <ButtonGroup>
                     <Button type="ghost" @click="_addArticleOpen">
@@ -111,16 +93,45 @@
                 <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="commentFlag" width="800" :mask-closable="false">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>查看评论</span>
+            </p>
+            <div class="" style="position: relative">
+                <fs-comment-list :comment-data="item"
+                                 :key="'comment-' + item.id"
+                                 @comment-success="getCommentList"
+                                 v-for="item, index in pageData.list"></fs-comment-list>
+                <div class="no-result-block" v-if="!pageData.totalCount && !tableLoading">
+                    <img src="../../../images/fail_pic.png"  style="width: 200px;"/>
+                    <p class="info">暂无评论</p>
+                </div>
+                <Spin size="large" fix v-if="tableLoading"></Spin>
+                <Page :total="pageData.totalCount"
+                      :current.sync="pageData.page"
+                      :page-size="pageData.pageSize"
+                      @on-change="getCommentList"
+                      show-total
+                      v-if="pageData.totalCount > 20"
+                      style="margin-top: 16px;"></Page>
+            </div>
+            <div slot="footer">
+                <Button type="ghost" style="margin-left: 8px" @click="commentFlag = false">关闭</Button>
+            </div>
+        </Modal>
     </Card>
 </template>
 <style lang="less">
 </style>
 <script>
+    import FsCommentList from '@/baseComponents/fs-comment-list';
     import fsTablePage from '@/baseComponents/fs-table-page';
     import WangEditor from '@/baseComponents/fs-wangeditor';
     import fsAutoTextarea from '@/baseComponents/fs-auto-textarea';
+    import pageMixin from '@/mixins/pageMixin';
     export default {
         name: 'myKnowledge',
+        mixins: [pageMixin],
         data () {
             const colBtn = (vm, h, params, {content, icon, foo}) => {
                 return h('Tooltip', {
@@ -152,6 +163,7 @@
                 fileDefault: [],
                 shareDetail: '',
                 depSettingFlag: false,
+                commentFlag: false,
                 formType: '',
                 chooseDataArr: [],
                 orgData: [],
@@ -186,7 +198,7 @@
                         type: 'input'
                     },
                     type: {
-                        value: 1,
+                        value: 0,
                         type: 'default'
                     }
                 },
@@ -266,6 +278,7 @@
         },
         created() {
             this._setTableHeight();
+            this.$store.commit('getTreeData');
         },
         methods: {
             _storeFilter(root, path, id) {
@@ -349,7 +362,15 @@
                 this.formType = 'create';
                 this.depSettingFlag = true;
             },
-            _checkArticleCommon() {
+            _checkArticleCommon(data) {
+                this.checkArticleId = data.id;
+                this.getCommentList();
+                this.commentFlag = true;
+            },
+            getCommentList() {
+                let params = {};
+                params.shareId = this.checkArticleId;
+                this.getList('/share/getShareCommentList', params);
             },
             _articleEditor(data) {
                 this._initSendForm();
@@ -390,7 +411,8 @@
         components: {
             fsTablePage,
             WangEditor,
-            fsAutoTextarea
+            fsAutoTextarea,
+            FsCommentList
         }
     };
 </script>

@@ -15,6 +15,7 @@
                                placeholder="搜索知识..."
                                @focus="isFocus = true"
                                v-model="searchValue"
+                               @keyup.enter="_searchKnowledge"
                                autocomplete="off"/>
                         <div class="search-btn"
                              @click.stop="_searchKnowledge"
