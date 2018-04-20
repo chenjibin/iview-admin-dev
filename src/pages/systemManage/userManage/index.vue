@@ -31,7 +31,7 @@
                         <Select filterable v-model="searchData.roleId.value"
                                 clearable
                                 :transfer="true"
-                                placeholder="筛选角色" style="width: 200px">
+                                placeholder="输入查询角色" style="width: 200px">
                             <Option :value="item.id" v-for="(item, index) in roleCombo" :key="'role' + index">{{item.name}} <span :title="item.companyname" style="float:right;color:#ccc;width:65px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
                         </Select>
                     </FormItem>
