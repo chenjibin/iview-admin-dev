@@ -174,6 +174,7 @@
                     'list',
                     'quote',
                     'image',
+                    'video',
                     'undo',
                     'redo'
                 ],

@@ -214,6 +214,7 @@
                     'list',
                     'quote',
                     'image',
+                    'video',
                     'undo',
                     'redo'
                 ],
@@ -412,8 +413,8 @@
                 this.depSettingFlag = true;
             },
             _checkArticleCommon(data) {
-                this.getCommentList();
                 this.checkArticleId = data.id;
+                this.getCommentList();
                 this.commentFlag = true;
             },
             _articleEditor(data) {

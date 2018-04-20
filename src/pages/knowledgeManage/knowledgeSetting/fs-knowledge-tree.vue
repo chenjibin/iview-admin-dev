@@ -4,7 +4,7 @@
                placeholder="按照菜单名称进行筛选"
                v-model="filterTextName">
         </Input>
-        <div class="">
+        <div>
             <el-tree class="fs-tree"
                      :data="treeData"
                      :props="defaultProps"
@@ -18,7 +18,7 @@
                      :render-content="renderContent"
                      ref="tree1">
             </el-tree>
-            <div class="" v-else style="margin-top: 20px;text-align: center">
+            <div v-else style="margin-top: 20px;text-align: center">
                 <Poptip placement="right"
                         width="400">
                     <Button type="primary"
@@ -88,9 +88,85 @@
                 <Button type="ghost" style="margin-left: 8px" @click="depSettingFlag = false">取消</Button>
             </div>
         </Modal>
+        <Modal v-model="importantSettingFlag"
+               :mask-closable="false"
+               width="1200">
+            <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
+                <span>为重【{{storeNodeName}}】添加文章</span>
+            </p>
+            <Row :gutter="10">
+                <Col :span="12">
+                <fs-table-page v-if="importantSettingFlag"
+                               :columns="postColumns"
+                               :size="null"
+                               :height="500"
+                               :params="filterOpt"
+                               ref="importTable"
+                               url="/share/noImportantShare"></fs-table-page>
+                </Col>
+                <Col :span="12">
+                <div class="pick-important-block">
+                    <div class="pick-important-block-inner">
+                        <div class="top">
+                            <h2>{{storeNodeName}}</h2>
+                            <Button type="text">查看更多<Icon type="ios-arrow-right" style="margin-left: 8px"></Icon></Button>
+                        </div>
+                        <div class="content-list-wrapper">
+                            <Row :gutter="16">
+                                <Col :span="12" v-for="article, aindex in newArticle" :key="'article-' + aindex">
+                                <a href="javascript:void(0)"
+                                   class="item"
+                                   :title="article.share_item">{{article.share_item}}</a>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>
+                </div>
+                </Col>
+            </Row>
+            <div slot="footer">
+                <Button type="ghost" style="margin-left: 8px" @click="importantSettingFlag = false">关闭</Button>
+            </div>
+        </Modal>
     </Card>
 </template>
 <style lang="less">
+    .pick-important-block {
+        position: relative;
+        width: 100%;
+        padding-top: 56%;
+        border: 1px solid #ddd;
+        &-inner {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            .top {
+                display: flex;
+                justify-content: space-between;
+            }
+            .content-list-wrapper {
+                margin-top: 16px;
+                .item {
+                    font-size: 14px;
+                    margin-bottom: 14px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    display: block;
+                    color: #333;
+                    transition: color 0.5s ease;
+                    &:hover {
+                        color: #0077e6;
+                    }
+                }
+            }
+        }
+    }
     #knowledge-manage-tree {
         font-size: 14px;
         .fs-filter-tree {
@@ -119,11 +195,73 @@
     }
 </style>
 <script>
+    import fsTablePage from '@/baseComponents/fs-table-page';
+    import FsTablePage from '../../../baseComponents/fs-table-page';
+
     export default {
+        components: {FsTablePage},
         name: 'FsKnowledgeTree',
         data () {
+            const colBtn = (vm, h, params, {content, icon, foo}) => {
+                return h('Tooltip', {
+                    props: {
+                        content: content,
+                        placement: 'top',
+                        transfer: true
+                    }
+                }, [
+                    h('Button', {
+                        props: {
+                            type: 'primary',
+                            icon: icon,
+                            shape: 'circle',
+                            loading: vm.btnLoading
+                        },
+                        style: {
+                            margin: '0 2px'
+                        },
+                        on: {
+                            click: function () {
+                                foo(params.row);
+                            }
+                        }
+                    })
+                ]);
+            };
             return {
                 mubanBtnLoading: false,
+                importantSettingFlag: false,
+                newArticle: [],
+                filterOpt: {
+                    knowledgeId: {
+                        value: 1,
+                        type: 'tree'
+                    }
+                },
+                postColumns: [
+                    {
+                        title: '文章标题',
+                        key: 'share_item'
+                    },
+                    {
+                        title: '排序',
+                        key: 'sort',
+                        align: 'center',
+                        width: 100
+                    },
+                    {
+                        title: '操作',
+                        key: 'user_name',
+                        align: 'center',
+                        width: 80,
+                        render: (h, params) => {
+                            let vm = this;
+                            return h('div', [
+                                colBtn(vm, h, params, {content: '添加', icon: 'arrow-right-c', foo: vm._addToImportant})
+                            ]);
+                        }
+                    }
+                ],
                 formType: '',
                 rootRules: {
                     name: [
@@ -153,7 +291,9 @@
                     important: 0,
                     fatherId: []
                 },
-                chooseCateId: 0
+                chooseCateId: 0,
+                storeNodeId: null,
+                storeNodeName: ''
             };
         },
         watch: {
@@ -171,8 +311,32 @@
             this.$store.commit('getTreeData');
         },
         methods: {
+            _getNoimportantData() {
+                this.$refs.importTable.getList();
+            },
+            _getHasImportantData() {
+                let data = {};
+                data.knowledgeId = this.storeNodeId;
+                this.$http.get('/share/hasImportantShare', {params: data}).then((res) => {
+                    if (res.success) {
+                        this.newArticle = res.data;
+                    }
+                });
+            },
             nodeClickHandler(data) {
                 this.$emit('node-click', data.id);
+            },
+            _addToImportant(data) {
+                let sendData = {};
+                sendData.knowledgeId = this.storeNodeId;
+                sendData.shareId = data.id;
+                this.$http.post('', sendData).then((res) => {
+                    if (res.success) {
+                        this._getNoimportantData();
+                        this._getHasImportantData();
+                    }
+                });
+                console.log(data);
             },
             _initFormData() {
                 this.chooseCateId = 0;
@@ -202,6 +366,11 @@
             },
             appendItem(store, data, e) {
                 e.stopPropagation();
+                this.filterOpt.knowledgeId.value = data.id;
+                this.storeNodeId = data.id;
+                this.storeNodeName = data.name;
+                this._getHasImportantData();
+                this.importantSettingFlag = true;
             },
             _createCate() {
                 this.$refs.cateForm.validate((valid) => {
@@ -304,6 +473,8 @@
                     </div>);
             }
         },
-        components: {}
+        components: {
+            fsTablePage
+        }
     };
 </script>

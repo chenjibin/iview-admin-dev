@@ -23,8 +23,10 @@
                         <h4 class="title" :title="item.title">{{item.title}}</h4>
                         <div style="text-align: right">讲师: {{item.teacher_name}}</div>
                         <div style="text-align: right">培训类型: {{item.type_name}}</div>
-                        <div>
-                            <span class="item-label">时间:</span><span class="item-content">{{item.class_date | returnDate}}  {{item.period}}</span>
+                        <div style="height: 21px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                            <span class="item-label">时间:</span><span class="item-content" :title="returnDate(item.class_date) + ' ' + item.period">{{item.class_date | returnDate}}  {{item.period}}</span>
+                        </div>
+                        <div class="">
                             <span class="item-label">地点:</span><span class="item-content">{{item.position}}</span>
                         </div>
                         <div>
@@ -105,6 +107,9 @@
             }
         },
         methods: {
+            returnDate(val) {
+                return moment(val).format('YYYY-MM-DD');
+            },
             _traineeAdd(data) {
                 this.$Modal.confirm({
                     content: '确认报名' + data.title + '课程么?',
