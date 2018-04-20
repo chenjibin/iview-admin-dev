@@ -1,6 +1,7 @@
 <template>
     <div class="fs-article-index">
-        <div class="tree">
+        <div class="tree" :class="{'show': treeShow}">
+            <div class="btn" @click.stop="treeShow = !treeShow">{{treeShow ? '收起知识体系': '展开知识体系'}}</div>
             <p class="title">知识体系</p>
             <el-tree class="fs-tree"
                      :data="treeData"
@@ -30,6 +31,24 @@
             top: 60px;
             width: 200px;
             background-color: #fff;
+            transition: transform 0.3s;
+            transform: translate3d(-100%,0,0);
+            &.show {
+                transform: translate3d(0,0,0);
+            }
+            .btn {
+                position: absolute;
+                right: -32px;
+                top: 0;
+                z-index: 100;
+                width: 32px;
+                background-color: #fff;
+                padding: 8px;
+                font-size: 14px;
+                cursor: pointer;
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+            }
             .title {
                 padding: 0 0 12px 12px;
                 font-size: 18px;
@@ -49,6 +68,7 @@
         name: 'articleIndex',
         data () {
             return {
+                treeShow: false,
                 defaultProps: {
                     children: 'children',
                     label: 'name'
@@ -56,11 +76,11 @@
             };
         },
         created() {
-            this.$store.commit('getTreeData');
+            this.$store.commit('getNoImportantTreeData');
         },
         computed: {
             treeData() {
-                return this.$store.state.knowledge.treeData;
+                return this.$store.state.knowledge.noImportantTreeData;
             }
         },
         methods: {

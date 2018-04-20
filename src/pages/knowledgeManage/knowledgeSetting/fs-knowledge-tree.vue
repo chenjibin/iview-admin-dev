@@ -92,7 +92,7 @@
                :mask-closable="false"
                width="1200">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
-                <span>为重【{{storeNodeName}}】添加文章</span>
+                <span>为【{{storeNodeName}}】添加文章</span>
             </p>
             <Row :gutter="10">
                 <Col :span="12">
@@ -113,14 +113,89 @@
                         </div>
                         <div class="content-list-wrapper">
                             <Row :gutter="16">
-                                <Col :span="12" v-for="article, aindex in newArticle" :key="'article-' + aindex">
-                                <a href="javascript:void(0)"
-                                   class="item"
-                                   :title="article.share_item">{{article.share_item}}</a>
+                                <Col :span="12"
+                                     v-for="article, aindex in newArticle"
+                                     v-if="aindex <= 11"
+                                     :key="'article-' + article.id">
+                                <div class="content-list-wrapper-inner">
+                                    <a href="javascript:void(0)"
+                                       class="item"
+                                       :title="article.share_item">【{{article.sort}}】{{article.share_item}}</a>
+                                    <div class="tool-box">
+                                        <div class="" v-show="!(isActiveImportantId === +article.id)">
+                                            <Button type="primary"
+                                                    shape="circle"
+                                                    size="small"
+                                                    @click.native.stop="isActiveImportantId = article.id"
+                                                    style="margin-right: 16px;">设置排序</Button>
+                                            <Button type="error"
+                                                    hape="circle"
+                                                    size="small"
+                                                    @click.native.stop="_delFromImportant(article)">移除</Button>
+                                        </div>
+                                        <div class="" v-show="isActiveImportantId === +article.id">
+                                            <InputNumber
+                                                    v-model="article.sort"
+                                                    @keyup.native.enter="_confirmSortUpdate(article)"
+                                                    :min="1" size="small"></InputNumber>
+                                            <Button type="primary"
+                                                    shape="circle"
+                                                    size="small"
+                                                    @click.native.stop="_confirmSortUpdate(article)"
+                                                    style="margin-right: 6px;">确定</Button>
+                                            <Button type="primary"
+                                                    shape="circle"
+                                                    size="small"
+                                                    @click.native.stop="isActiveImportantId = 0">取消</Button>
+                                        </div>
+                                    </div>
+                                </div>
                                 </Col>
                             </Row>
                         </div>
                     </div>
+                </div>
+                <div class="left-important-block">
+                    <Row :gutter="16">
+                        <Col :span="12"
+                             v-for="article, aindex in newArticle"
+                             v-if="aindex > 11"
+                             :key="'article-' + article.id">
+                        <div class="content-list-wrapper-inner">
+                            <a href="javascript:void(0)"
+                               class="item"
+                               :title="article.share_item">【{{article.sort}}】{{article.share_item}}</a>
+                            <div class="tool-box">
+                                <div class="" v-show="!(isActiveImportantId === +article.id)">
+                                    <Button type="primary"
+                                            shape="circle"
+                                            size="small"
+                                            @click.native.stop="isActiveImportantId = article.id"
+                                            style="margin-right: 16px;">设置排序</Button>
+                                    <Button type="error"
+                                            hape="circle"
+                                            size="small"
+                                            @click.native.stop="_delFromImportant(article)">移除</Button>
+                                </div>
+                                <div class="" v-show="isActiveImportantId === +article.id">
+                                    <InputNumber v-model="article.sort"
+                                                 :min="1"
+                                                 @keyup.native.enter="_confirmSortUpdate(article)"
+                                                 size="small"></InputNumber>
+                                    <Button type="primary"
+                                            shape="circle"
+                                            size="small"
+                                            @click.native.stop="_confirmSortUpdate(article)"
+                                            style="margin-right: 6px;">确定</Button>
+                                    <Button type="primary"
+                                            shape="circle"
+                                            size="small"
+                                            @click.native.stop="isActiveImportantId = 0">取消</Button>
+                                </div>
+                            </div>
+                        </div>
+                        </Col>
+                    </Row>
                 </div>
                 </Col>
             </Row>
@@ -131,11 +206,46 @@
     </Card>
 </template>
 <style lang="less">
+    .left-important-block {
+        padding: 16px;
+        .content-list-wrapper-inner {
+            padding: 8px 8px;
+            .tool-box {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 2;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.6);
+                border-radius: 6px;
+            }
+            &:hover .tool-box{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+        .item {
+            font-size: 14px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: block;
+            color: #333;
+            transition: color 0.5s ease;
+            &:hover {
+                color: #0077e6;
+            }
+        }
+    }
     .pick-important-block {
         position: relative;
         width: 100%;
         padding-top: 56%;
         border: 1px solid #ddd;
+        border-radius: 6px;
         &-inner {
             position: absolute;
             left: 0;
@@ -151,9 +261,27 @@
             }
             .content-list-wrapper {
                 margin-top: 16px;
+                &-inner {
+                    padding: 8px 8px;
+                    .tool-box {
+                        display: none;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        z-index: 2;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0,0,0,0.6);
+                        border-radius: 6px;
+                    }
+                    &:hover .tool-box{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
                 .item {
                     font-size: 14px;
-                    margin-bottom: 14px;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                     overflow: hidden;
@@ -197,7 +325,6 @@
 <script>
     import fsTablePage from '@/baseComponents/fs-table-page';
     import FsTablePage from '../../../baseComponents/fs-table-page';
-
     export default {
         components: {FsTablePage},
         name: 'FsKnowledgeTree',
@@ -232,6 +359,7 @@
                 mubanBtnLoading: false,
                 importantSettingFlag: false,
                 newArticle: [],
+                isActiveImportantId: 0,
                 filterOpt: {
                     knowledgeId: {
                         value: 1,
@@ -253,12 +381,25 @@
                         title: '操作',
                         key: 'user_name',
                         align: 'center',
-                        width: 80,
+                        width: 120,
                         render: (h, params) => {
-                            let vm = this;
-                            return h('div', [
-                                colBtn(vm, h, params, {content: '添加', icon: 'arrow-right-c', foo: vm._addToImportant})
-                            ]);
+                            const vm = this;
+                            return h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    icon: 'arrow-right-c',
+                                    shape: 'circle',
+                                    loading: vm.btnLoading
+                                },
+                                style: {
+                                    margin: '0 2px'
+                                },
+                                on: {
+                                    click: function () {
+                                        vm._addToImportant(params.row);
+                                    }
+                                }
+                            }, '添加');
                         }
                     }
                 ],
@@ -311,8 +452,20 @@
             this.$store.commit('getTreeData');
         },
         methods: {
+            _confirmSortUpdate(data) {
+                let sendData = {};
+                sendData.sort = data.sort;
+                sendData.shareId = data.id;
+                this.$http.post('/share/updateSort', sendData).then((res) => {
+                    if (res.success) {
+                        this._getNoimportantData();
+                        this._getHasImportantData();
+                        this.isActiveImportantId = 0;
+                    }
+                });
+            },
             _getNoimportantData() {
-                this.$refs.importTable.getList();
+                this.$refs.importTable.getListData();
             },
             _getHasImportantData() {
                 let data = {};
@@ -330,13 +483,23 @@
                 let sendData = {};
                 sendData.knowledgeId = this.storeNodeId;
                 sendData.shareId = data.id;
-                this.$http.post('', sendData).then((res) => {
+                this.$http.post('/share/setImportantShare', sendData).then((res) => {
                     if (res.success) {
                         this._getNoimportantData();
                         this._getHasImportantData();
                     }
                 });
-                console.log(data);
+            },
+            _delFromImportant(data) {
+                let sendData = {};
+                sendData.knowledgeId = this.storeNodeId;
+                sendData.shareId = data.id;
+                this.$http.post('/share/deleteImportantShare', sendData).then((res) => {
+                    if (res.success) {
+                        this._getNoimportantData();
+                        this._getHasImportantData();
+                    }
+                });
             },
             _initFormData() {
                 this.chooseCateId = 0;

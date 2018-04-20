@@ -172,6 +172,7 @@
                     'italic',
                     'link',
                     'list',
+                    'justify',
                     'quote',
                     'image',
                     'video',
@@ -274,12 +275,12 @@
         },
         computed: {
             treeData() {
-                return this.$store.state.knowledge.treeData;
+                return this.$store.state.knowledge.noImportantTreeData;
             }
         },
         created() {
             this._setTableHeight();
-            this.$store.commit('getTreeData');
+            this.$store.commit('getNoImportantTreeData');
         },
         methods: {
             _storeFilter(root, path, id) {

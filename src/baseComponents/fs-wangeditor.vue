@@ -118,7 +118,6 @@
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                         let respondData = JSON.parse(xhr.responseText);
-                        console.log(respondData);
                         if (respondData.success) {
                             insert(respondData.data[0].filename);
                         }
@@ -154,7 +153,6 @@
                     this.$emit('update:editorcontent', '');
                 }
             }
-        },
-        components: {}
+        }
     };
 </script>

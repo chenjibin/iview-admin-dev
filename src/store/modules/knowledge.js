@@ -7,12 +7,20 @@ import axios from 'axios';
 const knowledge = {
     state: {
         treeData: [],
+        noImportantTreeData: [],
         keyword: '',
         cateId: '',
         cateName: '',
         topHeight: '1200px'
     },
     mutations: {
+        getNoImportantTreeData(state) {
+            axios.get('/knowledge/getMenuNoImportant').then((res) => {
+                if (res.success) {
+                    state.noImportantTreeData = [res.data];
+                }
+            });
+        },
         getTreeData(state) {
             axios.get('/knowledge/getMenu').then((res) => {
                 if (res.success) {
@@ -22,6 +30,8 @@ const knowledge = {
         },
         setKeyWord(state, keyword) {
             state.keyword = keyword;
+            state.cateId = '';
+            state.cateName = '';
         },
         setCateId(state, cateId) {
             state.cateId = cateId;
