@@ -48,14 +48,7 @@
                     <div class="" style="margin-bottom: 16px;">
                         <span>文章主图</span>
                         <div class="" style="margin-top: 8px;">
-                            <Upload action="/oa/share/uploadFile"
-                                    :format="['jpg','jpeg','png']"
-                                    accept="image/jpeg,image/jpg,image/png"
-                                    :default-file-list="imgDefault"
-                                    :on-success="_imgUpSuccessHandler"
-                                    :on-remove="_imgRemoveSuccessHandler">
-                                <Button type="ghost" icon="ios-cloud-upload-outline" size="small">点击上传</Button>
-                            </Upload>
+                            <fs-cropper-img-article :defaultimg.sync="depSettingForm.showpic"></fs-cropper-img-article>
                         </div>
                     </div>
                     <div class="" style="margin-bottom: 16px;">
@@ -125,6 +118,7 @@
 </style>
 <script>
     import FsCommentList from '@/baseComponents/fs-comment-list';
+    import fsCropperImgArticle from '@/baseComponents/fs-cropper-img/fs-cropper-img-article';
     import fsTablePage from '@/baseComponents/fs-table-page';
     import WangEditor from '@/baseComponents/fs-wangeditor';
     import fsAutoTextarea from '@/baseComponents/fs-auto-textarea';
@@ -414,7 +408,8 @@
             fsTablePage,
             WangEditor,
             fsAutoTextarea,
-            FsCommentList
+            FsCommentList,
+            fsCropperImgArticle
         }
     };
 </script>
