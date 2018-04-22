@@ -14,11 +14,11 @@
             :page-size="pageData.pageSize"
             @on-change="pageChangeHandler"
             ></Page>
-        <Modal v-model="modelFlag" width="800" :mask-closable="false">
+        <Modal v-model="modelFlag" width="740" :mask-closable="false">
             <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                 <span>{{noticeData.title}}</span>
             </p>
-            <div class="" v-html="noticeData.content" style="font-size: 16px"></div>
+            <div class="" v-html="noticeData.content" style="margin: 0 auto;width: 690px;font-size: 16px"></div>
             <div slot="footer">
             </div>
         </Modal>
