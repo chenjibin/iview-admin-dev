@@ -108,7 +108,7 @@
                                     },
                                     on: {
                                         click: function () {
-                                            vm.changeInfo(params);
+                                            vm.changeInfo(params.row);
                                             vm.changeInfoModal = true;
                                         }
                                     }
@@ -145,7 +145,6 @@
         },
         methods: {
             changeInfo(data) {
-                console.log(data);
                 this.baseInfo.name = data.name;
                 this.baseInfo.remarks = data.remarks;
                 this.baseInfo.id = data.id;
