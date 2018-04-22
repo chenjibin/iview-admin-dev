@@ -7,3 +7,5 @@ import rasterizehtml from 'rasterizehtml';
 import moment from 'moment';
 import debounce from 'lodash/debounce';
 import _forEach from 'lodash/forEach';
+import E from 'wangeditor';
+
