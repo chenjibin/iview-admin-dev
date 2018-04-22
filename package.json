@@ -22,11 +22,12 @@
     "clipboard": "^1.7.1",
     "countup": "^1.8.2",
     "cropperjs": "^1.2.1",
+    "crypto-js": "^3.1.9-1",
     "echarts": "^3.8.5",
-    "element-ui": "^2.0.11",
+    "element-ui": "^2.3.3",
     "es6-promise": "^4.2.4",
     "html2canvas": "^0.5.0-beta4",
-    "iview": "^2.9.2",
+    "iview": "^2.13.0",
     "iview-area": "^1.5.14",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.4",
@@ -39,7 +40,8 @@
     "vue": "^2.5.13",
     "vue-lazyload": "^1.2.1",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "wangeditor": "^3.1.1"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",
@@ -57,6 +59,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "babel-runtime": "^6.11.6",
     "clean-webpack-plugin": "^0.1.17",
+    "compression-webpack-plugin": "^1.1.11",
     "copy-webpack-plugin": "^4.3.1",
     "css-hot-loader": "^1.3.5",
     "css-loader": "^0.28.7",
@@ -88,6 +91,7 @@
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "^2.5.13",
     "webpack": "^3.10.0",
+    "webpack-bundle-analyzer": "^2.11.1",
     "webpack-dev-server": "^2.9.7",
     "webpack-merge": "^4.1.1",
     "webpack-uglify-parallel": "^0.1.4"

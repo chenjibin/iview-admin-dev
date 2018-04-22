@@ -3,9 +3,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const cleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJsParallelPlugin = require('webpack-uglify-parallel');
+// const UglifyJsParallelPlugin = require('webpack-uglify-parallel');
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpack.base.config.js');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
@@ -32,8 +34,6 @@ module.exports = merge(webpackBaseConfig, {
             allChunks: true
         }),
         new webpack.optimize.CommonsChunkPlugin({
-            // name: 'vendors',
-            // filename: 'vendors.[hash].js'
             name: ['vender-exten', 'vender-base'],
             minChunks: Infinity
         }),
@@ -65,21 +65,26 @@ module.exports = merge(webpackBaseConfig, {
             },
             {
                 from: 'src/views/main-components/theme-switch/theme'
-            },
-            {
-                from: 'src/baseComponents/tinymce'
             }
-        ], {
-            ignore: [
-                'text-editor.vue'
-            ]
-        }),
+        ]),
         new HtmlWebpackPlugin({
             title: '天马人事管理系统',
             favicon: './favicon.ico',
             filename: '../index.html',
             template: './src/template/index.ejs',
             inject: false
-        })
+        }),
+        new CompressionWebpackPlugin({
+            asset: '[path].gz[query]',
+            algorithm: 'gzip',
+            test: new RegExp(
+                '\\.(' +
+                ['js', 'css'].join('|') +
+                ')$'
+            ),
+            threshold: 10240,
+            minRatio: 0.8
+        }),
+        new BundleAnalyzerPlugin()
     ]
 });
