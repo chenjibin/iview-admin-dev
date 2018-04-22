@@ -3,11 +3,13 @@
     <div id="assetslocation">
         <Card>
             <Form inline :label-width="60">
-                <FormItem label="岗位名称">
-                    <Input type="text" style="width: 173px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.name"
-                           placeholder="岗位名称"></Input>
+                <FormItem label="岗位">
+                    <Select type="text" style="width: 185px" filterable clearable
+                            @on-change="_inputDebounce"
+                            v-model="filterOpt.name"
+                            placeholder="输入筛选岗位" clearable>
+                        <Option v-for="(item,index) in dataComboList" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.name"><span>{{item.name}}</span><span v-if="isManger === 0 || isManger === 1" :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
+                    </Select>
                 </FormItem>
                 <Button type="ghost" @click="addInfo">
                     <Icon type="plus-circled"></Icon>
@@ -32,12 +34,18 @@
                   style="margin-top: 16px;"></Page>
         </Card>
         <Modal v-model="changeInfoModal" width="300">
-            <Form style="margin-top: 20px">
+            <Form style="margin-top: 20px" :label-width="60">
                 <input style="display: none" v-model="baseInfo.id"/>
                 <FormItem label="岗位名称">
                     <Input type="text" style="width: 173px"
                            v-model="baseInfo.name"
                            placeholder="岗位名称"></Input>
+                </FormItem>
+                <FormItem label="所属公司" v-if="isManger === 0 || isManger === 1">
+                    <Select type="text" style="width: 173px"
+                            v-model="baseInfo.companyId" >
+                        <Option v-for="(item,index) in companyList" :label="item.name" :value="item.id">{{item.name}}</Option>
+                    </Select>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -65,9 +73,12 @@
                 },
                 baseInfo: {
                     name: '',
+                    companyId: 1,
                     remarks: ''
                 },
                 changeInfoModal: false,
+                dataComboList: [],
+                companyList: [],
                 postColumns: [
                     {
                         title: '岗位名称',
@@ -97,7 +108,7 @@
                                     },
                                     on: {
                                         click: function () {
-                                            vm.changeInfo(params.row);
+                                            vm.changeInfo(params);
                                             vm.changeInfoModal = true;
                                         }
                                     }
@@ -124,23 +135,45 @@
         created () {
             this._getPostData();
             this._setTableHeight();
+            this.getPositionCombo();
+            this.getCompanyList();
+        },
+        computed: {
+            isManger() {
+                return this.$store.state.user.userInfo.ismanger;
+            }
         },
         methods: {
             changeInfo(data) {
-                this.baseInfo = data;
+                console.log(data);
+                this.baseInfo.name = data.name;
+                this.baseInfo.remarks = data.remarks;
+                this.baseInfo.id = data.id;
+                this.baseInfo.companyId = data.companyid;
+            },
+            getPositionCombo() {
+                var vm = this;
+                vm.$http.post('/talentPosition/dataComboList').then((res) => {
+                    if (res.success) {
+                        vm.dataComboList = res.data;
+                    }
+                });
             },
             saveInfo() {
                 var vm = this;
                 vm.$http.post('/talentPosition/add', vm.baseInfo).then((res) => {
                     if (res.success) {
+                        vm.getPositionCombo();
+                        vm._filterResultHandler();
                         vm.$Message.success('保存成功');
                         vm.changeInfoModal = false;
-                        vm._filterResultHandler();
                     }
                 });
             },
             addInfo() {
-                this.baseInfo = {};
+                this.baseInfo.name = '';
+                this.baseInfo.remarks = '';
+                this.baseInfo.companyId = 1;
                 this.changeInfoModal = true;
             },
             delInfo(data) {
@@ -163,9 +196,14 @@
                     }
                 });
             },
+            getCompanyList() {
+                this.$http.post('/company/lists').then((res) => {
+                    this.companyList = res.data;
+                });
+            },
             _inputDebounce: debounce(function () {
                 this._filterResultHandler();
-            }, 1600),
+            }, 500),
             _filterResultHandler () {
                 this.initPage();
                 this._getPostData();

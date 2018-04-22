@@ -29,7 +29,7 @@ export default {
                 page: this.pageData.page,
                 pageSize: this.pageData.pageSize
             }, params || {});
-            this.$http.get(url, {params: data}).then((res) => {
+            this.$http.post(url, data).then((res) => {
                 if (res.success) {
                     this.pageData.totalCount = res.totalCount;
                     this.pageData.list = res.data.map(x => {

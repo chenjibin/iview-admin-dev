@@ -32,7 +32,7 @@
                                 clearable
                                 :transfer="true"
                                 placeholder="输入查询角色" style="width: 200px">
-                            <Option :value="item.id" v-for="(item, index) in roleCombo" :key="'role' + index">{{item.name}} <span :title="item.companyname" style="float:right;color:#ccc;width:65px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
+                            <Option :value="item.id" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" v-for="(item, index) in roleCombo" :key="'role' + index">{{item.name}} <span v-if="isManger == 0 || isManger == 1" :title="item.companyname" style="float:right;color:#ccc;width:65px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
                         </Select>
                     </FormItem>
                     <FormItem label="状态">
@@ -618,7 +618,6 @@
                         { required: true, message: '请选择性别', trigger: 'change' }
                     ]
                 },
-                isManger: -1,
                 totalCount: 1,
                 roleCombo: [],
                 searchData: {
@@ -881,8 +880,12 @@
                 leavePeople: ''
             };
         },
+        computed: {
+            isManger() {
+                return this.$store.state.user.userInfo.ismanger;
+            }
+        },
         created() {
-            this.isManger = this.$store.state.user.userInfo.ismanger;
             this._getBanCiData();
             this._setTableHeight();
             this._getAllMenu();
@@ -891,7 +894,6 @@
             this._getAccessMenu();
             this._getOrgTree();
             this._getOrgComboList();
-//            this._getRoleComboList();
         },
         methods: {
             filterNode(value, data) {
