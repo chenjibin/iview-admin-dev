@@ -8,7 +8,15 @@
                             @on-change="_inputDebounce"
                             v-model="filterOpt.name"
                             placeholder="输入筛选岗位" clearable>
-                        <Option v-for="(item,index) in dataComboList" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.name"><span>{{item.name}}</span><span v-if="isManger === 0 || isManger === 1" :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
+                        <Option v-for="(item,index) in dataComboList"
+                                :label="isManger > 1 ?item.name:item.name+' '+item.companyname"
+                                :key="'post-' + item.id"
+                                :value="item.name">
+                            <span>{{item.name}}</span>
+                            <span v-if="isManger === 0 || isManger === 1"
+                                  :title="item.companyname"
+                                  style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span>
+                        </Option>
                     </Select>
                 </FormItem>
                 <Button type="ghost" @click="addInfo">
@@ -44,7 +52,10 @@
                 <FormItem label="所属公司" v-if="isManger === 0 || isManger === 1">
                     <Select type="text" style="width: 173px"
                             v-model="baseInfo.companyId" >
-                        <Option v-for="(item,index) in companyList" :label="item.name" :value="item.id">{{item.name}}</Option>
+                        <Option v-for="(item,index) in companyList"
+                                :label="item.name"
+                                :key="'com-' + item.id"
+                                :value="item.id">{{item.name}}</Option>
                     </Select>
                 </FormItem>
             </Form>

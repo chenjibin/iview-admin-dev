@@ -7,7 +7,10 @@
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.companyId"
                             placeholder="筛选公司" clearable>
-                        <Option v-for="(item,index) in companyList" :label="item.name" :value="item.id">{{item.name}}</Option>
+                        <Option v-for="(item,index) in companyList"
+                                :label="item.name"
+                                :key="'com-' + item.id"
+                                :value="item.id">{{item.name}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="姓名">
@@ -21,7 +24,13 @@
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.postname"
                             placeholder="输入筛选岗位" clearable>
-                        <Option v-for="(item,index) in dataComboList" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.name"><span>{{item.name}}</span><span v-if="isManger === 0 || isManger === 1" :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
+                        <Option v-for="(item,index) in dataComboList"
+                                :key="'post-' + item.id"
+                                :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.name">
+                            <span>{{item.name}}</span>
+                            <span v-if="isManger === 0 || isManger === 1"
+                                  :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span>
+                        </Option>
                     </Select>
                 </FormItem>
                 <FormItem label="学历">
@@ -179,7 +188,14 @@
                         </FormItem>
                         <FormItem label="岗位" style="width:460px" prop="postname">
                             <Select filterable name="postname" v-model="talentBean.postname">
-                                <Option v-for="(item,index) in dataComboList" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.id"><span>{{item.name}}</span><span v-if="isManger === 0 || isManger === 1" :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
+                                <Option v-for="(item,index) in dataComboList"
+                                        :label="isManger > 1 ?item.name:item.name+' '+item.companyname"
+                                        :key="'post-' + item.id"
+                                        :value="item.id">
+                                    <span>{{item.name}}</span>
+                                    <span v-if="isManger === 0 || isManger === 1"
+                                          :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span>
+                                </Option>
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" style="width:460px">
