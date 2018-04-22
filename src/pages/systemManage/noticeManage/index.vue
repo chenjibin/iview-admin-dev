@@ -105,12 +105,12 @@
                             <!--</FormItem>-->
                             <!--</Col>-->
                         </Row>
-                        <text-editor
-                                :menubar="editorOpt.menubar"
-                                :plugins="editorOpt.plugins"
-                                :editor-content="strangeSettingForm.content"
-                                :toolbar1="editorOpt.toolbar1"
-                                @content-change="_setContent"></text-editor>
+                            <wang-editor
+                                    v-if="settingModalFlag"
+                                    :menus="editorMeun"
+                                    :editorcontent.sync="editorContent"
+                                    :defaul-text="'公告内容...'"
+                                    img-url="/oa/share/uploadFile"></wang-editor>
                     </Form>
                     </Col>
                     <Col :span="8">
@@ -155,11 +155,11 @@
                     <Button type="ghost" style="margin-left: 8px" @click="settingModalFlag = false">取消</Button>
                 </div>
             </Modal>
-            <Modal v-model="lookModelFlag" width="800" :mask-closable="false">
+            <Modal v-model="lookModelFlag" width="740" :mask-closable="false">
                 <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                     <span>{{noticeData.title}}</span>
                 </p>
-                <div style="max-height: 500px;overflow: auto;font-size: 16px;" v-html="noticeData.content"></div>
+                <div style="margin: 0 auto;max-height: 500px;width: 690px;overflow: auto;font-size: 16px;" v-html="noticeData.content"></div>
                 <div slot="footer">
                 </div>
             </Modal>
@@ -170,7 +170,7 @@
     import pageMixin from '@/mixins/pageMixin';
     import moment from 'moment';
     import debounce from 'lodash/debounce';
-    import textEditor from '@/baseComponents/text-editor';
+    import WangEditor from '@/baseComponents/fs-wangeditor';
     export default {
         name: 'noticeManage',
         data () {
@@ -180,6 +180,20 @@
                 strangeModalFlag: false,
                 lookModelFlag: false,
                 isNoticeType: 'create',
+                editorContent: '',
+                editorMeun: [
+                    'bold',
+                    'italic',
+                    'link',
+                    'list',
+                    'justify',
+                    'emoticon',
+                    'quote',
+                    'image',
+                    'video',
+                    'undo',
+                    'redo'
+                ],
                 noticeRule: {
                     title: [
                         { required: true, message: '标题不能为空!', trigger: 'blur' }
@@ -353,7 +367,7 @@
                         this.btnLoading = true;
                         let data = {};
                         data.title = this.strangeSettingForm.title;
-                        data.content = this.strangeSettingForm.editorContent;
+                        data.content = this.editorContent;
                         data.organizeId = this.$refs.treeDom.getCheckedKeys().join(',');
                         data.noticeType = this.strangeSettingForm.type;
                         data.state = this.strangeSettingForm.status;
@@ -377,9 +391,6 @@
             _operateNotice() {
                 this._noticeHandler(0, '发布公告成功!');
             },
-//            _saveNotice() {
-//                this._noticeHandler(0, '保存草稿成功!');
-//            },
             _getAllDepIds(data) {
                 data.forEach((item) => {
                     this.allTreeId.push(item.id);
@@ -393,8 +404,7 @@
                 this.strangeSettingForm.require = '1';
                 this.strangeSettingForm.status = '1';
                 this.strangeSettingForm.id = '';
-                this.strangeSettingForm.content = '';
-                this.strangeSettingForm.editorContent = '';
+                this.editorContent = '';
                 this.$refs.treeDom.setCheckedKeys(this.allTreeId.slice(0));
             },
             _openNewNotice() {
@@ -442,7 +452,7 @@
                 this.strangeSettingForm.require = data.type;
                 this.strangeSettingForm.status = data.state + '';
                 this.strangeSettingForm.content = data.content;
-                this.strangeSettingForm.editorContent = data.content;
+                this.editorContent = data.content;
                 this.strangeSettingForm.id = data.id;
                 this.$refs.treeDom.setCheckedKeys(data.organzeid ? data.organzeid.split(',').filter(x => !!x) : []);
                 this.settingModalFlag = true;
@@ -472,7 +482,7 @@
             }
         },
         components: {
-            textEditor
+            WangEditor
         }
     };
 </script>

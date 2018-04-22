@@ -33,26 +33,27 @@
                            :row-class-name="_rowClassName"
                            :disabled-hover="true"></Table>
                     <Modal v-model="modelFlag"
-                           width="900"
+                           width="740"
                            :mask-closable="false">
                         <p slot="header" style="color:#495060;text-align:center;font-size: 18px">
                             <span>{{logDetail.date}} 日志</span>
                         </p>
-                        <div class="" style="min-height: 100px;font-size: 16px;" v-html="logDetail.editorContent" v-show="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
-                        <div v-show="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
-                            <span style="display: inline-block;margin-right: 10px;height: 30px;line-height: 30px;vertical-align: top;">日志类型</span>
-                            <Select v-model="logDetail.logType"
-                                    placeholder="日志类型"
-                                    style="margin-bottom: 10px;width:200px">
-                                <Option v-for="item in logTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                            </Select>
-                            <text-editor
-                                    :menubar="editorOpt.menubar"
-                                    :plugins="editorOpt.plugins"
-                                    :editor-content="logDetail.content"
-                                    :toolbar1="editorOpt.toolbar1"
-                                    ref="textEditor"
-                                    @content-change="_setContent"></text-editor>
+                        <div class="" v-if="modelFlag">
+                            <div class="" style="min-height: 100px;font-size: 16px;" v-html="editorContent" v-show="[5,6].indexOf(logDetail.type) > -1 && nowDate !== logDetail.date"></div>
+                            <div v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
+                                <span style="display: inline-block;margin-right: 10px;height: 30px;line-height: 30px;vertical-align: top;">日志类型</span>
+                                <Select v-model="logDetail.logType"
+                                        placeholder="日志类型"
+                                        transfer
+                                        style="margin-bottom: 10px;width:200px">
+                                    <Option v-for="item in logTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                                <wang-editor
+                                        :menus="editorMeun"
+                                        :editorcontent.sync="editorContent"
+                                        :defaul-text="'日志内容...'"
+                                        img-url="/oa/share/uploadFile"></wang-editor>
+                            </div>
                         </div>
                         <div slot="footer">
                             <div class="" v-if="[0,1,2,3].indexOf(logDetail.type) > -1 || nowDate === logDetail.date">
@@ -173,7 +174,7 @@
 </style>
 <script>
     import moment from 'moment';
-    import textEditor from '@/baseComponents/text-editor';
+    import WangEditor from '@/baseComponents/fs-wangeditor';
     import dateMixin from '@/mixins/dateMixin';
     const NOW_DATE = moment().format('YYYY-MM-DD');
     export default {
@@ -190,6 +191,20 @@
                 dateData: null,
                 nowDate: NOW_DATE,
                 logMaxHeight: '300px',
+                editorContent: '',
+                editorMeun: [
+                    'bold',
+                    'italic',
+                    'link',
+                    'list',
+                    'justify',
+                    'emoticon',
+                    'quote',
+                    'image',
+                    'video',
+                    'undo',
+                    'redo'
+                ],
                 editorOpt: {
                     menubar: '',
                     plugins: [
@@ -206,9 +221,9 @@
                     date: '',
                     type: 0,
                     logType1: '',
-                    editorContent: '',
-                    commentResult: '0',
-                    content: ''
+                    // editorContent: '',
+                    commentResult: '0'
+                    // content: ''
                 },
                 logTypeList: [
                     {
@@ -338,9 +353,6 @@
             _rowClassName() {
                 return 'mylog-table-row';
             },
-            _setContent(content) {
-                this.logDetail.editorContent = content;
-            },
             _setSelectOpt(type, date, logType) {
                 if (type === 0 && date !== NOW_DATE) {
                     this.logTypeList = [
@@ -350,9 +362,7 @@
                         }
                     ];
                     this.logDetail.logType = '1';
-                    // this.logDetail.content = '休息';
-                    this.$refs.textEditor.setEditorValue('休息');
-                    this.logDetail.editorContent = '休息';
+                    this.editorContent = '<p>休息</p>';
                 } else {
                     this.logTypeList = [
                         {
@@ -380,9 +390,7 @@
                 this.logDetail.date = obj.date;
                 this.logDetail.type = obj.type;
                 this.logDetail.commentResult = obj.commentResult;
-                // this.logDetail.content = obj.content || '';
-                this.$refs.textEditor.setEditorValue(obj.content || '');
-                this.logDetail.editorContent = obj.content || '';
+                this.editorContent = obj.content || '';
                 this.logDetail.logType = obj.logType ? obj.logType + '' : '0';
                 this.logDetail.logType1 = obj.logType || '';
                 this._setSelectOpt(obj.type, obj.date, obj.logType);
@@ -390,7 +398,7 @@
             },
             _submitLog() {
                 if (this.logDetail.logType === '0') {
-                    let realContent = this._returnRealContent(this.logDetail.editorContent);
+                    let realContent = this._returnRealContent(this.editorContent);
                     if (realContent.length < 10) {
                         this.$Message.error('出勤日志不能少于10个字!');
                         return;
@@ -400,7 +408,7 @@
                 let data = {
                     type: this.logDetail.logType,
                     time: this.logDetail.date,
-                    content: this.logDetail.editorContent
+                    content: this.editorContent
                 };
                 this.$http.post('/journal/addJournal', data).then((res) => {
                     if (res.success) {
@@ -474,7 +482,7 @@
             }
         },
         components: {
-            textEditor
+            WangEditor
         }
     };
 </script>
