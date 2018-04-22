@@ -152,7 +152,7 @@
                     <Col :span="8">
                     <FormItem label="角色" prop="role">
                         <Select v-model="userSettingForm.role" ref="roleSelect">
-                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'nrole' + index">{{item.name}}</Option>
+                            <Option :value="item.id" v-for="(item, index) in roleData" :key="'nrole' + item.id">{{item.name}}</Option>
                         </Select>
                     </FormItem>
                     </Col>
