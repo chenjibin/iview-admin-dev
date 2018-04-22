@@ -734,75 +734,60 @@
                         render: (h, params) => {
                             let vm = this;
                             return h('div', [
-                                h('Tooltip', {
+                                h('Button', {
                                     props: {
-                                        content: '特殊权限设置',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            icon: 'arrow-shrink',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function(e) {
-                                                e.stopPropagation();
-                                                vm._specAccessOpen(params.row);
-                                            }
-                                        },
-                                        style: {
-                                            marginRight: '4px'
+                                        type: 'primary',
+                                        icon: 'arrow-shrink',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '特殊权限设置'
+                                    },
+                                    on: {
+                                        click: function(e) {
+                                            e.stopPropagation();
+                                            vm._specAccessOpen(params.row);
                                         }
-                                    })
-                                ]),
-                                h('Tooltip', {
+                                    },
+                                    style: {
+                                        marginRight: '4px'
+                                    }
+                                }),
+                                h('Button', {
                                     props: {
-                                        content: '用户授权',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            icon: 'key',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function(e) {
-                                                e.stopPropagation();
-                                                vm._userAccessOpen(params.row);
-                                            }
-                                        },
-                                        style: {
-                                            marginRight: '4px'
+                                        type: 'primary',
+                                        icon: 'key',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '用户授权'
+                                    },
+                                    on: {
+                                        click: function(e) {
+                                            e.stopPropagation();
+                                            vm._userAccessOpen(params.row);
                                         }
-                                    })
-                                ]),
-                                h('Tooltip', {
+                                    },
+                                    style: {
+                                        marginRight: '4px'
+                                    }
+                                }),
+                                h('Button', {
                                     props: {
-                                        content: '用户设置',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            icon: 'ios-gear',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function (e) {
-                                                e.stopPropagation();
-                                                vm._editorSetting(params.row);
-                                            }
+                                        type: 'primary',
+                                        icon: 'ios-gear',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '用户设置'
+                                    },
+                                    on: {
+                                        click: function (e) {
+                                            e.stopPropagation();
+                                            vm._editorSetting(params.row);
                                         }
-                                    })
-                                ])
+                                    }
+                                })
                             ]);
                         }
                     }

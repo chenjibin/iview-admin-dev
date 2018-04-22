@@ -167,7 +167,7 @@
                                     props: {
                                         color: 'green'
                                     }
-                                }, '可审批');
+                                }, '立即审批');
                             }
                             return h('div', [
                                 h('Tag', {

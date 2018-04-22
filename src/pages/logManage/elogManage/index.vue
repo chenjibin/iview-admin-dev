@@ -257,29 +257,24 @@
                         render: (h, params) => {
                             let vm = this;
                             return h('div', [
-                                h('Tooltip', {
+                                h('Button', {
                                     props: {
-                                        content: '查看',
-                                        placement: 'top',
-                                        transfer: true
-                                    }
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            icon: 'eye',
-                                            shape: 'circle'
-                                        },
-                                        on: {
-                                            click: function () {
-                                                vm._checkLogOpen(params.row);
-                                            }
-                                        },
-                                        style: {
-                                            marginRight: '4px'
+                                        type: 'primary',
+                                        icon: 'eye',
+                                        shape: 'circle'
+                                    },
+                                    attrs: {
+                                        title: '查看'
+                                    },
+                                    on: {
+                                        click: function () {
+                                            vm._checkLogOpen(params.row);
                                         }
-                                    })
-                                ])
+                                    },
+                                    style: {
+                                        marginRight: '4px'
+                                    }
+                                })
                             ]);
                         }
                     }
