@@ -2,21 +2,31 @@
     <div id="hire">
         <Card>
             <Form inline :label-width="60">
+                <FormItem label="公司" v-if="isManger === 0 || isManger === 1">
+                    <Select type="text" style="width: 173px" clearable
+                            @on-change="_filterResultHandler"
+                            v-model="filterOpt.companyId"
+                            placeholder="筛选公司" clearable>
+                        <Option v-for="(item,index) in companyList" :label="item.name" :value="item.id">{{item.name}}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="姓名">
-                    <Input type="text" style="width: 173px"
+                    <Input type="text" style="width: 173px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.name"
-                           placeholder="筛选姓名"></Input>
+                           placeholder="输入筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="岗位">
-                    <Input type="text" style="width: 173px"
-                           @on-change="_inputDebounce"
-                           v-model="filterOpt.postname"
-                           placeholder="筛选岗位"></Input>
+                    <Select type="text" style="width: 173px" filterable clearable
+                            @on-change="_filterResultHandler"
+                            v-model="filterOpt.postname"
+                            placeholder="输入筛选岗位" clearable>
+                        <Option v-for="(item,index) in dataComboList" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.name"><span>{{item.name}}</span><span v-if="isManger === 0 || isManger === 1" :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="学历">
-                    <Select type="text" style="width: 173px"
-                            @on-change="_filterResultHandler"
+                    <Select type="text" style="width: 173px" clearable
+                            @on-change="_filterResultHandler" filterable
                             v-model="filterOpt.education"
                             placeholder="筛选学历" clearable>
                         <Option :value="1">博士研究生</Option>
@@ -29,7 +39,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="性别">
-                    <Select type="text" style="width: 173px"
+                    <Select type="text" style="width: 173px" clearable
                             @on-change="_filterResultHandler"
                             v-model="filterOpt.sex"
                             placeholder="筛选性别" clearable>
@@ -38,7 +48,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="电话">
-                    <Input type="text" v-model="filterOpt.phone" style="width: 173px" placeholder="筛选号码"
+                    <Input type="text" v-model="filterOpt.phone" style="width: 173px" placeholder="筛选号码" clearable
                            @on-change="_inputDebounce"></Input>
                 </FormItem>
                 <FormItem label="信息来源">
@@ -168,8 +178,8 @@
                             </Select>
                         </FormItem>
                         <FormItem label="岗位" style="width:460px" prop="postname">
-                            <Select name="postname" v-model="talentBean.postname">
-                                <Option :value="item.id" v-for="item, index in positionData" :key="item.id">{{item.name}}</Option>
+                            <Select filterable name="postname" v-model="talentBean.postname">
+                                <Option v-for="(item,index) in dataComboList" :label="isManger > 1 ?item.name:item.name+' '+item.companyname" :value="item.id"><span>{{item.name}}</span><span v-if="isManger === 0 || isManger === 1" :title="item.companyname" style="float:right;color:#ccc;width:60px;text-overflow: ellipsis;text-align: right;white-space: nowrap;overflow: hidden">{{item.companyname}}</span></Option>
                             </Select>
                         </FormItem>
                         <FormItem label="期望月薪" style="width:460px">
@@ -610,6 +620,7 @@
                 saveBtn2Loading: false, // 提交按钮加载
                 saveBtn1Loading: false, // 暂存按钮加载
                 socailShipForm: [], // 社会关系
+                companyList: [],
                 filterOpt: {
                     name: '', // 员工姓名
                     startdate: [], // 预约日期左区间
@@ -654,11 +665,11 @@
                 talentBean: {
                     id: '',
                     postname: '',
-                    monthlysalary: '',
+                    monthlysalary: 0,
                     resumesource: '',
                     appointment: '',
                     name: '',
-                    age: '',
+                    age: 18,
                     yearswork: 0,
                     sex: '',
                     marriage: '',
@@ -934,6 +945,7 @@
                         }
                     }
                 ],
+                dataComboList: [],
                 filterPeopleLoading: false
             };
         },
@@ -942,6 +954,13 @@
             this._getPostData();
             this.getPositionData(); // 岗位下拉框
             this._setTableHeight();
+            this.getCompanyList();
+            this.getPositionCombo();
+        },
+        computed: {
+            isManger() {
+                return this.$store.state.user.userInfo.ismanger;
+            }
         },
         methods: {
             getPositionData() {
@@ -1199,7 +1218,6 @@
                         });
                     }
                 });
-
             },
             getStatusText (num) {
                 var text = ['未预约', '已预约', '已到达', '未到达', '面试合格', '待定', '面试不合格', '合格到达', '合格未到达', '试岗通过', '试岗未通过'];
@@ -1338,6 +1356,19 @@
                     });
                 });
             },
+            getPositionCombo() {
+                var vm = this;
+                vm.$http.post('/talentPosition/dataComboList').then((res) => {
+                    if (res.success) {
+                        vm.dataComboList = res.data;
+                    }
+                });
+            },
+            getCompanyList() {
+                this.$http.post('/company/lists').then((res) => {
+                    this.companyList = res.data;
+                });
+            },
             _getPostData () {
                 this.getList('/talentLibrary/dataList', this.filterOpt);
             }
@@ -1365,6 +1396,9 @@
                 padding: 0;
                 min-width: 60px;
             }
+        }
+        .ivu-select-item{
+            padding: 7px 9px;
         }
     }
     .showUserInfoItem {
