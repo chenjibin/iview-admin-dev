@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="" style="text-align: right;">
-                    <Button @click="_submitExam">答题完成！交卷</Button>
+                    <Button @click="_submitExam" :loading="examBtnLoading">答题完成！交卷</Button>
                 </div>
             </div>
         </Card>
@@ -135,6 +135,7 @@
         data () {
             return {
                 paperInfo: {},
+                examBtnLoading: false,
                 questionList: [],
                 numMap: ['一', '二', '三', '四', '五'],
                 typeMap: ['单选题', '多选题', '判断题', '填空题', '问答题']
@@ -168,6 +169,7 @@
         },
         methods: {
             _submitExam() {
+                this.examBtnLoading = true;
                 let data = {};
                 data.pid = this.paperId;
                 data.answerList = [];
@@ -187,6 +189,8 @@
                         this.$emit('submit-paper-success');
                         this.$Message.success('交卷成功!');
                     }
+                }).finally(() => {
+                    this.examBtnLoading = false;
                 });
             },
             returnNeedList(data) {
