@@ -770,14 +770,39 @@
                     {
                         title: '姓名',
                         key: 'name',
-                        align: 'center',
-                        width: 90
+                        align: 'left',
+                        width: 100
                     },
                     {
                         title: '岗位',
                         key: 'poststring',
-                        align: 'center',
-                        width: 100
+                        align: 'left',
+                        width: 160,
+                        render: (h, params) => {
+                            let ps = params.row.poststring;
+                            let cid = params.row.companyid;
+                            let cname = params.row.companyname;
+                            if (!ps) {
+                                return h('span');
+                            }
+                            if (this.isManger !== 0 && this.isManger !== 1) {
+                                return h('span', ps);
+                            }
+                            if (cname) {
+                                if (ps.indexOf(cname) > -1) {
+                                    return h('span', ps);
+                                } else {
+                                    return h('span', cname + ps);
+                                }
+                            } else if (cid) {
+                                cname = this.companyList[cid - 1] ? this.companyList[cid - 1].name : '';
+                                if (ps.indexOf(cname) > -1) {
+                                    return h('span', ps);
+                                } else {
+                                    return h('span', cname + ps);
+                                }
+                            }
+                        }
                     },
                     {
                         title: '性别',
@@ -976,6 +1001,11 @@
         computed: {
             isManger() {
                 return this.$store.state.user.userInfo.ismanger;
+            }
+        },
+        mounted() {
+            if (this.isManger > 1) {
+                this.tableHeight = this.tableHeight + 57;
             }
         },
         methods: {
@@ -1314,7 +1344,7 @@
             },
             _setTableHeight () {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 100 - 20 - 34 - 114 - 49;
+                this.tableHeight = dm - 100 - 20 - 34 - 114 - 49 - 57;
             },
             _setPage (page) {
                 this.pageData.page = page;
