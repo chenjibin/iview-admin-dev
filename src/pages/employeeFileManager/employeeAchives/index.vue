@@ -158,7 +158,7 @@
                                 <Input type="text" v-model="baseForm.sex" disabled></Input>
                             </FormItem>
                             <FormItem label="手机" style="width:49%;margin-right:1%;">
-                                <Input type="text" v-model="baseForm.cellphone" ></Input>
+                                <Input type="text" :maxlength="11" v-model="baseForm.cellphone" ></Input>
                             </FormItem>
                             <FormItem label="QQ" style="width:49%;margin-right:1%;">
                                 <Input type="text" v-model="baseForm.inphone" ></Input>
@@ -275,8 +275,8 @@
                                 <FormItem label="证明人" style="width:12%">
                                     <Input type="text" v-model="item.witness"></Input>
                                 </FormItem>
-                                <FormItem label="公司电话" style="width:12%">
-                                    <Input type="text" v-model="item.phone"></Input>
+                                <FormItem label="公司号码" style="width:12%">
+                                    <Input type="text" :maxlength="11" v-model="item.phone"></Input>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
                                     <Input type="text" v-model="baseForm.userid" ></Input>
@@ -313,8 +313,8 @@
                                 <FormItem label="职务" style="width:13%">
                                     <Input type="text" v-model="item.duties"></Input>
                                 </FormItem>
-                                <FormItem label="电话" style="width:13%">
-                                    <Input type="text" v-model="item.phone"></Input>
+                                <FormItem label="手机" style="width:13%">
+                                    <Input type="text" :maxlength="11" v-model="item.phone"></Input>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
                                     <Input type="text" v-model="baseForm.userid" ></Input>
@@ -332,8 +332,8 @@
                             <FormItem label="联系人关系" style="width:30%">
                                 <Input type="text" v-model="emergency.contactrelationship" ></Input>
                             </FormItem>
-                            <FormItem label="联系人电话" style="width:30%">
-                                <Input type="text" v-model="emergency.contactnumber" ></Input>
+                            <FormItem label="联系人手机" style="width:30%">
+                                <Input type="text" :maxlength="11" v-model="emergency.contactnumber" ></Input>
                             </FormItem>
                             <FormItem style="width:100%">
                                 <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(1,socailShipForm)">提交</Button>

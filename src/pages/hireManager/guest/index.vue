@@ -172,11 +172,11 @@
                             <FormItem label="离职原因" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
                                 <Input type="text" v-model="item.reasonleaving"></Input>
                             </FormItem>
-                            <FormItem label="证明人" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
-                                <Input type="text" v-model="item.witness"></Input>
+                            <FormItem label="证明人手机" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
+                                <Input type="text" :maxlength="11" v-model="item.witness"></Input>
                             </FormItem>
                             <FormItem label="公司电话" :class="device.mobile?'mobileFormItemLeft':'pcWorkingFormItem'">
-                                <Input type="text" v-model="item.phone"></Input>
+                                <Input type="text" :maxlength="13" v-model="item.phone"></Input>
                             </FormItem>
                             <FormItem label="工作描述" style="width:79%;margin-right: 1%;">
                                 <Input type="textarea" :autosize="{minRows: 5,maxRows: 16}" v-model="item.descriptioncontent"></Input>
@@ -220,8 +220,8 @@
                             <FormItem label="职务" :class="device.mobile?'mobileFormItemLeft':'pcRelationFormItem'">
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
-                            <FormItem label="电话" :class="device.mobile?'mobileFormRight':'pcRelationFormItem'">
-                                <Input type="text" v-model="item.phone"></Input>
+                            <FormItem label="手机" :class="device.mobile?'mobileFormRight':'pcRelationFormItem'">
+                                <Input type="text" :maxlength="11" v-model="item.phone"></Input>
                             </FormItem>
                             <FormItem label="用户id" style="display: none">
                                 <Input type="text" v-model="item.talentid" ></Input>
@@ -243,7 +243,7 @@
                             <Input type="text" v-model="talentBean.emrelate" ></Input>
                         </FormItem>
                         <FormItem label="联系人电话" style="width:32%;margin-right: 1%;">
-                            <Input type="text" v-model="talentBean.emphone" ></Input>
+                            <Input type="text" :maxlength="11" v-model="talentBean.emphone" ></Input>
                         </FormItem>
                         <!--<FormItem style="width:100%">-->
                             <!--<Button type="primary" icon="android-add" style="margin-left: 8px"  @click="socailShipForm.push({})">增加关系</Button>-->

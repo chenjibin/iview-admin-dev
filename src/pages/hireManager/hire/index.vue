@@ -394,7 +394,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="电话" style="width:13%">
-                                <Input type="text" v-model="item.phone"></Input>
+                                <Input type="text" :maxlength="13" v-model="item.phone"></Input>
                             </FormItem>
                             <FormItem label="用户id" style="display: none">
                                 <Input type="text" v-model="item.talentid" ></Input>
@@ -413,7 +413,7 @@
                             <Input type="text" v-model="talentBean.emrelate" ></Input>
                         </FormItem>
                         <FormItem label="联系人电话" style="width:30%">
-                            <Input type="text" v-model="talentBean.emphone" ></Input>
+                            <Input type="text" :maxlength="11" v-model="talentBean.emphone" ></Input>
                         </FormItem>
                         <FormItem style="width:100%">
                             <Button type="primary" icon="android-add" style="margin-left: 8px"  @click="socailShipForm.push({})">增加关系</Button>
