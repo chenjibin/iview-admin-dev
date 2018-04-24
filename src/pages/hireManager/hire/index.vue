@@ -104,7 +104,6 @@
                 <FormItem label="预约时间">
                     <DatePicker split-panels :clearable = "true" format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('startdate',$event)"
-                                @on-clear="clearDate('startdate')"
                                 :value="filterOpt.startdate"></DatePicker>
                 </FormItem>
                 <FormItem label="面试时间">

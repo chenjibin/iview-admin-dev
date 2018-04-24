@@ -360,7 +360,7 @@
                 return this.storePath;
             },
             _getOrgTree() {
-                this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
+                this.$http.get('/organize/organizeTreeCertainVmC?fatherId=-1').then((res) => {
                     if (res.success) {
                         this.orgTreeData = res.data;
                     }

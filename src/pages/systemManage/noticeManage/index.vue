@@ -119,7 +119,6 @@
                             <el-tree :data="orgTreeData"
                                      ref="treeDom"
                                      show-checkbox
-                                     default-expand-all
                                      :expand-on-click-node="false"
                                      :default-checked-keys="strangeSettingForm.deps"
                                      :highlight-current="true"
@@ -464,7 +463,7 @@
             },
             _getOrgTree() {
                 return new Promise((resolve) => {
-                    this.$http.get('/organize/organizeTreeCertainVm?fatherId=-1').then((res) => {
+                    this.$http.get('/organize/organizeTreeCertainVmC?fatherId=-1').then((res) => {
                         if (res.success) {
                             this.orgTreeData = res.data;
                             resolve(res.data);
