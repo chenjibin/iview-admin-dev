@@ -468,7 +468,7 @@
                 </ButtonGroup>
             </div>
         </Modal>
-        <Modal v-model="changUserStatusModel">
+        <Modal v-model="changUserStatusModel" :mask-closable="false">
             <Form ref="statusForm" :model="statusForm" :rules="rules" inline>
                 <h3>当前人员{{success_msg}}</h3>
                 <!---1.未预约 0.预约 1.已到达 2.未到达 3.合格 4.待定 5.不合格 6.合格到达 7.合格未到达 8.试岗通过 9.试岗未通过'-->
@@ -775,33 +775,8 @@
                     {
                         title: '岗位',
                         key: 'poststring',
-                        align: 'left',
-                        width: 160,
-                        render: (h, params) => {
-                            let ps = params.row.poststring;
-                            let cid = params.row.companyid;
-                            let cname = params.row.companyname;
-                            if (!ps) {
-                                return h('span');
-                            }
-                            if (this.isManger !== 0 && this.isManger !== 1) {
-                                return h('span', ps);
-                            }
-                            if (cname) {
-                                if (ps.indexOf(cname) > -1) {
-                                    return h('span', ps);
-                                } else {
-                                    return h('span', cname + ps);
-                                }
-                            } else if (cid) {
-                                cname = this.companyList[cid - 1] ? this.companyList[cid - 1].name : '';
-                                if (ps.indexOf(cname) > -1) {
-                                    return h('span', ps);
-                                } else {
-                                    return h('span', cname + ps);
-                                }
-                            }
-                        }
+                        align: 'center',
+                        width: 100
                     },
                     {
                         title: '性别',
