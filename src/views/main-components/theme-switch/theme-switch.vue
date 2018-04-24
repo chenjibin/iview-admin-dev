@@ -113,10 +113,10 @@ export default {
                 }]);
             }
             let stylePath = '';
-            if (config.env.indexOf('dev') > -1) {
+            if (process.env.NODE_ENV === 'development') {
                 stylePath = './src/views/main-components/theme-switch/theme/';
             } else {
-                stylePath = 'resource/';
+                stylePath = '/oa/resource/';
             }
             if (mainTheme !== 'b') {
                 path = stylePath + mainTheme + '.css';
