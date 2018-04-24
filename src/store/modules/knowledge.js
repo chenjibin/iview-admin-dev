@@ -24,7 +24,11 @@ const knowledge = {
         getTreeData(state) {
             axios.get('/knowledge/getMenu').then((res) => {
                 if (res.success) {
-                    state.treeData = [res.data];
+                    if (!res.data) {
+                        state.treeData = [];
+                    } else {
+                        state.treeData = [res.data];
+                    }
                 }
             });
         },
