@@ -174,7 +174,7 @@
                         align: 'center',
                         width: 60,
                         render: (h, params) => {
-                            return String.fromCharCode(params.row._index + 65);
+                            return h('span', String.fromCharCode(params.row._index + 65));
                         }
                     },
                     {
