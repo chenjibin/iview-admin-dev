@@ -2,33 +2,41 @@
     <div>
         <Card>
             <Form inline :label-width="60">
+                <FormItem label="公司" v-if="isManger === 0 || isManger === 1">
+                    <Select type="text" style="width: 120px" clearable
+                            @on-change="_inputDebounce"
+                            v-model="filterOpt.companyId"
+                            placeholder="筛选公司" clearable>
+                        <Option v-for="(item,index) in companyList" :label="item.name" :value="item.id">{{item.name}}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="姓名">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 120px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.name"
                            placeholder="筛选姓名"></Input>
                 </FormItem>
                 <FormItem label="状态">
-                    <Select v-model="filterOpt.kqstates" style="width: 120px" placeholder="筛选状态" @on-change="_inputDebounce" clearable>
+                    <Select v-model="filterOpt.kqstates"  style="width: 120px" placeholder="筛选状态" @on-change="_inputDebounce" clearable>
                         <Option value="-1">全部</Option>
                         <Option value="0">离职</Option>
                         <Option value="1">在职</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="部门">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 120px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.organizeName"
                            placeholder="筛选部门"></Input>
                 </FormItem>
                 <FormItem label="岗位">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 120px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.postName"
                            placeholder="筛选岗位"></Input>
                 </FormItem>
                 <FormItem label="学历">
-                    <Select type="text" style="width: 120px"
+                    <Select type="text" style="width: 120px" clearable
                             @on-change="_inputDebounce"
                             v-model="filterOpt.xueli"
                             placeholder="筛选学历" clearable>
@@ -39,7 +47,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="性别">
-                    <Select type="text" style="width: 120px"
+                    <Select type="text" style="width: 120px" clearable
                             @on-change="_inputDebounce"
                             v-model="filterOpt.sex"
                             placeholder="筛选性别" clearable>
@@ -66,25 +74,25 @@
                     </Select>
                 </FormItem>
                 <FormItem label="毕业院校">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 120px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.school"
                            placeholder="筛选院校"></Input>
                 </FormItem>
                 <FormItem label="专业">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 120px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.profession"
                            placeholder="筛选专业"></Input>
                 </FormItem>
                 <FormItem label="住址">
-                    <Input type="text" style="width: 120px"
+                    <Input type="text" style="width: 120px" clearable
                            @on-change="_inputDebounce"
                            v-model="filterOpt.address"
                            placeholder="筛选住址"></Input>
                 </FormItem>
                 <FormItem label="离职原因">
-                    <Select type="text" style="width: 120px"
+                    <Select type="text" style="width: 120px" clearable
                             @on-change="_inputDebounce"
                             v-model="filterOpt.reasonLeaving" clearable>
                         <Option value="个人原因">个人原因</Option>
@@ -93,25 +101,25 @@
                 </FormItem>
                 <FormItem label="返聘意愿">
                     <Select type="text" style="width: 120px"
-                            @on-change="_inputDebounce"
+                            @on-change="_inputDebounce" clearable
                             v-model="filterOpt.gradeLeaving" clearable>
                         <Option value="A" label="A"><span>A</span><span style="float:right;color:#ccc;width:50px;text-align: right;">优秀</span></Option>
                         <Option value="B" label="B"><span>B</span><span style="float:right;color:#ccc;width:50px;text-align: right;">良好</span></Option>
-                        <Option value="C" label=""><span>C</span><span style="float:right;color:#ccc;width:50px;text-align: right;">较差</span></Option>
+                        <Option value="C" label="C"><span>C</span><span style="float:right;color:#ccc;width:50px;text-align: right;">较差</span></Option>
                     </Select>
                 </FormItem>
                 <FormItem label="入职日期">
-                    <DatePicker type="date" style="width: 120px"
+                    <DatePicker type="date" style="width: 120px" clearable
                                 @on-change="_monthDateChange"
                                 :value="filterOpt.monthDate"></DatePicker>
                 </FormItem>
                 <FormItem label="到">
-                    <DatePicker type="date" style="width: 120px"
+                    <DatePicker type="date" style="width: 120px" clearable
                                 @on-change="_monthEndDateChange"
                                 :value="filterOpt.endmonthDate"></DatePicker>
                 </FormItem>
                 <FormItem label="出生日期">
-                    <DatePicker type="date" style="width: 120px"
+                    <DatePicker type="date" style="width: 120px" clearable
                                 placeholder="筛选出生日期"
                                 @on-change="_birthdayChange"
                                 :value="filterOpt.birthday"></DatePicker>
@@ -150,7 +158,7 @@
                                 <Input type="text" v-model="baseForm.sex" disabled></Input>
                             </FormItem>
                             <FormItem label="手机" style="width:49%;margin-right:1%;">
-                                <Input type="text" v-model="baseForm.cellphone" ></Input>
+                                <Input type="text" :maxlength="11" v-model="baseForm.cellphone" ></Input>
                             </FormItem>
                             <FormItem label="QQ" style="width:49%;margin-right:1%;">
                                 <Input type="text" v-model="baseForm.inphone" ></Input>
@@ -267,8 +275,8 @@
                                 <FormItem label="证明人" style="width:12%">
                                     <Input type="text" v-model="item.witness"></Input>
                                 </FormItem>
-                                <FormItem label="公司电话" style="width:12%">
-                                    <Input type="text" v-model="item.phone"></Input>
+                                <FormItem label="公司号码" style="width:12%">
+                                    <Input type="text" :maxlength="11" v-model="item.phone"></Input>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
                                     <Input type="text" v-model="baseForm.userid" ></Input>
@@ -305,8 +313,8 @@
                                 <FormItem label="职务" style="width:13%">
                                     <Input type="text" v-model="item.duties"></Input>
                                 </FormItem>
-                                <FormItem label="电话" style="width:13%">
-                                    <Input type="text" v-model="item.phone"></Input>
+                                <FormItem label="手机" style="width:13%">
+                                    <Input type="text" :maxlength="11" v-model="item.phone"></Input>
                                 </FormItem>
                                 <FormItem label="用户id" style="display: none">
                                     <Input type="text" v-model="baseForm.userid" ></Input>
@@ -324,8 +332,8 @@
                             <FormItem label="联系人关系" style="width:30%">
                                 <Input type="text" v-model="emergency.contactrelationship" ></Input>
                             </FormItem>
-                            <FormItem label="联系人电话" style="width:30%">
-                                <Input type="text" v-model="emergency.contactnumber" ></Input>
+                            <FormItem label="联系人手机" style="width:30%">
+                                <Input type="text" :maxlength="11" v-model="emergency.contactnumber" ></Input>
                             </FormItem>
                             <FormItem style="width:100%">
                                 <Button type="primary" icon="checkmark-round" :loading="btnLoading" @click="saveRelation(1,socailShipForm)">提交</Button>
@@ -385,6 +393,7 @@
             return {
                 settingModalFlag: false,
                 btnLoading: false,
+                companyList: [],
                 postColumns: [
                     {
                         title: '姓名',
@@ -513,7 +522,7 @@
                         workingtime: '',
                         employer: '',
                         duties: '',
-                        monthlysalary: '',
+                        monthlysalary: 500,
                         reasonleaving: '',
                         witness: ''
                     }
@@ -552,6 +561,12 @@
         created () {
             this._getPostData();
             this._setTableHeight();
+            this.getCompanyList();
+        },
+        computed: {
+            isManger() {
+                return this.$store.state.user.userInfo.ismanger;
+            }
         },
         methods: {
             // 下载图片
@@ -633,8 +648,13 @@
                     }
                 });
             },
+            getCompanyList() {
+                this.$http.post('/company/lists').then((res) => {
+                    this.companyList = res.data;
+                });
+            },
             // 社会关系 教育程度 工作资历保存
-            saveRelation(typerelationship,data) {
+            saveRelation(typerelationship, data) {
                 var d = {};
                 this.btnLoading = true;
                 d.typerelationship = typerelationship;

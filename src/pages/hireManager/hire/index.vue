@@ -104,7 +104,6 @@
                 <FormItem label="预约时间">
                     <DatePicker split-panels :clearable = "true" format="yyyy-MM-dd" type="daterange" style="width: 173px"
                                 @on-change="_monthDateChange('startdate',$event)"
-                                @on-clear="clearDate('startdate')"
                                 :value="filterOpt.startdate"></DatePicker>
                 </FormItem>
                 <FormItem label="面试时间">
@@ -394,7 +393,7 @@
                                 <Input type="text" v-model="item.post"></Input>
                             </FormItem>
                             <FormItem label="电话" style="width:13%">
-                                <Input type="text" v-model="item.phone"></Input>
+                                <Input type="text" :maxlength="13" v-model="item.phone"></Input>
                             </FormItem>
                             <FormItem label="用户id" style="display: none">
                                 <Input type="text" v-model="item.talentid" ></Input>
@@ -413,7 +412,7 @@
                             <Input type="text" v-model="talentBean.emrelate" ></Input>
                         </FormItem>
                         <FormItem label="联系人电话" style="width:30%">
-                            <Input type="text" v-model="talentBean.emphone" ></Input>
+                            <Input type="text" :maxlength="11" v-model="talentBean.emphone" ></Input>
                         </FormItem>
                         <FormItem style="width:100%">
                             <Button type="primary" icon="android-add" style="margin-left: 8px"  @click="socailShipForm.push({})">增加关系</Button>
@@ -770,14 +769,39 @@
                     {
                         title: '姓名',
                         key: 'name',
-                        align: 'center',
-                        width: 90
+                        align: 'left',
+                        width: 100
                     },
                     {
                         title: '岗位',
                         key: 'poststring',
-                        align: 'center',
-                        width: 100
+                        align: 'left',
+                        width: 160,
+                        render: (h, params) => {
+                            let ps = params.row.poststring;
+                            let cid = params.row.companyid;
+                            let cname = params.row.companyname;
+                            if (!ps) {
+                                return h('span');
+                            }
+                            if (this.isManger !== 0 && this.isManger !== 1) {
+                                return h('span', ps);
+                            }
+                            if (cname) {
+                                if (ps.indexOf(cname) > -1) {
+                                    return h('span', ps);
+                                } else {
+                                    return h('span', cname + ps);
+                                }
+                            } else if (cid) {
+                                cname = this.companyList[cid - 1] ? this.companyList[cid - 1].name : '';
+                                if (ps.indexOf(cname) > -1) {
+                                    return h('span', ps);
+                                } else {
+                                    return h('span', cname + ps);
+                                }
+                            }
+                        }
                     },
                     {
                         title: '性别',
@@ -976,6 +1000,11 @@
         computed: {
             isManger() {
                 return this.$store.state.user.userInfo.ismanger;
+            }
+        },
+        mounted() {
+            if (this.isManger > 1) {
+                this.tableHeight = this.tableHeight + 57;
             }
         },
         methods: {
@@ -1314,7 +1343,7 @@
             },
             _setTableHeight () {
                 let dm = document.body.clientHeight;
-                this.tableHeight = dm - 100 - 20 - 34 - 114 - 49;
+                this.tableHeight = dm - 100 - 20 - 34 - 114 - 49 - 57;
             },
             _setPage (page) {
                 this.pageData.page = page;
